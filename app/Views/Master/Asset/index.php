@@ -91,7 +91,7 @@
 									<th>Tag </th>
 									<th>Location </th>
 									<th>Number </th>
-									<th>Frequency</th>
+									<th>Frequency </th>
 								</tr>
 							</thead>
 							<tbody>
