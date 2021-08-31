@@ -90,7 +90,7 @@
 									<th>Asset </th>
 									<th>Tag </th>
 									<th>Location </th>
-									<th>Number</th>
+									<th>Number </th>
 									<th>Frequency</th>
 								</tr>
 							</thead>
