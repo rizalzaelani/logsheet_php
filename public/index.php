@@ -5,7 +5,7 @@ define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
 /*
  *---------------------------------------------------------------
- * BOOTSTRAP THE APPLICATION TEST
+ * BOOTSTRAP THE APPLICATION
  *---------------------------------------------------------------
  * This process sets up the path constants, loads and registers
  * our autoloader, along with Composer's, loads our constants
