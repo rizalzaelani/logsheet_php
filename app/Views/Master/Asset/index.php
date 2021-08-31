@@ -87,8 +87,8 @@
 							<thead class="bg-primary">
 								<tr>
 									<th>#</th>
-									<th>Asset</th>
-									<th>Tag</th>
+									<th>Asset </th>
+									<th>Tag </th>
 									<th>Location</th>
 									<th>Number</th>
 									<th>Frequency</th>
