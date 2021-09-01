@@ -12,7 +12,8 @@
 						<h4 class="title"><?= (isset($subtitle) ? $subtitle : '')  ?></h4>
 						<div>
 							<div class="btn-group">
-								<button data-toggle="tooltip" data-placement="top" title="Add Data" class="btn btndark btn-sm" @click="handleAdd()"><i class="fa fa-plus"></i> Add</button>
+								<a href="<?= base_url('Asset/add'); ?>" class="btn btn-sm"><i class="fa fa-plus"></i> Add</a>
+								<!-- <button data-toggle="tooltip" data-placement="top" title="Add Data" class="btn btndark btn-sm" @click="handleAdd()"><i class="fa fa-plus"></i> Add</button> -->
 							</div>
 							<div class="btn-group">
 								<button data-toggle="tooltip" data-placement="top" title="Filter" class="btn btndark btn-sm" id="btnFilter" @click="btnFilter()"><i class="fa fa-filter"></i> Filter</button>
@@ -98,7 +99,7 @@
 
 								<?php
 								for ($i = 1; $i <= 11; $i++) { ?>
-									<tr>
+									<tr style="cursor: pointer;">
 										<td><?= $i; ?></td>
 										<td>Asset Name</td>
 										<td>CCTV, ROUTER</td>
@@ -116,9 +117,6 @@
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="exampleModalScrollableTitle">Add Asset</h5>
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
 								</div>
 								<div class="modal-body">
 									<div class="form-group">

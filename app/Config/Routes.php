@@ -47,7 +47,7 @@ $routes->add('/Asset/import', 'Master/Asset::import');
 $routes->add('/Asset/export', 'Master/Asset::export');
 $routes->add('/Asset/exportCsv', 'Master/Asset::exportCsv');
 $routes->add('/Asset/exportOds', 'Master/Asset::exportOds');
-$routes->post('/Asset/add', 'Master/Asset::add');
+$routes->add('/Asset/add', 'Master/Asset::add');
 $routes->add('/Asset/detail/(:num)', 'Master/Asset::detail');
 $routes->get('/Asset/detail/', 'Master/Asset::detail');
 $routes->add('/Asset/getDetail/', 'Master/Asset::getDetail');
