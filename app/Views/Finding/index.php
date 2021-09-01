@@ -138,7 +138,7 @@
 						</div>
 					</div>
 					<!-- datatable -->
-					<table class="table table-hover table-striped" id="example">
+					<table class="table table-hover w-100" id="example">
 						<thead class="bg-primary">
 							<tr>
 								<th>#</th>

@@ -65,4 +65,13 @@ class Asset extends BaseController
 		);
 		echo json_encode($output);
 	}
+
+	public function detail()
+	{
+		$data = array(
+			'title' => 'Detail',
+			'subtitle' => 'Detail',
+		);
+		return $this->template->render('Master/Asset/detail', $data);
+	}
 }

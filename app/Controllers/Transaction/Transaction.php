@@ -10,7 +10,7 @@ class Transaction extends BaseController
 	{
 		$data = array(
 			'title' => 'Transaction',
-			'subtitle' => 'Checklist Equipment Record IPC Logsheet'
+			'subtitle' => 'Transaction'
 		);
 
 		return $this->template->render('Transaction/index', $data);
