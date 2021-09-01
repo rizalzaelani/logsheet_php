@@ -1,5 +1,5 @@
 <div class="c-sidebar c-sidebar-light c-sidebar-fixed c-sidebar-lg-show fade-in" id="sidebar">
-    <div class="c-sidebar-brand d-md-down-none m-2">
+    <div class="c-sidebar-brand d-md-down-none m-1">
         <img src="/img/logo-act.png" height="40" width="162" class="c-sidebar-brand-full">
         <img class="c-sidebar-brand-minimized" src="/img/logo-act-min.png" width="40" height="38" alt="">
     </div>

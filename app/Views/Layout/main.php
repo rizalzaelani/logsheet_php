@@ -36,7 +36,7 @@
   <div class="c-wrapper">
     <?= $this->include('Layout/components/header'); ?>
     <div class="c-body">
-      <main class="c-main bg-light">
+      <main class="c-main">
         <div class="container-fluid">
           <div class="fade-in">
             <?= $this->renderSection('content'); ?>
