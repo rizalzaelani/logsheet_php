@@ -31,7 +31,7 @@ button:focus {
 }
 
 .dt-fixed-bottom {
-  width: 100%;
+  width: calc(100% - 30px);
   position: absolute;
   padding-right: 2rem;
   padding-left: 0rem;
@@ -96,4 +96,8 @@ button:focus {
   border: 2px solid #2c2c34;
   border-radius: 2px;
   color: rgba(255, 255, 255, 0.6);
+}
+
+div.dataTables_wrapper div.dataTables_length select {
+  min-width: 3.5rem !important;
 }

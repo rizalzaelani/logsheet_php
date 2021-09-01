@@ -112,7 +112,7 @@
 					</div>
 					<!-- datatable -->
 					<div class="table-responsive">
-						<table class="table table-hover w-100" id="example">
+						<table class="table table-hover w-100 nowrap" id="tableTrx">
 							<thead class="bg-primary">
 								<tr>
 									<th>#</th>
@@ -151,6 +151,9 @@
 		data: () => ({
 			data: null
 		}),
+		mounted() {
+			this.getData()
+		},
 		methods: {
 			btnFilter() {
 				$('#btnHideFilter').show();
@@ -161,6 +164,13 @@
 				$('#btnFilter').show();
 				$('#filter').hide();
 				$('#btnHideFilter').hide();
+			},
+			getData() {
+				$('#tableTrx').DataTable({
+					'scrollY': "calc(100vh - 220px)",
+					'paging': true,
+					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<""i><"d-flex justify-content-end align-items-center" <"mt-2 mr-2"l>pr>>>',
+				});
 			}
 		}
 	})
