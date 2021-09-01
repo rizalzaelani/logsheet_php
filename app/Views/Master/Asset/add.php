@@ -9,13 +9,13 @@
     <div class="col-12">
         <div class="card card-main card-border-top">
             <div class="container-fluid">
-                <div class="card-header">
-                    <h4 class="title"><?= $title; ?></h4>
-                </div>
                 <div class="card-body">
                     <div class="form-group mt-3">
                         <form action="">
-                            <h5><b>Asset</b></h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5><b>Add Asset</b></h5>
+                                <a class="btn btn-sm btn-success" href="<?= base_url('Asset'); ?>"><i class="fa fa-arrow-left"></i> Back</a>
+                            </div>
                             <hr>
                             <div class="row mb-3">
                                 <label class="col-2" for="assetName">Asset Name</label>
@@ -60,7 +60,10 @@
                                 </div>
                             </div>
 
-                            <h5 class="mt-3"><b>Parameter {{ tag }}</b></h5>
+                            <div class="d-flex justify-content-between align-items-center" id="param">
+                                <h5 class="mt-3"><b>Parameter</b></h5>
+                                <button class="btn btn-sm btn-primary" @click="addParam()" type="button"><i class="fa fa-plus"></i> Add Parameter</button>
+                            </div>
                             <hr>
                             <div class="row mb-3">
                                 <label class="col-2" for="parameter">Parameter</label>
@@ -69,6 +72,10 @@
                             <div class="row mb-3">
                                 <label class="col-2" for="photo">Photo</label>
                                 <input class="col-10 form-control" type="text" placeholder="Photo">
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-2" for="description">Description</label>
+                                <input class="col-10 form-control" type="text" placeholder="Description">
                             </div>
                             <div class="row mb-3">
                                 <label class="col-2" for="type">Type</label>
@@ -122,6 +129,9 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="d-flex justify-content-end align-items-center">
+                                <button class="btn btn-success">Submit</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -137,21 +147,22 @@
     let v = new Vue({
         el: '#app',
         data: {
-            tag: ''
+            tag: this.addParam,
         },
-    })
-    $('#tag').on('change', function() {
-        if ($(this).val() == 'CCTV') {
-            v.tag = "CCTV";
-        } else if ($(this).val() == 'ROUTER') {
-            v.tag = "ROUTER"
-        } else if ($(this).val() == 'IT') {
-            v.tag = "IT"
-        } else {
-            v.tag = ''
+        methods: {
+            addParam() {
+                // create a new div element
+                const newDiv = document.createElement("div");
+
+                // and give it some content
+                const newContent = document.createTextNode("Hi there and greetings!");
+
+                // add the text node to the newly created div
+                newDiv.appendChild(newContent);
+            }
         }
-        // var valTag = $(this).val();
     })
+
     $('#type').on('change', function() {
         if ($(this).val() == 'Select') {
             $('.typeSelect').show();

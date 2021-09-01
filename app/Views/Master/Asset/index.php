@@ -12,16 +12,16 @@
 						<h4 class="title"><?= (isset($subtitle) ? $subtitle : '')  ?></h4>
 						<div>
 							<div class="btn-group">
-								<a href="<?= base_url('Asset/add'); ?>" class="btn btn-sm"><i class="fa fa-plus"></i> Add</a>
+								<a href="<?= base_url('Asset/add'); ?>" class="btn btn-sm btn-outline-dark"><i class="fa fa-plus"></i> Add</a>
 								<!-- <button data-toggle="tooltip" data-placement="top" title="Add Data" class="btn btndark btn-sm" @click="handleAdd()"><i class="fa fa-plus"></i> Add</button> -->
 							</div>
 							<div class="btn-group">
-								<button data-toggle="tooltip" data-placement="top" title="Filter" class="btn btndark btn-sm" id="btnFilter" @click="btnFilter()"><i class="fa fa-filter"></i> Filter</button>
-								<button data-toggle="tooltip" data-placement="top" title="Hide Filter" class="btn btndark btn-sm" id="btnHideFilter" @click="btnHideFilter()" style="display: none;"><i class="fa fa-eye-slash"></i> Hide Filter</button>
+								<button data-toggle="tooltip" data-placement="top" title="Filter" class="btn btn-outline-dark btn-sm" id="btnFilter" @click="btnFilter()"><i class="fa fa-filter"></i> Filter</button>
+								<button data-toggle="tooltip" data-placement="top" title="Hide Filter" class="btn btn-outline-dark btn-sm" id="btnHideFilter" @click="btnHideFilter()" style="display: none;"><i class="fa fa-eye-slash"></i> Hide Filter</button>
 							</div>
 							<div class="btn-group">
-								<button data-toggle="tooltip" data-placement="top" title="Import / Export" class="btn btndark btn-sm" type="button"><i class="fa fa-upload"></i> Import</button>
-								<button class="btn btndark btn-sm dropdown-toggle dropdown-toggle-split" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
+								<button data-toggle="tooltip" data-placement="top" title="Import / Export" class="btn btn-outline-dark btn-sm" type="button"><i class="fa fa-upload"></i> Import</button>
+								<button class="btn btn-outline-dark btn-sm dropdown-toggle dropdown-toggle-split" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
 								<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-start" style="position: absolute; transform: translate3d(71px, 34px, 0px); top: 0px; left: 0px; will-change: transform; font-size: 12px;">
 									<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload"></i> Import Data</a>
 									<div class="dropdown-divider"></div>
@@ -31,7 +31,7 @@
 								</div>
 							</div>
 							<div class="btn-group">
-								<a style="text-decoration: none; " href="<?= base_url('Asset/domPdf'); ?>" data-toggle="tooltip" data-placement="top" title="Print Pdf" id="print" class="btn btndark btn-sm" data-toggle="tooltip" title="Print"><i class="fa fa-print"></i> Print</a>
+								<a style="text-decoration: none; " href="<?= base_url('Asset/domPdf'); ?>" data-toggle="tooltip" data-placement="top" title="Print Pdf" id="print" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" title="Print"><i class="fa fa-print"></i> Print</a>
 							</div>
 							<div class="btn-group">
 								<div class="dt-search-input">
@@ -41,8 +41,8 @@
 								</div>
 							</div>
 							<div class="btn-group">
-								<button data-toggle="tooltip" data-placement="top" title="Search" class="btn btndark btn-sm" id="btnSearch" type="button" @click="btnSearch()"><i class="fa fa-search"></i> Search</button>
-								<button data-toggle="tooltip" data-placement="top" title="Hide Search" class="btn btndark btn-sm" id="btnHide" type="button" @click="btnHide()" style="display: none;"><i class="fa fa-eye-slash"></i> Hide</button>
+								<button data-toggle="tooltip" data-placement="top" title="Search" class="btn btn-outline-dark btn-sm" id="btnSearch" type="button" @click="btnSearch()"><i class="fa fa-search"></i> Search</button>
+								<button data-toggle="tooltip" data-placement="top" title="Hide Search" class="btn btn-outline-dark btn-sm" id="btnHide" type="button" @click="btnHide()" style="display: none;"><i class="fa fa-eye-slash"></i> Hide</button>
 							</div>
 						</div>
 					</div>
