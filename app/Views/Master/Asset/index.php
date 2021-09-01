@@ -101,7 +101,7 @@
 									<tr>
 										<td><?= $i; ?></td>
 										<td>Asset Name</td>
-										<td>CCTV</td>
+										<td>CCTV, ROUTER</td>
 										<td>Gedung Mesin</td>
 										<td>0<?= $i; ?></td>
 										<td>Daily</td>
@@ -372,7 +372,9 @@
 	});
 
 	// Row Click
-	// 
+	$(document).on('click', '#tableEq tbody tr', function() {
+		window.location.href = "<?= base_url('Asset/detail'); ?>";
+	});
 
 	$('#tag').select2({
 		theme: 'coreui',

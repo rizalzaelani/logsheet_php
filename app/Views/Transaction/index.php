@@ -67,7 +67,7 @@
 		<div class="card">
 			<div class="container-fluid">
 				<div class="card-header d-flex flex-row justify-content-between">
-					<h4 class="title">Location</h4>
+					<h4 class="title"><?= (isset($title) ? $title : ''); ?></h4>
 					<div>
 						<div class="btn-group">
 							<button class="btn btn-sm" id="btnFilter" @click="btnFilter()"><i class="fa fa-filter"></i> Filter</button>
@@ -111,28 +111,30 @@
 						</div>
 					</div>
 					<!-- datatable -->
-					<table class="table table-hover " id="example">
-						<thead class="bg-primary">
-							<tr>
-								<th>#</th>
-								<th>Asset</th>
-								<th>Tag</th>
-								<th>Location</th>
-								<th>Condition</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php for ($i = 1; $i <= 15; $i++) { ?>
+					<div class="table-responsive">
+						<table class="table table-hover w-100" id="example">
+							<thead class="bg-primary">
 								<tr>
-									<td><?= $i; ?></td>
-									<td>Asset</td>
-									<td>CCTV</td>
-									<td>Gedung Mesin</td>
-									<td>Normal</td>
+									<th>#</th>
+									<th>Asset</th>
+									<th>Tag</th>
+									<th>Location</th>
+									<th>Condition</th>
 								</tr>
-							<?php } ?>
-						</tbody>
-					</table>
+							</thead>
+							<tbody>
+								<?php for ($i = 1; $i <= 15; $i++) { ?>
+									<tr>
+										<td><?= $i; ?></td>
+										<td>Asset</td>
+										<td>CCTV</td>
+										<td>Gedung Mesin</td>
+										<td>Normal</td>
+									</tr>
+								<?php } ?>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>

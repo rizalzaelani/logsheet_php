@@ -28,7 +28,7 @@
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Equipment') ?>">
                 <svg class="c-sidebar-nav-icon">
                     <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-library-bookmark') ?>"></use>
-                </svg> Equipment</a>
+                </svg> Asset</a>
         </li>
 
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Report') ?>">
