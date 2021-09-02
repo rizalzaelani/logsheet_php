@@ -6,7 +6,7 @@
     <ul class="c-sidebar-nav ps ps--active-y">
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link active" href="<?= base_url('/Dashboard') ?>">
                 <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-browser') ?>"></use>
+                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-speedometer') ?>"></use>
                 </svg> Dashboard</a>
         </li>
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Transaction') ?>">

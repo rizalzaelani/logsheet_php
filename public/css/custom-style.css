@@ -1,6 +1,29 @@
+.c-header {
+  background-color: inherit;
+  border-bottom: none;
+}
+
+.card-main {
+  padding: .75rem 1.25rem;
+}
+
+.card-main.fixed-height {
+    min-height: calc(100vh - 95px);
+    margin-bottom: 0.75rem !important;
+}
+
+.header-icon > * {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
 button:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+a {
+  color: inherit;
 }
 
 .hide {
@@ -25,19 +48,6 @@ button:focus {
   padding-right: 1.5rem !important;
 }
 
-.fixed-height {
-  height: calc(100vh - 92px);
-  margin-bottom: 0.75rem !important;
-}
-
-.dt-fixed-bottom {
-  width: calc(100% - 30px);
-  position: absolute;
-  padding-right: 2rem;
-  padding-left: 0rem;
-  bottom: 0.5rem;
-}
-
 /* .card-border-top {
   border-top: 2px solid #003399 !important;
 } */
@@ -52,10 +62,6 @@ button:focus {
 
 .title {
   margin-bottom: 0px;
-}
-
-.dataTables_scrollHeadInner {
-  width: 100% !important;
 }
 
 .c-sidebar-minimizer {
@@ -98,6 +104,120 @@ button:focus {
   color: rgba(255, 255, 255, 0.6);
 }
 
+/* datatables */
+
 div.dataTables_wrapper div.dataTables_length select {
   min-width: 3.5rem !important;
 }
+
+.dataTables_scrollHeadInner {
+  width: 100% !important;
+}
+
+.dt-search-input{
+    display: none;
+    position: absolute;
+    top: 0;
+    background: #fff;
+    width: calc(100% - 1.5rem);
+}
+
+/* .dt-fixed-bottom {
+  width: calc(100% - 30px);
+  position: absolute;
+  padding-right: 2rem;
+  padding-left: 0rem;
+  bottom: 0.5rem;
+} */
+
+
+/* input */
+
+.input-transparent {
+  background-color: rgba(0, 0, 0, 0) !important;
+  color: black;
+  border: none !important;
+  outline: none !important;
+  margin: 0 !important;
+  height: inherit !important;
+}
+
+.input-border-bottom {
+  background-color: rgba(0, 0, 0, 0) !important;
+  color: black;
+  outline: none !important;
+  margin: 0 !important;
+  height: inherit !important;
+}
+
+.input-transparent:focus {
+  box-shadow: inherit !important;
+}
+
+
+/* Material Input */
+.input-container {
+  position: relative;
+}
+
+input.material-input {
+  background-color: rgba(0, 0, 0, 0) !important;
+  border: 0;
+  border-bottom: 2px solid #9e9e9e;
+  outline: none;
+  transition: .2s ease-in-out;
+  box-sizing: border-box;
+}
+
+.input-container > .suffix + .material-input, .input-container > .suffix ~ label {
+  margin-right: 3rem !important;
+  width: calc(100% - 3rem) !important;
+}
+
+.input-container > label {
+  top: 0;
+  left: 0; right: 0;
+  color: #9e9e9e;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  font-size: 1rem;
+  cursor: text;
+  transition: .2s ease-in-out;
+  box-sizing: border-box;
+}
+
+input.material-input,
+.input-container > label {
+  width: 100%;
+  height: 3rem;
+  font-size: 1rem;
+}
+
+.input-container > .suffix {
+  position: absolute;
+  width: 3rem;
+  font-size: 1.5rem;
+  -webkit-transition: color 2s;
+  transition: color 2s;
+  top: 1rem;
+  right: -0.5rem;
+}
+
+/* Interation */
+input.material-input:focus {
+  border-bottom: 2px solid var(--primary);
+}
+
+input.material-input:focus + label {
+  color: var(--primary);
+  font-size: .8rem;
+  top: -30px;
+  pointer-events: none;
+}
+
+input.material-input:focus + .suffix {
+  color: var(--primary);
+}
+
+/* End Material Input */
