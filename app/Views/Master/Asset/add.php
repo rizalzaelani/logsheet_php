@@ -59,74 +59,76 @@
                                     </select>
                                 </div>
                             </div>
-
                             <div class="d-flex justify-content-between align-items-center" id="param">
                                 <h5 class="mt-3"><b>Parameter</b></h5>
                                 <button class="btn btn-sm btn-primary" @click="addParam()" type="button"><i class="fa fa-plus"></i> Add Parameter</button>
                             </div>
                             <hr>
-                            <div class="row mb-3">
-                                <label class="col-2" for="parameter">Parameter</label>
-                                <input class="col-10 form-control" type="text" placeholder="Parameter Name">
-                            </div>
-                            <div class="row mb-3">
-                                <label class="col-2" for="photo">Photo</label>
-                                <input class="col-10 form-control" type="text" placeholder="Photo">
-                            </div>
-                            <div class="row mb-3">
-                                <label class="col-2" for="description">Description</label>
-                                <input class="col-10 form-control" type="text" placeholder="Description">
-                            </div>
-                            <div class="row mb-3">
-                                <label class="col-2" for="type">Type</label>
-                                <div class="col-10 p-0">
-                                    <select name="type" id="type">
-                                        <option value="Input">Input</option>
-                                        <option value="Select">Select</option>
-                                        <option value="Checkbox">Checkbox</option>
-                                    </select>
+                            <div>
+                                <h5 class="mb-3">Parameter</h5>
+                                <div class="row mb-3">
+                                    <label class="col-2" for="parameter">Parameter</label>
+                                    <input class="col-10 form-control" type="text" placeholder="Parameter Name">
                                 </div>
-                            </div>
-                            <div class="row mb-3 typeInput">
-                                <label class="col-2" for="min">Min</label>
-                                <input class="col-10 form-control" type="text" name="min" id="min" placeholder="Min Value">
-                            </div>
-                            <div class="row mb-3 typeInput">
-                                <label class="col-2" for="max">Max</label>
-                                <input class="col-10 form-control" type="text" name="max" id="max" placeholder="Max Value">
-                            </div>
-                            <div class="row mb-3 typeInput">
-                                <label class="col-2" for="uom">Unit Of Measure</label>
-                                <input class="col-10 form-control" type="text" name="uom" id="uom" placeholder="Unit Of Measure">
-                            </div>
-                            <div class="row mb-3 typeSelect" style="display: none;">
-                                <label class="col-2" for="normal">Normal</label>
-                                <div class="col-10 p-0">
-                                    <select name="normal" id="normal" multiple>
-                                        <option value="Item 1">Item 1</option>
-                                        <option value="Item 2">Item 2</option>
-                                        <option value="Item 3">Item 3</option>
-                                    </select>
+                                <div class="row mb-3">
+                                    <label class="col-2" for="photo">Photo</label>
+                                    <input class="col-10 form-control" type="text" placeholder="Photo">
                                 </div>
-                            </div>
-                            <div class="row mb-3 typeSelect" style="display: none;">
-                                <label class="col-2" for="abnormal">Abnormal</label>
-                                <div class="col-10 p-0">
-                                    <select name="abnormal" id="abnormal" multiple>
-                                        <option value="Item 1">Item 1</option>
-                                        <option value="Item 2">Item 2</option>
-                                        <option value="Item 3">Item 3</option>
-                                    </select>
+                                <div class="row mb-3">
+                                    <label class="col-2" for="description">Description</label>
+                                    <input class="col-10 form-control" type="text" placeholder="Description">
                                 </div>
-                            </div>
-                            <div class="row mb-3 typeSelect" style="display: none;">
-                                <label class="col-2" for="option">Option</label>
-                                <div class="col-10 p-0">
-                                    <select name="option" id="option" multiple>
-                                        <option value="Item 1">Item 1</option>
-                                        <option value="Item 2">Item 2</option>
-                                        <option value="Item 3">Item 3</option>
-                                    </select>
+                                <div class="row mb-3">
+                                    <label class="col-2" for="type">Type</label>
+                                    <div class="col-10 p-0">
+                                        <select name="type" id="type">
+                                            <option value="Input">Input</option>
+                                            <option value="Select">Select</option>
+                                            <option value="Checkbox">Checkbox</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 typeInput">
+                                    <label class="col-2" for="min">Min</label>
+                                    <input class="col-10 form-control" type="text" name="min" id="min" placeholder="Min Value">
+                                </div>
+                                <div class="row mb-3 typeInput">
+                                    <label class="col-2" for="max">Max</label>
+                                    <input class="col-10 form-control" type="text" name="max" id="max" placeholder="Max Value">
+                                </div>
+                                <div class="row mb-3 typeInput">
+                                    <label class="col-2" for="uom">Unit Of Measure</label>
+                                    <input class="col-10 form-control" type="text" name="uom" id="uom" placeholder="Unit Of Measure">
+                                </div>
+                                <div class="row mb-3 typeSelect" style="display: none;">
+                                    <label class="col-2" for="normal">Normal</label>
+                                    <div class="col-10 p-0">
+                                        <select name="normal" id="normal" multiple>
+                                            <option value="Item 1">Item 1</option>
+                                            <option value="Item 2">Item 2</option>
+                                            <option value="Item 3">Item 3</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 typeSelect" style="display: none;">
+                                    <label class="col-2" for="abnormal">Abnormal</label>
+                                    <div class="col-10 p-0">
+                                        <select name="abnormal" id="abnormal" multiple>
+                                            <option value="Item 1">Item 1</option>
+                                            <option value="Item 2">Item 2</option>
+                                            <option value="Item 3">Item 3</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 typeSelect" style="display: none;">
+                                    <label class="col-2" for="option">Option</label>
+                                    <div class="col-10 p-0">
+                                        <select name="option" id="option" multiple>
+                                            <option value="Item 1">Item 1</option>
+                                            <option value="Item 2">Item 2</option>
+                                            <option value="Item 3">Item 3</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end align-items-center">
@@ -178,7 +180,16 @@
     })
     $('#tag').select2({
         theme: 'coreui',
-        placeholder: "Select Tag"
+        placeholder: "Select Tag",
+        allowClear: true,
+        escapeMarkup: function(markup) {
+            return markup;
+        },
+        language: {
+            noResults: function() {
+                return `<button class="btn btn-sm btn-primary">Add</button>`;
+            }
+        }
     })
     $('#location').select2({
         theme: 'coreui'

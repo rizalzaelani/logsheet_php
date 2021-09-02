@@ -247,15 +247,33 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="tag">Tag <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="tag"></i></label>
-                                                <input class="col-9 form-control tag" type="text" name="tag">
+                                                <div class="col-9 p-0">
+                                                    <select class="form-control" name="tag" id="tag">
+                                                        <option value="CCTV">CCTV</option>
+                                                        <option value="ROUTER">ROUTER</option>
+                                                        <option value="IT">IT</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="location">Location <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="location"></i></label>
-                                                <input class="col-9 form-control location" type="text" name="location">
+                                                <div class="col-9 p-0">
+                                                    <select class="form-control" name="location" id="location">
+                                                        <option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
+                                                        <option value="GEDUNG MESIN">GEDUNG MESIN</option>
+                                                        <option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="frequency">Frequency <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
-                                                <input class="col-9 form-control frequency" type="text" name="frequency">
+                                                <label class="col-3" for="frequency">Frequency Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <select class="form-control" name="frequency" id="frequency">
+                                                        <option value="Daily">Daily</option>
+                                                        <option value="Weekly">Weekly</option>
+                                                        <option value="Monthly">Monthly</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
@@ -531,6 +549,60 @@
             }
         }
     });
+
+    // select2 edit asset
+    $(document).ready(function() {
+        $('#tag').select2({
+            theme: 'coreui',
+            placeholder: "Tag Name",
+            tags: true,
+            dropdownParent: $('#editDetailModal'),
+            allowClear: true,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            language: {
+                noResults: function() {
+                    return `<button class="btn btn-sm btn-primary">Add</button>`;
+                }
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#location').select2({
+            theme: 'coreui',
+            placeholder: "Location Name",
+            dropdownParent: $('#editDetailModal'),
+            allowClear: true,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            language: {
+                noResults: function() {
+                    return `<button class="btn btn-sm btn-primary">Add</button>`;
+                }
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#frequency').select2({
+            theme: 'coreui',
+            placeholder: "Frequency Type",
+            dropdownParent: $('#editDetailModal'),
+            allowClear: true,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            language: {
+                noResults: function() {
+                    return `<button class="btn btn-sm btn-primary">Add</button>`;
+                }
+            }
+        });
+    });
+
     // select2 add parameter
     $(document).ready(function() {
         $('.type').select2({
