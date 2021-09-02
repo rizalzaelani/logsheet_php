@@ -32,10 +32,10 @@ class Database extends Config
 	 */
 	public $default = [
 		'DSN'      => '',
-		'hostname' => 'localhost',
-		'username' => 'root',
-		'password' => 'root',
-		'database' => 'db_testLogsheet',
+		'hostname' => '66.42.48.15',
+		'username' => 'admin',
+		'password' => '**cinta=nocola##',
+		'database' => 'db_logsheet',
 		'DBDriver' => 'MySQLi',
 		'DBPrefix' => '',
 		'pConnect' => false,
@@ -47,7 +47,7 @@ class Database extends Config
 		'compress' => false,
 		'strictOn' => false,
 		'failover' => [],
-		'port'     => 8889,
+		'port'     => 3306,
 	];
 
 	/**

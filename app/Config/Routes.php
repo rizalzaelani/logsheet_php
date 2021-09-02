@@ -38,6 +38,7 @@ $routes->get('/Operation', 'Master/Operation::index');
 $routes->get('/Users', 'Master/Users::index');
 
 $routes->get('/Asset', 'Master/Asset::index');
+$routes->add('/Asset/dataTag', 'Master/Asset::dataTag');
 $routes->get('/Api', 'Api/Api::index');
 $routes->add('/Asset/domPdf', 'Master/Asset::domPdf');
 $routes->get('/Asset/deletedData', 'Master/Asset::deletedData');

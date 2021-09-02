@@ -5,6 +5,7 @@ namespace App\Controllers\Master;
 use App\Controllers\BaseController;
 use App\Controllers\RESTful\ResourceController;
 use App\Models\AssetModel;
+use App\Models\TagModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Reader\XLSX\Reader;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
@@ -77,9 +78,20 @@ class Asset extends BaseController
 
 	public function add()
 	{
+		$modelTag = new TagModel();
 		$data = array(
-			'title' => "Add Asset"
+			'title' => "Add Asset",
+			'data' => $modelTag->findAll()
 		);
 		return $this->template->render('Master/Asset/add', $data);
+	}
+
+	public function dataTag()
+	{
+		$modelTag = new TagModel();
+		$data = array(
+			'data' => $modelTag->findAll()
+		);
+		return json_encode($data);
 	}
 }

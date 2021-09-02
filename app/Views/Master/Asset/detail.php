@@ -66,7 +66,7 @@
                                         <tr class="mt-1">
                                             <th>Action</th>
                                             <td>: <button class="btn btn-sm btn-primary mr-1" type="button" @click="editDetail()"><i class="fa fa-edit"></i> Edit</button>
-                                                <button class="btn btn-sm btn-danger mr-1" type="button" @click="handleDelete()"><i class="fa fa-trash"></i> Delete</button>
+                                                <button class="btn btn-sm btn-danger mr-1" type="button" @click="deleteAsset()"><i class="fa fa-trash"></i> Delete</button>
                                             </td>
                                         </tr>
                                     </table>
@@ -239,11 +239,11 @@
                                         <form method="post" enctype="multipart/form-data">
                                             <div class="row mb-3">
                                                 <label class="col-3" for="asset">Asset <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="asset"></i></label>
-                                                <input class="col-9 form-control asset" type="text" name="asset">
+                                                <input class="col-9 form-control asset" type="text" name="asset" placeholder="Asset Name">
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="number">Number <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="number"></i></label>
-                                                <input class="col-9 form-control number" type="text" name="number">
+                                                <input class="col-9 form-control number" type="text" name="number" placeholder="Asset Number">
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="tag">Tag <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="tag"></i></label>
@@ -277,14 +277,14 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
-                                                <input class="col-9 form-control description" type="text" name="description">
+                                                <input class="col-9 form-control description" type="text" name="description" placeholder="Description">
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class="fa fa-times"></i> Cancel</button>
-                                    <button type="button" class="btn btn-primary" @click="update()"><i class="fa fa-check"></i> Update</button>
+                                    <button type="button" class="btn btn-primary" @click="updateAsset()"><i class="fa fa-check"></i> Update</button>
                                 </div>
                             </div>
                         </div>
@@ -360,6 +360,57 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="row mb-3 typeCheckbox" style="display: none;">
+                                                <label class="col-3">Normal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="normal1" type="checkbox" value="Item 1">
+                                                        <label class="form-check-label" for="normal1">Item 1</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="normal2" type="checkbox" value="Item 2">
+                                                        <label class="form-check-label" for="normal2">Item 2</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="normal3" type="checkbox" value="Item 3">
+                                                        <label class="form-check-label" for="normal3">Item 3</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3 typeCheckbox" style="display: none;">
+                                                <label class="col-3">Abormal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="abnormal1" type="checkbox" value="Item 1">
+                                                        <label class="form-check-label" for="abnormal1">Item 1</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="abnormal2" type="checkbox" value="Item 2">
+                                                        <label class="form-check-label" for="abnormal2">Item 2</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="abnormal3" type="checkbox" value="Item 3">
+                                                        <label class="form-check-label" for="abnormal3">Item 3</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3 typeCheckbox" style="display: none;">
+                                                <label class="col-3">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="option1" type="checkbox" value="Item 1">
+                                                        <label class="form-check-label" for="option1">Item 1</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="option2" type="checkbox" value="Item 2">
+                                                        <label class="form-check-label" for="option2">Item 2</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="option3" type="checkbox" value="Item 3">
+                                                        <label class="form-check-label" for="option3">Item 3</label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="showOn">Parameter Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
                                                 <div class="col-9 p-0">
@@ -379,7 +430,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
-                                    <button type="button" class="btn btn-primary" @click="update()"><i class="fa fa-check"></i> Update</button>
+                                    <button type="button" class="btn btn-primary" @click="addParam()"><i class="fa fa-check"></i> Update</button>
                                 </div>
                             </div>
                         </div>
@@ -413,15 +464,15 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="row mb-3 typeInput">
+                                            <div class="row mb-3 typeInputEdit">
                                                 <label class="col-3" for="min">Min <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
                                                 <input type="text" class="form-control col-9 min" name="min" placeholder="Min Value">
                                             </div>
-                                            <div class="row mb-3 typeInput">
+                                            <div class="row mb-3 typeInputEdit">
                                                 <label class="col-3" for="max">Max <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
                                                 <input type="text" class="form-control col-9 max" name="max" placeholder="Max Value">
                                             </div>
-                                            <div class="row mb-3 typeInput">
+                                            <div class="row mb-3 typeInputEdit">
                                                 <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
                                                 <input type="text" class="form-control col-9 uom" name="uom" placeholder="Unit Of Measure">
                                             </div>
@@ -455,6 +506,57 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="row mb-3 typeCheckboxEdit" style="display: none;">
+                                                <label class="col-3">Normal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="normal1" type="checkbox" value="Item 1">
+                                                        <label class="form-check-label" for="normal1">Item 1</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="normal2" type="checkbox" value="Item 2">
+                                                        <label class="form-check-label" for="normal2">Item 2</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="normal3" type="checkbox" value="Item 3">
+                                                        <label class="form-check-label" for="normal3">Item 3</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3 typeCheckboxEdit" style="display: none;">
+                                                <label class="col-3">Abormal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="abnormal1" type="checkbox" value="Item 1">
+                                                        <label class="form-check-label" for="abnormal1">Item 1</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="abnormal2" type="checkbox" value="Item 2">
+                                                        <label class="form-check-label" for="abnormal2">Item 2</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="abnormal3" type="checkbox" value="Item 3">
+                                                        <label class="form-check-label" for="abnormal3">Item 3</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3 typeCheckboxEdit" style="display: none;">
+                                                <label class="col-3">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="option1" type="checkbox" value="Item 1">
+                                                        <label class="form-check-label" for="option1">Item 1</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="option2" type="checkbox" value="Item 2">
+                                                        <label class="form-check-label" for="option2">Item 2</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mr-1">
+                                                        <input class="form-check-input" id="option3" type="checkbox" value="Item 3">
+                                                        <label class="form-check-label" for="option3">Item 3</label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="showOn">Parameter Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
                                                 <div class="col-9 p-0">
@@ -474,7 +576,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class="fa fa-times"></i> Cancel</button>
-                                    <button type="button" class="btn btn-primary" @click="update()"><i class="fa fa-check"></i> Update</button>
+                                    <button type="button" class="btn btn-primary" @click="updateParameter()"><i class="fa fa-check"></i> Update</button>
                                 </div>
                             </div>
                         </div>
@@ -495,13 +597,85 @@
             myModal: ''
         },
         methods: {
+            updateAsset() {
+                const swalWithBootstrapButtons = swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success mr-1',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Success!',
+                    text: 'You have successfully update this data.',
+                    icon: 'success'
+                })
+            },
+            deleteAsset() {
+                const swalWithBootstrapButtons = swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success mr-1',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Area you sure?',
+                    text: 'You will delete this data!.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    cancelButtonText: '<i class="fa fa-times"></i> Cancel',
+                    confirmButtonText: '<i class="fa fa-check"></i> Yes, delete!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        swalWithBootstrapButtons.fire({
+                            title: 'Success!',
+                            text: 'You have successfully deleted this data.',
+                            icon: 'success',
+                            allowOutsideClick: false
+                        })
+                    }
+                })
+            },
             addParameter() {
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
             },
+            addParam() {
+                this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                this.myModal.hide();
+                const swalWithBootstrapButtons = swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success mr-1',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Success!',
+                    text: 'You have successfully add data.',
+                    icon: 'success'
+                })
+            },
             editParameter() {
                 this.myModal = new coreui.Modal(document.getElementById('editParameterModal'), {});
                 this.myModal.show();
+            },
+            updateParameter() {
+                this.myModal = new coreui.Modal(document.getElementById('editParameterModal'), {});
+                this.myModal.hide();
+                const swalWithBootstrapButtons = swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success mr-1',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Success!',
+                    text: 'You have successfully update this data.',
+                    icon: 'success'
+                })
             },
             deleteParameter() {
                 const swalWithBootstrapButtons = Swal.mixin({
@@ -512,7 +686,7 @@
                     buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
-                    title: 'Delete this data?',
+                    title: 'Are yu sure?',
                     text: "You will delete this data!",
                     icon: 'warning',
                     showCancelButton: true,
@@ -555,9 +729,7 @@
         $('#tag').select2({
             theme: 'coreui',
             placeholder: "Tag Name",
-            tags: true,
             dropdownParent: $('#editDetailModal'),
-            allowClear: true,
             escapeMarkup: function(markup) {
                 return markup;
             },
@@ -574,7 +746,6 @@
             theme: 'coreui',
             placeholder: "Location Name",
             dropdownParent: $('#editDetailModal'),
-            allowClear: true,
             escapeMarkup: function(markup) {
                 return markup;
             },
@@ -591,7 +762,6 @@
             theme: 'coreui',
             placeholder: "Frequency Type",
             dropdownParent: $('#editDetailModal'),
-            allowClear: true,
             escapeMarkup: function(markup) {
                 return markup;
             },
@@ -619,6 +789,7 @@
             dropdownParent: $('#addParameterModal'),
         });
     });
+
     $(document).ready(function() {
         $('.abnormal').select2({
             theme: 'coreui',
@@ -626,6 +797,7 @@
             dropdownParent: $('#addParameterModal'),
         });
     });
+
     $(document).ready(function() {
         $('.option').select2({
             theme: 'coreui',
@@ -633,6 +805,7 @@
             dropdownParent: $('#addParameterModal'),
         });
     });
+
     $(document).ready(function() {
         $('.showOn').select2({
             theme: 'coreui',
@@ -645,19 +818,31 @@
         if ($(this).val() == 'select') {
             $('.typeSelect').show();
             $('.typeInput').hide();
-        } else {
+            $('.typeCheckbox').hide();
+        } else if ($(this).val() == 'checkbox') {
+            $('.typeCheckbox').show();
             $('.typeSelect').hide();
+            $('.typeInput').hide();
+        } else {
             $('.typeInput').show();
+            $('.typeSelect').hide();
+            $('.typeCheckbox').hide();
         }
     })
 
     $('.typeEdit').on('change', function() {
         if ($(this).val() == 'select') {
             $('.typeSelectEdit').show();
-            $('.typeInput').hide();
-        } else {
+            $('.typeInputEdit').hide();
+            $('.typeCheckboxEdit').hide();
+        } else if ($(this).val() == 'checkbox') {
+            $('.typeCheckboxEdit').show();
             $('.typeSelectEdit').hide();
-            $('.typeInput').show();
+            $('.typeInputEdit').hide();
+        } else {
+            $('.typeInputEdit').show();
+            $('.typeSelectEdit').hide();
+            $('.typeCheckboxEdit').hide();
         }
     })
 

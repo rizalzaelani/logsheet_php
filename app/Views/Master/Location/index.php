@@ -50,7 +50,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive w-100">
-                        <table class="table dt-responsive w-100 table-hover">
+                        <table class="table dt-responsive w-100 table-hover" id="tableLocation">
                             <tr>
                                 <thead class="bg-primary">
                                     <th style="border-top-left-radius: 5px;">#</th>
@@ -122,7 +122,17 @@
         data: {
             myModal: ''
         },
+        mounted() {
+            this.getData;
+        },
         methods: {
+            getData() {
+                $('#tableLocation').DataTable({
+                    'scrollY': "calc(100vh - 300px)",
+                    'paging': true,
+                    'dom': '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-flex justify-content-between"<""i><"d-flex justify-content-end align-items-center" <"mt-2 mr-2"l>pr>>>',
+                });
+            },
             handleAdd() {
                 this.myModal = new coreui.Modal(document.getElementById('exampleModalScrollable'), {});
                 this.myModal.show();
