@@ -10,7 +10,16 @@
                 <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-menu') ?>"></use>
             </svg>
         </button>
-        <h4 class="text-upercase mb-0"><?= $title ?></h4>
+        <!-- <h6 class="text-uppercase mb-0"><?= $title ?></h6> -->
+        <ol class="breadcrumb m-0 border-bottom-0">
+            <?php foreach (($breadcrumbs ?? []) as $key => $row) { ?>
+                <?php if (count($breadcrumbs ?? []) == $key + 1) { ?>
+                    <li class="breadcrumb-item active text-capitalize"><?= $row; ?></li>
+                <?php } else { ?>
+                    <li class="breadcrumb-item text-capitalize"><a href="<?= site_url($row) ?>"><?= $row; ?></a></li>
+                <?php } ?>
+            <?php } ?>
+        </ol>
     </div>
     <ul class="c-header-nav mfs-auto">
         <li class="c-header-nav-item px-3 c-d-legacy-none">
