@@ -210,10 +210,7 @@
 							language: {
 								"processing": `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`
 							},
-							dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-flex justify-content-between"<""i><"d-flex justify-content-end align-items-center" <"mt-2 mr-2"l>pr>>>',
-							// order: [
-							// 	[3, 'desc']
-							// ],
+							dom: '<"float-left"B><"">t<"dt-fixed-bottom"<"d-flex justify-content-between"<""i><"d-flex justify-content-end align-items-center" <"mt-2 mr-2"l>pr>>>',
 							ajax: {
 								url: "<?= base_url() . '/Asset/datatable' ?>",
 								type: "POST",
@@ -258,7 +255,8 @@
 				$('#tableEq').DataTable({
 					'scrollY': "calc(100vh - 300px)",
 					'paging': true,
-					'dom': 'tip'
+					'dom': '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-flex justify-content-between"<""i><"d-flex justify-content-end align-items-center" <"mt-2 mr-2"l>pr>>>',
+
 				});
 			},
 			handleAdd() {
