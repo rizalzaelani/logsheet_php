@@ -65,7 +65,7 @@
                                         </tr>
                                         <tr class="mt-1">
                                             <th>Action</th>
-                                            <td>: <button class="btn btn-sm btn-primary mr-1" type="button" @click="getDataUpdate()"><i class="fa fa-edit"></i> Edit</button>
+                                            <td>: <button class="btn btn-sm btn-primary mr-1" type="button" @click="editDetail()"><i class="fa fa-edit"></i> Edit</button>
                                                 <button class="btn btn-sm btn-danger mr-1" type="button" @click="handleDelete()"><i class="fa fa-trash"></i> Delete</button>
                                             </td>
                                         </tr>
@@ -117,50 +117,104 @@
                         <!-- tab parameter -->
                         <div class="tab-pane" id="parameter" role="tabpanel">
                             <button class="btn btn-sm btn-success mt-2" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
-                            <div class="table-responsive mt-2">
-                                <table class="table table-hover">
-                                    <thead class="bg-primary">
-                                        <tr>
-                                            <th>Parameter</th>
-                                            <th>Photo</th>
-                                            <th>Description</th>
-                                            <th>UoM</th>
-                                            <th>Min</th>
-                                            <th>Max</th>
+                            <div>
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                            <tr class="bg-primary text-center">
+                                                <th colspan="8">ROUTER</th>
+                                            </tr>
+                                            <tr>
+                                                <th width="12,5%">Parameter</th>
+                                                <th width="12,5%">Photo</th>
+                                                <th width="12,5%">Description</th>
+                                                <th width="12,5%">UoM</th>
+                                                <th width="12,5%">Min</th>
+                                                <th width="12,5%">Max</th>
+                                                <th width="15%">Show On</th>
+                                                <th width="10%" style="border-top-right-radius: 5px;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>PING</td>
+                                                <td><a href="/img/logo-act.png">ping.jpg</a></td>
+                                                <td>desc ping</td>
+                                                <td>ms</td>
+                                                <td>35</td>
+                                                <td>67</td>
+                                                <td>Running, Standby</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>UPLOAD</td>
+                                                <td><a href="/img/logo-act.png">upload.jpg</a></td>
+                                                <td>desc upload</td>
+                                                <td>MBPS</td>
+                                                <td>35</td>
+                                                <td>67</td>
+                                                <td>Running, Standby</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
-                                            <th>Show On</th>
-                                            <th style="border-top-right-radius: 5px;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>PING</td>
-                                            <td><a href="/img/logo-act.png">ping.jpg</a></td>
-                                            <td>desc ping</td>
-                                            <td>ms</td>
-                                            <td>35</td>
-                                            <td>67</td>
-                                            <td>Running, Standby</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>UPLOAD</td>
-                                            <td><a href="/img/logo-act.png">upload.jpg</a></td>
-                                            <td>desc upload</td>
-                                            <td>MBPS</td>
-                                            <td>35</td>
-                                            <td>67</td>
-                                            <td>Running, Standby</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div>
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                            <tr class="bg-primary text-center">
+                                                <th colspan="8">CCTV</th>
+                                            </tr>
+                                            <tr>
+                                                <th width="12,5%">Parameter</th>
+                                                <th width="12,5%">Photo</th>
+                                                <th width="12,5%">Description</th>
+                                                <th width="12,5%">UoM</th>
+                                                <th width="12,5%">Min</th>
+                                                <th width="12,5%">Max</th>
+                                                <th width="15%">Show On</th>
+                                                <th width="10%" style="border-top-right-radius: 5px;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>CABLE</td>
+                                                <td><a href="/img/logo-act.png">cable.jpg</a></td>
+                                                <td>desc cable</td>
+                                                <td>good, bad</td>
+                                                <td>bad</td>
+                                                <td>good</td>
+                                                <td>Running, Standby</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>AMPERE</td>
+                                                <td><a href="/img/logo-act.png">ampere.jpg</a></td>
+                                                <td>desc ampere</td>
+                                                <td>A</td>
+                                                <td>5</td>
+                                                <td>23</td>
+                                                <td>Running, Standby</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <!-- tab setting -->
@@ -172,48 +226,64 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- modal Edit-->
-                    <div class="modal fade" tabindex="-1" role="dialog" id="modalEdit">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal fade" tabindex="-1" role="dialog" id="editDetailModal">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Data</h5>
-                                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button> -->
                                 </div>
                                 <div class="modal-body">
-                                    <div class="container form-group">
+                                    <div class="container">
                                         <form method="post" enctype="multipart/form-data">
-                                            <div class="row mt-1" style="display: none;">
-                                                <div class="col-4">
-                                                    <label for="adminequip_id">ID <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="id"></i></label>
+                                            <div class="row mb-3">
+                                                <label class="col-3" for="asset">Asset <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="asset"></i></label>
+                                                <input class="col-9 form-control asset" type="text" name="asset">
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-3" for="number">Number <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="number"></i></label>
+                                                <input class="col-9 form-control number" type="text" name="number">
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-3" for="tag">Tag <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="tag"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <select class="form-control" name="tag" id="tag">
+                                                        <option value="CCTV">CCTV</option>
+                                                        <option value="ROUTER">ROUTER</option>
+                                                        <option value="IT">IT</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-8">
-                                                    <input id="adminequip_id" readonly type="text" class="form-control" name="adminequip_id">
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-3" for="location">Location <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="location"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <select class="form-control" name="location" id="location">
+                                                        <option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
+                                                        <option value="GEDUNG MESIN">GEDUNG MESIN</option>
+                                                        <option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="mb-3">
-                                                <label for="company">Company <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="company"></i></label>
-                                                <input id="company" type="text" class="form-control" name="company">
+                                            <div class="row mb-3">
+                                                <label class="col-3" for="frequency">Frequency Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <select class="form-control" name="frequency" id="frequency">
+                                                        <option value="Daily">Daily</option>
+                                                        <option value="Weekly">Weekly</option>
+                                                        <option value="Monthly">Monthly</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <div class="mb-3">
-                                                <label for="area">Area <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="area"></i></label>
-                                                <input id="area" type="text" class="form-control" name="area">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="unit">Unit <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="unit"></i></label>
-                                                <input id="unit" type="text" class="form-control" name="unit">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="equipment">Equipment <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="equipment"></i></label>
-                                                <input id="equipment" type="text" class="form-control" name="equipment">
+                                            <div class="row mb-3">
+                                                <label class="col-3" for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
+                                                <input class="col-9 form-control description" type="text" name="description">
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel" @click="btnCancel()"><i class="fa fa-times"></i> Cancel</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class="fa fa-times"></i> Cancel</button>
                                     <button type="button" class="btn btn-primary" @click="update()"><i class="fa fa-check"></i> Update</button>
                                 </div>
                             </div>
@@ -308,7 +378,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel" @click="btnCancel()"><i class="fa fa-times"></i> Cancel</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
                                     <button type="button" class="btn btn-primary" @click="update()"><i class="fa fa-check"></i> Update</button>
                                 </div>
                             </div>
@@ -320,7 +390,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Add Parameter</h5>
+                                    <h5 class="modal-title">Edit Parameter</h5>
                                 </div>
                                 <div class="modal-body">
                                     <div class="container">
@@ -336,7 +406,7 @@
                                             <div class="row mb-3">
                                                 <label class="col-3" for="type">Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control type" name="type" placeholder="Select Type">
+                                                    <select class="form-control typeEdit" name="type" placeholder="Select Type">
                                                         <option value="input">Input</option>
                                                         <option value="select">Select</option>
                                                         <option value="checkbox">Checkbox</option>
@@ -355,30 +425,30 @@
                                                 <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
                                                 <input type="text" class="form-control col-9 uom" name="uom" placeholder="Unit Of Measure">
                                             </div>
-                                            <div class="row mb-3 typeSelect" style="display: none;">
+                                            <div class="row mb-3 typeSelectEdit" style="display: none;">
                                                 <label class="col-3" for="normal">Normal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control normal" name="normal">
+                                                    <select class="form-control normalEdit" name="normal">
                                                         <option value="item 1">item 1</option>
                                                         <option value="item 2">item 2</option>
                                                         <option value="item 3">item 3</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="row mb-3 typeSelect" style="display: none;">
+                                            <div class="row mb-3 typeSelectEdit" style="display: none;">
                                                 <label class="col-3" for="abnormal">Abnormal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control abnormal" name="abnormal">
+                                                    <select class="form-control abnormalEdit" name="abnormal">
                                                         <option value="item 1">item 1</option>
                                                         <option value="item 2">item 2</option>
                                                         <option value="item 3">item 3</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="row mb-3 typeSelect" style="display: none;">
+                                            <div class="row mb-3 typeSelectEdit" style="display: none;">
                                                 <label class="col-3" for="option">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control option" name="option">
+                                                    <select class="form-control optionEdit" name="option">
                                                         <option value="item 1">item 1</option>
                                                         <option value="item 2">item 2</option>
                                                         <option value="item 3">item 3</option>
@@ -388,7 +458,7 @@
                                             <div class="row mb-3">
                                                 <label class="col-3" for="showOn">Parameter Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control showOn" name="showOn" multiple="multiple">
+                                                    <select class="form-control showOnEdit" name="showOn" multiple="multiple">
                                                         <option value="Running">Running</option>
                                                         <option value="Standby">Standby</option>
                                                         <option value="Repair">Repair</option>
@@ -403,7 +473,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel" @click="btnCancel()"><i class="fa fa-times"></i> Cancel</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class="fa fa-times"></i> Cancel</button>
                                     <button type="button" class="btn btn-primary" @click="update()"><i class="fa fa-check"></i> Update</button>
                                 </div>
                             </div>
@@ -457,25 +527,82 @@
                             icon: 'success',
                             allowOutsideClick: false
                         })
-                    } else if (
-                        result.dismiss === Swal.DismissReason.cancel
-                    ) {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger'
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire(
-                            'Cancelled',
-                            'You cancel deleting this data.',
-                            'error'
-                        )
                     }
                 })
+            },
+            editDetail() {
+                this.myModal = new coreui.Modal(document.getElementById('editDetailModal'), {});
+                this.myModal.show();
+            },
+            btnCancel() {
+                const swalWithBootstrapButtons = swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire(
+                    'Cancelled',
+                    'You cancel editing this data.',
+                    'error'
+                )
             }
         }
     });
+
+    // select2 edit asset
+    $(document).ready(function() {
+        $('#tag').select2({
+            theme: 'coreui',
+            placeholder: "Tag Name",
+            tags: true,
+            dropdownParent: $('#editDetailModal'),
+            allowClear: true,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            language: {
+                noResults: function() {
+                    return `<button class="btn btn-sm btn-primary">Add</button>`;
+                }
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#location').select2({
+            theme: 'coreui',
+            placeholder: "Location Name",
+            dropdownParent: $('#editDetailModal'),
+            allowClear: true,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            language: {
+                noResults: function() {
+                    return `<button class="btn btn-sm btn-primary">Add</button>`;
+                }
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#frequency').select2({
+            theme: 'coreui',
+            placeholder: "Frequency Type",
+            dropdownParent: $('#editDetailModal'),
+            allowClear: true,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            language: {
+                noResults: function() {
+                    return `<button class="btn btn-sm btn-primary">Add</button>`;
+                }
+            }
+        });
+    });
+
     // select2 add parameter
     $(document).ready(function() {
         $('.type').select2({
@@ -524,10 +651,20 @@
         }
     })
 
+    $('.typeEdit').on('change', function() {
+        if ($(this).val() == 'select') {
+            $('.typeSelectEdit').show();
+            $('.typeInput').hide();
+        } else {
+            $('.typeSelectEdit').hide();
+            $('.typeInput').show();
+        }
+    })
+
 
     // select2 edit parameter
     $(document).ready(function() {
-        $('.type').select2({
+        $('.typeEdit').select2({
             theme: 'coreui',
             placeholder: "Select Type",
             dropdownParent: $('#editParameterModal'),
@@ -535,28 +672,28 @@
     });
 
     $(document).ready(function() {
-        $('.normal').select2({
+        $('.normalEdit').select2({
             theme: 'coreui',
             placeholder: "Select Type",
             dropdownParent: $('#editParameterModal'),
         });
     });
     $(document).ready(function() {
-        $('.abnormal').select2({
+        $('.abnormalEdit').select2({
             theme: 'coreui',
             placeholder: "Select Type",
             dropdownParent: $('#editParameterModal'),
         });
     });
     $(document).ready(function() {
-        $('.option').select2({
+        $('.optionEdit').select2({
             theme: 'coreui',
             placeholder: "Select Type",
             dropdownParent: $('#editParameterModal'),
         });
     });
     $(document).ready(function() {
-        $('.showOn').select2({
+        $('.showOnEdit').select2({
             theme: 'coreui',
             placeholder: "Parameter Status",
             dropdownParent: $('#editParameterModal'),

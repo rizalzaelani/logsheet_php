@@ -74,4 +74,12 @@ class Asset extends BaseController
 		);
 		return $this->template->render('Master/Asset/detail', $data);
 	}
+
+	public function add()
+	{
+		$data = array(
+			'title' => "Add Asset"
+		);
+		return $this->template->render('Master/Asset/add', $data);
+	}
 }

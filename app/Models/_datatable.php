@@ -10,7 +10,6 @@ class _datatable extends Model
 
     public function __construct($table, $column_order, $column_search, $order)
     {
-        parent::__construct();
         $this->request = \Config\Services::request();
         $this->db = \Config\Database::connect();
         $this->table = $table;
