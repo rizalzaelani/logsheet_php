@@ -13,6 +13,8 @@ class Transaction extends BaseController
 			'subtitle' => 'Transaction'
 		);
 
+
+		$data["breadcrumbs"] = [ "home", "transaction"];
 		return $this->template->render('Transaction/index', $data);
 	}
 }

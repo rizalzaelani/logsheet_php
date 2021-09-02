@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div class="d-flex justify-content-between mb-1">
-					<h4><?= ""//$title ?></h4>
+					<h4><?= $title ?></h4>
 					<h5 class="header-icon">
 						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter"></i></a>
 						<a href="javascript:;" onclick="table.ajax.reload();"><i class="fa fa-redo-alt"></i></a>
