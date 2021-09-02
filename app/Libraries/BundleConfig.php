@@ -8,9 +8,10 @@ class BundleConfig
 	{
 		$plugin = array(
 			base_url('/vendors/jquery/jquery.min.js'),
-			base_url('/js/tooltips.js'),
+			// base_url('/js/tooltips.js'),
 			base_url('/js/coreui.bundle.min.js'),
 			base_url('/js/coreui-utils.js'),
+			base_url('/js/custom-func.js'),
 			base_url('/js/jquery.maskedinput.js'),
 			base_url('/vendors/moment/moment-with-locales.min.js'),
 			base_url('/vendors/datatables/jquery.dataTables.js'),
@@ -21,8 +22,6 @@ class BundleConfig
 			base_url('/vendors/filepond/filepond-plugin-file-validate-type.js'),
 			base_url('/vendors/filepond/filepond.min.js'),
 			base_url('/vendors/filepond/filepond.jquery.js'),
-			base_url('/js/tooltips.js'),
-			base_url('/js/advanced-forms.js'),
 
 		);
 		return $plugin;
@@ -34,6 +33,7 @@ class BundleConfig
 			base_url('/css/style.css'),
 			base_url('/css/custom-style.css'),
 			base_url('/css/style.min.css.map'),
+			base_url('/css/materialdesignicons.min.css'),
 			base_url('/icons/coreui/css/all.min.css'),
 			base_url('/vendors/datatables/dataTables.bootstrap4.css'),
 			base_url('/vendors/daterangepicker/daterangepicker.css'),

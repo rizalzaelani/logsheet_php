@@ -1,14 +1,17 @@
-<header class="c-header c-header-light c-header-fixed fade-in p-1">
-    <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show">
-        <svg class="c-icon c-icon-lg">
-            <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-menu') ?>"></use>
-        </svg>
-    </button>
-    <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
-        <svg class="c-icon c-icon-lg">
-            <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-menu') ?>"></use>
-        </svg>
-    </button>
+<header class="c-header c-header-light fade-in p-1">
+    <div class="d-flex flex-row align-items-center">
+        <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show">
+            <svg class="c-icon c-icon-lg">
+                <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-menu') ?>"></use>
+            </svg>
+        </button>
+        <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
+            <svg class="c-icon c-icon-lg">
+                <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-menu') ?>"></use>
+            </svg>
+        </button>
+        <h4 class="text-upercase mb-0"><?= $title ?></h4>
+    </div>
     <ul class="c-header-nav mfs-auto">
         <li class="c-header-nav-item px-3 c-d-legacy-none">
             <button class="c-class-toggler c-header-nav-btn" type="button" id="header-tooltip" data-target="body" data-class="c-dark-theme" data-toggle="c-tooltip" data-placement="bottom" title="Toggle Light/Dark Mode">
