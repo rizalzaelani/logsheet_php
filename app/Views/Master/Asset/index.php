@@ -99,7 +99,7 @@
 
 								<?php
 								for ($i = 1; $i <= 11; $i++) { ?>
-									<tr style="cursor: pointer;">
+									<tr class="cursor-pointer">
 										<td><?= $i; ?></td>
 										<td>Asset Name</td>
 										<td>CCTV, ROUTER</td>
@@ -112,7 +112,7 @@
 						</table>
 					</div>
 					<!-- Modal Tambah-->
-					<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+					<div class=" modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
 						<div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
 							<div class="modal-content">
 								<div class="modal-header">

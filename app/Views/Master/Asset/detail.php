@@ -1,8 +1,8 @@
 <?= $this->extend('Layout/main'); ?>
 
 <?= $this->section('customStyles'); ?>
-
 <!-- Custom Style Css -->
+<link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.dataTables.min.css">
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -12,15 +12,15 @@
             <div class="card-body">
                 <div class="d-flex flex-row justify-content-between align-items-center w-100">
                     <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" id="detail_tab">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-list-rich"></use>
                                 </svg> Detail <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read equipment data, edit, and delete the data. And also you can read the log of changes that have occurred to the equipment data.</div>"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter">
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="parameter_tab">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
                                 </svg> Parameter <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read the parameter data of an equipment</div>"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting">
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" id="setting_tab">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
                                 </svg> Setting <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>In this tab, you can change the settings on an equipment</div>"></i></a></li>
@@ -72,53 +72,15 @@
                                 <img src="/img/logo-act.png" alt="Image" class="img-thumbnail m-0">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="mt-2 col-12">
-                                <h5>Change Log</h5>
-                            </div>
-                            <div class="table-responsive w-100 mt-2 col-12">
-                                <table class="table table-hover">
-                                    <thead class="bg-primary">
-                                        <tr>
-                                            <th style="border-top-left-radius: 5px;">#</th>
-                                            <th>Asset</th>
-                                            <th>Number</th>
-                                            <th>Tag</th>
-                                            <th>Location</th>
-                                            <th>Frequency</th>
-                                            <th>Description</th>
-                                            <!-- <th style="border-top-right-radius: 5px;">Action</th> -->
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php for ($i = 1; $i < 6; $i++) { ?>
-                                            <tr>
-                                                <td><?= $i; ?></td>
-                                                <td>log asset</td>
-                                                <td>log number</td>
-                                                <td>log tag</td>
-                                                <td>log location</td>
-                                                <td>log frequency</td>
-                                                <td>log description</td>
-                                                <!-- <td class="d-flex justify-content-between align-items-center">
-                                                            <a href="" class="btn btn-sm btn-success mr-1"><i class="fa fa-edit"></i></a>
-                                                            <a href="" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
-                                                        </td> -->
-                                            </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                     <!-- tab parameter -->
                     <div class="tab-pane" id="parameter" role="tabpanel">
-                        <button class="btn btn-success mt-2" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
+                        <!-- <button class="btn btn-success mt-2" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button> -->
                         <div class="table-responsive mt-2">
-                            <table class="table table-hover table-bordered">
+                            <table class="table dt-responsive table-hover table-bordered w-100 display" id="tableParam">
                                 <thead>
                                     <tr class="bg-primary text-center">
-                                        <th colspan="8">PARAMETER</th>
+                                        <th colspan="8">SORTING PARAMETER</th>
                                     </tr>
                                     <tr>
                                         <th width="12,5%">Parameter</th>
@@ -128,7 +90,7 @@
                                         <th width="12,5%">Min</th>
                                         <th width="12,5%">Max</th>
                                         <th width="15%">Show On</th>
-                                        <th width="10%" style="border-top-right-radius: 5px;">Action</th>
+                                        <!-- <th width="10%" style="border-top-right-radius: 5px;">Action</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -140,10 +102,10 @@
                                         <td>35</td>
                                         <td>67</td>
                                         <td>Running, Standby</td>
-                                        <td>
+                                        <!-- <td>
                                             <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
                                             <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     <tr>
                                         <td>UPLOAD</td>
@@ -153,10 +115,10 @@
                                         <td>35</td>
                                         <td>67</td>
                                         <td>Running, Standby</td>
-                                        <td>
+                                        <!-- <td>
                                             <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
                                             <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     <tr>
                                         <td>CABLE</td>
@@ -166,10 +128,10 @@
                                         <td>bad</td>
                                         <td>good</td>
                                         <td>Running, Standby</td>
-                                        <td>
+                                        <!-- <td>
                                             <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
                                             <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     <tr>
                                         <td>AMPERE</td>
@@ -179,10 +141,10 @@
                                         <td>5</td>
                                         <td>23</td>
                                         <td>Running, Standby</td>
-                                        <td>
+                                        <!-- <td>
                                             <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
                                             <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -486,19 +448,69 @@
                 </div>
             </div>
         </div>
+        <!-- change log -->
+        <div class="card card-main" id="cardChangeLog">
+            <div class="row">
+                <div class="mt-2 col-12">
+                    <h5>Change Log</h5>
+                </div>
+                <div class="table-responsive w-100 mt-2 col-12">
+                    <table class="table table-hover">
+                        <thead class="bg-primary">
+                            <tr>
+                                <th style="border-top-left-radius: 5px;">#</th>
+                                <th>Date</th>
+                                <th>Asset</th>
+                                <th>Number</th>
+                                <th>Tag</th>
+                                <th>Location</th>
+                                <th>Frequency</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php for ($i = 1; $i < 6; $i++) { ?>
+                                <tr>
+                                    <td><?= $i; ?></td>
+                                    <td>13-02-2021 12.30.00</td>
+                                    <td>log asset</td>
+                                    <td>log number</td>
+                                    <td>log tag</td>
+                                    <td>log location</td>
+                                    <td>log frequency</td>
+                                    <td>log description</td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <?= $this->endSection(); ?>
 
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
+<script src="https://cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
 <script>
     let v = new Vue({
         el: '#app',
         data: {
             myModal: ''
         },
+        mounted() {
+            this.getDataParameter();
+        },
         methods: {
+            getDataParameter: () => {
+                $('#tableParam').DataTable({
+                    dom: 't',
+                    rowReorder: {
+                        selector: 'tr'
+                    }
+                });
+            },
             updateAsset() {
                 this.myModal.hide();
                 const swalWithBootstrapButtons = swal.mixin({
@@ -624,6 +636,18 @@
             }
         }
     });
+
+    $('#tableParam tbody tr').addClass('cursor-move');
+
+    $('#detail_tab').click(() => {
+        $('#cardChangeLog').show();
+    })
+    $('#parameter_tab').click(() => {
+        $('#cardChangeLog').hide();
+    })
+    $('#setting_tab').click(() => {
+        $('#cardChangeLog').hide();
+    })
 
     // select2 edit asset
     $(document).ready(function() {
