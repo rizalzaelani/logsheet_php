@@ -3,6 +3,10 @@
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
 <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.dataTables.min.css">
+<link href="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css" rel="stylesheet" />
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -60,12 +64,6 @@
                                         <th>Description</th>
                                         <td>: DESC</td>
                                     </tr>
-                                    <tr class="mt-1">
-                                        <th>Action</th>
-                                        <td>: <button class="btn btn-sm btn-success mr-1" type="button" @click="editDetail()"><i class="fa fa-edit"></i> Edit</button>
-                                            <button class="btn btn-sm btn-danger mr-1" type="button" @click="deleteAsset()"><i class="fa fa-trash"></i> Delete</button>
-                                        </td>
-                                    </tr>
                                 </table>
                             </div>
                             <div class="col-6 d-flex flex-row align-items-center" style="border: 1px solid #d8dbe0;">
@@ -75,14 +73,14 @@
                     </div>
                     <!-- tab parameter -->
                     <div class="tab-pane" id="parameter" role="tabpanel">
-                        <!-- <button class="btn btn-success mt-2" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button> -->
                         <div class="table-responsive mt-2">
-                            <table class="table dt-responsive table-hover table-bordered w-100 display" id="tableParam">
+                            <table class="table dt-responsive table-hover w-100 display" id="tableParam">
                                 <thead>
                                     <tr class="bg-primary text-center">
                                         <th colspan="8">SORTING PARAMETER</th>
                                     </tr>
-                                    <tr>
+                                    <tr style="display: none;">
+                                        <th>#</th>
                                         <th width="12,5%">Parameter</th>
                                         <th width="12,5%">Photo</th>
                                         <th width="12,5%">Description</th>
@@ -90,11 +88,11 @@
                                         <th width="12,5%">Min</th>
                                         <th width="12,5%">Max</th>
                                         <th width="15%">Show On</th>
-                                        <!-- <th width="10%" style="border-top-right-radius: 5px;">Action</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td style="display: none;">1</td>
                                         <td>PING</td>
                                         <td><a href="/img/logo-act.png">ping.jpg</a></td>
                                         <td>desc ping</td>
@@ -102,12 +100,9 @@
                                         <td>35</td>
                                         <td>67</td>
                                         <td>Running, Standby</td>
-                                        <!-- <td>
-                                            <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td> -->
                                     </tr>
                                     <tr>
+                                        <td style="display: none;">2</td>
                                         <td>UPLOAD</td>
                                         <td><a href="/img/logo-act.png">upload.jpg</a></td>
                                         <td>desc upload</td>
@@ -115,12 +110,9 @@
                                         <td>35</td>
                                         <td>67</td>
                                         <td>Running, Standby</td>
-                                        <!-- <td>
-                                            <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td> -->
                                     </tr>
                                     <tr>
+                                        <td style="display: none;">3</td>
                                         <td>CABLE</td>
                                         <td><a href="/img/logo-act.png">cable.jpg</a></td>
                                         <td>desc cable</td>
@@ -128,12 +120,9 @@
                                         <td>bad</td>
                                         <td>good</td>
                                         <td>Running, Standby</td>
-                                        <!-- <td>
-                                            <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td> -->
                                     </tr>
                                     <tr>
+                                        <td style="display: none;">4</td>
                                         <td>AMPERE</td>
                                         <td><a href="/img/logo-act.png">ampere.jpg</a></td>
                                         <td>desc ampere</td>
@@ -141,10 +130,6 @@
                                         <td>5</td>
                                         <td>23</td>
                                         <td>Running, Standby</td>
-                                        <!-- <td>
-                                            <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
-                                        </td> -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -153,8 +138,80 @@
                     <!-- tab setting -->
                     <div class="tab-pane" id="setting" role="tabpanel">
                         <div class="row mt-2">
-                            <div class="col">
-                                <h5>Setting</h5>
+                            <div class="col-6">
+                                <table class="table mt-2">
+                                    <tr class="mt-1">
+                                        <th>Asset</th>
+                                        <td>: Asset Name</td>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Number</th>
+                                        <td>: 001</td>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Tag</th>
+                                        <td>: ROUTER, CCTV</td>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Location</th>
+                                        <td>: Asset Location</td>
+                                    </tr>
+
+                                    <tr class="mt-1">
+                                        <th>Frequency</th>
+                                        <td>: Weekly</td>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Description</th>
+                                        <td>: Asset Description</td>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Change Operation Mode</th>
+                                        <th class="d-flex align-items-center">
+                                            :<div class="ml-1 btn-group btn-group-toggle d-flex align-items-center" data-toggle="buttons">
+                                                <label class="btn btn-sm btn-outline-success">
+                                                    <input type="radio" name="options" autocomplete="off"> Running
+                                                </label>
+                                                <label class="btn btn-sm btn-outline-info active">
+                                                    <input type="radio" name="options" autocomplete="off" checked> Standby
+                                                </label>
+                                                <label class="btn btn-sm btn-outline-danger">
+                                                    <input type="radio" name="options" autocomplete="off"> Repair
+                                                </label>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Show Last Value</th>
+                                        <td class="d-flex align-items-center">
+                                            : <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                <input type="checkbox" class="c-switch-input">
+                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Latitude/Longitude</th>
+                                        <td class="d-flex align-items-center">
+                                            : <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                <input type="checkbox" class="c-switch-input" id="latlong" value="false">
+                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr class="mt-1">
+                                        <th>Action</th>
+                                        <th>: <button class="btn btn-sm mr-1" type="button" @click="editDetail()"><i class="fa fa-edit"></i> Edit</button>
+                                            <button class="btn btn-sm mr-1" type="button" @click="deleteAsset()"><i class="fa fa-trash"></i> Delete</button>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6 align-items-center" style="border: 1px solid #d8dbe0;">
+                                <input type="file" class="filepond mt-2 mb-2" name="filepond" accept="image/png, image/jpeg, image/gif" />
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-sm"><i class="fa fa-upload"></i> Upload Image</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -239,7 +296,7 @@
                                         </div>
                                         <div class="row mb-3">
                                             <label class="col-3" for="photo">Photo <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
-                                            <input type="text" class="form-control col-9" name="photo" placeholder="Photo">
+                                            <input type="file" class="form-control col-9 photo" name="photo" placeholder="Photo">
                                         </div>
                                         <div class="row mb-3">
                                             <label class="col-3" for="type">Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
@@ -351,7 +408,7 @@
                                         </div>
                                         <div class="row mb-3">
                                             <label class="col-3" for="photo">Photo <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
-                                            <input type="text" class="form-control col-9" name="photo" placeholder="Photo">
+                                            <input type="file" class="form-control col-9" name="photo" placeholder="Photo">
                                         </div>
                                         <div class="row mb-3">
                                             <label class="col-3" for="type">Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
@@ -458,7 +515,7 @@
                     <table class="table table-hover">
                         <thead class="bg-primary">
                             <tr>
-                                <th style="border-top-left-radius: 5px;">#</th>
+                                <th>#</th>
                                 <th>Date</th>
                                 <th>Asset</th>
                                 <th>Number</th>
@@ -486,12 +543,101 @@
                 </div>
             </div>
         </div>
+
+        <!-- parameter -->
+        <div class="card card-main" id="cardParameter" style="display: none;">
+            <div class="mt-2 d-flex justify-content-between align-items-center">
+                <h5>Parameter</h5>
+                <button class="btn btn-sm" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
+            </div>
+            <div class="table-responsive mt-2">
+                <table class="table dt-responsive table-hover w-100 display" id="tableParameter">
+                    <thead class="bg-primary">
+                        <tr>
+                            <th width="12,5%">Parameter</th>
+                            <th width="12,5%">Photo</th>
+                            <th width="12,5%">Description</th>
+                            <th width="12,5%">UoM</th>
+                            <th width="12,5%">Min</th>
+                            <th width="12,5%">Max</th>
+                            <th width="15%">Show On</th>
+                            <th width="10%" style="border-top-right-radius: 5px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PING</td>
+                            <td><a href="/img/logo-act.png">ping.jpg</a></td>
+                            <td>desc ping</td>
+                            <td>ms</td>
+                            <td>35</td>
+                            <td>67</td>
+                            <td>Running, Standby</td>
+                            <td>
+                                <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>UPLOAD</td>
+                            <td><a href="/img/logo-act.png">upload.jpg</a></td>
+                            <td>desc upload</td>
+                            <td>MBPS</td>
+                            <td>35</td>
+                            <td>67</td>
+                            <td>Running, Standby</td>
+                            <td>
+                                <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CABLE</td>
+                            <td><a href="/img/logo-act.png">cable.jpg</a></td>
+                            <td>desc cable</td>
+                            <td>good, bad</td>
+                            <td>bad</td>
+                            <td>good</td>
+                            <td>Running, Standby</td>
+                            <td>
+                                <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>AMPERE</td>
+                            <td><a href="/img/logo-act.png">ampere.jpg</a></td>
+                            <td>desc ampere</td>
+                            <td>A</td>
+                            <td>5</td>
+                            <td>23</td>
+                            <td>Running, Standby</td>
+                            <td>
+                                <button class="btn btn-sm btn-success mr-1" @click="editParameter()"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- mapbox -->
+        <div class="card card-main" id="cardMapbox" style="display: none;">
+            <h5>Mapbox</h5>
+            <div class="card-body">
+                <div id="map" class="w-100" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
     </div>
 </div>
 <?= $this->endSection(); ?>
 
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
 <script src="https://cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
 <script>
     let v = new Vue({
@@ -503,12 +649,12 @@
             this.getDataParameter();
         },
         methods: {
-            getDataParameter: () => {
+            getDataParameter() {
                 $('#tableParam').DataTable({
                     dom: 't',
                     rowReorder: {
                         selector: 'tr'
-                    }
+                    },
                 });
             },
             updateAsset() {
@@ -637,16 +783,58 @@
         }
     });
 
+    FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+    const pond = $('.filepond').filepond({
+        acceptedFileTypes: ['image/png', 'image/jpeg'],
+        imagePreviewHeight: 380,
+        imageCropAspectRatio: '1:1',
+        imageResizeTargetWidth: 200,
+        imageResizeTargetHeight: 200,
+        allowImagePreview: true,
+        allowImageCrop: true,
+        allowMultiple: false,
+        credits: false,
+        // stylePanelLayout: 'compact circle',
+        styleLoadIndicatorPosition: 'center bottom',
+        styleProgressIndicatorPosition: 'right bottom',
+        styleButtonRemoveItemPosition: 'left bottom',
+        styleButtonProcessItemPosition: 'right bottom',
+    });
+
     $('#tableParam tbody tr').addClass('cursor-move');
 
     $('#detail_tab').click(() => {
         $('#cardChangeLog').show();
+        $('#cardParameter').hide();
+        $('#cardMapbox').hide();
     })
     $('#parameter_tab').click(() => {
         $('#cardChangeLog').hide();
+        $('#cardParameter').hide();
+        $('#cardMapbox').hide();
     })
     $('#setting_tab').click(() => {
+        $('#cardParameter').show();
         $('#cardChangeLog').hide();
+        $('#latlong').on('change', function() {
+            if ($('#latlong').is(':checked')) {
+                $(this).attr('value', 'true');
+                $('#cardMapbox').show();
+                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                const map = new mapboxgl.Map({
+                    container: 'map', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                    center: [109.360430, -7.385735], // starting position [lng, lat]
+                    zoom: 11.5 // starting zoom
+                });
+                new mapboxgl.Marker()
+                    .setLngLat([109.360430, -7.385735])
+                    .addTo(map);
+            } else {
+                $(this).attr('value', 'false');
+                $('#cardMapbox').hide();
+            }
+        })
     })
 
     // select2 edit asset
@@ -809,6 +997,9 @@
             dropdownParent: $('#editParameterModal'),
         });
     });
+</script>
+<script>
+
 </script>
 
 
