@@ -27,7 +27,7 @@ a {
 }
 
 .hide {
-  display: none;
+  display: none !important;
 }
 
 #draggablePanelList .panel-heading {
