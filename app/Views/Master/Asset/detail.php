@@ -142,82 +142,138 @@
                                 <table class="table mt-2">
                                     <tr class="mt-1">
                                         <th>Asset</th>
-                                        <td>: Asset Name</td>
+                                        <td>:</td>
+                                        <td class="valueDefault">Asset Name</td>
+                                        <td class="input" style="display: none;"><input type="text" class="form-control" name="assetName" id="assetName" placeholder="Asset Name"></td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Number</th>
-                                        <td>: 001</td>
+                                        <td>:</td>
+                                        <td class="valueDefault">Asset Number</td>
+                                        <td class="input" style="display: none;"><input type="text" class="form-control" name="assetNumber" id="assetNumber" placeholder="001"></td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Tag</th>
-                                        <td>: ROUTER, CCTV</td>
+                                        <td>:</td>
+                                        <td class="valueDefault">Tag Name</td>
+                                        <td class="input" style="display: none">
+                                            <select class="form-control" name="tag" id="tag">
+                                                <option value="CCTV">CCTV</option>
+                                                <option value="ROUTER">ROUTER</option>
+                                                <option value="IT">IT</option>
+                                            </select>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Location</th>
-                                        <td>: Asset Location</td>
+                                        <td>:</td>
+                                        <td class="valueDefault">Location Name</td>
+                                        <td class="input" style="display: none;">
+                                            <select class="form-control" name="location" id="location">
+                                                <option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
+                                                <option value="GEDUNG MESIN">GEDUNG MESIN</option>
+                                                <option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
+                                            </select>
+                                        </td>
                                     </tr>
 
                                     <tr class="mt-1">
                                         <th>Frequency</th>
-                                        <td>: Weekly</td>
+                                        <td>:</td>
+                                        <td class="valueDefault">Frequency</td>
+                                        <td class="input" style="display: none;">
+                                            <select class="form-control" name="frequency" id="frequency">
+                                                <option value="Daily">Daily</option>
+                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">Monthly</option>
+                                            </select>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Description</th>
-                                        <td>: Asset Description</td>
+                                        <td>:</td>
+                                        <td class="valueDefault">Description</td>
+                                        <td class="input" style="display: none;"><input type="text" class="form-control" name="description" id="description" placeholder="Description"></td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Change Operation Mode</th>
-                                        <th class="d-flex align-items-center">
-                                            :<div class="ml-1 btn-group btn-group-toggle d-flex align-items-center" data-toggle="buttons">
+                                        <td>:</td>
+                                        <td class="d-flex align-items-center">
+                                            <div class="ml-1 btn-group btn-group-toggle d-flex align-items-center" data-toggle="buttons">
                                                 <label class="btn btn-sm btn-outline-success">
-                                                    <input type="radio" name="options" autocomplete="off"> Running
+                                                    <input type="radio" name="running" autocomplete="off"> Running
                                                 </label>
-                                                <label class="btn btn-sm btn-outline-info active">
-                                                    <input type="radio" name="options" autocomplete="off" checked> Standby
+                                                <label class="btn btn-sm btn-outline-info">
+                                                    <input type="radio" name="standby" autocomplete="off"> Standby
                                                 </label>
                                                 <label class="btn btn-sm btn-outline-danger">
-                                                    <input type="radio" name="options" autocomplete="off"> Repair
+                                                    <input type="radio" name="repair" autocomplete="off"> Repair
                                                 </label>
                                             </div>
-                                        </th>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Show Last Value</th>
-                                        <td class="d-flex align-items-center">
-                                            : <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                <input type="checkbox" class="c-switch-input">
+                                        <td>:</td>
+                                        <td class="valueDefault">
+                                            <div class="d-flex align-items-center"></div>
+                                            <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                <input type="checkbox" class="c-switch-input" disabled checked>
+                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                            </label>
+                                        </td>
+                                        <td style="display: none;" class="input">
+                                            <div class="d-flex align-items-center"></div>
+                                            <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                <input type="checkbox" class="c-switch-input" checked>
                                                 <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                                             </label>
                                         </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Latitude/Longitude</th>
-                                        <td class="d-flex align-items-center">
-                                            : <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                <input type="checkbox" class="c-switch-input" id="latlong" value="false">
+                                        <td>:</td>
+                                        <td class="valueDefault">
+                                            <div class="d-flex align-items-center"></div>
+                                            <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                <input type="checkbox" class="c-switch-input latlong" id="latlong" checked disabled>
                                                 <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                                             </label>
+                                        </td>
+                                        <td style="display: none;" class="input">
+                                            <div class="d-flex align-items-center">
+                                                <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                    <input type="checkbox" class="c-switch-input latlong" id="latlong">
+                                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                                </label>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Action</th>
-                                        <th>: <button class="btn btn-sm mr-1" type="button" @click="editDetail()"><i class="fa fa-edit"></i> Edit</button>
+                                        <td>:</td>
+                                        <th><button class="btn btn-sm mr-1" type="button" @click="editDetail()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
+                                            <button style="display: none;" class="btn btn-sm mr-1" type="button" @click="cancelEdit()" id="btnCancelEdit"><i class="fa fa-times"></i> Cancel</button>
                                             <button class="btn btn-sm mr-1" type="button" @click="deleteAsset()"><i class="fa fa-trash"></i> Delete</button>
                                         </th>
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-6 align-items-center" style="border: 1px solid #d8dbe0;">
-                                <input type="file" class="filepond mt-2 mb-2" name="filepond" accept="image/png, image/jpeg, image/gif" />
-                                <div class="d-flex justify-content-center">
-                                    <button class="btn btn-sm"><i class="fa fa-upload"></i> Upload Image</button>
+                            <div class="col-6" style="border: 1px solid #d8dbe0;">
+                                <div class="valueDefault">
+                                    <div class="d-flex flex-column">
+                                        <img src="/img/logo-act.png" alt="Image" class="img-thumbnail m-0 align-self-center">
+                                    </div>
+                                </div>
+                                <div style="display: none;" class="input">
+                                    <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" accept="image/png, image/jpeg, image/gif" />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- modal Edit-->
+                <!-- modal Edit
                 <div class="modal fade" tabindex="-1" role="dialog" id="editDetailModal">
                     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
                         <div class="modal-content">
@@ -278,7 +334,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- modal add parameter-->
                 <div class="modal fade" role="dialog" id="addParameterModal">
@@ -354,16 +410,16 @@
                                             <label class="col-3">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
                                             <div class="col-9 p-0">
                                                 <div class="form-check form-check-inline mr-1">
-                                                    <input class="form-check-input" id="option1" type="checkbox" value="Item 1">
-                                                    <label class="form-check-label" for="option1">Item 1</label>
+                                                    <input class="form-check-input" id="items1Add" type="checkbox" value="Item 1">
+                                                    <label class="form-check-label" for="items1Add">Item 1</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mr-1">
-                                                    <input class="form-check-input" id="option2" type="checkbox" value="Item 2">
-                                                    <label class="form-check-label" for="option2">Item 2</label>
+                                                    <input class="form-check-input" id="items2Add" type="checkbox" value="Item 2">
+                                                    <label class="form-check-label" for="items2Add">Item 2</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mr-1">
-                                                    <input class="form-check-input" id="option3" type="checkbox" value="Item 3">
-                                                    <label class="form-check-label" for="option3">Item 3</label>
+                                                    <input class="form-check-input" id="items3Add" type="checkbox" value="Item 3">
+                                                    <label class="form-check-label" for="items3Add">Item 3</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -466,16 +522,16 @@
                                             <label class="col-3">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
                                             <div class="col-9 p-0">
                                                 <div class="form-check form-check-inline mr-1">
-                                                    <input class="form-check-input" id="option1" type="checkbox" value="Item 1">
-                                                    <label class="form-check-label" for="option1">Item 1</label>
+                                                    <input class="form-check-input" id="items1Edit" type="checkbox" value="Item 1">
+                                                    <label class="form-check-label" for="items1Edit">Item 1</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mr-1">
-                                                    <input class="form-check-input" id="option2" type="checkbox" value="Item 2">
-                                                    <label class="form-check-label" for="option2">Item 2</label>
+                                                    <input class="form-check-input" id="items2Edit" type="checkbox" value="Item 2">
+                                                    <label class="form-check-label" for="items2Edit">Item 2</label>
                                                 </div>
                                                 <div class="form-check form-check-inline mr-1">
-                                                    <input class="form-check-input" id="option3" type="checkbox" value="Item 3">
-                                                    <label class="form-check-label" for="option3">Item 3</label>
+                                                    <input class="form-check-input" id="items3Edit" type="checkbox" value="Item 3">
+                                                    <label class="form-check-label" for="items3Edit">Item 3</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -541,6 +597,14 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- mapbox -->
+        <div class="card card-main" id="cardMapbox" style="display: none;">
+            <h5>Mapbox</h5>
+            <div class="card-body">
+                <div id="map" class="w-100" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
 
@@ -619,14 +683,6 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- mapbox -->
-        <div class="card card-main" id="cardMapbox" style="display: none;">
-            <h5>Mapbox</h5>
-            <div class="card-body">
-                <div id="map" class="w-100" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
     </div>
@@ -764,8 +820,18 @@
                 })
             },
             editDetail() {
-                this.myModal = new coreui.Modal(document.getElementById('editDetailModal'), {});
-                this.myModal.show();
+                // this.myModal = new coreui.Modal(document.getElementById('editDetailModal'), {});
+                // this.myModal.show();
+                $('.input').show();
+                $('#btnCancelEdit').show();
+                $('.valueDefault').hide();
+                $('#btnEdit').hide();
+            },
+            cancelEdit() {
+                $('.input').hide();
+                $('#btnCancelEdit').hide();
+                $('.valueDefault').show();
+                $('#btnEdit').show();
             },
             btnCancel() {
                 const swalWithBootstrapButtons = swal.mixin({
@@ -786,15 +852,12 @@
     FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
     const pond = $('.filepond').filepond({
         acceptedFileTypes: ['image/png', 'image/jpeg'],
-        imagePreviewHeight: 380,
-        imageCropAspectRatio: '1:1',
         imageResizeTargetWidth: 200,
         imageResizeTargetHeight: 200,
         allowImagePreview: true,
         allowImageCrop: true,
         allowMultiple: false,
         credits: false,
-        // stylePanelLayout: 'compact circle',
         styleLoadIndicatorPosition: 'center bottom',
         styleProgressIndicatorPosition: 'right bottom',
         styleButtonRemoveItemPosition: 'left bottom',
@@ -816,10 +879,10 @@
     $('#setting_tab').click(() => {
         $('#cardParameter').show();
         $('#cardChangeLog').hide();
-        $('#latlong').on('change', function() {
-            if ($('#latlong').is(':checked')) {
-                $(this).attr('value', 'true');
+        $('.latlong').on('change', function() {
+            if ($(this).is(':checked')) {
                 $('#cardMapbox').show();
+                $(this).attr('value', 'true');
                 mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
                 const map = new mapboxgl.Map({
                     container: 'map', // container ID
@@ -830,9 +893,14 @@
                 new mapboxgl.Marker()
                     .setLngLat([109.360430, -7.385735])
                     .addTo(map);
-            } else {
-                $(this).attr('value', 'false');
+            } else if (!($(this).is(':checked'))) {
                 $('#cardMapbox').hide();
+            } else {
+                swal.fire({
+                    icon: error,
+                    title: 'Failed',
+                    text: 'Failed Load Map'
+                })
             }
         })
     })
@@ -842,7 +910,6 @@
         $('#tag').select2({
             theme: 'coreui',
             placeholder: "Tag Name",
-            dropdownParent: $('#editDetailModal'),
             escapeMarkup: function(markup) {
                 return markup;
             },
@@ -858,7 +925,6 @@
         $('#location').select2({
             theme: 'coreui',
             placeholder: "Location Name",
-            dropdownParent: $('#editDetailModal'),
             escapeMarkup: function(markup) {
                 return markup;
             },
@@ -874,7 +940,6 @@
         $('#frequency').select2({
             theme: 'coreui',
             placeholder: "Frequency Type",
-            dropdownParent: $('#editDetailModal'),
             escapeMarkup: function(markup) {
                 return markup;
             },
