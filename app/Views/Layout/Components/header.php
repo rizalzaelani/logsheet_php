@@ -11,18 +11,18 @@
             </svg>
         </button>
         <!-- <h6 class="text-uppercase mb-0"><?= $title ?></h6> -->
-        <ol class="breadcrumb m-0 border-bottom-0">
+        <ol class="breadcrumb border-bottom-0">
             <?php foreach (($breadcrumbs ?? []) as $key => $row) { ?>
                 <?php if (count($breadcrumbs ?? []) == $key + 1) { ?>
-                    <li class="breadcrumb-item active text-capitalize"><?= $row; ?></li>
+                    <li class="breadcrumb-item active text-capitalize"><?= $row['title']; ?></li>
                 <?php } else { ?>
-                    <li class="breadcrumb-item text-capitalize"><a href="<?= site_url($row) ?>"><?= $row; ?></a></li>
+                    <li class="breadcrumb-item text-capitalize"><a href="<?= site_url($row['link']) ?>"><?= $row['title']; ?></a></li>
                 <?php } ?>
             <?php } ?>
         </ol>
     </div>
     <ul class="c-header-nav mfs-auto">
-        <li class="c-header-nav-item px-3 c-d-legacy-none">
+        <li class="c-header-nav-item px-1 c-d-legacy-none">
             <button class="c-class-toggler c-header-nav-btn" type="button" id="header-tooltip" data-target="body" data-class="c-dark-theme" data-toggle="c-tooltip" data-placement="bottom" title="Toggle Light/Dark Mode">
                 <svg class="c-icon c-d-dark-none">
                     <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-moon') ?>"></use>

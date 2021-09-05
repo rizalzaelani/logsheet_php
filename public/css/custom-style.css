@@ -1,6 +1,14 @@
+body {
+  font-family: Nunito,sans-serif !important;
+}
+
 .c-header {
   background-color: inherit;
   border-bottom: none;
+}
+
+.card {
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%) !important;
 }
 
 .card-main {
@@ -17,6 +25,11 @@
   margin-right: 0.25rem;
 }
 
+.breadcrumb {
+  margin-bottom: -2px;
+  font-size: 1rem;
+}
+
 button:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -26,14 +39,39 @@ a {
   color: inherit;
 }
 
+.c-sidebar.c-sidebar-light .c-sidebar-brand {
+  background-color: inherit !important;
+}
+
+.card-body {
+  padding: .5rem;
+}
+
 .hide {
   display: none;
 }
 
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  background: inherit;
+  border: none;
+  border-bottom: 3px solid var(--primary);
+}
+.nav-tabs .nav-item {
+  margin-bottom: -2px;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  border-bottom: 3px solid transparent;
+}
+
 .nav-tabs .nav-link:hover,
 .nav-tabs .nav-link:focus {
-  border-color: #003399 #003399 #003399 !important;
+  border: none;
+  border-bottom: 3px solid var(--primary);
 }
+
 
 .tooltipClass {
   text-align: left;
@@ -43,13 +81,13 @@ a {
   padding-top: 1rem;
 }
 
-.container-fluid {
+/* .container-fluid {
   padding-left: 1.5rem !important;
   padding-right: 1.5rem !important;
-}
+} */
 
 /* .card-border-top {
-  border-top: 2px solid #003399 !important;
+  border-top: 2px solid var(--primary) !important;
 } */
 
 .cursor-pointer {
@@ -70,15 +108,9 @@ a {
 
 /* tabs */
 
-.nav-tabs {
-  border-color: #003399 !important;
-}
-.nav-tabs .nav-link.active,
-.nav-tabs .nav-item.show .nav-link {
-  color: #fff !important;
-  background-color: #003399 !important;
-  border-color: #003399 #003399 #003399 !important;
-}
+/* .nav-tabs {
+  border-color: var(--primary) !important;
+} */
 
 /* dark theme */
 
@@ -125,9 +157,10 @@ div.dataTables_wrapper div.dataTables_length select {
 .dt-search-input{
     display: none;
     position: absolute;
-    top: 0;
+    top: 0rem;
     background: #fff;
     width: calc(100% - 2.5rem);
+    z-index: 10;
 }
 
 .c-dark-theme .dt-search-input {
@@ -145,6 +178,20 @@ div.dataTables_wrapper div.dataTables_length select {
   padding-left: 0rem;
   bottom: 0.5rem;
 } */
+
+div.dataTables_wrapper div.dataTables_info {
+  padding-top: 0 !important;
+  margin-left: .25rem;
+  /* margin-bottom: .21rem; */
+}
+
+div.dataTables_wrapper div.dataTables_length label {
+  margin-bottom: 0;
+}
+
+.ptd-4{
+  padding-top: .4rem !important;
+}
 
 
 /* input */

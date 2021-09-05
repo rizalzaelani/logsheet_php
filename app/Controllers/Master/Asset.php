@@ -3,20 +3,9 @@
 namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
-use App\Controllers\RESTful\ResourceController;
 use App\Models\AssetModel;
 use App\Models\TagModel;
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Reader\XLSX\Reader;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
-use Box\Spout\Common\Entity\Style\Color;
-use Box\Spout\Common\Entity\Style\Border;
-use Box\Spout\Common\Entity\Row;
 use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\Exceptions\PageNotFoundException;
-use PhpParser\Node\Stmt\Echo_;
 
 use Dompdf\Dompdf;
 
@@ -41,6 +30,18 @@ class Asset extends BaseController
 			'getArea' => $area,
 			'getUnit' => $unit,
 		);
+		
+		$data["breadcrumbs"] = [
+			[
+				"title"	=> "Home",
+				"link"	=> "Dashboard"
+			],
+			[
+				"title"	=> "Asset",
+				"link"	=> "Asset"
+			],
+		];
+
 		return $this->template->render('Master/Asset/index', $data);
 	}
 	public function datatable()

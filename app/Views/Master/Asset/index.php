@@ -5,173 +5,151 @@
 <?= $this->section('content') ?>
 <div class="row" id="app">
 	<div class="col-12">
-		<div class="card card-main fixed-height card-border-top">
-			<div class="container-fluid">
-				<div class="card-header">
-					<div class="d-flex flex-row justify-content-between align-items-center">
-						<h4 class="title"><?= (isset($subtitle) ? $subtitle : '')  ?></h4>
-						<div>
-							<div class="btn-group">
-								<a href="<?= base_url('Asset/add'); ?>" class="btn btn-sm btn-outline-dark"><i class="fa fa-plus"></i> Add</a>
-								<!-- <button data-toggle="tooltip" data-placement="top" title="Add Data" class="btn btndark btn-sm" @click="handleAdd()"><i class="fa fa-plus"></i> Add</button> -->
+		<div class="card card-main fixed-height">
+			<div class="card-body">
+				<div class="dt-search-input">
+					<div class="input-container">
+						<a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
+						<input name="dt-search" class="material-input" type="text" data-target="#tableTrx" placeholder="Search Data Transaction" />
+					</div>
+				</div>
+				<div class="d-flex justify-content-between mb-1">
+					<h4><?= $title ?></h4>
+					<h5 class="header-icon">
+						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
+						<!-- <a href="javascript:;" onclick="table.ajax.reload();"><i class="fa fa-redo-alt" data-toggle="tooltip" title="Refresh"></i></a> -->
+						<a href="#" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+						<a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
+						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-start" style="position: absolute; transform: translate3d(71px, 34px, 0px); top: 0px; left: 0px; will-change: transform; font-size: 12px;">
+							<a class="dropdown-item" href="<?= base_url('/Asset/add'); ?>"><i class="fa fa-plus"></i> Add Asset</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload"></i> Import Data</a>
+							<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>"><i class="fa fa-file-excel"></i> Export Data</a>
+						</div>
+					</h5>
+				</div>
+				<div class="row mt-2 collapse" id="filterDT">
+					<div class="col-4">
+						<div class="form-group" id="filterCompany">
+							<select class="form-control bg-transparent select2-multiple w-100 company" name="company" id="company" multiple="multiple">
+								<option value="all">All</option>
+								<option value="IPC">IPC</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-4">
+						<fieldset class="form-group">
+							<div class="" id="filterArea">
+								<select class="form-control bg-transparent select2-multiple w-100 area" name="area" id="area" multiple="multiple">
+									<option value="all">All</option>
+									<option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
+									<option value="GEDUNG KAS">GEDUNG KAS</option>
+									<option value="GEDUNG MAINTENANCE">GEDUNG MAINTENANCE</option>
+									<option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
+								</select>
 							</div>
-							<div class="btn-group">
-								<button data-toggle="tooltip" data-placement="top" title="Filter" class="btn btn-outline-dark btn-sm" id="btnFilter" @click="btnFilter()"><i class="fa fa-filter"></i> Filter</button>
-								<button data-toggle="tooltip" data-placement="top" title="Hide Filter" class="btn btn-outline-dark btn-sm" id="btnHideFilter" @click="btnHideFilter()" style="display: none;"><i class="fa fa-eye-slash"></i> Hide Filter</button>
-							</div>
-							<div class="btn-group">
-								<button data-toggle="tooltip" data-placement="top" title="Import / Export" class="btn btn-outline-dark btn-sm" type="button"><i class="fa fa-upload"></i> Import</button>
-								<button class="btn btn-outline-dark btn-sm dropdown-toggle dropdown-toggle-split" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
-								<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-start" style="position: absolute; transform: translate3d(71px, 34px, 0px); top: 0px; left: 0px; will-change: transform; font-size: 12px;">
-									<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload"></i> Import Data</a>
-									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>"><i class="fa fa-file-excel"></i> Export Excel</a>
-									<a class="dropdown-item" href="<?= base_url('/Asset/exportCsv'); ?>"><i class="fa fa-file-csv"></i> Export CSV</a>
-									<a class="dropdown-item" href="<?= base_url('/Asset/exportOds'); ?>"><i class="fa fa-file-alt"></i> Export ODS</a>
-								</div>
-							</div>
-							<div class="btn-group">
-								<a style="text-decoration: none; " href="<?= base_url('Asset/domPdf'); ?>" data-toggle="tooltip" data-placement="top" title="Print Pdf" id="print" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" title="Print"><i class="fa fa-print"></i> Print</a>
-							</div>
-							<div class="btn-group">
-								<div class="dt-search-input">
-									<div class="input-container">
-										<input type="text" id="myInputTextField" class="form-control form-control-sm" style="display: none; text-decoration: none;">
-									</div>
-								</div>
-							</div>
-							<div class="btn-group">
-								<button data-toggle="tooltip" data-placement="top" title="Search" class="btn btn-outline-dark btn-sm" id="btnSearch" type="button" @click="btnSearch()"><i class="fa fa-search"></i> Search</button>
-								<button data-toggle="tooltip" data-placement="top" title="Hide Search" class="btn btn-outline-dark btn-sm" id="btnHide" type="button" @click="btnHide()" style="display: none;"><i class="fa fa-eye-slash"></i> Hide</button>
-							</div>
+						</fieldset>
+					</div>
+					<div class="col-4">
+						<div class="form-group" id="filterUnit">
+							<select class="form-control bg-transparent select2-multiple w-100 unit" name="unit" id="unit" multiple="multiple">
+								<option value="all">All</option>
+								<option value="CCTV">CCTV</option>
+								<option value="ROUTER">ROUTER</option>
+								<option value="IT">IT</option>
+							</select>
 						</div>
 					</div>
 				</div>
-				<div class="card-body">
-					<!-- filter -->
-					<div class="row filter mt-2" id="filter" style="display: none;">
-						<div class="col-4">
-							<div class="form-group" id="filterCompany">
-								<select class="form-control bg-transparent select2-multiple w-100 company" name="company" id="company" multiple="multiple">
-									<option value="">All</option>
-									<?php foreach ($getCompany as $list) : ?>
-										<option value="<?= $list; ?>"><?= $list; ?></option>
-									<?php endforeach; ?>
-								</select>
-							</div>
-						</div>
-						<div class="col-4">
-							<fieldset class="form-group">
-								<div class="" id="filterArea">
-									<select class="form-control bg-transparent select2-multiple w-100 area" name="area" id="area" multiple="multiple">
-										<option value="">All</option>
-										<?php foreach ($getArea as $list) : ?>
-											<option value="<?= $list; ?>"><?= $list; ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-							</fieldset>
-						</div>
-						<div class="col-4">
-							<div class="form-group" id="filterUnit">
-								<select class="form-control bg-transparent select2-multiple w-100 unit" name="unit" id="unit" multiple="multiple">
-									<option value="">All</option>
-									<?php foreach ($getUnit as $list) : ?>
-										<option value="<?= $list; ?>"><?= $list; ?></option>
-									<?php endforeach; ?>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="table-responsive w-100">
-						<table class="table table-hover w-100 nowrap" id="tableEq" @current-items="getFiltered()">
-							<thead class="bg-primary">
-								<tr>
-									<th>#</th>
-									<th>Asset </th>
-									<th>Tag </th>
-									<th>Location </th>
-									<th>Number </th>
-									<th>Frequency</th>
-								</tr>
-							</thead>
-							<tbody>
+				<div class="table-responsive w-100">
+					<table class="table table-hover w-100 nowrap" id="tableEq" @current-items="getFiltered()">
+						<thead class="bg-primary">
+							<tr>
+								<th>#</th>
+								<th>Asset </th>
+								<th>Tag </th>
+								<th>Location </th>
+								<th>Number </th>
+								<th>Frequency</th>
+							</tr>
+						</thead>
+						<tbody>
 
-								<?php
-								for ($i = 1; $i <= 11; $i++) { ?>
-									<tr style="cursor: pointer;">
-										<td><?= $i; ?></td>
-										<td>Asset Name</td>
-										<td>CCTV, ROUTER</td>
-										<td>Gedung Mesin</td>
-										<td>0<?= $i; ?></td>
-										<td>Daily</td>
-									</tr>
-								<?php } ?>
-							</tbody>
-						</table>
-					</div>
-					<!-- Modal Tambah-->
-					<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-						<div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="exampleModalScrollableTitle">Add Asset</h5>
+							<?php
+							for ($i = 1; $i <= 11; $i++) { ?>
+								<tr style="cursor: pointer;">
+									<td><?= $i; ?></td>
+									<td>Asset Name</td>
+									<td>CCTV, ROUTER</td>
+									<td>Gedung Mesin</td>
+									<td>0<?= $i; ?></td>
+									<td>Daily</td>
+								</tr>
+							<?php } ?>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Modal Tambah-->
+				<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalScrollableTitle">Add Asset</h5>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<form action="">
+										<div class="mb-3">
+											<label for="assetTag">Tag <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetTag"></i></label>
+											<div class="form-group">
+												<select class="form-control bg-transparent select2-multiple w-100 tag" name="tag" id="tag" multiple="multiple">
+													<option value="all">All</option>
+													<option value="Test 1">Test 1</option>
+													<option value="Test 2">Test 2</option>
+												</select>
+											</div>
+										</div>
+										<div class="mb-3">
+											<label for="assetLocation">Location <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetLocation"></i></label>
+											<div class="form-group">
+												<select class="form-control bg-transparent select2-multiple w-100 location" name="location" id="location" multiple="multiple">
+													<option value="all">All</option>
+													<option value="Test 1">Test 1</option>
+													<option value="Test 2">Test 2</option>
+												</select>
+											</div>
+										</div>
+										<div class="mb-3">
+											<label for="assetStatus">Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetStatus"></i></label>
+											<input id="assetStatus" type="text" class="form-control" required>
+										</div>
+										<div class="mb-3">
+											<label for="assetName">Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetName"></i></label>
+											<input id="assetName" type="text" class="form-control" required>
+										</div>
+										<div class="mb-3">
+											<label for="assetNumber">Number <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetNumber"></i></label>
+											<input id="assetNumber" type="text" class="form-control" required>
+										</div>
+										<div class="mb-3">
+											<label for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
+											<input id="description" type="text" class="form-control" required>
+										</div>
+										<div class="mb-3">
+											<label for="frequencyType">Frequency Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequencyType"></i></label>
+											<input id="frequencyType" type="text" class="form-control" required>
+										</div>
+										<div class="mb-3">
+											<label for="frequency">Frequency <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
+											<input id="frequency" type="text" class="form-control" required>
+										</div>
+									</form>
 								</div>
-								<div class="modal-body">
-									<div class="form-group">
-										<form action="">
-											<div class="mb-3">
-												<label for="assetTag">Tag <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetTag"></i></label>
-												<div class="form-group">
-													<select class="form-control bg-transparent select2-multiple w-100 tag" name="tag" id="tag" multiple="multiple">
-														<option value="all">All</option>
-														<option value="Test 1">Test 1</option>
-														<option value="Test 2">Test 2</option>
-													</select>
-												</div>
-											</div>
-											<div class="mb-3">
-												<label for="assetLocation">Location <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetLocation"></i></label>
-												<div class="form-group">
-													<select class="form-control bg-transparent select2-multiple w-100 location" name="location" id="location" multiple="multiple">
-														<option value="all">All</option>
-														<option value="Test 1">Test 1</option>
-														<option value="Test 2">Test 2</option>
-													</select>
-												</div>
-											</div>
-											<div class="mb-3">
-												<label for="assetStatus">Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetStatus"></i></label>
-												<input id="assetStatus" type="text" class="form-control" required>
-											</div>
-											<div class="mb-3">
-												<label for="assetName">Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetName"></i></label>
-												<input id="assetName" type="text" class="form-control" required>
-											</div>
-											<div class="mb-3">
-												<label for="assetNumber">Number <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="assetNumber"></i></label>
-												<input id="assetNumber" type="text" class="form-control" required>
-											</div>
-											<div class="mb-3">
-												<label for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
-												<input id="description" type="text" class="form-control" required>
-											</div>
-											<div class="mb-3">
-												<label for="frequencyType">Frequency Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequencyType"></i></label>
-												<input id="frequencyType" type="text" class="form-control" required>
-											</div>
-											<div class="mb-3">
-												<label for="frequency">Frequency <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
-												<input id="frequency" type="text" class="form-control" required>
-											</div>
-										</form>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-									<button type="button" class="btn btn-primary">Save changes</button>
-								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Save changes</button>
 							</div>
 						</div>
 					</div>
@@ -202,15 +180,17 @@
 							processing: true,
 							serverSide: true,
 							destroy: true,
-							scrollY: 'calc(100vh - 272px)',
+							scrollY: "calc(100vh - 272px)",
 							scrollX: true,
 							scrollCollapse: true,
 							fixedColumns: true,
 							responsive: true,
 							language: {
-								"processing": `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`
+								processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+								lengthMenu: "Showing _MENU_ ",
+								info: "of _MAX_ entries"
 							},
-							dom: '<"float-left"B><"">t<"dt-fixed-bottom"<"d-flex justify-content-between"<""i><"d-flex justify-content-end align-items-center" <"mt-2 mr-2"l>pr>>>',
+							dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
 							ajax: {
 								url: "<?= base_url() . '/Asset/datatable' ?>",
 								type: "POST",
@@ -253,9 +233,12 @@
 			},
 			getData: () => {
 				$('#tableEq').DataTable({
-					'scrollY': "calc(100vh - 300px)",
-					'paging': true,
-					'dom': '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-flex justify-content-between"<""i><"d-flex justify-content-end align-items-center" <"mt-2 mr-2"l>pr>>>',
+					scrollY: "calc(100vh - 272px)",
+					language: {
+						lengthMenu: "Showing _MENU_ ",
+						info: "of _MAX_ entries"
+					},
+					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
 
 				});
 			},
