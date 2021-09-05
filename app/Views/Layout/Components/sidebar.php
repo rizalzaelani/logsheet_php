@@ -16,7 +16,7 @@
         </li>
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Finding') ?>">
                 <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/solid.svg#cis-find-replace') ?>"></use>
+                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-warning') ?>"></use>
                 </svg> Finding</a>
         </li>
         <!-- <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/IncidentalReport') ?>">

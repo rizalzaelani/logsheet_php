@@ -70,11 +70,26 @@ class Asset extends BaseController
 
 	public function detail()
 	{
+		// return json_encode($dummy);
 		$data = array(
 			'title' => 'Detail',
 			'subtitle' => 'Detail',
 		);
 		return $this->template->render('Master/Asset/detail', $data);
+	}
+
+	public function getParam()
+	{
+		$dummy = array(
+			"parameterName" => "PING",
+			"photo" => "photo.jpg",
+			"description" => "desc Parameter",
+			"uom" => "ms",
+			"min" => 35,
+			"max" => 65,
+			"showOn" => "Running, Standby",
+		);
+		echo json_encode($dummy);
 	}
 
 	public function add()
