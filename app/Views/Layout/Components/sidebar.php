@@ -16,7 +16,7 @@
         </li>
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Finding') ?>">
                 <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/solid.svg#cis-find-replace') ?>"></use>
+                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-warning') ?>"></use>
                 </svg> Finding</a>
         </li>
         <!-- <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/IncidentalReport') ?>">
@@ -89,7 +89,7 @@
     </ul>
     <div class="c-class-toggler d-flex justify-content-between align-items-center" type="button" data-target="_parent" data-class="c-sidebar-unfoldable">
 
-        <img class="p-2 ml-3 c-sidebar-brand-full" src="/img/logo.png" alt="" height="40" width="162">
+        <img class="p-2 ml-3 c-sidebar-brand-full" src="/img/logo2.svg" alt="" height="49" width="200">
         <button class="c-sidebar-minimizer"></button>
     </div>
 </div>

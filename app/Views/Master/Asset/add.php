@@ -149,7 +149,7 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="photo">Photo <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="photo"></i></label>
-                                                    <input type="text" class="form-control col-9" name="photo" placeholder="Photo">
+                                                    <input type="file" class="form-control col-9" name="photo" placeholder="Photo">
                                                 </div>
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="type">Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="type"></i></label>
@@ -261,7 +261,7 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="photo">Photo <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
-                                                    <input type="text" class="form-control col-9" name="photo" placeholder="Photo">
+                                                    <input type="file" class="form-control col-9" name="photo" placeholder="Photo">
                                                 </div>
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="type">Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
