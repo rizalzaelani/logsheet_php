@@ -36,7 +36,7 @@ class BundleConfig
 			base_url('/css/materialdesignicons.min.css'),
 			base_url('/icons/coreui/css/all.min.css'),
 			base_url('/vendors/datatables/dataTables.bootstrap4.css'),
-			base_url('/vendors/daterangepicker/daterangepicker.css'),
+			base_url('/vendors/daterangepicker/daterangepicker.min.css'),
 			base_url('/vendors/fontawesome/css/fontawesome.css'),
 			base_url('/vendors/select2/css/select2-coreui.min.css'),
 			base_url('/vendors/select2/css/select2.min.css'),

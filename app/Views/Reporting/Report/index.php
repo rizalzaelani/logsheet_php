@@ -45,7 +45,7 @@
 												<label class="col-form-label">Date Range</label>
 											</div>
 											<div class="col-7">
-												<div class="" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; width: 100%">
+												<div class="" id="reportrange" style="cursor: pointer; padding: 5px 10px; width: 100%">
 													<i class="fa fa-calendar"></i>&nbsp;
 													<span></span> <i class="fa fa-caret-down"></i>
 												</div>

@@ -16,15 +16,15 @@
             <div class="card-body">
                 <div class="d-flex flex-row justify-content-between align-items-center w-100">
                     <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" id="detail_tab">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" id="detail_tab" @click="detailTab()">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-list-rich"></use>
                                 </svg> Detail <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read equipment data, edit, and delete the data. And also you can read the log of changes that have occurred to the equipment data.</div>"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="parameter_tab">
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="parameter_tab" @click="parameterTab()">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
                                 </svg> Parameter <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read the parameter data of an equipment</div>"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" id="setting_tab">
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" id="setting_tab" @click="settingTab()">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
                                 </svg> Setting <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>In this tab, you can change the settings on an equipment</div>"></i></a></li>
@@ -199,7 +199,7 @@
                                         <th>Change Operation Mode</th>
                                         <td>:</td>
                                         <td class="d-flex align-items-center">
-                                            <div class="ml-1 btn-group btn-group-toggle d-flex align-items-center" data-toggle="buttons">
+                                            <div class="ml-1 btn-group btn-group-toggle d-flex align-items-center" data-toggle="buttons" disabled>
                                                 <label class="btn btn-sm btn-outline-success">
                                                     <input type="radio" name="running" autocomplete="off"> Running
                                                 </label>
@@ -233,40 +233,53 @@
                                     <tr class="mt-1">
                                         <th>Latitude/Longitude</th>
                                         <td>:</td>
-                                        <td class="valueDefault">
+                                        <td>
                                             <div class="d-flex align-items-center"></div>
                                             <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                <input type="checkbox" class="c-switch-input latlong" id="latlong" checked disabled>
+                                                <input type="checkbox" class="c-switch-input latlong" id="latlong" v-model="checked" disabled>
                                                 <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                                             </label>
                                         </td>
-                                        <td style="display: none;" class="input">
+                                        <!-- <td style="display: none;" class="input">
                                             <div class="d-flex align-items-center">
                                                 <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
                                                     <input type="checkbox" class="c-switch-input latlong" id="latlong">
                                                     <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                                                 </label>
                                             </div>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Action</th>
                                         <td>:</td>
-                                        <th><button class="btn btn-sm mr-1" type="button" @click="editDetail()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
-                                            <button style="display: none;" class="btn btn-sm mr-1" type="button" @click="cancelEdit()" id="btnCancelEdit"><i class="fa fa-times"></i> Cancel</button>
-                                            <button class="btn btn-sm mr-1" type="button" @click="deleteAsset()"><i class="fa fa-trash"></i> Delete</button>
+                                        <th class="d-flex justify-content-start align-items-center">
+                                            <button class="btn btn-sm mr-1" type="button" @click="editDetail()" id="btnEdit"><i class="fa fa-edit mr-1"></i>Edit</button>
+                                            <div style="display: none;" id="btnCancelEdit">
+                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between" type="button" @click="cancelEdit()"><i class="fa fa-times mr-1"></i> Cancel</button>
+                                            </div>
+                                            <div id="btnDelete">
+                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between" type="button" @click="deleteAsset()"><i class="fa fa-trash mr-1"></i>Delete</button>
+                                            </div>
+                                            <div style="display: none;" id="btnUpdate">
+                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between" type="button" @click="updateDetail()"><i class="fa fa-check mr-1"></i> Update</button>
+                                            </div>
                                         </th>
                                     </tr>
                                 </table>
                             </div>
                             <div class="col-6" style="border: 1px solid #d8dbe0;">
-                                <div class="valueDefault">
-                                    <div class="d-flex flex-column">
-                                        <img src="/img/logo-act.png" alt="Image" class="img-thumbnail m-0 align-self-center">
+                                <div class="valueDefault mt-2 w-100">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <img src="/img/logo-act.png" alt="Image" class="img-thumbnail">
                                     </div>
                                 </div>
                                 <div style="display: none;" class="input">
-                                    <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" accept="image/png, image/jpeg, image/gif" />
+                                    <div class="d-flex align-items-center">
+                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" accept="image/png, image/jpeg, image/gif" />
+                                    </div>
+                                    <div id="map-container">
+                                        <div id="map" style="min-width: 100% !important; height: 350px;"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -600,14 +613,6 @@
             </div>
         </div>
 
-        <!-- mapbox -->
-        <div class="card card-main" id="cardMapbox" style="display: none;">
-            <h5>Mapbox</h5>
-            <div class="card-body">
-                <div id="map" class="w-100" style="width: 100%; height: 500px;"></div>
-            </div>
-        </div>
-
         <!-- parameter -->
         <div class="card card-main" id="cardParameter" style="display: none;">
             <div class="mt-2 d-flex justify-content-between align-items-center">
@@ -699,12 +704,68 @@
     let v = new Vue({
         el: '#app',
         data: {
-            myModal: ''
+            myModal: '',
+            checked: false
         },
         mounted() {
             this.getDataParameter();
         },
         methods: {
+            detailTab() {
+                $('#cardChangeLog').show();
+                $('#cardParameter').hide();
+            },
+            parameterTab() {
+                $('#cardChangeLog').hide();
+                $('#cardParameter').hide();
+            },
+            settingTab() {
+                $('#cardParameter').show();
+                $('#cardChangeLog').hide();
+                $('.latlong').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                        const map = new mapboxgl.Map({
+                            container: 'map', // container ID
+                            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                            center: [109.005913, -7.727989], // starting position [lng, lat]
+                            zoom: 14, // starting zoom
+                        });
+                        map.addControl(new mapboxgl.FullscreenControl());
+                        map.resize();
+                        const marker = new mapboxgl.Marker({
+                                color: 'green',
+                                draggable: true,
+                            })
+                            .setLngLat([109.005913, -7.727989])
+                            .addTo(map);
+
+                        const marker2 = new mapboxgl.Marker({
+                                color: 'red',
+                                draggable: true,
+                            })
+                            .setLngLat([109.000000, -7.726000])
+                            .addTo(map);
+
+                        function onDragEnd(params) {
+                            const lnglat = marker.getLngLat();
+                            coordinates.style.display = 'block';
+                            coordinates.innerHTML = `Longitude: ${lnglat.lng}<br />Latitude: ${lnglat.lat}`;
+                        }
+                        marker.on('dragend', onDragEnd);
+                        $('#map').show();
+                        $('#map').addClass('w-100');
+                    } else if (!($(this).is(':checked'))) {
+                        $('#map').hide();
+                    } else {
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Failed',
+                            text: 'Failed Load Map'
+                        })
+                    }
+                })
+            },
             getDataParameter() {
                 $('#tableParam').DataTable({
                     dom: 't',
@@ -713,8 +774,7 @@
                     },
                 });
             },
-            updateAsset() {
-                this.myModal.hide();
+            updateDetail() {
                 const swalWithBootstrapButtons = swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success mr-1',
@@ -820,18 +880,20 @@
                 })
             },
             editDetail() {
-                // this.myModal = new coreui.Modal(document.getElementById('editDetailModal'), {});
-                // this.myModal.show();
                 $('.input').show();
                 $('#btnCancelEdit').show();
+                $('#btnUpdate').show();
                 $('.valueDefault').hide();
                 $('#btnEdit').hide();
+                $('.latlong').removeAttr('disabled');
             },
             cancelEdit() {
                 $('.input').hide();
                 $('#btnCancelEdit').hide();
+                $('#btnUpdate').hide();
                 $('.valueDefault').show();
                 $('#btnEdit').show();
+                $('.latlong').prop('disabled', true);
             },
             btnCancel() {
                 const swalWithBootstrapButtons = swal.mixin({
@@ -852,9 +914,8 @@
     FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
     const pond = $('.filepond').filepond({
         acceptedFileTypes: ['image/png', 'image/jpeg'],
-        imageResizeTargetWidth: 200,
-        imageResizeTargetHeight: 200,
         allowImagePreview: true,
+        imagePreviewMaxHeight: 200,
         allowImageCrop: true,
         allowMultiple: false,
         credits: false,
@@ -866,50 +927,12 @@
 
     $('#tableParam tbody tr').addClass('cursor-move');
 
-    $('#detail_tab').click(() => {
-        $('#cardChangeLog').show();
-        $('#cardParameter').hide();
-        $('#cardMapbox').hide();
-    })
-    $('#parameter_tab').click(() => {
-        $('#cardChangeLog').hide();
-        $('#cardParameter').hide();
-        $('#cardMapbox').hide();
-    })
-    $('#setting_tab').click(() => {
-        $('#cardParameter').show();
-        $('#cardChangeLog').hide();
-        $('.latlong').on('change', function() {
-            if ($(this).is(':checked')) {
-                $('#cardMapbox').show();
-                $(this).attr('value', 'true');
-                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                const map = new mapboxgl.Map({
-                    container: 'map', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                    center: [109.360430, -7.385735], // starting position [lng, lat]
-                    zoom: 11.5 // starting zoom
-                });
-                new mapboxgl.Marker()
-                    .setLngLat([109.360430, -7.385735])
-                    .addTo(map);
-            } else if (!($(this).is(':checked'))) {
-                $('#cardMapbox').hide();
-            } else {
-                swal.fire({
-                    icon: error,
-                    title: 'Failed',
-                    text: 'Failed Load Map'
-                })
-            }
-        })
-    })
-
     // select2 edit asset
     $(document).ready(function() {
         $('#tag').select2({
             theme: 'coreui',
             placeholder: "Tag Name",
+            tags: true,
             escapeMarkup: function(markup) {
                 return markup;
             },

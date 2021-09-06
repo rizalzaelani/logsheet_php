@@ -7,157 +7,78 @@
 <?= $this->section('content') ?>
 <div class="row" id="app">
 	<div class="col-12">
-		<div class="card">
-			<div class="container-fluid">
-				<div class="card-header">
-					<h4 class="title"><?= (isset($subtitle) ? $subtitle : ''); ?></h4>
-				</div>
-				<div class="card-body">
-					<div class="row">
-						<div class="col-sm-6 col-lg-4">
-							<div class="card text-white bg-gradient-danger">
-								<div class="card-body card-body pb-0 d-flex justify-content-between align-items-start">
-									<div>
-										<div class="text-value-lg">9.823</div>
-										<div>NOT FOLLOW UP</div>
-									</div>
-									<div class="btn-group">
-										<button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											<svg class="c-icon">
-												<use xlink:href="/icons/coreui/svg/free.svg#cil-settings"></use>
-											</svg>
-										</button>
-										<div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-									</div>
-								</div>
-								<div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
-									<canvas class="chart" id="card-chart1" height="70"></canvas>
-								</div>
-							</div>
-						</div>
-						<!-- /.col-->
-						<div class="col-sm-6 col-lg-4">
-							<div class="card text-white bg-gradient-warning">
-								<div class="card-body card-body pb-0 d-flex justify-content-between align-items-start">
-									<div>
-										<div class="text-value-lg">9.823</div>
-										<div>OPEN</div>
-									</div>
-									<div class="btn-group">
-										<button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											<svg class="c-icon">
-												<use xlink:href="/icons/coreui/svg/free.svg#cil-settings"></use>
-											</svg>
-										</button>
-										<div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-									</div>
-								</div>
-								<div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
-									<canvas class="chart" id="card-chart2" height="70"></canvas>
-								</div>
-							</div>
-						</div>
-						<!-- /.col-->
-						<div class="col-sm-6 col-lg-4">
-							<div class="card text-white bg-gradient-success">
-								<div class="card-body card-body pb-0 d-flex justify-content-between align-items-start">
-									<div>
-										<div class="text-value-lg">9.823</div>
-										<div>CLOSE</div>
-									</div>
-									<div class="btn-group">
-										<button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											<svg class="c-icon">
-												<use xlink:href="/icons/coreui/svg/free.svg#cil-settings"></use>
-											</svg>
-										</button>
-										<div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-									</div>
-								</div>
-								<div class="c-chart-wrapper mt-3" style="height:70px;">
-									<canvas class="chart" id="card-chart3" height="70"></canvas>
-								</div>
-							</div>
-						</div>
+		<div class="card card-main fixed-height">
+			<div class="card-body">
+				<div class="dt-search-input">
+					<div class="input-container">
+						<a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
+						<input name="dt-search" class="material-input" type="text" data-target="#tableTrx" placeholder="Search Data Transaction" />
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="card">
-			<div class="container-fluid">
-				<div class="card-header d-flex flex-row justify-content-between align-items-center">
-					<h4 class="title">Finding</h4>
-					<div>
-						<div class="btn-group">
-							<button class="btn btn-sm" id="btnFilter" @click="btnFilter()"><i class="fa fa-filter"></i> Filter</button>
-							<button class="btn btn-sm hide" id="btnHideFilter" @click="btnHideFilter()"><i class="fa fa-eye-slash"></i> Hide Filter</button>
+				<div class="d-flex justify-content-between mb-1">
+					<h4><?= $title ?></h4>
+					<h5 class="header-icon">
+						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
+						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+						</div>
+					</h5>
+				</div>
+				<div class="row mt-2 collapse" id="filterDT">
+					<div class="col-4">
+						<div class="form-group" id="filterCompany">
+							<select class="form-control bg-transparent select2-multiple w-100 company" name="company" id="company" multiple="multiple">
+								<option value="all">All</option>
+								<option value="IPC">IPC</option>
+							</select>
 						</div>
 					</div>
-				</div>
-				<div class="card-body">
-					<!-- filter -->
-					<div class="row filter" id="filter" style="display: none;">
-						<div class="col-3">
-							<div class="form-group">
-								<div class="btn-group" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; width: 100%">
-									<i class="fa fa-calendar"></i>&nbsp;
-									<span></span> <i class="fa fa-caret-down"></i>
-								</div>
-							</div>
-						</div>
-						<div class="col-3">
-							<div class="form-group" id="filterCompany">
-								<select class="form-control bg-transparent select2-multiple w-100 company" name="company" id="company" multiple="multiple">
+					<div class="col-4">
+						<fieldset class="form-group">
+							<div class="" id="filterArea">
+								<select class="form-control bg-transparent select2-multiple w-100 area" name="area" id="area" multiple="multiple">
 									<option value="all">All</option>
-									<option value="IPC">IPC</option>
+									<option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
+									<option value="GEDUNG KAS">GEDUNG KAS</option>
+									<option value="GEDUNG MAINTENANCE">GEDUNG MAINTENANCE</option>
+									<option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
 								</select>
 							</div>
-						</div>
-						<div class="col-3">
-							<fieldset class="form-group">
-								<div class="" id="filterArea">
-									<select class="form-control bg-transparent select2-multiple w-100 area" name="area" id="area" multiple="multiple">
-										<option value="all">All</option>
-										<option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
-										<option value="GEDUNG KAS">GEDUNG KAS</option>
-										<option value="GEDUNG MAINTENANCE">GEDUNG MAINTENANCE</option>
-										<option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
-									</select>
-								</div>
-							</fieldset>
-						</div>
-						<div class="col-3">
-							<div class="form-group" id="filterUnit">
-								<select class="form-control bg-transparent select2-multiple w-100 unit" name="unit" id="unit" multiple="multiple">
-									<option value="all">All</option>
-									<option value="CCTV">CCTV</option>
-									<option value="ROUTER">ROUTER</option>
-									<option value="IT">IT</option>
-								</select>
-							</div>
+						</fieldset>
+					</div>
+					<div class="col-4">
+						<div class="form-group" id="filterUnit">
+							<select class="form-control bg-transparent select2-multiple w-100 unit" name="unit" id="unit" multiple="multiple">
+								<option value="all">All</option>
+								<option value="CCTV">CCTV</option>
+								<option value="ROUTER">ROUTER</option>
+								<option value="IT">IT</option>
+							</select>
 						</div>
 					</div>
-					<!-- datatable -->
-					<table class="table table-hover w-100" id="example">
+				</div>
+				<!-- datatable -->
+				<div class="table-responsive">
+					<table class="table table-hover w-100 nowrap" id="tableTrx">
 						<thead class="bg-primary">
 							<tr>
-								<th>#</th>
+								<th style="width: 20px;">#</th>
 								<th>Asset</th>
 								<th>Tag</th>
 								<th>Location</th>
 								<th>Condition</th>
-								<th>Finding Priority</th>
 							</tr>
 						</thead>
 						<tbody>
-							<?php for ($i = 1; $i <= 10; $i++) { ?>
+							<?php for ($i = 1; $i <= 15; $i++) { ?>
 								<tr>
-									<td><?= $i; ?></td>
-									<td>Asset Name</td>
+									<td class="text-center"><?= $i; ?></td>
+									<td>Asset</td>
 									<td>CCTV</td>
 									<td>Gedung Mesin</td>
-									<td>Open</td>
-									<td>High</td>
+									<td>Normal</td>
 								</tr>
 							<?php } ?>
 						</tbody>
@@ -176,18 +97,31 @@
 	let v = new Vue({
 		el: '#app',
 		data: () => ({
-			data: null
+			data: null,
+			table: null
 		}),
+		mounted() {
+			this.getData();
+
+			let search = $(".dt-search-input input[data-target='#tableTrx']");
+			search.unbind().bind("keypress", function(e) {
+				if (e.which == 13 || e.keyCode == 13) {
+					let searchData = search.val();
+					table.search(searchData).draw();
+				}
+			});
+		},
 		methods: {
-			btnFilter() {
-				$('#btnFilter').hide();
-				$('#btnHideFilter').show();
-				$('#filter').show();
-			},
-			btnHideFilter() {
-				$('#btnHideFilter').hide();
-				$('#filter').hide();
-				$('#btnFilter').show();
+			getData() {
+				table = $('#tableTrx').DataTable({
+					scrollY: "calc(100vh - 272px)",
+					language: {
+						lengthMenu: "Showing _MENU_ ",
+						info: "of _MAX_ entries",
+						infoEmpty: 'of 0 entries',
+					},
+					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
+				});
 			}
 		}
 	})

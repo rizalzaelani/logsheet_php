@@ -1,6 +1,14 @@
-.c-header {
+body {
+  font-family: Nunito,sans-serif !important;
+}
+
+.c-header, .c-dark-theme .c-header {
   background-color: inherit;
   border-bottom: none;
+}
+
+.card {
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%) !important;
 }
 
 .card-main {
@@ -17,6 +25,11 @@
   margin-right: 0.25rem;
 }
 
+.breadcrumb {
+  margin-bottom: -2px;
+  font-size: 1rem;
+}
+
 button:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -26,9 +39,56 @@ a {
   color: inherit;
 }
 
+.c-sidebar.c-sidebar-light .c-sidebar-brand {
+  background-color: inherit !important;
+}
+
+.card-body {
+  padding: .5rem;
+}
+
 .hide {
   display: none !important;
 }
+/* map */
+.coordinates {
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  position: absolute;
+  bottom: 40px;
+  left: 10px;
+  padding: 5px 10px;
+  margin: 0;
+  font-size: 11px;
+  line-height: 18px;
+  border-radius: 3px;
+  display: none;
+}
+#map {
+  width: 100% !important;
+  /* height: 100% !important; */
+}
+#map-container {
+  /* height: 100vh; */
+  width: auto;
+}
+
+/* end map */
+
+/* filepond */
+.filepond--root {
+  /* height: calc(100vh - 500px) !important; */
+}
+.filepond--root .filepond--browser {
+  max-height: calc(100vh - 500px);
+}
+/* .filepond--panel-root {
+  height: calc(100vh - 600px) !important;
+} */
+.filepond--root .filepond--drop-label {
+  min-height: 13em !important;
+}
+/* end filepond */
 
 #draggablePanelList .panel-heading {
   cursor: move;
@@ -37,10 +97,27 @@ a {
   cursor: move;
 }
 
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  background: inherit;
+  border: none;
+  border-bottom: 3px solid var(--primary);
+}
+.nav-tabs .nav-item {
+  margin-bottom: -2px;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  border-bottom: 3px solid transparent;
+}
+
 .nav-tabs .nav-link:hover,
 .nav-tabs .nav-link:focus {
-  border-color: #003399 #003399 #003399 !important;
+  border: none;
+  border-bottom: 3px solid var(--primary);
 }
+
 
 .tooltipClass {
   text-align: left;
@@ -50,13 +127,13 @@ a {
   padding-top: 1rem;
 }
 
-.container-fluid {
+/* .container-fluid {
   padding-left: 1.5rem !important;
   padding-right: 1.5rem !important;
-}
+} */
 
 /* .card-border-top {
-  border-top: 2px solid #003399 !important;
+  border-top: 2px solid var(--primary) !important;
 } */
 
 .cursor-pointer {
@@ -81,15 +158,9 @@ a {
 
 /* tabs */
 
-.nav-tabs {
-  border-color: #003399 !important;
-}
-.nav-tabs .nav-link.active,
-.nav-tabs .nav-item.show .nav-link {
-  color: #fff !important;
-  background-color: #003399 !important;
-  border-color: #003399 #003399 #003399 !important;
-}
+/* .nav-tabs {
+  border-color: var(--primary) !important;
+} */
 
 /* dark theme */
 
@@ -137,12 +208,13 @@ div.dataTables_wrapper div.dataTables_length select {
   width: 100% !important;
 }
 
-.dt-search-input {
-  display: none;
-  position: absolute;
-  top: 0;
-  background: #fff;
-  width: calc(100% - 2.5rem);
+.dt-search-input{
+    display: none;
+    position: absolute;
+    top: 0rem;
+    background: #fff;
+    width: calc(100% - 2.5rem);
+    z-index: 10;
 }
 
 .c-dark-theme .dt-search-input {
@@ -160,6 +232,21 @@ div.dataTables_wrapper div.dataTables_length select {
   padding-left: 0rem;
   bottom: 0.5rem;
 } */
+
+div.dataTables_wrapper div.dataTables_info {
+  padding-top: 0 !important;
+  margin-left: .25rem;
+  /* margin-bottom: .21rem; */
+}
+
+div.dataTables_wrapper div.dataTables_length label {
+  margin-bottom: 0;
+}
+
+.ptd-4{
+  padding-top: .4rem !important;
+}
+
 
 /* input */
 
@@ -252,3 +339,51 @@ input.material-input:focus + .suffix {
 }
 
 /* End Material Input */
+
+
+/* Select2 */
+.select2-container--coreui .select2-results__option--highlighted, .select2-container--coreui .select2-results__option--highlighted.select2-results__option[aria-selected="true"]{
+  background-color: var(--primary) !important;
+}
+
+/* End Select2 */
+
+/* daterange */
+
+.daterangepicker .ranges li.active, 
+.daterangepicker td.active, 
+.daterangepicker td.active:hover {
+  background-color: var(--primary) !important;
+}
+
+.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+  background-color: var(--primary) !important;
+}
+
+.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+  background-color: var(--primary) !important;
+  color: #fff !important;
+}
+
+.c-app.c-dark-theme .daterangepicker td.in-range {
+  background-color: #747474;
+  color: #e1e1e1;
+}
+
+.c-dark-theme .daterangepicker td.active {
+  background-color: var(--primary) !important;
+}
+
+.c-dark-theme .daterangepicker .ranges li:hover {
+  background-color: #747474;
+}
+
+.c-dark-theme .daterangepicker td.available:hover, .c-dark-theme .daterangepicker th.available:hover {
+  background-color: var(--primary) !important;
+}
+
+.c-dark-theme .daterangepicker .cancelBtn {
+  color: #fff;
+}
+
+/* end daterange */
