@@ -2,7 +2,7 @@ body {
   font-family: Nunito,sans-serif !important;
 }
 
-.c-header {
+.c-header, .c-dark-theme .c-header {
   background-color: inherit;
   border-bottom: none;
 }
@@ -300,3 +300,51 @@ input.material-input:focus + .suffix {
 }
 
 /* End Material Input */
+
+
+/* Select2 */
+.select2-container--coreui .select2-results__option--highlighted, .select2-container--coreui .select2-results__option--highlighted.select2-results__option[aria-selected="true"]{
+  background-color: var(--primary) !important;
+}
+
+/* End Select2 */
+
+/* daterange */
+
+.daterangepicker .ranges li.active, 
+.daterangepicker td.active, 
+.daterangepicker td.active:hover {
+  background-color: var(--primary) !important;
+}
+
+.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+  background-color: var(--primary) !important;
+}
+
+.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+  background-color: var(--primary) !important;
+  color: #fff !important;
+}
+
+.c-app.c-dark-theme .daterangepicker td.in-range {
+  background-color: #747474;
+  color: #e1e1e1;
+}
+
+.c-dark-theme .daterangepicker td.active {
+  background-color: var(--primary) !important;
+}
+
+.c-dark-theme .daterangepicker .ranges li:hover {
+  background-color: #747474;
+}
+
+.c-dark-theme .daterangepicker td.available:hover, .c-dark-theme .daterangepicker th.available:hover {
+  background-color: var(--primary) !important;
+}
+
+.c-dark-theme .daterangepicker .cancelBtn {
+  color: #fff;
+}
+
+/* end daterange */

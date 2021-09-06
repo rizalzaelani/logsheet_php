@@ -19,8 +19,11 @@
 					<h4><?= $title ?></h4>
 					<h5 class="header-icon">
 						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
-						<a href="javascript:;" onclick="table.ajax.reload();"><i class="fa fa-redo-alt" data-toggle="tooltip" title="Refresh"></i></a>
 						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+						</div>
 					</h5>
 				</div>
 				<div class="row mt-2 collapse" id="filterDT">
@@ -94,11 +97,9 @@
 	let v = new Vue({
 		el: '#app',
 		data: () => ({
-			data: null
+			data: null,
+			table: null
 		}),
-		setup() {
-			const table = ref(null)
-		},
 		mounted() {
 			this.getData();
 
@@ -111,22 +112,13 @@
 			});
 		},
 		methods: {
-			btnFilter() {
-				$('#btnHideFilter').show();
-				$('#filter').show();
-				$('#btnFilter').hide();
-			},
-			btnHideFilter() {
-				$('#btnFilter').show();
-				$('#filter').hide();
-				$('#btnHideFilter').hide();
-			},
 			getData() {
 				table = $('#tableTrx').DataTable({
 					scrollY: "calc(100vh - 272px)",
 					language: {
 						lengthMenu: "Showing _MENU_ ",
-						info: "of _MAX_ entries"
+						info: "of _MAX_ entries",
+						infoEmpty: 'of 0 entries',
 					},
 					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
 				});
