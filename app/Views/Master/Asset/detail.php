@@ -734,14 +734,12 @@
                         map.addControl(new mapboxgl.FullscreenControl());
                         map.resize();
                         const marker = new mapboxgl.Marker({
-                                color: 'green',
                                 draggable: true,
                             })
                             .setLngLat([109.005913, -7.727989])
                             .addTo(map);
 
                         const marker2 = new mapboxgl.Marker({
-                                color: 'red',
                                 draggable: true,
                             })
                             .setLngLat([109.000000, -7.726000])

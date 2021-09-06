@@ -89,9 +89,12 @@
     </ul>
     <div class="c-class-toggler d-flex justify-content-between align-items-center" type="button" data-target="_parent" data-class="c-sidebar-unfoldable">
 
-        <img class="p-2 ml-2 mr-2 c-sidebar-brand-full" src="/img/logo2.svg" alt="" height="49" width="200">
+        <!-- <img class="p-2 ml-2 mr-2 c-sidebar-brand-full" src="/img/logo2.svg" alt="" height="49" width="200"> -->
 
         <!-- <img class="p-2 ml-3 c-sidebar-brand-full" src="/img/nocola-logo.png" alt="" width="180"> -->
+
+        <img class="p-2 ml-3 c-sidebar-brand-full" src="/img/nocola-logo.png" alt="" width="180">
+
         <button class="c-sidebar-minimizer"></button>
     </div>
 </div>
