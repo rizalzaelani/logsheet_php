@@ -66,13 +66,14 @@
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-6 d-flex flex-row align-items-center" style="border: 1px solid #d8dbe0;">
-                                <img src="/img/logo-act.png" alt="Image" class="img-thumbnail m-0">
+                            <div class="col-6" style="border: 1px solid #d8dbe0;">
+                                <img src="/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
+                                <div class="mt-1" id="mapDetail" style="width: 100% !important; height: 170px"></div>
                             </div>
                         </div>
                     </div>
                     <!-- tab parameter -->
-                    <div class="tab-pane" id="parameter" role="tabpanel">
+                    <div class=" tab-pane" id="parameter" role="tabpanel">
                         <div class="table-responsive mt-2">
                             <table class="table dt-responsive table-hover w-100 display" id="tableParam">
                                 <thead>
@@ -236,7 +237,7 @@
                                         <td>
                                             <div class="d-flex align-items-center"></div>
                                             <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                <input type="checkbox" class="c-switch-input latlong" id="latlong" v-model="checked" disabled>
+                                                <input type="checkbox" class="c-switch-input latlong" id="latlong" v-model="checked" checked disabled>
                                                 <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                                             </label>
                                         </td>
@@ -272,6 +273,7 @@
                                     <div class="d-flex justify-content-center align-items-center">
                                         <img src="/img/logo-act.png" alt="Image" class="img-thumbnail">
                                     </div>
+                                    <div class="mt-1" id="mapSetting" style="min-width: 100% !important; height: 350px;"></div>
                                 </div>
                                 <div style="display: none;" class="input">
                                     <div class="d-flex align-items-center">
@@ -705,7 +707,7 @@
         el: '#app',
         data: {
             myModal: '',
-            checked: false
+            checked: ''
         },
         mounted() {
             this.getDataParameter();
@@ -739,12 +741,6 @@
                             .setLngLat([109.005913, -7.727989])
                             .addTo(map);
 
-                        const marker2 = new mapboxgl.Marker({
-                                draggable: true,
-                            })
-                            .setLngLat([109.000000, -7.726000])
-                            .addTo(map);
-
                         function onDragEnd(params) {
                             const lnglat = marker.getLngLat();
                             coordinates.style.display = 'block';
@@ -755,6 +751,33 @@
                         $('#map').addClass('w-100');
                     } else if (!($(this).is(':checked'))) {
                         $('#map').hide();
+                    } else {
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Failed',
+                            text: 'Failed Load Map'
+                        })
+                    }
+                })
+                $('.latlong').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                        const map = new mapboxgl.Map({
+                            container: 'mapSetting', // container ID
+                            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                            center: [109.005913, -7.727989], // starting position [lng, lat]
+                            zoom: 14, // starting zoom
+                        });
+                        map.addControl(new mapboxgl.FullscreenControl());
+                        map.resize();
+                        const marker = new mapboxgl.Marker()
+                            .setLngLat([109.005913, -7.727989])
+                            .addTo(map);
+
+                        $('#mapSetting').show();
+                        $('#mapSetting').addClass('w-100');
+                    } else if (!($(this).is(':checked'))) {
+                        $('#mapSetting').hide();
                     } else {
                         swal.fire({
                             icon: 'error',
@@ -884,6 +907,7 @@
                 $('.valueDefault').hide();
                 $('#btnEdit').hide();
                 $('.latlong').removeAttr('disabled');
+                // $('#detail_tab').addClass('disabled');
             },
             cancelEdit() {
                 $('.input').hide();
@@ -892,6 +916,7 @@
                 $('.valueDefault').show();
                 $('#btnEdit').show();
                 $('.latlong').prop('disabled', true);
+                // $('#detail_tab').remove('disabled');
             },
             btnCancel() {
                 const swalWithBootstrapButtons = swal.mixin({
@@ -908,6 +933,34 @@
             }
         }
     });
+
+    $('.latlong').on('change', function() {
+        if ($(this).is(':checked')) {
+            mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+            const map = new mapboxgl.Map({
+                container: 'mapDetail', // container ID
+                style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                center: [109.005913, -7.727989], // starting position [lng, lat]
+                zoom: 14, // starting zoom
+            });
+            map.addControl(new mapboxgl.FullscreenControl());
+            map.resize();
+            const marker = new mapboxgl.Marker()
+                .setLngLat([109.005913, -7.727989])
+                .addTo(map);
+
+            $('#mapDetail').show();
+            $('#mapDetail').addClass('w-100');
+        } else if (!($(this).is(':checked'))) {
+            $('#mapDetail').hide();
+        } else {
+            swal.fire({
+                icon: 'error',
+                title: 'Failed',
+                text: 'Failed Load Map'
+            })
+        }
+    })
 
     FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
     const pond = $('.filepond').filepond({

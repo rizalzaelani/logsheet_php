@@ -1,8 +1,9 @@
 body {
-  font-family: Nunito,sans-serif !important;
+  font-family: Nunito, sans-serif !important;
 }
 
-.c-header, .c-dark-theme .c-header {
+.c-header,
+.c-dark-theme .c-header {
   background-color: inherit;
   border-bottom: none;
 }
@@ -44,7 +45,7 @@ a {
 }
 
 .card-body {
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 .hide {
@@ -63,14 +64,6 @@ a {
   line-height: 18px;
   border-radius: 3px;
   display: none;
-}
-#map {
-  width: 100% !important;
-  /* height: 100% !important; */
-}
-#map-container {
-  /* height: 100vh; */
-  width: auto;
 }
 
 /* end map */
@@ -117,7 +110,6 @@ a {
   border: none;
   border-bottom: 3px solid var(--primary);
 }
-
 
 .tooltipClass {
   text-align: left;
@@ -208,13 +200,13 @@ div.dataTables_wrapper div.dataTables_length select {
   width: 100% !important;
 }
 
-.dt-search-input{
-    display: none;
-    position: absolute;
-    top: 0rem;
-    background: #fff;
-    width: calc(100% - 2.5rem);
-    z-index: 10;
+.dt-search-input {
+  display: none;
+  position: absolute;
+  top: 0rem;
+  background: #fff;
+  width: calc(100% - 2.5rem);
+  z-index: 10;
 }
 
 .c-dark-theme .dt-search-input {
@@ -235,7 +227,7 @@ div.dataTables_wrapper div.dataTables_length select {
 
 div.dataTables_wrapper div.dataTables_info {
   padding-top: 0 !important;
-  margin-left: .25rem;
+  margin-left: 0.25rem;
   /* margin-bottom: .21rem; */
 }
 
@@ -243,10 +235,9 @@ div.dataTables_wrapper div.dataTables_length label {
   margin-bottom: 0;
 }
 
-.ptd-4{
-  padding-top: .4rem !important;
+.ptd-4 {
+  padding-top: 0.4rem !important;
 }
-
 
 /* input */
 
@@ -340,9 +331,10 @@ input.material-input:focus + .suffix {
 
 /* End Material Input */
 
-
 /* Select2 */
-.select2-container--coreui .select2-results__option--highlighted, .select2-container--coreui .select2-results__option--highlighted.select2-results__option[aria-selected="true"]{
+.select2-container--coreui .select2-results__option--highlighted,
+.select2-container--coreui
+  .select2-results__option--highlighted.select2-results__option[aria-selected="true"] {
   background-color: var(--primary) !important;
 }
 
@@ -350,17 +342,19 @@ input.material-input:focus + .suffix {
 
 /* daterange */
 
-.daterangepicker .ranges li.active, 
-.daterangepicker td.active, 
+.daterangepicker .ranges li.active,
+.daterangepicker td.active,
 .daterangepicker td.active:hover {
   background-color: var(--primary) !important;
 }
 
-.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+.daterangepicker td.available:hover,
+.daterangepicker th.available:hover {
   background-color: var(--primary) !important;
 }
 
-.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+.daterangepicker td.available:hover,
+.daterangepicker th.available:hover {
   background-color: var(--primary) !important;
   color: #fff !important;
 }
@@ -378,7 +372,8 @@ input.material-input:focus + .suffix {
   background-color: #747474;
 }
 
-.c-dark-theme .daterangepicker td.available:hover, .c-dark-theme .daterangepicker th.available:hover {
+.c-dark-theme .daterangepicker td.available:hover,
+.c-dark-theme .daterangepicker th.available:hover {
   background-color: var(--primary) !important;
 }
 
