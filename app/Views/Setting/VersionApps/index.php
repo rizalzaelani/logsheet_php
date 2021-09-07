@@ -28,16 +28,33 @@
 				<!-- datatable -->
 				<div class="row">
 					<div class="col-12">
-						<table class="table table-hover table-striped" id="tableVersionApps">
+						<table class="table table-hover table-striped w-100" id="tableVersionApps">
 							<thead class="bg-primary">
 								<tr>
-									<th>#</th>
-									<th>nama</th>
-									<th>nama</th>
-									<th>nama</th>
-									<th>nama</th>
+									<th>No</th>
+									<th>Name</th>
+									<th>Type</th>
+									<th>Version</th>
+									<th>By</th>
+									<th>Date</th>
+									<th>Action</th>
 								</tr>
 							</thead>
+							<tbody>
+								<tr>
+									<td>1</td>
+									<td>Name</td>
+									<td>Type</td>
+									<td>1.0</td>
+									<td>By</td>
+									<td>10-09-2021</td>
+									<td>
+										<button class="btn btn-sm btn-info text-white"><i class="fa fa-eye"></i></button>
+										<button class="btn btn-sm btn-success"><i class="fa fa-edit"></i></button>
+										<button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+									</td>
+								</tr>
+							</tbody>
 						</table>
 					</div>
 				</div>

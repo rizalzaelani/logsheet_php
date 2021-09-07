@@ -16,7 +16,7 @@
 				<div class="d-flex justify-content-between mb-1">
 					<h4><?= $title ?></h4>
 					<h5 class="header-icon">
-						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
+						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="filter"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<!-- <a href="javascript:;" onclick="table.ajax.reload();"><i class="fa fa-redo-alt" data-toggle="tooltip" title="Refresh"></i></a> -->
 						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
@@ -353,7 +353,7 @@
 				$('#btnFilter').show()
 				$('#filter').hide();
 				$('#btnHideFilter').hide();
-				$(".dataTables_scrollBody").css("max-height", "calc(100vh - 300px)");
+				$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
 			}
 		}
 	});
@@ -362,6 +362,10 @@
 	$(document).on('click', '#tableEq tbody tr', function() {
 		window.location.href = "<?= base_url('Asset/detail'); ?>";
 	});
+
+	$('#filter').click(function() {
+		console.log($(this));
+	})
 
 	$('#tag').select2({
 		theme: 'coreui',
