@@ -61,17 +61,13 @@
 				</div>
 				<!-- datatable -->
 				<div class="table-responsive">
-					<table class="table table-responsive table-hover nowrap" id="tableFinding">
+					<table class="table table-hover w-100" id="tableFinding">
 						<thead class="bg-primary">
 							<tr>
 								<th style="width: 20px;">#</th>
 								<th>Asset</th>
 								<th>Tag</th>
 								<th>Location</th>
-								<th>Other 1</th>
-								<th>Other 2</th>
-								<th>Other 3</th>
-								<th>Other 4</th>
 								<th>Condition</th>
 							</tr>
 						</thead>
@@ -82,10 +78,6 @@
 									<td>Asset</td>
 									<td>CCTV</td>
 									<td>Gedung Mesin</td>
-									<td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam, eligendi deleniti.</td>
-									<td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam, eligendi deleniti.</td>
-									<td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam, eligendi deleniti.</td>
-									<td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam, eligendi deleniti.</td>
 									<td>Normal</td>
 								</tr>
 							<?php } ?>
@@ -127,8 +119,6 @@
 			getData() {
 				table = $('#tableFinding').DataTable({
 					scrollY: "calc(100vh - 272px)",
-					scrollX: true,
-					autoWidth: true,
 					language: {
 						lengthMenu: "Showing _MENU_ ",
 						info: "of _MAX_ entries",
