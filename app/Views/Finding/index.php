@@ -12,14 +12,14 @@
 				<div class="dt-search-input">
 					<div class="input-container">
 						<a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
-						<input name="dt-search" class="material-input" type="text" data-target="#tableTrx" placeholder="Search Data Transaction" />
+						<input name="dt-search" class="material-input" type="text" data-target="#tableFinding" placeholder="Search Data Transaction" />
 					</div>
 				</div>
 				<div class="d-flex justify-content-between mb-1">
 					<h4><?= $title ?></h4>
 					<h5 class="header-icon">
 						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
-						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+						<a href="javascript:;" class="dt-search" data-target="#tableFinding"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
 							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
@@ -61,7 +61,7 @@
 				</div>
 				<!-- datatable -->
 				<div class="table-responsive">
-					<table class="table table-hover w-100 nowrap" id="tableTrx">
+					<table class="table table-hover w-100" id="tableFinding">
 						<thead class="bg-primary">
 							<tr>
 								<th style="width: 20px;">#</th>
@@ -103,24 +103,32 @@
 		mounted() {
 			this.getData();
 
-			let search = $(".dt-search-input input[data-target='#tableTrx']");
+			let search = $(".dt-search-input input[data-target='#tableFinding']");
 			search.unbind().bind("keypress", function(e) {
 				if (e.which == 13 || e.keyCode == 13) {
 					let searchData = search.val();
 					table.search(searchData).draw();
 				}
 			});
+
+			$(document).on('click', '#tableFinding tbody tr', function() {
+				window.location.href = "<?= site_url('Finding/detailList') ?>?trxId=" + $(this).attr("data-id");
+			});
 		},
 		methods: {
 			getData() {
-				table = $('#tableTrx').DataTable({
+				table = $('#tableFinding').DataTable({
 					scrollY: "calc(100vh - 272px)",
 					language: {
 						lengthMenu: "Showing _MENU_ ",
 						info: "of _MAX_ entries",
 						infoEmpty: 'of 0 entries',
 					},
-					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
+					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+					'createdRow': function(row, data, dataIndex) {
+						$(row).attr('data-id', "1");
+						$(row).addClass('cursor-pointer');
+					},
 				});
 			}
 		}
