@@ -25,7 +25,7 @@
                 </svg> Incidental Report</a>
         </li> -->
         <li class="c-sidebar-nav-title">REPORTING</li>
-        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Equipment') ?>">
+        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/ReportingAsset') ?>">
                 <svg class="c-sidebar-nav-icon">
                     <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-library-bookmark') ?>"></use>
                 </svg> Asset</a>

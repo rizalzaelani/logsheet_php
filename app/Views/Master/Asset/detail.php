@@ -66,7 +66,7 @@
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-6" style="border: 1px solid #d8dbe0;">
+                            <div class="col-6 imgMap" style="border: 1px solid #d8dbe0;">
                                 <img src="/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
                                 <div class="mt-1" id="mapDetail" style="width: 100% !important; height: 170px"></div>
                             </div>
@@ -951,7 +951,9 @@
 
             $('#mapDetail').show();
             $('#mapDetail').addClass('w-100');
+            $('.imgMap').removeClass('d-flex align-items-center');
         } else if (!($(this).is(':checked'))) {
+            $('.imgMap').addClass('d-flex align-items-center');
             $('#mapDetail').hide();
         } else {
             swal.fire({

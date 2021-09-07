@@ -119,7 +119,7 @@
                     language: {
                         lengthMenu: "Showing _MENU_ ",
                         info: "of _MAX_ entries",
-						infoEmpty: 'of 0 entries',
+                        infoEmpty: 'of 0 entries',
                     },
                     dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
                 });

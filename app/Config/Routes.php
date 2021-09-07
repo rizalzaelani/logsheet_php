@@ -78,9 +78,10 @@ $routes->get('/Finding', 'Finding/Finding::index');
 $routes->get('/Finding/detailList', 'Finding/Finding::detailList');
 $routes->get('/Finding/detail', 'Finding/Finding::detail');
 
+$routes->get('/ReportingAsset', 'Reporting/Asset::index');
+$routes->get('/ReportingAsset/detail', 'Reporting/Asset::detail');
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
-$routes->get('/Equipment', 'Reporting/Equipment::index');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');
 $routes->get('/Report', 'Reporting/Report::index');
 
