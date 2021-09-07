@@ -71,10 +71,15 @@ $routes->add('/Notification', 'Setting/Notification::index');
 $routes->add('/Application', 'Setting/Application::index');
 $routes->add('/VersionApps', 'Setting/VersionApps::index');
 
+$routes->get('/Transaction', 'Transaction/Transaction::index');
+$routes->get('/Transaction/detail', 'Transaction/Transaction::detail');
+
 $routes->get('/Finding', 'Finding/Finding::index');
+$routes->get('/Finding/detailList', 'Finding/Finding::detailList');
+$routes->get('/Finding/detail', 'Finding/Finding::detail');
+
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
-$routes->get('/Transaction', 'Transaction/Transaction::index');
 $routes->get('/Equipment', 'Reporting/Equipment::index');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');
 $routes->get('/Report', 'Reporting/Report::index');
