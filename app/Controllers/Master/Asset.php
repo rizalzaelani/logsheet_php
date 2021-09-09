@@ -19,16 +19,12 @@ class Asset extends BaseController
 	}
 	public function index()
 	{
-		$model = new AssetModel();
-		$company = array('IPC');
-		$area = array('GEDUNG PARKIR', 'GEDUNG KAS', 'GEDUNG MAINTENANCE', 'GEDUNG FINANCE', "GEDUNG COB", "GEDUNG MESIN");
-		$unit = array('CCTV', 'ROUTER', 'IT');
+		// $model = new AssetModel();
+		// $data = $model->findAll();
+		// return $data;
 		$data = array(
 			'title' => 'Asset',
 			'subtitle' => 'Asset',
-			'getCompany' => $company,
-			'getArea' => $area,
-			'getUnit' => $unit,
 		);
 
 		$data["breadcrumbs"] = [
