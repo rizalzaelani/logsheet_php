@@ -30,7 +30,7 @@ class Asset extends BaseController
 			'getArea' => $area,
 			'getUnit' => $unit,
 		);
-		
+
 		$data["breadcrumbs"] = [
 			[
 				"title"	=> "Home",
@@ -72,9 +72,24 @@ class Asset extends BaseController
 	{
 		// return json_encode($dummy);
 		$data = array(
-			'title' => 'Detail',
+			'title' => 'Detail Asset',
 			'subtitle' => 'Detail',
 		);
+
+		$data["breadcrumbs"] = [
+			[
+				"title"	=> "Home",
+				"link"	=> "Dashboard"
+			],
+			[
+				"title"	=> "Asset",
+				"link"	=> "Asset"
+			],
+			[
+				"title" => "Detail",
+				"link" => "detail"
+			],
+		];
 		return $this->template->render('Master/Asset/detail', $data);
 	}
 

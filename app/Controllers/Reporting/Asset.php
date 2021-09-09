@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Controllers\Transaction;
+namespace App\Controllers\Reporting;
 
 use App\Controllers\BaseController;
 
-class Transaction extends BaseController
+class Asset extends BaseController
 {
 	public function index()
 	{
 		$data = array(
-			'title' => 'Transaction',
-			'subtitle' => 'Transaction'
+			'title' => 'Reporting Asset',
+			'subtitle' => 'List Equipment IPC Logsheet'
 		);
-
 		$data["breadcrumbs"] = [
 			[
 				"title"	=> "Home",
 				"link"	=> "Dashboard"
 			],
 			[
-				"title"	=> "Transaction",
-				"link"	=> "Transaction"
+				"title"	=> "Reporting Asset",
+				"link"	=> "reportingAsset"
 			],
 		];
-		return $this->template->render('Transaction/index', $data);
+		return $this->template->render('Reporting/Asset/index.php', $data);
 	}
 
 	public function detail()
@@ -31,24 +30,24 @@ class Transaction extends BaseController
 		$json = file_get_contents('json/transactionParameter.json');
 		$arr = json_decode($json);
 		$data = array(
-			'title' => 'Detail Transaction',
-			'subtitle' => 'Detail Transaction',
+			'title' => 'Detail Reporting',
+			'subtitle' => 'Detail Reporting',
 		);
-		$data["arr"] = $arr;
+		$data['arr'] = $arr;
 		$data["breadcrumbs"] = [
 			[
 				"title"	=> "Home",
 				"link"	=> "Dashboard"
 			],
 			[
-				"title"	=> "Transaction",
-				"link"	=> "Transaction"
+				"title"	=> "Reporting Asset",
+				"link"	=> "ReportingAsset"
 			],
 			[
 				"title"	=> "Detail",
 				"link"	=> ""
 			],
 		];
-		return $this->template->render('Transaction/detail', $data);
+		return $this->template->render('Reporting/Asset/detail', $data);
 	}
 }
