@@ -67,17 +67,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="text-center">1</td>
-                                    <td>Oil Level</td>
-                                    <td class="text-center"></td>
-                                    <td class="text-center">Dipstick level</td>
-                                    <td class="text-center"><i>(Empty)</i></td>
-                                    <td class="text-center"><i>(Empty)</i></td>
-                                    <td class="text-center"></td>
-                                    <td class="text-center">5</td>
-                                </tr>
-                                <tr>
+                                <?php $i = 1;
+                                foreach ($arr as $items => $val) : ?>
+                                    <tr>
+                                        <td class="text-center"><?= $i++; ?></td>
+                                        <td><?= $val->parameter; ?></td>
+                                        <td class="text-center"><?= (($val->tagNo) == '' ? '' : $val->tagNo) ?></td>
+                                        <td class="text-center"><?= $val->specStandard; ?></td>
+                                        <td class="text-center"><i><?= (($val->min || $val->deviasi != '') ? $val->min . '/' . $val->deviasi : ''); ?></i></td>
+                                        <td class="text-center"><i><?= (($val->max || $val->normal != '') ? $val->max . '/' . $val->normal : ''); ?></i></td>
+                                        <td class="text-center"><?= (($val->satuan || $val->option != '') ? $val->satuan . '/' . $val->option : ''); ?></td>
+                                        <td class="text-center"><?= $val->value; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <!-- <tr>
                                     <td class="text-center">2</td>
                                     <td>Clutch Oil Pressure</td>
                                     <td class="text-center"></td>
@@ -136,7 +139,7 @@
                                     <td class="text-center">80</td>
                                     <td class="text-center">C</td>
                                     <td class="text-center">46</td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                     </div>

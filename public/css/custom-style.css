@@ -249,7 +249,8 @@ div.dataTables_wrapper div.dataTables_length label {
 
 /* table-fix-width */
 
-.table, .table-fix-width {
+.table,
+.table-fix-width {
   /*background: rgba(255,255,255,.5);*/
   border-radius: 0.5rem;
 }
@@ -263,7 +264,8 @@ div.dataTables_wrapper div.dataTables_length label {
   /* border-bottom: 1px solid #a4b7c1 !important; */
 }
 
-.table-fix-width th, .table-fix-width td {
+.table-fix-width th,
+.table-fix-width td {
   padding: 5px 10px;
   white-space: nowrap;
   vertical-align: top;
@@ -272,7 +274,8 @@ div.dataTables_wrapper div.dataTables_length label {
   /* border-right: 1px solid #a4b7c1 !important; */
 }
 
-.table-record-fix-width th, .table-record-fix-width td {
+.table-record-fix-width th,
+.table-record-fix-width td {
   padding: 5px 10px;
   white-space: pre-wrap;
   vertical-align: top;
@@ -432,7 +435,7 @@ input.material-input:focus + .suffix {
 /* timeline */
 
 .history-tl-container {
-  font-family: "Roboto",sans-serif;
+  font-family: "Roboto", sans-serif;
   line-height: 1.3em;
   width: 100%;
   margin: auto;
@@ -452,7 +455,7 @@ input.material-input:focus + .suffix {
   margin-left: 20px;
   min-height: 50px;
   /*background: rgba(255,255,0,0.1);*/
-  border-left: 2px dashed #86D6FF;
+  border-left: 2px dashed #86d6ff;
   padding: 0 0 50px 30px;
   position: relative;
 }
@@ -468,14 +471,14 @@ input.material-input:focus + .suffix {
   content: " ";
   border: 8px solid rgba(255, 255, 255, 0.74);
   border-radius: 500%;
-  background: #258CC7;
+  background: #258cc7;
   height: 35px;
   width: 35px;
   transition: all 500ms ease-in-out;
 }
 
 .history-tl-container ul.tl li.dot-primary::before {
-  background: #258CC7;
+  background: #258cc7;
 }
 
 .history-tl-container ul.tl li.dot-success::before {
@@ -487,7 +490,7 @@ input.material-input:focus + .suffix {
 }
 
 .history-tl-container ul.tl li.dot-primary:hover::before {
-  border-color: #258CC7;
+  border-color: #258cc7;
   transition: all 1000ms ease-in-out;
 }
 
@@ -506,20 +509,18 @@ a.deco-none {
   text-decoration: none;
 }
 
-
 ul.tl li .item-detail {
-  color: rgba(0,0,0,0.5);
+  color: rgba(0, 0, 0, 0.5);
   font-size: 12px;
 }
 
 ul.tl li .timestamp {
-  color: #8D8D8D;
+  color: #8d8d8d;
   position: absolute;
   width: 100px;
   left: -50%;
   text-align: right;
   font-size: 12px;
 }
-
 
 /* end timeline */
