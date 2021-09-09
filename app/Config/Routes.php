@@ -80,6 +80,7 @@ $routes->get('/Finding/detail', 'Finding/Finding::detail');
 
 $routes->get('/ReportingAsset', 'Reporting/Asset::index');
 $routes->get('/ReportingAsset/detail', 'Reporting/Asset::detail');
+$routes->add('/ReportingAsset/tableDetail', 'Reporting/Asset::tableDetail');
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');
