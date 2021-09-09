@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class _datatable extends Model
+class DatatableModel extends Model
 {
     protected $db;
 
@@ -36,75 +36,40 @@ class _datatable extends Model
             $i++;
         }
 
-        // $filCompany = $_POST['columns'][1]['search']['value'] ?? "";
-        // if ($filCompany != "") {
-        //     $this->builder->where('company', $filCompany);
-        // }
-
-        // $filArea = explode(",", $_POST['columns'][2]['search']['value'] ?? "");
-        // $filArea = array_values(array_filter($filArea, function ($val) {
-        //     return $val != "";
-        // }));
-        // if (!empty($filArea)) {
-        //     $this->builder->whereIn('area', $filArea);
-        // }
-
-        // $filUnit = explode(",", $_POST['columns'][3]['search']['value'] ?? "");
-        // $filUnit = array_values(array_filter($filUnit, function ($val) {
-        //     return $val != "";
-        // }));
-        // if (!empty($filUnit)) {
-        //     $this->builder->whereIn('unit', $filUnit);
-        // }
-
         if (isset($_POST['order'])) {
             $this->builder->orderBy($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
         } else if (isset($this->order)) {
-            $this->order = $this->order;
             $this->builder->orderBy(key($this->order), $this->order[key($this->order)]);
         }
     }
 
-    public function datatable($data = '')
+    public function datatable($where = '')
     {
         $this->_datatable_query();
         if ($_POST['length'] != -1) {
             $this->builder->limit($_POST['length'], $_POST['start']);
         }
-        if ($data != '') {
-            $this->builder->where($data);
+        if ($where != '') {
+            $this->builder->where($where);
         }
         return $this->builder->limit($_POST['length'])->get()->getResult();
     }
 
-    public function count_filtered($data = '')
+    public function count_filtered($where = '')
     {
         $this->_datatable_query();
-        if ($data != '') {
-            $this->builder->where($data);
+        if ($where != '') {
+            $this->builder->where($where);
         }
         return $this->builder->countAllResults();
     }
 
-    public function count_all($data = '')
+    public function count_all($where = '')
     {
         $dt = $this->db->table($this->table);
-        if ($data != '') {
-            $dt->where($data);
+        if ($where != '') {
+            $dt->where($where);
         }
         return $dt->countAllResults();
     }
-
-    // public function getListCompany()
-    // {
-    //     $this->builder->select(('company'));
-    //     $this->builder->orderBy('company', 'asc');
-    //     $query = $this->builder->get();
-    //     $result = $query->getResult();
-    //     $company = array();
-    //     foreach ($result as $row) {
-    //         $company[] = $row->company;
-    //     }
-    //     return $company;
-    // }
 }

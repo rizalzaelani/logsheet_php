@@ -49,13 +49,13 @@ class Asset extends BaseController
 		$column_search = array('assetId', 'assetName', 'assetNumber', 'description');
 		$order = array('createdAt' => 'asc');
 		$request = \Config\Services::request();
-		$datatable = new \App\Models\_datatable($table, $column_order, $column_search, $order);
+		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 		$where = [];
-		$list = $datatable->datatable($where);
+		$list = $DTModel->datatable($where);
 		$output = array(
 			"draw" => $request->getPost('draw'),
-			"recordsTotal" => $datatable->count_all($where),
-			"recordsFiltered" => $datatable->count_filtered($where),
+			"recordsTotal" => $DTModel->count_all($where),
+			"recordsFiltered" => $DTModel->count_filtered($where),
 			"data" => $list,
 			// "getData" => $area
 			'status' => 200,
