@@ -71,37 +71,48 @@
                                     <th class="text-center" rowspan="2" style="vertical-align: middle;">Min</th>
                                     <th class="text-center" rowspan="2" style="vertical-align: middle;">Max</th>
                                     <th class="text-center" rowspan="2" style="vertical-align: middle;">UoM</th>
-                                    <?php for ($i = 1; $i <= 10; $i++) { ?>
-                                        <th class="text-center" style="vertical-align: middle;"><?= $i; ?> Aug 2021</th>
-
-                                    <?php } ?>
+                                    <?php
+                                    foreach ($groupSch as $key => $value) {
+                                        $length = count($value);
+                                        if ($length > 1) { ?>
+                                            <th class="text-center" colspan="<?= $length; ?>">
+                                                <?= $key; ?>
+                                            </th>
+                                        <?php } else if ($length <= 1) { ?>
+                                            <th class="text-center"><?= $key; ?></th>
+                                    <?php }
+                                    }
+                                    ?>
                                 </tr>
                                 <tr>
-                                    <?php for ($i = 1; $i <= 10; $i++) { ?>
-                                        <th class="text-center" style="vertical-align: middle;">00:00</th>
+                                    <?php foreach ($dataSchedule as $key) { ?>
+                                        <th class="text-center"><?= date('h:i:s', strtotime($key->scheduleFrom)); ?></th>
                                     <?php } ?>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $i = 1;
-                                foreach ($arr as $items => $val) : ?>
+                                foreach ($dataParameter as $items) : ?>
                                     <tr>
                                         <td class="text-center"><?= $i++; ?></td>
-                                        <td><?= $val->parameter; ?></td>
-                                        <td class="text-center"><?= (($val->tagNo) == '' ? '' : $val->tagNo) ?></td>
-                                        <td class="text-center"><i><?= (($val->min == '' ? '(empty)' : $val->min)) ?></i></td>
-                                        <td class="text-center"><i><?= (($val->max == '' ? '(empty)' : $val->max)) ?></i></td>
-                                        <td class="text-center"><?= $val->satuan ?></td>
-                                        <td><i>(NC)</i></td>
-                                        <td><i>(NC)</i></td>
-                                        <td><i>(RUN)</i></td>
-                                        <td><i>(NC)</i></td>
-                                        <td><i>(NC)</i></td>
-                                        <td><i>(RUN)</i></td>
-                                        <td><i>(NC)</i></td>
-                                        <td><i>(NC)</i></td>
-                                        <td><i>(RUN)</i></td>
-                                        <td><i>(NC)</i></td>
+                                        <td><?= $items->parameter; ?></td>
+                                        <td class="text-center"><?= (($items->tagNo) == '' ? '' : $items->tagNo) ?></td>
+                                        <td class="text-center"><i><?= (($items->min == '' ? '(empty)' : $items->min)) ?></i></td>
+                                        <td class="text-center"><i><?= (($items->max == '' ? '(empty)' : $items->max)) ?></i></td>
+                                        <td class="text-center"><?= $items->satuan ?></td>
+                                        <?php
+                                        $lengthSchedule = count($dataSchedule);
+                                        foreach ($dataSchedule as $rowSch) :
+                                            $filtRec = array_values(array_filter($dataRecord, function ($val) use ($rowSch, $items) {
+                                                return $val->scheduleHistoryId == $rowSch->scheduleHistoryId && $val->parameterId == $items->parameterId;
+                                            }));
+                                            if (!empty($filtRec)) {
+                                                echo "<td class='text-center'>" . $filtRec[0]->value . "</td>";
+                                            } else {
+                                                echo "<td class='text-center text-danger'><i>(RUN)</i></td>";
+                                            }
+                                        endforeach;
+                                        ?>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -121,10 +132,14 @@
 <!-- Custom Script Js -->
 
 <script>
+    moment().format();
+    var now = moment(Date(1628614800000));
+    // console.log(now);
     let v = new Vue({
         el: '#app',
         data: () => ({
-            data: null
+            data: null,
+            date: now
         }),
         mounted() {
             this.getData();
@@ -148,5 +163,16 @@
         theme: 'coreui'
     })
     $('.select2-container').addClass('ml-1');
+
+    $.ajax({
+        url: '<?= base_url('ReportingAsset/tableDetail'); ?>',
+        type: 'POST',
+        data: {},
+        success: {
+            if (res) {
+                console.log(res);
+            }
+        }
+    });
 </script>
 <?= $this->endSection(); ?>
