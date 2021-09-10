@@ -12,23 +12,31 @@ use Dompdf\Dompdf;
 class Asset extends BaseController
 {
 	use ResponseTrait;
+	private $db;
 	function __construct()
 	{
+		$this->db = db_connect();
 		$model = new AssetModel();
 		helper('form');
 	}
 	public function index()
 	{
-		$model = new AssetModel();
-		$company = array('IPC');
-		$area = array('GEDUNG PARKIR', 'GEDUNG KAS', 'GEDUNG MAINTENANCE', 'GEDUNG FINANCE', "GEDUNG COB", "GEDUNG MESIN");
-		$unit = array('CCTV', 'ROUTER', 'IT');
+		// $query = $this->db->query('SELECT t.tagName, t.description, s.assetName, s.assetNumber FROM tblm_tag t RIGHT JOIN tblmb_assetTag b ON b.tagId = t.tagId JOIN tblm_asset s ON b.assetId = s.assetId');
+		// $results = $query->getResult();
+		// $builder = $this->db->table('tblm_asset as asset');
+		// $builder->select('* , GROUP_CONCAT(tag.tagName) as tag_name');
+		// $builder->join('tblmb_assetTag as assetTag', 'assetTag.assetId = asset.assetId');
+		// $builder->join('tblm_tag as tag', 'tag.tagId = assetTag.tagId');
+		// $builder->groupBy('asset.assetId');
+		// $data = $builder->get()->getResult();
+		// $json = json_encode($data);
+		// d($json);
+		// foreach ($data as $key) {
+		// 	d($key->tag_name);
+		// }
 		$data = array(
 			'title' => 'Asset',
 			'subtitle' => 'Asset',
-			'getCompany' => $company,
-			'getArea' => $area,
-			'getUnit' => $unit,
 		);
 
 		$data["breadcrumbs"] = [
@@ -46,11 +54,9 @@ class Asset extends BaseController
 	}
 	public function datatable()
 	{
-		$model = new AssetModel();
-		// $area = array('GEDUNG PARKIR', 'GEDUNG KAS', 'GEDUNG MAINTENANCE', 'GEDUNG FINANCE', "GEDUNG COB");
-		$table = 'tblm_asset';
-		$column_order = array('assetId', 'assetName', 'assetNumber', 'description');
-		$column_search = array('assetId', 'assetName', 'assetNumber', 'description');
+		$table = 'vw_asset';
+		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'frequencyType', 'createdAt');
+		$column_search = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'frequencyType', 'createdAt');
 		$order = array('createdAt' => 'asc');
 		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
@@ -61,7 +67,6 @@ class Asset extends BaseController
 			"recordsTotal" => $DTModel->count_all($where),
 			"recordsFiltered" => $DTModel->count_filtered($where),
 			"data" => $list,
-			// "getData" => $area
 			'status' => 200,
 			'message' => 'success'
 		);

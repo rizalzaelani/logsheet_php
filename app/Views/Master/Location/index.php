@@ -12,13 +12,13 @@
                 <div class="dt-search-input">
                     <div class="input-container">
                         <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
-                        <input name="dt-search" class="material-input" type="text" data-target="#tableTrx" placeholder="Search Data Transaction" />
+                        <input name="dt-search" class="material-input" type="text" data-target="#tableLocation" placeholder="Search Data Transaction" />
                     </div>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <h4><?= $title ?></h4>
                     <h5 class="header-icon">
-                        <a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+                        <a href="javascript:;" class="dt-search" data-target="#tableLocation"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
@@ -29,24 +29,12 @@
                     <table class="table w-100 table-hover" id="tableLocation">
                         <thead class="bg-primary">
                             <tr>
-                                <th>#</th>
                                 <th>Tag Location</th>
                                 <th>Latitude</th>
                                 <th>Longitude</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php for ($i = 1; $i <= 11; $i++) { ?>
-                                <tr>
-                                    <td><?= $i ?></td>
-                                    <td>Gudang Mesin</td>
-                                    <td>-6.193125</td>
-                                    <td>106.821810</td>
-                                    <td>description</td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
                     </table>
                 </div>
 
@@ -108,21 +96,58 @@
             search.unbind().bind("keypress", function(e) {
                 if (e.which == 13 || e.keyCode == 13) {
                     let searchData = search.val();
-                    table.search(searchData).draw();
+                    v.table.search(searchData).draw();
                 }
             });
         },
         methods: {
             getData() {
-                this.table = $('#tableLocation').DataTable({
-                    scrollY: "calc(100vh - 272px)",
-                    language: {
-                        lengthMenu: "Showing _MENU_ ",
-                        info: "of _MAX_ entries",
-                        infoEmpty: 'of 0 entries',
-                    },
-                    dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
-                });
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        this.table = await $('#tableLocation').DataTable({
+                            processing: true,
+                            serverSide: true,
+                            scrollY: "calc(100vh - 272px)",
+                            language: {
+                                processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+                                lengthMenu: "Showing _MENU_ ",
+                                info: "of _MAX_ entries",
+                                infoEmpty: 'of 0 entries',
+                            },
+                            dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+                            ajax: {
+                                url: "<?= base_url('/Location/datatable'); ?>",
+                                type: "POST",
+                                data: {},
+                                complete: () => {
+                                    resolve();
+                                }
+                            },
+                            columns: [{
+                                    data: "tagLocationName",
+                                    name: "tagLocationName"
+                                },
+                                {
+                                    data: "latitude",
+                                    name: "latitude"
+                                },
+                                {
+                                    data: "longitude",
+                                    name: "longitude"
+                                },
+                                {
+                                    data: "description",
+                                    name: "description"
+                                },
+                            ],
+                            order: [0, 'asc']
+                        });
+                    } catch (er) {
+                        console.log(er)
+                        reject(er);
+                    }
+                })
+
             },
             handleAdd() {
                 this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
