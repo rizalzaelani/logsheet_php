@@ -10,7 +10,7 @@
 				<div class="dt-search-input">
 					<div class="input-container">
 						<a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
-						<input name="dt-search" class="material-input" type="text" data-target="#tableTrx" placeholder="Search Data Transaction" />
+						<input name="dt-search" class="material-input" type="text" data-target="#tableEq" placeholder="Search Data Asset" />
 					</div>
 				</div>
 				<div class="d-flex justify-content-between mb-1">
@@ -18,7 +18,7 @@
 					<h5 class="header-icon">
 						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="filter"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<!-- <a href="javascript:;" onclick="table.ajax.reload();"><i class="fa fa-redo-alt" data-toggle="tooltip" title="Refresh"></i></a> -->
-						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+						<a href="javascript:;" class="dt-search" data-target="#tableEq"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
 							<a class="dropdown-item" href="<?= base_url('/Asset/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Asset</a>
@@ -64,31 +64,17 @@
 					</div>
 				</div>
 				<div class="table-responsive w-100">
-					<table class="table table-hover w-100 nowrap" id="tableEq" @current-items="getFiltered()">
+					<table class="table table-hover w-100" id="tableEq" @current-items="getFiltered()">
 						<thead class="bg-primary">
 							<tr>
-								<th>#</th>
-								<th>Asset </th>
-								<th>Tag </th>
-								<th>Location </th>
-								<th>Number </th>
+								<th>Asset</th>
+								<th>Number</th>
+								<th>Tag</th>
+								<th>Location</th>
+								<th>Description</th>
 								<th>Frequency</th>
 							</tr>
 						</thead>
-						<tbody>
-
-							<?php
-							for ($i = 1; $i <= 11; $i++) { ?>
-								<tr style="cursor: pointer;">
-									<td><?= $i; ?></td>
-									<td>Asset Name</td>
-									<td>CCTV, ROUTER</td>
-									<td>Gedung Mesin</td>
-									<td>0<?= $i; ?></td>
-									<td>Daily</td>
-								</tr>
-							<?php } ?>
-						</tbody>
 					</table>
 				</div>
 
@@ -172,21 +158,28 @@
 			table: null
 		}),
 		mounted() {
-			this.getData1()
+			this.GetData()
+
+			let search = $(".dt-search-input input[data-target='#tableEq']");
+			search.unbind().bind("keypress", function(e) {
+				if (e.which == 13 || e.keyCode == 13) {
+					let searchData = search.val();
+					v.table.search(searchData).draw();
+				}
+			});
+
+			$(document).on('click', '#tableEq tbody tr', function() {
+				window.location.href = "<?= site_url('Asset/detail') ?>?trxId=" + $(this).attr("data-id");
+			});
 		},
 		methods: {
 			GetData() {
 				return new Promise(async (resolve, reject) => {
 					try {
 						this.table = await $('#tableEq').DataTable({
-							searchDelay: 20000,
 							processing: true,
 							serverSide: true,
-							destroy: true,
 							scrollY: "calc(100vh - 272px)",
-							scrollX: true,
-							scrollCollapse: true,
-							fixedColumns: true,
 							responsive: true,
 							language: {
 								processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
@@ -196,7 +189,7 @@
 							},
 							dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
 							ajax: {
-								url: "<?= base_url() . '/Asset/datatable' ?>",
+								url: "<?= base_url('/Asset/datatable') ?>",
 								type: "POST",
 								data: {},
 								complete: () => {
@@ -204,28 +197,37 @@
 								}
 							},
 							columns: [{
-									data: "company",
-									name: "company",
+									data: "assetName",
+									name: "assetName",
 								},
 								{
-									data: "area",
-									name: "area",
+									data: "assetNumber",
+									name: "assetNumber",
 								},
 								{
-									data: "unit",
-									name: "unit"
+									data: "tagName",
+									name: "tagName",
 								},
 								{
-									data: "equipment",
-									name: "equipment",
+									data: "tagLocationName",
+									name: "tagLocationName",
+								},
+								{
+									data: "description",
+									name: "description"
+								},
+								{
+									data: "frequencyType",
+									name: "frequencyType",
 								},
 							],
+							order: [0, 'asc'],
 							columnDefs: [{
 								targets: "_all",
 								className: "dt-head-center"
-							}],
+							}, ],
 							'createdRow': function(row, data) {
-								row.setAttribute("data-id", data.adminequip_id);
+								row.setAttribute("data-id", data.assetId);
 								row.classList.add("cursor-pointer")
 							},
 						});
@@ -234,21 +236,6 @@
 						reject(er);
 					}
 				})
-			},
-			getData1() {
-				return new Promise((resolve) => {
-					this.table = $('#tableEq').DataTable({
-						scrollY: "calc(100vh - 272px)",
-						language: {
-							lengthMenu: "Showing _MENU_ ",
-							info: "of _MAX_ entries",
-							infoEmpty: 'of 0 entries',
-						},
-						dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
-
-					});
-					resolve(true);
-				});
 			},
 			handleAdd() {
 				this.myModal = new coreui.Modal(document.getElementById('exampleModalScrollable'), {});
@@ -356,11 +343,6 @@
 				$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
 			}
 		}
-	});
-
-	// Row Click
-	$(document).on('click', '#tableEq tbody tr', function() {
-		window.location.href = "<?= base_url('Asset/detail'); ?>";
 	});
 
 	$('#filter').click(function() {

@@ -54,7 +54,7 @@ $routes->add('/Asset/add', 'Master/Asset::add');
 $routes->add('/Asset/detail/(:num)', 'Master/Asset::detail');
 $routes->get('/Asset/detail/', 'Master/Asset::detail');
 $routes->add('/Asset/getDetail/', 'Master/Asset::getDetail');
-$routes->post('/Asset/datatable', 'Master/Asset::datatable');
+$routes->add('/Asset/datatable', 'Master/Asset::datatable');
 $routes->add('/Asset/getDataImport', 'Master/Asset::getDataImport');
 $routes->post('/Asset/insertExcel', 'Master/Asset::insertExcel');
 $routes->post('/Asset/importexcel', 'Master/Asset::importexcel');
@@ -65,7 +65,10 @@ $routes->get('/Asset/detailData', 'Master/Asset::detailData');
 $routes->get('/Asset/detailData/(:any)', 'Master/Asset::detailData/$1');
 
 $routes->add('/Location', 'Master/location::index');
+$routes->post('/Location/datatable', 'Master/location::datatable');
+
 $routes->add('/Tag', 'Master/Tag::index');
+$routes->post('/Tag/datatable', 'Master/Tag::datatable');
 
 $routes->add('/Notification', 'Setting/Notification::index');
 $routes->add('/Application', 'Setting/Application::index');
