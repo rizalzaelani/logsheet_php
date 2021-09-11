@@ -64,7 +64,7 @@
 					</div>
 				</div>
 				<div class="table-responsive w-100">
-					<table class="table table-hover w-100" id="tableEq" @current-items="getFiltered()">
+					<table class="table table-hover w-100 display" id="tableEq" @current-items="getFiltered()">
 						<thead class="bg-primary">
 							<tr>
 								<th>Asset</th>
@@ -177,6 +177,11 @@
 				return new Promise(async (resolve, reject) => {
 					try {
 						this.table = await $('#tableEq').DataTable({
+							drawCallback: function(settings) {
+								$(document).ready(function() {
+									$('[data-toggle="tooltip"]').tooltip();
+								})
+							},
 							processing: true,
 							serverSide: true,
 							scrollY: "calc(100vh - 272px)",
@@ -223,12 +228,30 @@
 							],
 							order: [0, 'asc'],
 							columnDefs: [{
-								targets: "_all",
-								className: "dt-head-center"
-							}, ],
+									targets: "_all",
+									className: "dt-head-center",
+								},
+								{
+									targets: [2, 3],
+									render: function(data) {
+										if (data != '-') {
+											var dt = data.split(',');
+											var list_dt = '';
+											$.each(dt, function(key, value) {
+												list_dt += '<span class="badge badge-secondary p-1 mr-1 mb-1" style="font-size: 13px">' + value + '</span>';
+											})
+											return list_dt;
+										} else {
+											return data;
+										}
+									}
+								}
+							],
 							'createdRow': function(row, data) {
 								row.setAttribute("data-id", data.assetId);
-								row.classList.add("cursor-pointer")
+								row.classList.add("cursor-pointer");
+								row.setAttribute("data-toggle", "tooltip");
+								row.setAttribute("title", "Click to go to asset detail");
 							},
 						});
 					} catch (er) {

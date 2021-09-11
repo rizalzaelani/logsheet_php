@@ -105,6 +105,11 @@
                 return new Promise(async (resolve, reject) => {
                     try {
                         this.table = await $('#tableLocation').DataTable({
+                            drawCallback: function(settings) {
+                                $(document).ready(function() {
+                                    $('[data-toggle="tooltip"]').tooltip();
+                                })
+                            },
                             processing: true,
                             serverSide: true,
                             scrollY: "calc(100vh - 272px)",
@@ -140,7 +145,13 @@
                                     name: "description"
                                 },
                             ],
-                            order: [0, 'asc']
+                            order: [0, 'asc'],
+                            'createdRow': function(row, data) {
+                                row.setAttribute("data-id", data.assetId);
+                                row.classList.add("cursor-pointer");
+                                row.setAttribute("data-toggle", "tooltip");
+                                row.setAttribute("title", "Click to go to location detail");
+                            },
                         });
                     } catch (er) {
                         console.log(er)

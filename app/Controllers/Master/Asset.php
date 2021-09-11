@@ -5,6 +5,8 @@ namespace App\Controllers\Master;
 use App\Controllers\BaseController;
 use App\Models\AssetModel;
 use App\Models\TagModel;
+use App\Models\LocationModel;
+use App\Models\StatusAssetModel;
 use CodeIgniter\API\ResponseTrait;
 
 use Dompdf\Dompdf;
@@ -21,19 +23,6 @@ class Asset extends BaseController
 	}
 	public function index()
 	{
-		// $query = $this->db->query('SELECT t.tagName, t.description, s.assetName, s.assetNumber FROM tblm_tag t RIGHT JOIN tblmb_assetTag b ON b.tagId = t.tagId JOIN tblm_asset s ON b.assetId = s.assetId');
-		// $results = $query->getResult();
-		// $builder = $this->db->table('tblm_asset as asset');
-		// $builder->select('* , GROUP_CONCAT(tag.tagName) as tag_name');
-		// $builder->join('tblmb_assetTag as assetTag', 'assetTag.assetId = asset.assetId');
-		// $builder->join('tblm_tag as tag', 'tag.tagId = assetTag.tagId');
-		// $builder->groupBy('asset.assetId');
-		// $data = $builder->get()->getResult();
-		// $json = json_encode($data);
-		// d($json);
-		// foreach ($data as $key) {
-		// 	d($key->tag_name);
-		// }
 		$data = array(
 			'title' => 'Asset',
 			'subtitle' => 'Asset',
@@ -114,12 +103,53 @@ class Asset extends BaseController
 
 	public function add()
 	{
+		$modelAsset = new AssetModel();
 		$modelTag = new TagModel();
+		$modelLocation = new LocationModel();
+		$modelStatus = new StatusAssetModel();
 		$data = array(
 			'title' => "Add Asset",
-			'data' => $modelTag->findAll()
 		);
+		$data['asset'] = $modelAsset->findAll();
+		$data['tag'] = $modelTag->findAll();
+		$data['location'] = $modelLocation->findAll();
+		$data['status'] = $modelStatus->findAll();
+		$data["breadcrumbs"] = [
+			[
+				"title"	=> "Home",
+				"link"	=> "Dashboard"
+			],
+			[
+				"title"	=> "Asset",
+				"link"	=> "Asset"
+			],
+			[
+				"title" => "Add Asset",
+				"link" => "add"
+			],
+		];
 		return $this->template->render('Master/Asset/add', $data);
+	}
+
+	public function save()
+	{
+		$data = $this->request->getJSON();
+		if (!empty($this->request->getJSON())) {
+			$json  = $this->request->getJSON();
+			$data = array(
+				'assetId' => $json->assetId,
+				'assetName' => $json->assetName,
+				'description' => $json->description,
+				'latitude' => $json->latitude,
+				'longitude' => $json->longitude,
+				'frequencyType' => $json->frequencyType,
+				'tag' => $json->tag,
+				'location' => $json->location,
+			);
+
+			echo json_encode(array('status' => 'success', 'data' => $data));
+			die();
+		}
 	}
 
 	public function dataTag()

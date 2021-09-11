@@ -13,19 +13,31 @@
                     <a class="btn btn-sm btn-success" href="<?= base_url('Asset'); ?>"><i class="fa fa-arrow-left"></i> Back</a>
                 </div>
                 <div class="form-group mt-3">
-                    <form action="">
+                    <form method="post" enctype="multipart/form-data">
                         <div class="row mb-3">
                             <label class="col-2" for="assetName">Asset Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>The name of an asset that you have.</div>"></i></label>
-                            <input class="col-10 form-control" type="text" placeholder="Asset Name">
+                            <input class="col-10 form-control" type="text" placeholder="Asset Name" v-model="assetName">
                         </div>
                         <div class="row mb-3">
                             <label class="col-2" for="assetNumber">Asset Number <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Number for each asset.</div>"></i></label>
-                            <input class="col-10 form-control" type="text" placeholder="Asset Number">
+                            <input class="col-10 form-control" type="text" placeholder="Asset Number" v-model="assetNumber">
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-2" for="status">Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Status</div>"></i></label>
+                            <div class="col-10 p-0">
+                                <select name="status" id="status">
+                                    <option value="" selected disabled>Select Status</option>
+                                    <?php foreach ($status as $key) : ?>
+                                        <option value="<?= $key['assetStatusName']; ?>"><?= $key['assetStatusName']; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <label class="col-2" for="frequencyType">Frequency Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Determining the frequency for your asset. Such as <b>Daily, Weekly, or Monthly</b></div>"></i></label>
                             <div class="col-10 p-0">
                                 <select name="frequencyType" id="frequencyType">
+                                    <option value="" selected disabled>Select Frequency Type</option>
                                     <option value="Daily">Daily</option>
                                     <option value="Weekly">Weekly</option>
                                     <option value="Monthly">Monthly</option>
@@ -33,10 +45,18 @@
                             </div>
                         </div>
                         <div class="row mb-3">
+                            <label class="col-2" for="assetLatitude">Latitude <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Latitude for each asset.</div>"></i></label>
+                            <input class="col-10 form-control" type="text" placeholder="Latitude" v-model="latitude">
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-2" for="assetLongitude">Longitude <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Longitude for each asset.</div>"></i></label>
+                            <input class="col-10 form-control" type="text" placeholder="Longitude" v-model="longitude">
+                        </div>
+                        <div class="row mb-3">
                             <label class="col-2" for="tag">Tag <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Tag for your asset</div>"></i></label>
                             <div class="col-10 p-0">
                                 <select name="tag" id="tag" multiple required>
-                                    <?php foreach ($data as $key) : ?>
+                                    <?php foreach ($tag as $key) : ?>
                                         <option value="<?= $key['tagName']; ?>"><?= $key['tagName']; ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -45,24 +65,54 @@
                         <div class="row mb-3">
                             <label class="col-2" for="location">Location <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Location of an asset that you have</div>"></i></label>
                             <div class="col-10 p-0">
-                                <select name="location" id="location">
-                                    <option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
-                                    <option value="GEDUNG MESIN">GEDUNG MESIN</option>
-                                    <option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
+                                <select name="location" id="location" multiple>
+                                    <?php foreach ($location as $key) : ?>
+                                        <option value="<?= $key['tagLocationName']; ?>"><?= $key['tagLocationName']; ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label class="col-2" for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Description of an asset that you have</div>"></i></label>
-                            <textarea class="col-10 form-control" rows="9" placeholder="Description"></textarea>
+                            <textarea class="col-10 form-control" rows="9" placeholder="Description" v-model="descAsset"></textarea>
                         </div>
                         <div class="d-flex justify-content-between align-items-center" id="param">
                             <h5 class="mt-3"><b>Parameter</b></h5>
                             <button class="btn btn-primary" @click="handleModalParameter()" type="button"><i class="fa fa-plus"></i> Add Parameter</button>
                         </div>
                         <hr>
+
+                        <table class="table">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th width="12,5%">Parameter</th>
+                                    <th width="12,5%">Photo</th>
+                                    <th width="12,5%">Description</th>
+                                    <th width="12,5%">UoM</th>
+                                    <th width="12,5%">Min</th>
+                                    <th width="12,5%">Max</th>
+                                    <th width="15%">Show On</th>
+                                    <th width="10%" style="border-top-right-radius: 5px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(items, i) in params" :key="i">
+                                    <td>{{ items.parameter }}</td>
+                                    <td>{{ items.photo }}</td>
+                                    <td>{{ items.descParam }}</td>
+                                    <td>{{ items.uom }}</td>
+                                    <td>{{ items.min }}</td>
+                                    <td>{{ items.max }}</td>
+                                    <td>{{ items.parameterStatus }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-success mr-1" @click="handleEditParameter()"><i class="fa fa-edit"></i></button>
+                                        <button type="button" class="btn btn-sm btn-danger" @click="deleteParameter()"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <!-- table parameter -->
-                        <div class="table-responsive mt-2">
+                        <!-- <div class="table-responsive mt-2">
                             <table class="table table-hover">
                                 <thead class="bg-primary">
                                     <tr>
@@ -131,7 +181,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
 
                         <!-- modal add parameter-->
                         <div class="modal fade" role="dialog" id="addParameterModal">
@@ -145,16 +195,17 @@
                                             <form method="post" enctype="multipart/form-data">
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="parameter">Parameter <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Parameter name for asset that you have.</div>"></i></label>
-                                                    <input type="text" class="form-control col-9 parameter" name="parameter" placeholder="Parameter Name">
+                                                    <input type="text" class="form-control col-9 parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameter">
                                                 </div>
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="photo">Photo <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="photo"></i></label>
-                                                    <input type="file" class="form-control col-9" name="photo" placeholder="Photo">
+                                                    <input type="file" class="form-control col-9" name="photo" placeholder="Photo" v-model="param.photo">
                                                 </div>
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="type">Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="type"></i></label>
                                                     <div class="col-9 p-0">
-                                                        <select class="form-control type" name="type" placeholder="Select Type">
+                                                        <select class="form-control type" name="type" placeholder="Select Type" id="type">
+                                                            <option value="" selected disabled>Select Type</option>
                                                             <option value="input">Input</option>
                                                             <option value="select">Select</option>
                                                             <option value="checkbox">Checkbox</option>
@@ -163,20 +214,21 @@
                                                 </div>
                                                 <div class="row mb-3 typeInput">
                                                     <label class="col-3" for="min">Min <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="min"></i></label>
-                                                    <input type="text" class="form-control col-9 min" name="min" placeholder="Min Value">
+                                                    <input type="text" class="form-control col-9 min" name="min" placeholder="Min Value" v-model="param.min">
                                                 </div>
                                                 <div class="row mb-3 typeInput">
                                                     <label class="col-3" for="max">Max <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="max"></i></label>
-                                                    <input type="text" class="form-control col-9 max" name="max" placeholder="Max Value">
+                                                    <input type="text" class="form-control col-9 max" name="max" placeholder="Max Value" v-model="param.max">
                                                 </div>
                                                 <div class="row mb-3 typeInput">
                                                     <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="uom"></i></label>
-                                                    <input type="text" class="form-control col-9 uom" name="uom" placeholder="Unit Of Measure">
+                                                    <input type="text" class="form-control col-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
                                                 </div>
                                                 <div class="row mb-3 typeSelect" style="display: none;">
                                                     <label class="col-3" for="normal">Normal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="normal"></i></label>
                                                     <div class="col-9 p-0">
-                                                        <select class="form-control normal" name="normal">
+                                                        <select class="form-control normal" name="normal" id="normal">
+                                                            <option value="" selected disabled>Select Item</option>
                                                             <option value="item 1">item 1</option>
                                                             <option value="item 2">item 2</option>
                                                             <option value="item 3">item 3</option>
@@ -186,17 +238,8 @@
                                                 <div class="row mb-3 typeSelect" style="display: none;">
                                                     <label class="col-3" for="abnormal">Abnormal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="abnormal"></i></label>
                                                     <div class="col-9 p-0">
-                                                        <select class="form-control abnormal" name="abnormal">
-                                                            <option value="item 1">item 1</option>
-                                                            <option value="item 2">item 2</option>
-                                                            <option value="item 3">item 3</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3 typeSelect" style="display: none;">
-                                                    <label class="col-3" for="option">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="option"></i></label>
-                                                    <div class="col-9 p-0">
-                                                        <select class="form-control option" name="option">
+                                                        <select class="form-control abnormal" name="abnormal" id="abnormal">
+                                                            <option value="" selected disabled>Select Item</option>
                                                             <option value="item 1">item 1</option>
                                                             <option value="item 2">item 2</option>
                                                             <option value="item 3">item 3</option>
@@ -207,15 +250,15 @@
                                                     <label class="col-3">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="option"></i></label>
                                                     <div class="col-9 p-0">
                                                         <div class="form-check form-check-inline mr-1">
-                                                            <input class="form-check-input" id="option1" type="checkbox" value="Item 1">
+                                                            <input class="form-check-input option" id="option1" type="checkbox" value="Item 1">
                                                             <label class="form-check-label" for="option1">Item 1</label>
                                                         </div>
                                                         <div class="form-check form-check-inline mr-1">
-                                                            <input class="form-check-input" id="option2" type="checkbox" value="Item 2">
+                                                            <input class="form-check-input option" id="option2" type="checkbox" value="Item 2">
                                                             <label class="form-check-label" for="option2">Item 2</label>
                                                         </div>
                                                         <div class="form-check form-check-inline mr-1">
-                                                            <input class="form-check-input" id="option3" type="checkbox" value="Item 3">
+                                                            <input class="form-check-input option" id="option3" type="checkbox" value="Item 3">
                                                             <label class="form-check-label" for="option3">Item 3</label>
                                                         </div>
                                                     </div>
@@ -223,7 +266,7 @@
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="showOn">Parameter Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="showOn"></i></label>
                                                     <div class="col-9 p-0">
-                                                        <select class="form-control showOn" name="showOn" multiple="multiple">
+                                                        <select class="form-control showOn" name="showOn" multiple="multiple" id="paramStatus">
                                                             <option value="Running">Running</option>
                                                             <option value="Standby">Standby</option>
                                                             <option value="Repair">Repair</option>
@@ -232,7 +275,7 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <label class="col-3" for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="description"></i></label>
-                                                    <textarea class="form-control col-9 description" name="description" rows="9" placeholder="Description of Parameter"></textarea>
+                                                    <textarea class="form-control col-9 description" name="description" rows="9" placeholder="Description of Parameter" v-model="param.descParam"></textarea>
                                                 </div>
                                             </form>
                                         </div>
@@ -356,6 +399,10 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="d-flex align-items-center w-100">
+                            <button class="btn btn-success w-100" type="button" @click="save()"><i class="fa fa-plus"></i> Add Asset</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -370,7 +417,30 @@
     let v = new Vue({
         el: '#app',
         data: {
-            myModal: ''
+            assetName: '',
+            assetNumber: '',
+            status: '',
+            frequencyType: '',
+            latitude: '',
+            longitude: '',
+            descAsset: '',
+            tag: [],
+            location: '',
+            myModal: '',
+            param: {
+                parameter: '',
+                photo: '',
+                type: '',
+                min: '',
+                max: '',
+                uom: '',
+                normal: '',
+                abnormal: '',
+                option: [],
+                parameterStatus: [],
+                descParam: '',
+            },
+            params: [],
         },
         methods: {
             handleModalParameter() {
@@ -378,6 +448,49 @@
                 this.myModal.show();
             },
             addParameter() {
+                //status parameter
+                // var paramStatus = [];
+                for (var option of document.getElementById('paramStatus').options) {
+                    if (option.selected) {
+                        v.param.parameterStatus.push(option.value);
+                    }
+                }
+                // v.param.parameterStatus.push(paramStatus);
+
+                //option param
+                var opt = [];
+                if ($('#option1').is(':checked')) {
+                    let a = $('#option1').val();
+                    opt.push(a);
+                }
+                if ($('#option2').is(':checked')) {
+                    let a = $('#option2').val();
+                    opt.push(a);
+                }
+                if ($('#option3').is(':checked')) {
+                    let a = $('#option3').val();
+                    opt.push(a);
+                }
+                v.param.option = opt;
+
+                //addparam
+                this.params.push(this.param);
+                this.param = {
+                        parameter: '',
+                        photo: '',
+                        type: '',
+                        min: '',
+                        max: '',
+                        uom: '',
+                        normal: '',
+                        abnormal: '',
+                        option: [],
+                        parameterStatus: [],
+                        descParam: '',
+                    },
+                    $('#paramStatus option').prop('selected', function() {
+                        return this.defaultSelected;
+                    })
                 this.myModal.hide();
                 const swalWithBootstrapButtons = swal.mixin({
                     customClass: {
@@ -437,8 +550,75 @@
                         })
                     }
                 })
+            },
+            save() {
+                var selectedTag = [];
+                for (var option of document.getElementById('tag').options) {
+                    if (option.selected) {
+                        selectedTag.push(option.value);
+                    }
+                }
+                v.tag = selectedTag;
+
+                var selectedLocation = [];
+                for (var option of document.getElementById('location').options) {
+                    if (option.selected) {
+                        selectedLocation.push(option.value);
+                    }
+                }
+                v.location = selectedLocation;
+
+                //post data
+                axios.post("<?= base_url('Asset/save'); ?>", {
+                    assetId: '',
+                    assetName: this.assetName,
+                    assetNumber: this.assetNumber,
+                    description: this.descAsset,
+                    frequencyType: this.frequencyType,
+                    latitude: this.latitude,
+                    longitude: this.longitude,
+                    tag: this.tag,
+                    location: this.location
+                }).then(res => {
+                    console.log(res);
+                    if (res.data.status == 'success') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-success mr-1',
+                                cancelButton: 'btn btn-danger'
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Success!',
+                            text: 'You have successfully add new asset.',
+                            icon: 'success'
+                        })
+                    }
+                })
             }
         }
+    })
+
+    $('#frequencyType').on('change', function() {
+        let data = $('#frequencyType option:selected').val();
+        v.frequencyType = data;
+    })
+    $('#status').on('change', function() {
+        let data = $('#status option:selected').val();
+        v.status = data;
+    })
+    $('#type').on('change', function() {
+        let data = $('#type option:selected').val();
+        v.param.type = data;
+    })
+    $('#normal').on('change', function() {
+        let data = $('#normal option:selected').val();
+        v.param.normal = data;
+    })
+    $('#abnormal').on('change', function() {
+        let data = $('#abnormal option:selected').val();
+        v.param.abnormal = data;
     })
 
     $('#type').on('change', function() {
@@ -461,10 +641,13 @@
         theme: 'coreui'
     })
 
+    $('#status').select2({
+        theme: 'coreui'
+    })
+
     $('#tag').select2({
         theme: 'coreui',
         placeholder: "Select Tag",
-        allowClear: true,
         escapeMarkup: function(markup) {
             return markup;
         },
@@ -476,27 +659,18 @@
     })
 
     $('#location').select2({
-        theme: 'coreui'
+        theme: 'coreui',
+        placeholder: 'Select Location'
     })
     $('#type').select2({
         theme: 'coreui'
     })
-    $('#type2').select2({
-        theme: 'coreui'
-    })
 
-    $('#type2').select2({
-        theme: 'coreui'
-    })
     $('#normal').select2({
         theme: 'coreui',
         placeholder: "Select Item"
     })
     $('#abnormal').select2({
-        theme: 'coreui',
-        placeholder: "Select Item"
-    })
-    $('#option').select2({
         theme: 'coreui',
         placeholder: "Select Item"
     })
@@ -536,13 +710,6 @@
     });
     $(document).ready(function() {
         $('.abnormal').select2({
-            theme: 'coreui',
-            placeholder: "Select Type",
-            dropdownParent: $('#addParameterModal'),
-        });
-    });
-    $(document).ready(function() {
-        $('.option').select2({
             theme: 'coreui',
             placeholder: "Select Type",
             dropdownParent: $('#addParameterModal'),
