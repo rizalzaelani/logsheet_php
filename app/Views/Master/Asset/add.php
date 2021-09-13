@@ -183,6 +183,34 @@
                             </table>
                         </div> -->
 
+                        <!-- Modal Tambah-->
+                        <div class="modal fade" id="modalTag" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true" style="z-index: 9999;">
+                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalTagTitle">Add Tag</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <form action="">
+                                                <div class="mb-3">
+                                                    <label for="tagname">Tag Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
+                                                    <input id="tagname" type="text" class="form-control" required>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- modal add parameter-->
                         <div class="modal fade" role="dialog" id="addParameterModal">
                             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
@@ -447,6 +475,10 @@
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
             },
+            addTag() {
+                this.modalTag = new coreui.Modal(document.getElementById('modalTag'), {});
+                this.modalTag.show();
+            },
             addParameter() {
                 //status parameter
                 // var paramStatus = [];
@@ -653,7 +685,7 @@
         },
         language: {
             noResults: function() {
-                return `<button class="btn btn-sm btn-primary">Add</button>`;
+                return `<button class="btn btn-sm btn-primary" onclick="v.addTag()"><i class="fa fa-plus"></i> Add</button>`;
             }
         }
     })

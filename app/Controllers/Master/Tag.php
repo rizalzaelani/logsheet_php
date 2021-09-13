@@ -30,8 +30,8 @@ class Tag extends BaseController
     public function datatable()
     {
         $table = "tblm_tag";
-        $column_order = array('tagName', 'description', 'createdAt');
-        $column_search = array('tagName', 'description', 'createdAt');
+        $column_order = array('tagId', 'tagName', 'description', 'createdAt');
+        $column_search = array('tagId', 'tagName', 'description', 'createdAt');
         $order = array('createdAt' => 'asc');
         $request = \Config\Services::request();
         $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
@@ -46,5 +46,22 @@ class Tag extends BaseController
             "message" => "success"
         );
         echo json_encode($output);
+    }
+
+    public function add()
+    {
+        $model = new TagModel();
+        $data = $this->request->getJSON();
+        if (isset($data)) {
+            $dt = array(
+                'tagId' => $data->tagId,
+                'userId' => $data->userId,
+                'tagName' => $data->tagName,
+                'description' => $data->description
+            );
+            $model->insert($dt);
+            echo json_encode(array('status' => 'success', 'message' => 'success add tag', 'data' => $dt));
+            die();
+        }
     }
 }

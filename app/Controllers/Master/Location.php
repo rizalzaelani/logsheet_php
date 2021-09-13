@@ -3,6 +3,7 @@
 namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
+use App\Models\LocationModel;
 
 class Location extends BaseController
 {
@@ -45,5 +46,59 @@ class Location extends BaseController
             "message" => "success"
         );
         echo json_encode($output);
+    }
+
+    public function detail($tagLocationId)
+    {
+        $model = new LocationModel();
+        $location = $model->where('tagLocationId', $tagLocationId)->first();
+        $data = array(
+            'title' => 'Detail Location',
+        );
+        $data['location'] = $location;
+        $data["breadcrumbs"] = [
+            [
+                "title"    => "Home",
+                "link"    => "Dashboard"
+            ],
+            [
+                "title"    => "Location",
+                "link"    => "Location"
+            ],
+            [
+                "title"    => "Detail",
+                "link"    => "detail"
+            ],
+        ];
+        return $this->template->render('Master/Location/detail', $data);
+    }
+
+    public function update()
+    {
+        $model = new LocationModel();
+        $json = $this->request->getJSON();
+        $id = $json->tagLocationId;
+        if (isset($json)) {
+            $data = array(
+                'tagLocationName' => $json->tagLocationName,
+                'latitude' => $json->latitude,
+                'longitude' => $json->longitude,
+                'description' => $json->description
+            );
+            $model->update($id, $data);
+            echo json_encode(array('status' => 'success', 'message' => 'success add tag', 'data' => $data));
+            die();
+        }
+    }
+
+    public function delete()
+    {
+        $model = new LocationModel();
+        $where = $this->request->getJSON('tagLocationId');
+        if (isset($where)) {
+            $model->delete($where);
+            echo json_encode(array('status' => 'success', 'message' => 'success delete data', 'data' => $where));
+            die();
+        }
     }
 }

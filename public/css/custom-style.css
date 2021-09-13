@@ -73,13 +73,13 @@ a {
   /* height: calc(100vh - 500px) !important; */
 }
 .filepond--root .filepond--browser {
-  max-height: calc(100vh - 500px);
+  max-height: calc(100vh - 600px);
 }
 /* .filepond--panel-root {
   height: calc(100vh - 600px) !important;
 } */
 .filepond--root .filepond--drop-label {
-  min-height: 13em !important;
+  min-height: 11em !important;
 }
 /* end filepond */
 

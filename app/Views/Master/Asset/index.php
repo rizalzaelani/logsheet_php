@@ -169,7 +169,7 @@
 			});
 
 			$(document).on('click', '#tableEq tbody tr', function() {
-				window.location.href = "<?= site_url('Asset/detail') ?>?trxId=" + $(this).attr("data-id");
+				window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
 			});
 		},
 		methods: {
@@ -235,7 +235,8 @@
 									targets: [2, 3],
 									render: function(data) {
 										if (data != '-') {
-											var dt = data.split(',');
+											// unique = Array.from(new Set(data));
+											var dt = Array.from(new Set(data.split(',')));
 											var list_dt = '';
 											$.each(dt, function(key, value) {
 												list_dt += '<span class="badge badge-secondary p-1 mr-1 mb-1" style="font-size: 13px">' + value + '</span>';
@@ -251,7 +252,8 @@
 								row.setAttribute("data-id", data.assetId);
 								row.classList.add("cursor-pointer");
 								row.setAttribute("data-toggle", "tooltip");
-								row.setAttribute("title", "Click to go to asset detail");
+								row.setAttribute("data-html", "true");
+								row.setAttribute("title", "<div>Click to go to asset detail</div>");
 							},
 						});
 					} catch (er) {

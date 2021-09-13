@@ -21,6 +21,11 @@
                         <a href="javascript:;" class="dt-search" data-target="#tableTag"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
+                            <a class="dropdown-item cursor-pointer" @click="handleAdd()"><i class="fa fa-plus mr-2"></i> Add Tag</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="<?= base_url('/Tag/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
+                            <a class="dropdown-item" href="<?= base_url('/Tag/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
                     </h5>
@@ -31,6 +36,7 @@
                             <tr>
                                 <th>Tag Name</th>
                                 <th>Description</th>
+                                <th width="20%">Action</th>
                             </tr>
                         </thead>
                     </table>
@@ -49,15 +55,19 @@
                                 <div class="form-group">
                                     <form action="">
                                         <div class="mb-3">
-                                            <label for="tagname">Tag Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
-                                            <input id="tagname" type="text" class="form-control" required>
+                                            <label for="tagname">Tag Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
+                                            <input id="tagname" type="text" class="form-control" required v-model="tagName">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
+                                            <input id="description" type="text" class="form-control" required v-model="description">
                                         </div>
                                     </form>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                                <button type="button" class="btn btn-primary" @click="add()"><i class="fa fa-plus"></i> Add</button>
                             </div>
                         </div>
                     </div>
@@ -74,9 +84,12 @@
     let v = new Vue({
         el: '#app',
         data: {
-            data: null,
-            table: null,
-            modalTag: null,
+            data: '',
+            table: '',
+            modalTag: '',
+            tagName: '',
+            description: '',
+            tagId: null,
         },
         mounted() {
             this.getData();
@@ -96,6 +109,8 @@
                         this.table = await $('#tableTag').DataTable({
                             processing: true,
                             serverSide: true,
+                            responsive: true,
+                            autoWidth: true,
                             scrollY: "calc(100vh - 272px)",
                             language: {
                                 processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
@@ -121,7 +136,11 @@
                                     name: "description"
                                 },
                             ],
-                            order: [0, 'asc']
+                            order: [0, 'asc'],
+                            columnDefs: [{
+                                defaultContent: "<div class='d-flex justify-content-center align-items-center'><button class='btn btn-outline-success btn-sm mr-1'><i class='fa fa-edit'></i> Edit</button><button class='btn btn-outline-danger btn-sm'><i class='fa fa-trash'></i> Delete</button></div>",
+                                targets: 2,
+                            }]
                         });
                     } catch (er) {
                         console.log(er)
@@ -134,6 +153,29 @@
                 this.modalTag = new coreui.Modal(document.getElementById('modalTag'), {});
                 this.modalTag.show();
             },
+            add() {
+                axios.post("<?= base_url('Tag/add'); ?>", {
+                    tagId: this.tagId,
+                    userId: '3f0857bf-0fab-11ec-95b6-5600026457d1',
+                    tagName: this.tagName,
+                    description: this.description
+                }).then(res => {
+                    if (res.data.status == 'success') {
+                        const swalWithBootstrapButtons = Swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-success',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Success!',
+                            text: "Success add tag.",
+                            icon: 'success',
+                            allowOutsideClick: false
+                        })
+                    }
+                })
+            }
         }
     })
 </script>

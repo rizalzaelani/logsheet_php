@@ -21,6 +21,11 @@
                         <a href="javascript:;" class="dt-search" data-target="#tableLocation"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
+                            <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Location</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="<?= base_url('/Location/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
+                            <a class="dropdown-item" href="<?= base_url('/Location/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
                     </h5>
@@ -99,6 +104,10 @@
                     v.table.search(searchData).draw();
                 }
             });
+
+            $(document).on('click', '#tableLocation tbody tr', function() {
+                window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
+            });
         },
         methods: {
             getData() {
@@ -147,7 +156,7 @@
                             ],
                             order: [0, 'asc'],
                             'createdRow': function(row, data) {
-                                row.setAttribute("data-id", data.assetId);
+                                row.setAttribute("data-id", data.tagLocationId);
                                 row.classList.add("cursor-pointer");
                                 row.setAttribute("data-toggle", "tooltip");
                                 row.setAttribute("title", "Click to go to location detail");
