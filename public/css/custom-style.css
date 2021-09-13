@@ -2,6 +2,22 @@ body {
   font-family: Nunito, sans-serif !important;
 }
 
+.c-sidebar-brand-full {
+  display: inherit !important;
+}
+
+.c-app.c-dark-theme .c-sidebar-brand-full {
+  display: none !important;
+}
+
+.c-sidebar-brand-full-dark {
+  display: none !important;
+}
+
+.c-app.c-dark-theme .c-sidebar-brand-full-dark {
+  display: inherit !important;
+}
+
 .c-header,
 .c-dark-theme .c-header {
   background-color: inherit;

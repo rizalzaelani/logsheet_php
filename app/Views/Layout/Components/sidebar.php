@@ -1,6 +1,7 @@
 <div class="c-sidebar c-sidebar-light c-sidebar-fixed c-sidebar-lg-show fade-in" id="sidebar">
     <div class="c-sidebar-brand d-md-down-none m-1">
         <img src="/img/logo-act.png" height="40" width="162" class="c-sidebar-brand-full">
+        <img src="/img/logo-act-dark.png" height="40" width="162" class="c-sidebar-brand-full-dark">
         <img class="c-sidebar-brand-minimized" src="/img/logo-act-min.png" width="40" height="38" alt="">
     </div>
     <ul class="c-sidebar-nav ps ps--active-y">
@@ -94,6 +95,7 @@
         <!-- <img class="p-2 ml-3 c-sidebar-brand-full" src="/img/nocola-logo.png" alt="" width="180"> -->
 
         <img class="p-2 ml-3 c-sidebar-brand-full" src="/img/nocola-logo.png" alt="" width="180">
+        <img class="p-2 ml-3 c-sidebar-brand-full-dark" src="/img/nocola-logo-dark.png" alt="" width="180">
 
         <button class="c-sidebar-minimizer"></button>
     </div>
