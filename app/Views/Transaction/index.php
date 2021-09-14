@@ -64,17 +64,17 @@
 					<table class="table table-hover w-100 nowrap" id="tableTrx">
 						<thead class="bg-primary">
 							<tr>
-								<th style="width: 20px;">#</th>
+								<th style="width: 60px;">Scanned</th>
 								<th>Asset</th>
 								<th>Tag</th>
 								<th>Location</th>
-								<th>Condition</th>
+								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php for ($i = 1; $i <= 15; $i++) { ?>
 								<tr>
-									<td class="text-center"><?= $i; ?></td>
+									<td class="text-center"><?= date("d M Y H:i", strtotime(date("Y-m-d") . " + " . $i . " days")); ?></td>
 									<td>Asset</td>
 									<td>CCTV</td>
 									<td>Gedung Mesin</td>
