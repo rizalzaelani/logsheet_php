@@ -38,10 +38,11 @@ $routes->get('/AdminData', 'Master/AdminData::index');
 $routes->get('/Operation', 'Master/Operation::index');
 $routes->get('/Users', 'Master/Users::index');
 
+$routes->get('/Api', 'Api/Api::index');
+
 $routes->get('/Asset', 'Master/Asset::index');
 $routes->add('/Asset/dataTag', 'Master/Asset::dataTag');
 $routes->add('/Asset/getParam', 'Master/Asset::getParam');
-$routes->get('/Api', 'Api/Api::index');
 $routes->add('/Asset/domPdf', 'Master/Asset::domPdf');
 $routes->get('/Asset/deletedData', 'Master/Asset::deletedData');
 $routes->get('/Asset/waitingApproved', 'Master/Asset::waitingApproved');
@@ -51,8 +52,9 @@ $routes->add('/Asset/export', 'Master/Asset::export');
 $routes->add('/Asset/exportCsv', 'Master/Asset::exportCsv');
 $routes->add('/Asset/exportOds', 'Master/Asset::exportOds');
 $routes->add('/Asset/add', 'Master/Asset::add');
-$routes->add('/Asset/detail/(:num)', 'Master/Asset::detail');
-$routes->get('/Asset/detail/', 'Master/Asset::detail');
+$routes->add('/Asset/save', 'Master/Asset::save');
+$routes->get('/Asset/detail/(:any)', 'Master\Asset::detail/$1');
+// $routes->get('/Asset/detail/', 'Master/Asset::detail');
 $routes->add('/Asset/getDetail/', 'Master/Asset::getDetail');
 $routes->add('/Asset/datatable', 'Master/Asset::datatable');
 $routes->add('/Asset/getDataImport', 'Master/Asset::getDataImport');
@@ -64,11 +66,21 @@ $routes->get('/Asset/download', 'Master/Asset::download');
 $routes->get('/Asset/detailData', 'Master/Asset::detailData');
 $routes->get('/Asset/detailData/(:any)', 'Master/Asset::detailData/$1');
 
+$routes->post('/Asset/addParameter', 'Master/Asset::addParameter');
+$routes->post('/Asset/editParameter', 'Master/Asset::editParameter');
+$routes->post('/Asset/updateParameter', 'Master/Asset::updateParameter');
+$routes->post('/Asset/deleteParameter', 'Master/Asset::deleteParameter');
+
 $routes->add('/Location', 'Master/location::index');
-$routes->post('/Location/datatable', 'Master/location::datatable');
+$routes->post('/Location/datatable', 'Master/Location::datatable');
+// $routes->add('/Location/detail', 'Master/location::detail');
+$routes->add('/Location/detail/(:any)', 'Master\Location::detail/$1');
+$routes->post('/Location/update', 'Master\Location::update');
+$routes->add('/Location/delete', 'Master\Location::delete');
 
 $routes->add('/Tag', 'Master/Tag::index');
 $routes->post('/Tag/datatable', 'Master/Tag::datatable');
+$routes->post('/Tag/add', 'Master/Tag::add');
 
 $routes->add('/Notification', 'Setting/Notification::index');
 $routes->add('/Application', 'Setting/Application::index');
