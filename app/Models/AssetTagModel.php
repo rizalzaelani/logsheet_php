@@ -12,4 +12,9 @@ class AssetTagModel extends Model
     protected $returnType           = 'array';
     protected $allowedFields        = ['assetTagId', 'assetId', 'tagId'];
     protected $createdField         = 'created_at';
+
+    public function deleteById($assetId)
+    {
+        return $this->builder('tblmb_assetTag')->where('assetId', $assetId)->delete();
+    }
 }

@@ -31,7 +31,7 @@
   padding-left: 20px;
 }
 .select2-container .select2-selection--multiple {
-  max-height: 50px;
+  /* max-height: 50px; */
   overflow-y: scroll;
   box-sizing: border-box;
   cursor: pointer;
