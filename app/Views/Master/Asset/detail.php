@@ -10,6 +10,11 @@
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
+<?php
+$assetTagId = (array_values(array_unique(explode(",", $assetData['tagId']))));
+$assetLocationId = (array_values(array_unique(explode(",", $assetData['tagLocationId']))));
+$assetStatus = array($assetData['assetStatusId']);
+?>
 <div class="row" id="app">
     <div class="col-12">
         <div class="card card-main card-border-top">
@@ -41,49 +46,66 @@
                                 <table class="table mt-2">
                                     <tr class="mt-1">
                                         <th>Asset</th>
-                                        <td>:
-                                            <?php foreach ($data as $key) {
-                                                echo $key['assetName'];
-                                            } ?>
+                                        <td>:</td>
+                                        <td class="pl-0">
+                                            <?= $assetData['assetName']; ?>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Number</th>
-                                        <td>: <?php foreach ($data as $key) {
-                                                    echo $key['assetNumber'];
-                                                } ?></td>
+                                        <td>:</td>
+                                        <td class="pl-0">
+                                            <?= $assetData['assetNumber']; ?>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Description</th>
-                                        <td>: <?php foreach ($data as $key) {
-                                                    echo $key['description'];
-                                                } ?></td>
+                                        <td>:</td>
+                                        <td class="pl-0">
+                                            <?= $assetData['description']; ?>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Frequency</th>
-                                        <td>: <?php foreach ($data as $key) {
-                                                    echo $key['frequencyType'];
-                                                } ?></td>
+                                        <td>:</td>
+                                        <td class="pl-0">
+                                            <?= $assetData['frequencyType']; ?>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Status</th>
-                                        <td>: <?php foreach ($data as $key) {
-                                                    echo $key['assetStatusName'];
-                                                } ?></td>
+                                        <td>:</td>
+                                        <td class="pl-0">
+                                            <?= $assetData['assetStatusName']; ?>
+                                        </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Tag</th>
-                                        <td>:
-                                            <?php foreach ($data as $key) : ?>
-                                                <span class="badge badge-secondary" style="font-size: 13px;"><?= $key['tagName']; ?></span>
-                                            <?php endforeach; ?>
+                                        <td>:</td>
+                                        <td class="pl-0">
+                                            <?php
+                                            $assetTagValue = (array_values(array_unique(explode(",", $assetData['tagName']))));
+                                            $length = count($assetTagValue);
+                                            for ($i = 0; $i < $length; $i++) { ?>
+                                                <span class="badge badge-dark p-1 mt-1" style="font-size: 13px;">
+                                                    <?= $assetTagValue[$i]; ?>
+                                                </span>
+                                            <?php }
+                                            ?>
                                         </td>
                                     </tr>
                                     <tr class="mt-1">
                                         <th>Location</th>
-                                        <td>:
-                                            <?php foreach ($data as $key) : ?>
-                                                <span class="badge badge-secondary" style="font-size: 13px;"><?= $key['tagLocationName']; ?></span>
-                                            <?php endforeach; ?>
+                                        <td>:</td>
+                                        <td class="pl-0">
+                                            <?php $assetLocationValue = (array_values(array_unique(explode(",", $assetData['tagLocationName']))));
+                                            $length = count($assetLocationValue);
+                                            for ($i = 0; $i < $length; $i++) { ?>
+                                                <span class="badge badge-dark p-1 mt-1" style="font-size: 13px;">
+                                                    <?= $assetLocationValue[$i]; ?>
+                                                </span>
+                                            <?php }
+                                            ?>
                                         </td>
                                     </tr>
                                 </table>
@@ -126,9 +148,31 @@
                                             <td style="display: none;"><?= $i++; ?></td>
                                             <td class="text-center"><?= $key['parameterName']; ?></td>
                                             <td class="text-center"><?= $key['description']; ?></td>
-                                            <td class="text-center"><?= $key['uom']; ?></td>
-                                            <td class="text-center"><?= $key['min']; ?></td>
-                                            <td class="text-center"><?= $key['max']; ?></td>
+                                            <td class="text-center">
+                                                <?php
+                                                if ($key['uom'] != '') {
+                                                    echo $key['uom'];
+                                                } else {
+                                                    echo $key['option'];
+                                                }
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <?php if ($key['min'] != '') {
+                                                    echo $key['min'];
+                                                } else {
+                                                    echo $key['abnormal'];
+                                                }
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <?php if ($key['max'] != '') {
+                                                    echo $key['max'];
+                                                } else {
+                                                    echo $key['normal'];
+                                                }
+                                                ?>
+                                            </td>
                                             <td class="text-center"><?= $key['showOn']; ?></td>
                                             <td class="text-center"><i class="fa fa-bars"></i></td>
                                         </tr>
@@ -139,115 +183,50 @@
                     </div>
                     <!-- tab setting -->
                     <div class="tab-pane" id="setting" role="tabpanel">
-                        <div class="row mt-2">
+                        <div class="row mt-3">
                             <div class="col-6">
-                                <table class="table mt-2">
-                                    <tr class="mt-1">
-                                        <th>Asset</th>
-                                        <td>:</td>
-                                        <td class="valueDefault">
-                                            <?php foreach ($data as $key) {
-                                                echo $key['assetName'];
-                                            } ?>
-                                        </td>
-                                        <td class="input" style="display: none;"><input type="text" class="form-control" name="assetName" id="assetName" value="<?= $asset['assetName'] ?>"></td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th>Number</th>
-                                        <td>:</td>
-                                        <td class="valueDefault">
-                                            <?php foreach ($data as $key) {
-                                                echo $key['assetNumber'];
-                                            } ?>
-                                        </td>
-                                        <td class="input" style="display: none;"><input type="text" class="form-control" name="assetNumber" id="assetNumber" value="<?= $asset['assetNumber'] ?>"></td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th>Description</th>
-                                        <td>:</td>
-                                        <td class="valueDefault">
-                                            <?php foreach ($data as $key) {
-                                                echo $key['description'];
-                                            } ?>
-                                        </td>
-                                        <td class="input" style="display: none;"><input type="text" class="form-control" name="description" id="description" value="<?= $asset['description'] ?>"></td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th>Status</th>
-                                        <td>:</td>
-                                        <td>
-                                            <?php foreach ($data as $key) {
-                                                echo $key['assetStatusName'];
-                                            } ?>
-                                        </td>
-                                        <!-- <td class="d-flex align-items-center">
-                                            <div class="ml-1 btn-group btn-group-toggle d-flex align-items-center" data-toggle="buttons" disabled>
-                                                <label class="btn btn-sm btn-outline-success">
-                                                    <input type="radio" name="running" autocomplete="off"> Running
-                                                </label>
-                                                <label class="btn btn-sm btn-outline-info">
-                                                    <input type="radio" name="standby" autocomplete="off"> Standby
-                                                </label>
-                                                <label class="btn btn-sm btn-outline-danger">
-                                                    <input type="radio" name="repair" autocomplete="off"> Repair
-                                                </label>
-                                            </div>
-                                        </td> -->
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th>Show Last Value</th>
-                                        <td>:</td>
-                                        <td class="valueDefault">
-                                            <div class="d-flex align-items-center"></div>
-                                            <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                <input type="checkbox" class="c-switch-input" disabled checked>
-                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                            </label>
-                                        </td>
-                                        <td style="display: none;" class="input">
-                                            <div class="d-flex align-items-center"></div>
-                                            <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                <input type="checkbox" class="c-switch-input" checked>
-                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th>Latitude/Longitude</th>
-                                        <td>:</td>
-                                        <td>
-                                            <div class="d-flex align-items-center"></div>
-                                            <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                <input type="checkbox" class="c-switch-input latlong" id="latlong" v-model="checked" checked disabled>
-                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                            </label>
-                                        </td>
-                                        <!-- <td style="display: none;" class="input">
-                                            <div class="d-flex align-items-center">
-                                                <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                                    <input type="checkbox" class="c-switch-input latlong" id="latlong">
-                                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                                </label>
-                                            </div>
-                                        </td> -->
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th>Action</th>
-                                        <td>:</td>
-                                        <th class="d-flex justify-content-start align-items-center">
-                                            <button class="btn btn-sm mr-1" type="button" @click="editDetail()" id="btnEdit"><i class="fa fa-edit mr-1"></i>Edit</button>
+                                <form enctype="multipart/form-data" method="post">
+                                    <div class="form-group row d-flex align-items-center">
+                                        <div class="col-3">
+                                            <label for="asset">Asset</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <input type="text" class="form-control" id="asset" name="asset" v-model="assetName" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row d-flex align-items-center">
+                                        <div class="col-3">
+                                            <label for="asset">Number</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <input type="text" class="form-control" name="asset" v-model="assetNumber" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row d-flex">
+                                        <div class="col-3">
+                                            <label for="asset">Description</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <textarea type="text" class="form-control" name="asset" v-model="assetDesc" rows="8" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex justify-content-end">
+                                    <div class="form-group row mb-0">
+                                        <div class="col-md d-flex justify-content-end align-items-center">
+                                            <button class="btn btn-sm mr-1 btn-outline-primary" type="button" @click="editDetail()" id="btnEdit"><i class="fa fa-edit mr-1"></i>Edit</button>
                                             <div style="display: none;" id="btnCancelEdit">
-                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between" type="button" @click="cancelEdit()"><i class="fa fa-times mr-1"></i> Cancel</button>
+                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between btn-outline-primary" type="button" @click="cancelEdit()"><i class="fa fa-times mr-1"></i> Cancel</button>
                                             </div>
                                             <div id="btnDelete">
-                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between" type="button" @click="deleteAsset()"><i class="fa fa-trash mr-1"></i>Delete</button>
+                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between btn-outline-primary" type="button" @click="deleteAsset()"><i class="fa fa-trash mr-1"></i>Delete</button>
                                             </div>
                                             <div style="display: none;" id="btnUpdate">
-                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between" type="button" @click="updateDetail()"><i class="fa fa-check mr-1"></i> Update</button>
+                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between btn-outline-primary" type="button" @click="updateAsset()"><i class="fa fa-check mr-1"></i> Update</button>
                                             </div>
-                                        </th>
-                                    </tr>
-                                </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-6" style="border: 1px solid #d8dbe0;">
                                 <div class="valueDefault mt-2 w-100">
@@ -258,10 +237,10 @@
                                 </div>
                                 <div style="display: none;" class="input">
                                     <div class="d-flex align-items-center">
-                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" accept="image/png, image/jpeg, image/gif" />
+                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" id="logo" accept="image/png, image/jpeg, image/gif" />
                                     </div>
-                                    <div id="map-container">
-                                        <div id="map" style="min-width: 100% !important; height: 200px;"></div>
+                                    <div id="map-container mb-2 pb-4">
+                                        <div id="map" style="min-width: 100% !important; height: 150px;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -283,7 +262,7 @@
                                         <form method="post" enctype="multipart/form-data">
                                             <div class="row mb-3">
                                                 <label class="col-3" for="parameter">Parameter <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="parameter"></i></label>
-                                                <input type="text" class="form-control col-9 parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameterName">
+                                                <input type="text" class="form-control col-9 parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameterName" :required="true">
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="photo">Photo <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
@@ -297,6 +276,7 @@
                                                         <option value="input">Input</option>
                                                         <option value="select">Select</option>
                                                         <option value="checkbox">Checkbox</option>
+                                                        <option value="textarea">Free Text</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -315,8 +295,7 @@
                                             <div class="row mb-3 typeSelect" style="display: none;">
                                                 <label class="col-3" for="normal">Normal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control normal" name="normal">
-                                                        <option value="" selected disabled>Select Item</option>
+                                                    <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple>
                                                         <option value="item 1">item 1</option>
                                                         <option value="item 2">item 2</option>
                                                         <option value="item 3">item 3</option>
@@ -326,8 +305,7 @@
                                             <div class="row mb-3 typeSelect" style="display: none;">
                                                 <label class="col-3" for="abnormal">Abnormal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control abnormal" name="abnormal">
-                                                        <option value="" selected disabled>Select Item</option>
+                                                    <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple>
                                                         <option value="item 1">item 1</option>
                                                         <option value="item 2">item 2</option>
                                                         <option value="item 3">item 3</option>
@@ -337,24 +315,13 @@
                                             <div class="row mb-3 typeCheckbox" style="display: none;">
                                                 <label class="col-3">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <div class="form-check form-check-inline mr-1">
-                                                        <input class="form-check-input" id="items1Add" type="checkbox" value="Item 1">
-                                                        <label class="form-check-label" for="items1Add">Item 1</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline mr-1">
-                                                        <input class="form-check-input" id="items2Add" type="checkbox" value="Item 2">
-                                                        <label class="form-check-label" for="items2Add">Item 2</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline mr-1">
-                                                        <input class="form-check-input" id="items3Add" type="checkbox" value="Item 3">
-                                                        <label class="form-check-label" for="items3Add">Item 3</label>
-                                                    </div>
+                                                    <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="showOn">Parameter Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <select class="form-control showOn" name="showOn" id="paramStatus">
+                                                    <select class="form-control showOn" name="showOn" id="showOn" multiple>
                                                         <option value="Running">Running</option>
                                                         <option value="Standby">Standby</option>
                                                         <option value="Repair">Repair</option>
@@ -371,8 +338,62 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel" @click="btnCancel()"><i class=" fa fa-times"></i> Cancel</button>
-                                <button type="button" class="btn btn-success" @click="addParam()" id="btnAddParam"><i class="fa fa-check"></i> Add Parameter</button>
+                                <button type="button" class="btn btn-success" @click="addParam()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
                                 <button type="button" class="btn btn-success" @click="updateParameter()" style="display: none;" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- modal import parameter-->
+                <div class="modal fade" role="dialog" id="importParameterModal">
+                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="titleModalAdd">Import Parameter</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <div class="form-group">
+                                        <form action="post" enctype="multipart/form-data">
+                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- modal table import parameter-->
+                <div class="modal fade" role="dialog" id="listImport">
+                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="titleModalAdd">List Parameter</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <table class="table w-100" id="tableImport">
+                                        <thead>
+                                            <tr>
+                                                <th>Parameter</th>
+                                                <th>Description</th>
+                                                <th>UoM</th>
+                                                <th>min</th>
+                                                <th>max</th>
+                                                <th>input type</th>
+                                                <th>show On</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
+                                <button type="button" class="btn btn-success" @click="insertParam()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
                             </div>
                         </div>
                     </div>
@@ -383,7 +404,7 @@
         <div class="card card-main" id="cardChangeLog">
             <div class="row">
                 <div class="mt-2 col-12">
-                    <h5>Change Log</h5>
+                    <h5><b>Change Log</b></h5>
                 </div>
                 <div class="table-responsive w-100 mt-2 col-12">
                     <table class="table table-hover">
@@ -423,46 +444,72 @@
             <div class="row">
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <h5 class="p-0 m-0">
-                            Location Name
-                        </h5>
-                        <hr>
-                        <form method="post" enctype="multipart/form-data">
-                            <div class="valueDefault">
-                                <?php foreach ($data as $key) : ?>
-                                    <span class="badge badge-secondary" style="font-size: 13px;"><?= $key['tagLocationName']; ?></span>
-                                <?php endforeach; ?>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="p-0 m-0">
+                                <b>Asset Location</b>
+                            </h5>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button class="btn btn-sm btn-outline-primary" id="btnLocation" @click="btnLocation()">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" id="btnLocationCancel" @click="btnLocationCancel()">
+                                    <i class="fa fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnLocationSave" @click="btnLocationSave()">
+                                    <i class="fa fa-save"></i>
+                                    Save
+                                </button>
                             </div>
-                            <div class="input" style="display: none;">
-                                <select class="form-control" name="location" id="location" multiple="multiple">
-                                    <?php foreach ($data as $key) : ?>
-                                        <option value="<?= $key['tagLocationName']; ?>" selected><?= $key['tagLocationName']; ?></option>
+                        </div>
+                        <hr>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="location">Location</label>
+                            <div class="col-md-9">
+                                <select class="form-control" name="location" id="location" multiple="multiple" readonly="readonly">
+                                    <?php foreach ($locationData as $val) : ?>
+                                        <option class="optionLocation" value="<?= $val->tagLocationId; ?>" <?= in_array($val->tagLocationId, $assetLocationId) ? 'selected' : ''; ?>><?= $val->tagLocationName; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <h5 class="p-0 m-0">
-                            Tag
-                        </h5>
-                        <hr>
-                        <form method="post" enctype="multipart/form-data">
-                            <div class="valueDefault">
-                                <?php foreach ($data as $key) : ?>
-                                    <span class="badge badge-secondary" style="font-size: 13px;"><?= $key['tagName']; ?></span>
-                                <?php endforeach; ?>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="p-0 m-0">
+                                <b>Asset Tag</b>
+                            </h5>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button class="btn btn-sm btn-outline-primary" id="btnTag" @click="btnTag()">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" id="btnTagCancel" @click="btnTagCancel()">
+                                    <i class="fa fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnTagSave" @click="btnTagSave()">
+                                    <i class="fa fa-save"></i>
+                                    Save
+                                </button>
                             </div>
-                            <div class="input" style="display: none;">
-                                <select class="form-control" name="tag" id="tag" multiple>
-                                    <option value="Tag 1" selected>Tag 1</option>
-                                    <option value="Tag 2" selected>Tag 2</option>
-                                    <option value="Tag 3" selected>Tag 3</option>
+                        </div>
+                        <hr>
+                        <div class="form-group row">
+                            <?php
+                            ?>
+                            <label class="col-md-3 col-form-label" for="tag">Tag</label>
+                            <div class="col-md-9">
+                                <select class="form-control" name="tag" id="tag" multiple readonly>
+                                    <?php foreach ($tagData as $val) : ?>
+                                        <option value="<?= $val->tagId; ?>" <?= in_array($val->tagId, $assetTagId) ? 'selected' : ''; ?>><?= $val->tagName; ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -473,20 +520,41 @@
             <div class="row">
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <h5 class="p-0 m-0">Schedule</h5>
-                        <hr>
-                        <div class="valueDefault">
-                            <p>Daily</p>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="p-0 m-0">
+                                <b>Schedule</b>
+                            </h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary" id="btnSchedule" @click="btnSchedule()">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnScheduleCancel" @click="btnScheduleCancel()">
+                                    <i class="fa fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnScheduleSave" @click="btnScheduleSaave()">
+                                    <i class="fa fa-save"></i>
+                                    Save
+                                </button>
+                            </div>
                         </div>
-                        <div class="input" style="display: none;">
+                        <hr>
+                        <div>
                             <form method="post" enctype="multipart/form-data">
-                                <label for="frequencyType">Set Schedule</label>
-                                <select class="form-control" name="frequencyType" id="frequencyType">
-                                    <option value="" selected disabled>Select Schedule</option>
-                                    <option value="Daily">Daily</option>
-                                    <option value="Weekly">Weekly</option>
-                                    <option value="Monthly">Monthly</option>
-                                </select>
+                                <div class="form-group row d-flex align-items-center">
+                                    <div class="col-3">
+                                        <label for="frequencyType">Frequency</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <select class="form-control" name="frequencyType" id="frequencyType" readonly="readonly">
+                                            <option value="" selected disabled>Select Frequency</option>
+                                            <option value="Daily">Daily</option>
+                                            <option value="Weekly">Weekly</option>
+                                            <option value="Monthly">Monthly</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="mt-3" id="daily" style="display: none;">
                                     <div class="row">
                                         <div class="col">
@@ -620,47 +688,141 @@
                 </div>
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <h5 class="p-0 m-0">Operation</h5>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="p-0 m-0">
+                                <b>Change Operation Mode</b>
+                            </h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary" id="btnOperation" @click="btnOperation()">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnOperationCancel" @click="btnOperationCancel">
+                                    <i class="fa fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnOperationSave" @click="btnOperationSave()">
+                                    <i class="fa fa-save"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
                         <hr>
-                        <div class="ml-1 btn-group btn-group-toggle d-flex align-items-center" data-toggle="buttons" disabled>
-                            <label class="btn btn-sm btn-outline-success">
-                                <input type="radio" name="running" autocomplete="off"> Running
-                            </label>
-                            <label class="btn btn-sm btn-outline-info">
-                                <input type="radio" name="standby" autocomplete="off"> Standby
-                            </label>
-                            <label class="btn btn-sm btn-outline-danger">
-                                <input type="radio" name="repair" autocomplete="off"> Repair
-                            </label>
-                        </div>
-                        <?php foreach ($status as $key) : ?>
-                            <p><?= $key['assetStatusName'] ?></p>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
-            <!-- Asset Tagging and Config -->
-            <div id="cardAssetTagging" style="display: none;">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="card card-main" id="cardLocationTag">
-                            <h5>Asset Tagging</h5>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card card-main" id="cardLocationTag">
-                            <h5>Other Config</h5>
+                        <div class="form-group row">
+                            <div class="col-3">
+                                <label for="operation">Operation</label>
+                            </div>
+                            <div class="col-9">
+                                <select name="operation" id="operation" readonly="readonly">
+                                    <?php foreach ($statusData as $key) : ?>
+                                        <option value="<?= $key->assetStatusId; ?>" <?= in_array($key->assetStatusId, $assetStatus) ? 'selected' : ''; ?>><?= $key->assetStatusName ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Asset Tagging and Config -->
+        <div id="cardAssetTagging" style="display: none;">
+            <div class="row">
+                <div class="col-6 pb-4">
+                    <div class="card card-main h-100" id="cardLocationTag">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="p-0 m-0">
+                                <b>Asset Tagging</b>
+                            </h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary" id="btnTagging" @click="btnTagging()">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnCancelTagging" @click="btnCancelTagging()">
+                                    <i class="fa fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnSaveTagging">
+                                    <i class="fa fa-save"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                        <hr>
+                        <form enctype="multipart/form-data" method="post">
+                            <div class="form-group row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label for="asset">Tagging Value</label>
+                                </div>
+                                <div class="col-9">
+                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="taggingValue" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row d-flex align-items-center">
+
+                                <div class="col-3">
+                                    <label for="asset">Tagging Type</label>
+                                </div>
+                                <div class="col-9">
+                                    <select name="tagging" id="taggingType" readonly="readonly">
+                                        <option value="" selected disabled>Select Tagging Type</option>
+                                        <option value="rfid">rfid</option>
+                                        <option value="coordinate">coordinate</option>
+                                        <option value="uhf">uhf</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label for="asset">Description</label>
+                                </div>
+                                <div class="col-9">
+                                    <input type="text" class="form-control" id="descTagging" placeholder="Description" v-model="taggingDesc" name="tagging" readonly>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-6 pb-4">
+                    <div class="card card-main h-100" id="cardLocationTag">
+                        <h5><b>Other Config</b></h5>
+                        <hr>
+                        <table>
+                            <tr class="mt-1">
+                                <td width="40%">Show Last Value</td>
+                                <td>:</td>
+                                <td>
+                                    <div class="d-flex align-items-center"></div>
+                                    <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                        <input type="checkbox" class="c-switch-input" checked>
+                                        <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="mt-1">
+                                <td>Coordinate</td>
+                                <td>:</td>
+                                <td>
+                                    <div class="d-flex align-items-center"></div>
+                                    <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                        <input type="checkbox" class="c-switch-input latlong" id="latlong">
+                                        <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- parameter -->
         <div class="card card-main" id="cardParameter" style="display: none;">
             <div class="mt-2 d-flex justify-content-between align-items-center">
-                <h5>Parameter</h5>
+                <h5><b>Parameter</b></h5>
                 <div>
-                    <button class="btn btn-sm" @click="addParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
+                    <button class="btn btn-sm" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
                     <button class="btn btn-sm" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
                 </div>
             </div>
@@ -685,9 +847,34 @@
                                 <td><?= $i++; ?></td>
                                 <td class="text-center"><?= $key['parameterName']; ?></td>
                                 <td class="text-center"><?= $key['description']; ?></td>
-                                <td class="text-center"><?= $key['uom']; ?></td>
-                                <td class="text-center"><?= $key['min']; ?></td>
-                                <td class="text-center"><?= $key['max']; ?></td>
+                                <td class="text-center">
+                                    <?php
+                                    if ($key['uom'] != '') {
+                                        echo $key['uom'];
+                                    } else {
+                                        echo $key['option'];
+                                    }
+                                    ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php
+                                    if ($key['min'] != '') {
+                                        echo $key['min'];
+                                    } else {
+                                        echo $key['abnormal'];
+                                    }
+                                    ?>
+
+                                </td>
+                                <td class="text-center">
+                                    <?php
+                                    if ($key['max'] != '') {
+                                        echo $key['max'];
+                                    } else {
+                                        echo $key['normal'];
+                                    }
+                                    ?>
+                                </td>
                                 <td class="text-center"><?= $key['showOn']; ?></td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
@@ -713,13 +900,24 @@
         let v = new Vue({
             el: '#app',
             data: {
+                assetName: `<?= $assetData['assetName']; ?>`,
+                assetNumber: `<?= $assetData['assetNumber']; ?>`,
+                assetDesc: `<?= $assetData['description']; ?>`,
+                taggingValue: `<?php foreach ($tagging as $key) {
+                                    echo $key['assetTaggingValue'];
+                                } ?>`,
+                taggingDesc: `<?php foreach ($tagging as $key) {
+                                    echo $key['description'];
+                                } ?>`,
+                statusId: '',
+                statusName: '',
+                assetLocation: [],
+                assetTag: [],
                 myModal: '',
                 checked: '',
                 param: {
                     parameterId: null,
-                    assetId: `<?php foreach ($data as $key) {
-                                    echo $key['assetId'];
-                                } ?>`,
+                    assetId: `<?= $assetData['assetId']; ?>`,
                     sortId: null,
                     parameterName: '',
                     photo: '',
@@ -727,11 +925,11 @@
                     uom: '',
                     min: null,
                     max: null,
-                    normal: '',
-                    abnormal: '',
+                    normal: [],
+                    abnormal: [],
                     option: '',
                     inputType: '',
-                    showOn: ''
+                    showOn: []
                 }
             },
             mounted() {
@@ -762,24 +960,57 @@
                 getDataParameter() {
                     $('#tableParam').DataTable({
                         dom: 't',
+                        paging: false,
                         rowReorder: {
                             selector: 'td:last-child'
                         },
                     });
                 },
-                updateDetail() {
-                    const swalWithBootstrapButtons = swal.mixin({
-                        customClass: {
-                            confirmButton: 'btn btn-success mr-1',
-                            cancelButton: 'btn btn-danger'
-                        },
-                        buttonsStyling: false
+                updateAsset() {
+                    axios.post("<?= base_url('Asset/update') ?>", {
+                        assetId: this.param.assetId,
+                        assetName: this.assetName,
+                        assetNumber: this.assetNumber,
+                        description: this.assetDesc
+                    }).then(res => {
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: 'You have successfully update this data.',
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        } else if (res.data.status == 'error') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: res.data.message,
+                                icon: 'error'
+                            })
+                        }
                     })
-                    swalWithBootstrapButtons.fire({
-                        title: 'Success!',
-                        text: 'You have successfully update this data.',
-                        icon: 'success'
-                    })
+
                 },
                 deleteAsset() {
                     const swalWithBootstrapButtons = swal.mixin({
@@ -798,11 +1029,112 @@
                         confirmButtonText: '<i class="fa fa-check"></i> Yes, delete!',
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: 'You have successfully deleted this data.',
-                                icon: 'success',
-                                allowOutsideClick: false
+                            axios.post("<?= base_url('Asset/delete'); ?>", {
+                                assetId: this.param.assetId
+                            }).then(res => {
+                                if (res.data.status == 'success') {
+                                    swalWithBootstrapButtons.fire({
+                                        title: 'Success!',
+                                        text: 'You have successfully deleted this data.',
+                                        icon: 'success',
+                                        allowOutsideClick: false
+                                    }).then(okay => {
+                                        if (okay) {
+                                            swal.fire({
+                                                title: 'Please Wait!',
+                                                text: 'Redirect..',
+                                                onOpen: function() {
+                                                    swal.showLoading()
+                                                }
+                                            })
+                                            window.location.href = "<?= base_url('Asset'); ?>"
+                                        }
+                                    })
+                                } else if (res.code == 500) {
+                                    const swalWithBootstrapButtons = swal.mixin({
+                                        customClass: {
+                                            confirmButton: 'btn btn-success mr-1',
+                                            cancelButton: 'btn btn-danger'
+                                        },
+                                        buttonsStyling: false
+                                    })
+                                    swalWithBootstrapButtons.fire({
+                                        title: 'Failed!',
+                                        text: 'Bad Request!',
+                                        icon: 'error',
+                                        allowOutsideClick: false
+                                    })
+                                }
+                            })
+                        }
+                    })
+                },
+                btnTagSave() {
+                    axios.post("<?= base_url('Asset/addTag'); ?>", {
+                        assetId: this.param.assetId,
+                        tagId: this.assetTag,
+                    }).then(res => {
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire(
+                                'Success!',
+                                'You have successfully add tag.',
+                                'success'
+                            ).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        }
+                    })
+                },
+                importParameter() {
+                    this.myModal = new coreui.Modal(document.getElementById('importParameterModal'), {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    this.myModal.show();
+                },
+                insertParam() {
+                    axios.post("<?= base_url('Asset/insertParameter'); ?>", {
+                        dataParam: importList,
+                        assetId: this.param.assetId
+                    }).then(res => {
+                        console.log(res);
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire(
+                                'Success!',
+                                'You have successfully add parameter.',
+                                'success'
+                            ).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
                             })
                         }
                     })
@@ -816,11 +1148,6 @@
                     this.myModal.show();
                 },
                 addParam() {
-                    for (var option of document.getElementById('paramStatus').options) {
-                        if (option.selected) {
-                            v.param.showOn = option.value;
-                        }
-                    }
                     axios.post("<?= base_url('Asset/addParameter'); ?>", {
                         parameterId: this.param.parameterId,
                         assetId: this.param.assetId,
@@ -831,11 +1158,11 @@
                         uom: this.param.uom,
                         min: this.param.min,
                         max: this.param.max,
-                        normal: this.param.normal,
-                        abnormal: this.param.abnormal,
+                        normal: this.param.normal.toString(),
+                        abnormal: this.param.abnormal.toString(),
                         option: this.param.option,
                         inputType: this.param.inputType,
-                        showOn: this.param.showOn
+                        showOn: this.param.showOn.toString()
                     }).then(res => {
                         this.myModal.hide();
                         const swalWithBootstrapButtons = swal.mixin({
@@ -988,92 +1315,261 @@
                     this.param.uom = '';
                     this.param.min = '';
                     this.param.max = '';
-                    this.param.normal = '';
-                    this.param.abnormal = '';
+                    this.param.normal = [];
+                    this.param.abnormal = [];
                     this.param.option = '';
                     this.param.inputType = '';
                     this.param.showOn = '';
                 },
-                editDetail() {
-                    $('.input').show();
-                    $('#btnCancelEdit').show();
-                    $('#btnUpdate').show();
-                    $('.valueDefault').hide();
-                    $('#btnEdit').hide();
-                    $('.latlong').removeAttr('disabled');
-                    $('.latlong').on('change', function() {
-                        if ($(this).is(':checked')) {
-                            mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                            const map = new mapboxgl.Map({
-                                container: 'map', // container ID
-                                style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                                center: [109.005913, -7.727989], // starting position [lng, lat]
-                                zoom: 14, // starting zoom
-                            });
-                            map.addControl(new mapboxgl.FullscreenControl());
-                            map.resize();
-                            const marker = new mapboxgl.Marker({
-                                    draggable: true,
-                                })
-                                .setLngLat([109.005913, -7.727989])
-                                .addTo(map);
-
-                            function onDragEnd(params) {
-                                const lnglat = marker.getLngLat();
-                                coordinates.style.display = 'block';
-                                coordinates.innerHTML = `Longitude: ${lnglat.lng}<br />Latitude: ${lnglat.lat}`;
-                            }
-                            marker.on('dragend', onDragEnd);
-                            $('#map').show();
-                            $('#map').addClass('w-100');
-                        } else if (!($(this).is(':checked'))) {
-                            $('#map').hide();
-                        } else {
-                            swal.fire({
-                                icon: 'error',
-                                title: 'Failed',
-                                text: 'Failed Load Map'
+                btnLocation() {
+                    $('#location').removeAttr("readonly");
+                    $('#btnLocationCancel').show();
+                    $('#btnLocationSave').show();
+                    $('#btnLocation').hide();
+                },
+                btnLocationCancel() {
+                    $('#location').attr("readonly", "readonly");
+                    $('#btnLocationCancel').hide();
+                    $('#btnLocationSave').hide();
+                    $('#btnLocation').show();
+                },
+                btnLocationSave() {
+                    axios.post('<?= base_url('Asset/addTagLocation'); ?>', {
+                        assetId: this.param.assetId,
+                        tagLocationId: this.assetLocation
+                    }).then(res => {
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
                             })
-                        }
-                    })
-                    $('.latlong').on('change', function() {
-                        if ($(this).is(':checked')) {
-                            mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                            const map = new mapboxgl.Map({
-                                container: 'mapSetting', // container ID
-                                style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                                center: [109.005913, -7.727989], // starting position [lng, lat]
-                                zoom: 14, // starting zoom
-                            });
-                            map.addControl(new mapboxgl.FullscreenControl());
-                            map.resize();
-                            const marker = new mapboxgl.Marker()
-                                .setLngLat([109.005913, -7.727989])
-                                .addTo(map);
-
-                            $('#mapSetting').show();
-                            $('#mapSetting').addClass('w-100');
-                        } else if (!($(this).is(':checked'))) {
-                            $('#mapSetting').hide();
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: res.data.message,
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
                         } else {
-                            swal.fire({
-                                icon: 'error',
-                                title: 'Failed',
-                                text: 'Failed Load Map'
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: 'Bad request!',
+                                icon: 'error'
                             })
                         }
                     })
                 },
+                btnTag() {
+                    $('#tag').removeAttr("readonly");
+                    $('#btnTagCancel').show();
+                    $('#btnTagSave').show();
+                    $('#btnTag').hide();
+                },
+                btnTagCancel() {
+                    $('#tag').attr("readonly", "readonly");
+                    $('#btnTagCancel').hide();
+                    $('#btnTagSave').hide();
+                    $('#btnTag').show();
+                },
+                btnTagSave() {
+                    axios.post('<?= base_url('Asset/addTag'); ?>', {
+                        assetId: this.param.assetId,
+                        tagId: this.assetTag,
+                    }).then(res => {
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: res.data.message,
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        } else if (res.data.status == 'failed') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: 'Bad Request!',
+                                icon: 'error'
+                            })
+                        }
+                    })
+                },
+                btnSchedule() {
+                    $('#frequencyType').removeAttr("readonly");
+                    $('#btnScheduleCancel').show();
+                    $('#btnScheduleSave').show();
+                    $('#btnSchedule').hide();
+                },
+                btnScheduleCancel() {
+                    $('#frequencyType').attr("readonly", "readonly");
+                    $('#btnScheduleCancel').hide();
+                    $('#btnScheduleSave').hide();
+                    $('#btnSchedule').show();
+                },
+                btnOperation() {
+                    $('#operation').removeAttr("readonly");
+                    $('#btnOperationCancel').show();
+                    $('#btnOperationSave').show();
+                    $('#btnOperation').hide();
+                },
+                btnOperationCancel() {
+                    $('#operation').attr("readonly", "readonly");
+                    $('#btnOperationCancel').hide();
+                    $('#btnOperationSave').hide();
+                    $('#btnOperation').show();
+                },
+                btnOperationSave() {
+                    axios.post("<?= base_url('Asset/updateOperation'); ?>", {
+                        assetId: this.param.assetId,
+                        assetStatusId: this.statusId,
+                        assetStatusName: this.statusName
+                    }).then(res => {
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: res.data.message,
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        }
+                    })
+                },
+                btnTagging() {
+                    let input = $('input[name=tagging]');
+                    input.removeAttr("readonly");
+                    $('#taggingType').removeAttr("readonly");
+                    $('#btnCancelTagging').show();
+                    $('#btnSaveTagging').show();
+                    $('#btnTagging').hide();
+                },
+                btnCancelTagging() {
+                    this.taggingValue = `<?php foreach ($tagging as $key) {
+                                                echo $key['assetTaggingValue'];
+                                            } ?>`;
+                    this.taggingDesc = `<?php foreach ($tagging as $key) {
+                                            echo $key['description'];
+                                        } ?>`;
+                    let input = $('input[name=tagging]');
+                    input.attr("readonly", "readonly");
+                    $('#taggingType').attr("readonly", "readonly");
+                    $('#btnCancelTagging').hide();
+                    $('#btnSaveTagging').hide();
+                    $('#btnTagging').show();
+                },
+                editDetail() {
+                    let input = $('input[name=asset]');
+                    let textarea = $('textarea[name=asset]');
+                    input.removeAttr("readonly");
+                    textarea.removeAttr("readonly");
+                    $('#btnCancelEdit').show();
+                    $('#btnUpdate').show();
+                    $('#btnEdit').hide();
+                },
                 cancelEdit() {
-                    $('.input').hide();
+                    let input = $('input[name=asset]');
+                    let textarea = $('textarea[name=asset]');
+                    input.attr("readonly", "readonly");
+                    textarea.attr("readonly", "readonly");
+                    this.assetName = `<?= $assetData['assetName']; ?>`;
+                    this.assetNumber = `<?= $assetData['assetNumber']; ?>`;
+                    this.assetDesc = `<?= $assetData['description']; ?>`;
                     $('#btnCancelEdit').hide();
                     $('#btnUpdate').hide();
-                    $('.valueDefault').show();
                     $('#btnEdit').show();
-                    $('.latlong').prop('disabled', true);
                 },
             }
         });
+
+        // Get value selected location, tag, operation mode
+
+        $(document).ready(function() {
+            let selected = $('#tag').val();
+            v.assetTag = selected;
+        })
+
+        $(document).ready(function() {
+            let selected = $('#location').val();
+            v.assetLocation = selected;
+        })
+
+        $(document).ready(function() {
+            let selected = $('#operation').val();
+            let text = $('#operation :selected').text();
+            v.statusId = selected;
+            v.statusName = text;
+        })
+
+        // On change tag, location, operation mode
+        $('#location').on('change', function() {
+            let data = $(this).val();
+            v.assetLocation = data;
+        })
+
+        $('#tag').on('change', function() {
+            let data = $(this).val();
+            v.assetTag = data;
+        })
+
+        $('#operation').on('change', function() {
+            let data = $(this).val();
+            let text = $('#operation :selected').text();
+
+            v.statusId = data;
+            v.statusName = text;
+        })
 
         $('.latlong').on('change', function() {
             if ($(this).is(':checked')) {
@@ -1104,23 +1600,168 @@
                 })
             }
         })
+        $('.latlong').on('change', function() {
+            if ($(this).is(':checked')) {
+                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                const map = new mapboxgl.Map({
+                    container: 'map', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                    center: [109.005913, -7.727989], // starting position [lng, lat]
+                    zoom: 14, // starting zoom
+                });
+                map.addControl(new mapboxgl.FullscreenControl());
+                map.resize();
+                const marker = new mapboxgl.Marker({
+                        draggable: true,
+                    })
+                    .setLngLat([109.005913, -7.727989])
+                    .addTo(map);
 
-        FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
-        const pond = $('.filepond').filepond({
-            acceptedFileTypes: ['image/png', 'image/jpeg'],
-            allowImagePreview: true,
-            imagePreviewMaxHeight: 200,
-            allowImageCrop: true,
-            allowMultiple: false,
-            credits: false,
-            styleLoadIndicatorPosition: 'center bottom',
-            styleProgressIndicatorPosition: 'right bottom',
-            styleButtonRemoveItemPosition: 'left bottom',
-            styleButtonProcessItemPosition: 'right bottom',
-        });
+                function onDragEnd(params) {
+                    const lnglat = marker.getLngLat();
+                    coordinates.style.display = 'block';
+                    coordinates.innerHTML = `Longitude: ${lnglat.lng}<br />Latitude: ${lnglat.lat}`;
+                }
+                marker.on('dragend', onDragEnd);
+                $('#map').show();
+                $('#map').addClass('w-100');
+            } else if (!($(this).is(':checked'))) {
+                $('#map').hide();
+            } else {
+                swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: 'Failed Load Map'
+                })
+            }
+        })
+        $('.latlong').on('change', function() {
+            if ($(this).is(':checked')) {
+                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                const map = new mapboxgl.Map({
+                    container: 'mapSetting', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                    center: [109.005913, -7.727989], // starting position [lng, lat]
+                    zoom: 14, // starting zoom
+                });
+                map.addControl(new mapboxgl.FullscreenControl());
+                map.resize();
+                const marker = new mapboxgl.Marker()
+                    .setLngLat([109.005913, -7.727989])
+                    .addTo(map);
+
+                $('#mapSetting').show();
+                $('#mapSetting').addClass('w-100');
+            } else if (!($(this).is(':checked'))) {
+                $('#mapSetting').hide();
+            } else {
+                swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: 'Failed Load Map'
+                })
+            }
+        })
+
+        $(document).ready(function() {
+            FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+            let pond = $('#logo').filepond({
+                acceptedFileTypes: ['image/png', 'image/jpeg'],
+                allowImagePreview: true,
+                imagePreviewMaxHeight: 200,
+                allowImageCrop: true,
+                allowMultiple: false,
+                credits: false,
+                styleLoadIndicatorPosition: 'center bottom',
+                styleProgressIndicatorPosition: 'right bottom',
+                styleButtonRemoveItemPosition: 'left bottom',
+                styleButtonProcessItemPosition: 'right bottom',
+            });
+        })
+
+        $(document).ready(function() {
+            FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+            let pond = $('#fileImportParam').filepond({
+                acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
+                allowMultiple: false,
+                instantUpload: true,
+                credits: false,
+                server: {
+                    process: {
+                        url: "<?= base_url('Asset/uploadFile'); ?>",
+                        method: 'post',
+                        onload: (res) => {
+                            var rsp = JSON.parse(res);
+                            if (rsp.status == "success") {
+                                importList = rsp.data;
+                                if (importList.length > 0) {
+                                    loadListImport(importList);
+                                    $('#importParameterModal').modal('hide');
+                                    this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
+                                    this.myModal.show();
+                                    $('#fileImportParam').filepond('removeFiles');
+                                }
+                            } else if (rsp.status == "failed") {
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-danger'
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire(
+                                    rsp.message,
+                                    '',
+                                    'error'
+                                )
+                            }
+                        }
+                    }
+                }
+            });
+        })
+
+        var loadListImport = (importList) => {
+            var table = $('#tableImport').DataTable({
+                "processing": false,
+                "serverSide": false,
+                "scrollX": false,
+                "paging": false,
+                "dom": `<"d-flex justify-content-between align-items-center"<i><f>>t`,
+                "data": importList,
+                "columns": [{
+                        "data": "parameterName"
+                    },
+                    {
+                        "data": "description"
+                    },
+                    {
+                        "data": "uom"
+                    },
+                    {
+                        "data": "min"
+                    },
+                    {
+                        "data": "max"
+                    },
+                    {
+                        "data": "inputType"
+                    },
+                    {
+                        "data": "showOn"
+                    }
+                ],
+                "columnDefs": [{
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center',
+                }],
+                "order": [1, 'asc'],
+            });
+        }
+
 
         $('#tableParam tbody tr td:last-child').addClass('cursor-move');
-
         // select2 edit asset
         $(document).ready(function() {
             $('#tag').select2({
@@ -1156,7 +1797,7 @@
         $(document).ready(function() {
             $('#frequencyType').select2({
                 theme: 'coreui',
-                placeholder: "Select Schedule",
+                placeholder: "Select Frequency",
             });
         });
 
@@ -1199,24 +1840,42 @@
         $(document).ready(function() {
             $('.normal').select2({
                 theme: 'coreui',
-                placeholder: "Select Type",
+                placeholder: "Select Item",
                 dropdownParent: $('#addParameterModal'),
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true // add additional parameters
+                    }
+                }
             });
         });
 
         $(document).ready(function() {
             $('.abnormal').select2({
                 theme: 'coreui',
-                placeholder: "Select Type",
+                placeholder: "Select Item",
                 dropdownParent: $('#addParameterModal'),
-            });
-        });
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
 
-        $(document).ready(function() {
-            $('.option').select2({
-                theme: 'coreui',
-                placeholder: "Select Type",
-                dropdownParent: $('#addParameterModal'),
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true // add additional parameters
+                    }
+                }
             });
         });
 
@@ -1228,30 +1887,86 @@
             });
         });
 
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        $(document).ready(function() {
+            $('#operation').select2({
+                theme: 'coreui',
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: uuidv4(),
+                        text: term,
+                        newTag: true // add additional parameters
+                    }
+                }
+            })
+        })
+
+
+        $(document).ready(function() {
+            $('#taggingType').select2({
+                theme: 'coreui',
+                placeholder: 'Select Tagging Type'
+            })
+        })
+
         $('.type').on('change', function() {
             let data = $('.type option:selected').val();
             v.param.inputType = data;
         })
+
         $('.normal').on('change', function() {
-            let data = $('.normal option:selected').val();
+            let data = $('.normal').val();
             v.param.normal = data;
         })
+
         $('.abnormal').on('change', function() {
-            let data = $('.abnormal option:selected').val();
+            let data = $('.abnormal').val();
             v.param.abnormal = data;
+        })
+
+        $('.normalAbnormal').on('change', function() {
+            if (v.param.normal != '' || v.param.abnormal != '') {
+                let normal = v.param.normal.toString();
+                let abnormal = v.param.abnormal.toString();
+                v.param.option = normal + ',' + abnormal;
+            } else if (v.param.normal.length < 1 || v.param.abnormal.length < 1) {
+                v.param.option = '';
+            }
+        })
+
+        $('.showOn').on('change', function() {
+            let data = $('.showOn').val();
+            v.param.showOn = data;
         })
 
         $('.type').on('change', function() {
             if ($(this).val() == 'select') {
                 $('.typeSelect').show();
+                $('.typeCheckbox').show();
                 $('.typeInput').hide();
-                $('.typeCheckbox').hide();
             } else if ($(this).val() == 'checkbox') {
                 $('.typeCheckbox').show();
                 $('.typeSelect').hide();
                 $('.typeInput').hide();
-            } else {
+            } else if ($(this).val() == 'input') {
                 $('.typeInput').show();
+                $('.typeSelect').hide();
+                $('.typeCheckbox').hide();
+            } else {
+                $('.typeInput').hide();
                 $('.typeSelect').hide();
                 $('.typeCheckbox').hide();
             }
@@ -1299,48 +2014,5 @@
                 $('.on').attr('disabled', false);
             }
         })
-
-        // select2 edit parameter
-        $(document).ready(function() {
-            $('.typeEdit').select2({
-                theme: 'coreui',
-                placeholder: "Select Type",
-                dropdownParent: $('#editParameterModal'),
-            });
-        });
-
-        $(document).ready(function() {
-            $('.normalEdit').select2({
-                theme: 'coreui',
-                placeholder: "Select Type",
-                dropdownParent: $('#editParameterModal'),
-            });
-        });
-        $(document).ready(function() {
-            $('.abnormalEdit').select2({
-                theme: 'coreui',
-                placeholder: "Select Type",
-                dropdownParent: $('#editParameterModal'),
-            });
-        });
-        $(document).ready(function() {
-            $('.optionEdit').select2({
-                theme: 'coreui',
-                placeholder: "Select Type",
-                dropdownParent: $('#editParameterModal'),
-            });
-        });
-        $(document).ready(function() {
-            $('.showOnEdit').select2({
-                theme: 'coreui',
-                placeholder: "Parameter Status",
-                dropdownParent: $('#editParameterModal'),
-            });
-        });
     </script>
-    <script>
-
-    </script>
-
-
     <?= $this->endSection(); ?>

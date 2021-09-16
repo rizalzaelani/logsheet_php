@@ -11,4 +11,13 @@ class AssetModel extends Model
     protected $primaryKey       = 'assetId';
     protected $useAutoIncrement = true;
     protected $allowedFields    = ['assetId', 'userId', 'assetStatusId', '', 'assetName', 'assetNumber', 'description', 'frequencyType', 'frequency', 'latitude', 'longitude', 'createdAt', 'updatedAt', 'deletedAt'];
+    protected $createdField     = 'createdAt';
+    protected $updatedField     = 'updatedAt';
+    protected $deletedField     = 'deletedAt';
+    protected $useSoftDeletes   = true;
+
+    public function getById($assetId)
+    {
+        return $this->builder('vw_asset')->where('assetId', $assetId)->get()->getRowArray();
+    }
 }

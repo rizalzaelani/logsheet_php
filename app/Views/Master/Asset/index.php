@@ -1,6 +1,11 @@
 <?= $this->extend('Layout/main'); ?>
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+<style>
+	.select2-container .select2-selection--multiple {
+		max-height: 50px !important;
+	}
+</style>
 <?= $this->endSection(); ?>
 <?= $this->section('content') ?>
 <div class="row" id="app">
@@ -169,7 +174,7 @@
 			});
 
 			$(document).on('click', '#tableEq tbody tr', function() {
-				window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
+				window.location.href = "<?= site_url('Asset/detail2') ?>/" + $(this).attr("data-id");
 			});
 		},
 		methods: {
@@ -239,7 +244,7 @@
 											var dt = Array.from(new Set(data.split(',')));
 											var list_dt = '';
 											$.each(dt, function(key, value) {
-												list_dt += '<span class="badge badge-secondary p-1 mr-1 mb-1" style="font-size: 13px">' + value + '</span>';
+												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
 											})
 											return list_dt;
 										} else {
@@ -321,57 +326,18 @@
 					})
 				}
 			},
-			//cancel on modal
-			handleCancel() {
-				const swalWithBootstrapButtons = swal.mixin({
-					customClass: {
-						confirmButton: 'btn btn-danger'
-					},
-					buttonsStyling: false
-				})
-				swalWithBootstrapButtons.fire({
-						icon: 'error',
-						title: 'Cancelled!',
-						text: 'You cancel adding data.',
-						allowOutsideClick: false
-					})
-					.then(res => {
-						v.adminequip_id = '',
-							v.company = '',
-							v.area = '',
-							v.unit = '',
-							v.equipment = ''
-					})
-			},
-			//show hide search
-			btnSearch() {
-				$('#myInputTextField').show();
-				$('#btnSearch').hide();
-				$('#btnHide').show();
-			},
-			btnHide() {
-				$('#myInputTextField').hide();
-				$('#btnSearch').show();
-				$('#btnHide').hide();
-			},
-			//show hide filter
-			btnFilter() {
-				$('#btnFilter').hide();
-				$('#filter').show();
-				$('#btnHideFilter').show();
-				$(".dataTables_scrollBody").css("max-height", "calc(100vh - 359px)");
-			},
-			btnHideFilter() {
-				$('#btnFilter').show()
-				$('#filter').hide();
-				$('#btnHideFilter').hide();
-				$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
-			}
 		}
 	});
 
 	$('#filter').click(function() {
-		console.log($(this));
+		let filt = document.querySelector('#filter');
+		let contain = (filt.classList.contains('collapsed'));
+		if (!(contain)) {
+			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 349px)");
+		} else if (contain) {
+			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
+		}
+		// let select = document.querySelector('.select2-container ');
 	})
 
 	$('#tag').select2({
