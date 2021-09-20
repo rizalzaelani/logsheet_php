@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class StatusAssetModel extends Model
+class AssetStatusModel extends Model
 {
     protected $DBGroup              = 'default';
     protected $table                = 'tblm_assetStatus';
@@ -12,4 +12,13 @@ class StatusAssetModel extends Model
     protected $returnType           = 'array';
     protected $allowedFields        = ['assetStatusId', 'assetStatusName'];
     protected $createdField         = 'created_at';
+    
+    public function getAll(array $where = null){
+        $query = $this->builder();
+        if($where != null){
+            $query = $query->where($where);
+        }
+
+        return $query->get()->getResultArray();
+    }
 }

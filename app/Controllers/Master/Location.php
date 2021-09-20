@@ -3,7 +3,7 @@
 namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
-use App\Models\LocationModel;
+use App\Models\TagLocationModel;
 
 class Location extends BaseController
 {
@@ -50,7 +50,7 @@ class Location extends BaseController
 
     public function detail($tagLocationId)
     {
-        $model = new LocationModel();
+        $model = new TagLocationModel();
         $location = $model->where('tagLocationId', $tagLocationId)->first();
         $data = array(
             'title' => 'Detail Location',
@@ -75,7 +75,7 @@ class Location extends BaseController
 
     public function update()
     {
-        $model = new LocationModel();
+        $model = new TagLocationModel();
         $json = $this->request->getJSON();
         $id = $json->tagLocationId;
         if (isset($json)) {
@@ -93,7 +93,7 @@ class Location extends BaseController
 
     public function delete()
     {
-        $model = new LocationModel();
+        $model = new TagLocationModel();
         $where = $this->request->getJSON('tagLocationId');
         if (isset($where)) {
             $model->delete($where);

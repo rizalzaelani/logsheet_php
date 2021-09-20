@@ -7,8 +7,8 @@ use App\Models\AssetModel;
 use App\Models\AssetTaggingModel;
 use App\Models\AssetTagLocationModel;
 use App\Models\TagModel;
-use App\Models\LocationModel;
-use App\Models\StatusAssetModel;
+use App\Models\TagLocationModel;
+use App\Models\AssetStatusModel;
 use App\Models\AssetTagModel;
 use App\Models\ParameterModel;
 use CodeIgniter\API\ResponseTrait;
@@ -53,6 +53,7 @@ class Asset extends BaseController
 
 		return $this->template->render('Master/Asset/index', $data);
 	}
+	
 	public function datatable()
 	{
 		$table = 'vw_asset';
@@ -80,7 +81,7 @@ class Asset extends BaseController
 	{
 		$model = new AssetModel();
 		$parameterModel = new ParameterModel();
-		$statusAssetModel = new StatusAssetModel();
+		$assetStatusModel = new AssetStatusModel();
 		$assetTaggingModel = new AssetTaggingModel();
 
 		$assetData = $model->getById($assetId);
@@ -109,9 +110,9 @@ class Asset extends BaseController
 	{
 		$assetModel = new AssetModel();
 		$parameter = new ParameterModel();
-		$statusModel = new StatusAssetModel();
+		$statusModel = new AssetStatusModel();
 		$tagModel = new TagModel();
-		$locationModel = new LocationModel();
+		$tagLocation = new TagLocationModel();
 		$assetTagModel = new AssetTagModel();
 		$assetTagging = new  AssetTaggingModel();
 
@@ -127,8 +128,8 @@ class Asset extends BaseController
 		// d($queryTag);
 		$tag = $tagModel->findColumn('tagName');
 		$tagId = $tagModel->findColumn('tagId');
-		$location = $locationModel->findColumn('tagLocationName');
-		$locationId = $locationModel->findColumn('tagLocationId');
+		$location = $tagLocation->findColumn('tagLocationName');
+		$locationId = $tagLocation->findColumn('tagLocationId');
 
 		$builder = $this->db->table('tblm_asset as a');
 		$builder->select('a.assetId as assetId, a.userId as userId, a.assetName as assetName, a.assetNumber as assetNumber, a.description, a.frequencyType, a.frequency, a.createdAt, a.updatedAt, a.deletedAt');
@@ -297,7 +298,7 @@ class Asset extends BaseController
 	public function updateOperation()
 	{
 		$assetModel = new AssetModel();
-		$statusModel = new StatusAssetModel();
+		$statusModel = new AssetStatusModel();
 		$json = $this->request->getJSON();
 		$assetId = $json->assetId;
 		$statusId = $json->assetStatusId;
@@ -341,8 +342,8 @@ class Asset extends BaseController
 	{
 		$modelAsset = new AssetModel();
 		$modelTag = new TagModel();
-		$modelLocation = new LocationModel();
-		$modelStatus = new StatusAssetModel();
+		$modelLocation = new TagLocationModel();
+		$modelStatus = new AssetStatusModel();
 		$data = array(
 			'title' => "Add Asset",
 		);
