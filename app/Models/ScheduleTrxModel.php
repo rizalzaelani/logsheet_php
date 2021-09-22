@@ -10,7 +10,7 @@ class ScheduleTrxModel extends Model
     protected $table                = 'tblt_scheduleTrx';
     protected $primaryKey           = 'scheduleTrxId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['scheduleTrxId','assetId','assetStatusId','frequencyType','frequency','scheduleFrom','scheduleTo','syncAt','scannedAt','scannedEnd','scannedBy','scannedWith','scannedNotes','scannedAccuration','approvedAt','approvedNotes','condition','createdAt'];
+    protected $allowedFields        = ['scheduleTrxId','assetId','assetStatusId','schType','schFrequency','schWeeks','schWeekDays','schDays','scheduleFrom','scheduleTo','syncAt','scannedAt','scannedEnd','scannedBy','scannedWith','scannedNotes','scannedAccuration','approvedAt','approvedNotes','condition'];
     protected $createdField         = 'createdAt';
 
     public function getById($id)

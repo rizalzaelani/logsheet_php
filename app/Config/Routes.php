@@ -95,6 +95,8 @@ $routes->add('/VersionApps', 'Setting/VersionApps::index');
 $routes->get('/Transaction', 'Transaction/Transaction::index');
 $routes->get('/Transaction/detail', 'Transaction/Transaction::detail');
 
+$routes->get('/ScheduleTrx/generateSchedule', 'Transaction/ScheduleTrx::generateSchedule');
+
 $routes->get('/Finding', 'Finding/Finding::index');
 $routes->get('/Finding/detailList', 'Finding/Finding::detailList');
 $routes->get('/Finding/detail', 'Finding/Finding::detail');
