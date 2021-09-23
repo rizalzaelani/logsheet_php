@@ -54,7 +54,7 @@ class Asset extends BaseController
 
 		return $this->template->render('Master/Asset/index', $data);
 	}
-	
+
 	public function datatable()
 	{
 		$table = 'vw_asset';
@@ -82,8 +82,8 @@ class Asset extends BaseController
 	{
 		$modelAsset = new AssetModel();
 		$modelTag = new TagModel();
-		$modelLocation = new LocationModel();
-		$modelStatus = new StatusAssetModel();
+		$modelLocation = new TagLocationModel();
+		$modelStatus = new AssetStatusModel();
 		$data = array(
 			'title' => "Add Asset",
 		);
@@ -145,7 +145,7 @@ class Asset extends BaseController
 		foreach ($paramNormal as $key => $value) {
 			array_push($normalArray, $value['normal']);
 		}
-		$normal = array_filter(array_unique(explode(",", implode("," ,$normalArray))));
+		$normal = array_filter(array_unique(explode(",", implode(",", $normalArray))));
 
 		// get value abnormal parameter
 		$paramAbnormal = $this->db->table('tblm_parameter')->select('abnormal')->get()->getResultArray();
@@ -153,7 +153,7 @@ class Asset extends BaseController
 		foreach ($paramAbnormal as $key => $value) {
 			array_push($abnormalArray, $value['abnormal']);
 		}
-		$abnormal = array_filter(array_unique(explode(",", implode("," ,$abnormalArray))));
+		$abnormal = array_filter(array_unique(explode(",", implode(",", $abnormalArray))));
 
 		$tagging = $assetTaggingModel->where('assetId', $assetId)->findAll();
 		$tagData = $this->db->table('tblm_tag')->get()->getResult();
@@ -196,7 +196,7 @@ class Asset extends BaseController
 		$assetModel = new AssetModel();
 		$assetTagLocationModel = new AssetTagLocationModel();
 		$assetTagModel = new AssetTagModel();
-		$assetStatusModel = new StatusAssetModel();
+		$assetStatusModel = new AssetStatusModel();
 		$assetTaggingModel = new AssetTaggingModel();
 		$parameterModel = new ParameterModel();
 
@@ -459,7 +459,7 @@ class Asset extends BaseController
 	public function updateOperation()
 	{
 		$assetModel = new AssetModel();
-		$statusModel = new AssetStatusModel();
+		$assetStatusModel = new AssetStatusModel();
 		$json = $this->request->getJSON();
 		$assetId = $json->assetId;
 		$assetStatusId = $json->assetStatusId;
@@ -548,7 +548,7 @@ class Asset extends BaseController
 
 	public function addTagLocation()
 	{
-		$tagLocationModel = new LocationModel();
+		$tagLocationModel = new TagLocationModel();
 		$assetTagLocationModel = new AssetTagLocationModel();
 		$json = $this->request->getJSON();
 		if ($json->tagLocationName != '') {

@@ -18,9 +18,10 @@ class TagLocationModel extends Model
         return $this->builder()->where($this->primaryKey, $id)->get()->getRowArray();
     }
 
-    public function getAll(array $where = null){
+    public function getAll(array $where = null)
+    {
         $query = $this->builder();
-        if($where != null){
+        if ($where != null) {
             $query = $query->where($where);
         }
 
