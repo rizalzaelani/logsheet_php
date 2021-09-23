@@ -6,6 +6,7 @@ use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
 use CodeIgniter\Filters\Honeypot;
+use App\Filters\JWTAuthFilter;
 
 class Filters extends BaseConfig
 {
@@ -16,9 +17,10 @@ class Filters extends BaseConfig
 	 * @var array
 	 */
 	public $aliases = [
-		'csrf'     => CSRF::class,
-		'toolbar'  => DebugToolbar::class,
-		'honeypot' => Honeypot::class,
+		'csrf'     			=> CSRF::class,
+		'toolbar'  			=> DebugToolbar::class,
+		'honeypot' 			=> Honeypot::class,
+		'JWTAuthFilter'		=> JWTAuthFilter::class,
 	];
 
 	/**
@@ -58,5 +60,17 @@ class Filters extends BaseConfig
 	 *
 	 * @var array
 	 */
-	public $filters = [];
+	public $filters = [
+		'JWTAuthFilter' => [
+			'before' => [
+				'api/asset/*',
+				'api/parameter/*',
+				'api/tag/*',
+				'api/tagLocation/*',
+				'api/assetStatus/*',
+				'api/scheduleTrx/*',
+				'api/transaction/*',
+			],
+		],
+	];
 }

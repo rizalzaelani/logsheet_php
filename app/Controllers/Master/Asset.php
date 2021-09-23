@@ -7,8 +7,8 @@ use App\Models\AssetModel;
 use App\Models\AssetTaggingModel;
 use App\Models\AssetTagLocationModel;
 use App\Models\TagModel;
-use App\Models\LocationModel;
-use App\Models\StatusAssetModel;
+use App\Models\TagLocationModel;
+use App\Models\AssetStatusModel;
 use App\Models\AssetTagModel;
 use App\Models\ParameterModel;
 use CodeIgniter\API\ResponseTrait;
@@ -54,6 +54,7 @@ class Asset extends BaseController
 
 		return $this->template->render('Master/Asset/index', $data);
 	}
+	
 	public function datatable()
 	{
 		$table = 'vw_asset';
@@ -132,7 +133,7 @@ class Asset extends BaseController
 	{
 		$model = new AssetModel();
 		$parameterModel = new ParameterModel();
-		$statusAssetModel = new StatusAssetModel();
+		$assetStatusModel = new AssetStatusModel();
 		$assetTaggingModel = new AssetTaggingModel();
 
 		$assetData = $model->getById($assetId);
@@ -458,7 +459,7 @@ class Asset extends BaseController
 	public function updateOperation()
 	{
 		$assetModel = new AssetModel();
-		$assetStatusModel = new StatusAssetModel();
+		$statusModel = new AssetStatusModel();
 		$json = $this->request->getJSON();
 		$assetId = $json->assetId;
 		$assetStatusId = $json->assetStatusId;
