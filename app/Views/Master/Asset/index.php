@@ -130,8 +130,8 @@
 											<input id="description" type="text" class="form-control" required>
 										</div>
 										<div class="mb-3">
-											<label for="frequencyType">Frequency Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequencyType"></i></label>
-											<input id="frequencyType" type="text" class="form-control" required>
+											<label for="schType">Frequency Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="schType"></i></label>
+											<input id="schType" type="text" class="form-control" required>
 										</div>
 										<div class="mb-3">
 											<label for="frequency">Frequency <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="frequency"></i></label>
@@ -174,7 +174,7 @@
 			});
 
 			$(document).on('click', '#tableEq tbody tr', function() {
-				window.location.href = "<?= site_url('Asset/detail2') ?>/" + $(this).attr("data-id");
+				window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
 			});
 		},
 		methods: {
@@ -227,8 +227,8 @@
 									name: "description"
 								},
 								{
-									data: "frequencyType",
-									name: "frequencyType",
+									data: "schType",
+									name: "schType",
 								},
 							],
 							order: [0, 'asc'],

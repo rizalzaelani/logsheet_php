@@ -22,6 +22,7 @@ use Box\Spout\Common\Entity\Style\Border;
 use Box\Spout\Common\Entity\Row;
 
 use Dompdf\Dompdf;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class Asset extends BaseController
 {
@@ -57,8 +58,8 @@ class Asset extends BaseController
 	public function datatable()
 	{
 		$table = 'vw_asset';
-		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'frequencyType', 'createdAt');
-		$column_search = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'frequencyType', 'createdAt');
+		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
+		$column_search = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
 		$order = array('createdAt' => 'asc');
 		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
@@ -77,273 +78,12 @@ class Asset extends BaseController
 		echo json_encode($output);
 	}
 
-	public function detail2($assetId)
-	{
-		$model = new AssetModel();
-		$parameterModel = new ParameterModel();
-		$assetStatusModel = new AssetStatusModel();
-		$assetTaggingModel = new AssetTaggingModel();
-
-		$assetData = $model->getById($assetId);
-
-		$assetParameter = $parameterModel->where('assetId', $assetId)->findAll();
-		$tagging = $assetTaggingModel->where('assetId', $assetId)->findAll();
-		$tagData = $this->db->table('tblm_tag')->get()->getResult();
-		$statusData = $this->db->table('tblm_assetStatus')->get()->getResult();
-		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
-
-		$data = array(
-			'title' => 'Detail Asset',
-			'subtitle' => 'Detail',
-		);
-
-		$data['parameter'] = $assetParameter;
-		$data['assetData'] = $assetData;
-		$data['tagData'] = $tagData;
-		$data['locationData'] = $locationData;
-		$data['statusData'] = $statusData;
-		$data['tagging'] = $tagging;
-		return $this->template->render('Master/Asset/detail', $data);
-	}
-
-	public function detail($assetId)
-	{
-		$assetModel = new AssetModel();
-		$parameter = new ParameterModel();
-		$statusModel = new AssetStatusModel();
-		$tagModel = new TagModel();
-		$tagLocation = new TagLocationModel();
-		$assetTagModel = new AssetTagModel();
-		$assetTagging = new  AssetTaggingModel();
-
-		$asset = $assetModel->where('assetId', $assetId)->first();
-		$assetParameter = $parameter->where('assetId', $assetId)->findAll();
-		$tagging = $assetTagging->where('assetId', $assetId)->findAll();
-		$assetStatus = $statusModel->where('assetStatusId', $asset['assetStatusId'])->first();
-		$assetTag = $assetTagModel->where('assetId', $assetId)->findAll();
-
-		$assetTag2 = $this->db->table('tblm_tag');
-		$assetTag2->select('tagId, tagName');
-		$queryTag = $assetTag2->get()->getResult();
-		// d($queryTag);
-		$tag = $tagModel->findColumn('tagName');
-		$tagId = $tagModel->findColumn('tagId');
-		$location = $tagLocation->findColumn('tagLocationName');
-		$locationId = $tagLocation->findColumn('tagLocationId');
-
-		$builder = $this->db->table('tblm_asset as a');
-		$builder->select('a.assetId as assetId, a.userId as userId, a.assetName as assetName, a.assetNumber as assetNumber, a.description, a.frequencyType, a.frequency, a.createdAt, a.updatedAt, a.deletedAt');
-		$builder->select('CASE WHEN group_concat(distinct c.tagName separator ";") IS NULL THEN "-" ELSE group_concat(distinct c.tagName separator ";") END AS tagName');
-		$builder->select('CASE WHEN group_concat(distinct c.tagId separator ";") IS NULL THEN "-" ELSE group_concat(distinct c.tagId separator ";") END AS tagId');
-		$builder->select('CASE WHEN group_concat(distinct e.tagLocationName separator ";") IS NULL THEN "-" ELSE group_concat(distinct e.tagLocationName separator ";") END AS tagLocationName');
-		$builder->select('CASE WHEN group_concat(distinct e.tagLocationId separator ";") IS NULL THEN "-" ELSE group_concat(distinct e.tagLocationId separator ";") END AS tagLocationId');
-		$builder->select('f.assetStatusId as assetStatus Id, f.assetStatusName as assetStatusName');
-		$builder->join('tblm_assetStatus as f', 'f.assetStatusId = a.assetStatusId');
-		$builder->join('tblmb_assetTag as b', 'b.assetId = a.assetId', 'LEFT');
-		$builder->join('tblm_tag as c', 'c.tagId = b.tagId', 'LEFT');
-		$builder->join('tblmb_assetTagLocation as d', 'd.assetId = a.assetId', 'LEFT');
-		$builder->join('tblm_tagLocation as e', 'e.tagLocationId = d.tagLocationId', 'LEFT');
-		$builder->groupBy('a.assetId, a.userId, a.assetName, a.assetNumber, a.description, a.frequencyType, a.frequency, a.createdAt, a.updatedAt, a.deletedAt');
-		$query = $builder->where('a.assetId', $assetId)->get()->getResult();
-		$tagSelected = (array_values(array_unique(explode(";", $query[0]->tagName))));
-		$tagIdSelected = (array_values(array_unique(explode(";", $query[0]->tagId))));
-		$locationSelected = (array_values(array_unique(explode(";", $query[0]->tagLocationName))));
-		$locationIdSelected = (array_values(array_unique(explode(";", $query[0]->tagLocationId))));
-		$data = array(
-			'title' => 'Detail Asset',
-			'subtitle' => 'Detail',
-		);
-
-		// select option tag
-		$pushTagSelected = array($tagIdSelected, $tagSelected);
-		$pushTag = [];
-		$pushTagId = array_push($pushTag, $tagId);
-		$pushTagName = array_push($pushTag, $tag);
-		$tagIdSelected2 = (array_intersect($pushTagSelected[0], $pushTag[0]));
-		$tagNameSelected = (array_intersect($pushTagSelected[1], $pushTag[1]));
-		$tagg = [];
-		$t = array_push($tagg, $tagIdSelected2);
-		$t = array_push($tagg, $tagNameSelected);
-		// d($pushTag);
-
-		$pushLocationSelected = array($locationIdSelected, $locationSelected);
-		$pushLocation = [];
-		$pushLocationId = array_push($pushLocation, $locationId);
-		$pushLocationName = array_push($pushLocation, $location);
-		$locationIdSelected2 = (array_intersect($pushLocationSelected[0], $pushLocation[0]));
-		$locationNameSelected = (array_intersect($pushLocationSelected[1], $pushLocation[1]));
-		$loc = [];
-		$t = array_push($loc, $locationIdSelected2);
-		$t = array_push($loc, $locationNameSelected);
-		// d($loc);
-
-		$data["breadcrumbs"] = [
-			[
-				"title"	=> "Home",
-				"link"	=> "Dashboard"
-			],
-			[
-				"title"	=> "Asset",
-				"link"	=> "Asset"
-			],
-			[
-				"title" => "Detail",
-				"link" => "detail"
-			],
-		];
-		$data['asset'] = $asset;
-		$data['parameter'] = $assetParameter;
-		$data['data'] = json_decode(json_encode($query), TRUE);
-		$data['selectedTag'] = $tagg;
-		$data['selectedLocation'] = $loc;
-		$data['queryTag'] = $queryTag;
-		$data['assetTag'] = array_intersect($tag, $tagSelected);
-		$data['tagUnselect'] = array_diff($tag, $tagSelected);
-		$data['assetTagId'] = array_intersect($tagId, $tagIdSelected);
-		$data['assetTagIdUnselect'] = array_diff($tagId, $tagIdSelected);
-		$data['assetLocation'] = array_intersect($location, $locationSelected);
-		$data['locationUnselect'] = array_diff($location, $locationSelected);
-		$data['assetLocationId'] = array_intersect($locationId, $locationIdSelected);
-		$data['assetLocationIdUnSelect'] = array_diff($locationId, $locationIdSelected);
-		$data['assetStatus'] = $assetStatus;
-		$data['tagging'] = $tagging;
-		$data['status'] = $statusModel->findAll();
-		// d(array_values(array_unique(explode(";", $query[0]->tagName))));
-		// echo json_encode(array('tag' => $query));
-		// d($queryTag);
-		// d(explode(";", $query[0]->tagName), explode(";", $query[0]->tagId));
-		return $this->template->render('Master/Asset/detail', $data);
-	}
-
-	public function update()
-	{
-		$model = new AssetModel();
-		$json = $this->request->getJSON();
-		$id = $json->assetId;
-		if (!empty($json->assetName)) {
-			$data = array(
-				'assetName' => $json->assetName,
-				'assetNumber' => $json->assetNumber,
-				'description' => $json->description
-			);
-			$model->update($id, $data);
-			echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
-		} else {
-			echo json_encode(array('status' => 'error', 'message' => 'Field asset name cannot be empty!'));
-		}
-		die();
-	}
-
-	public function delete()
-	{
-		$model = new AssetModel();
-		$json  = $this->request->getJSON();
-		if (!empty($json->assetId)) {
-			$model->delete($json->assetId);
-			echo json_encode(array('status' => 'success', 'message' => 'success delete data', 'data' => $json));
-		} else {
-			echo json_encode(array('status' => 'error', 'message' => 'Bad Request!', 'data' => $json));
-		}
-		die();
-	}
-
-	public function addTag()
-	{
-		$model = new AssetTagModel();
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		if ($json->assetId != '' && count($json->tagId) > 0) {
-			$length = count($json->tagId);
-			$model->deleteById($assetId);
-			for ($i = 0; $i < $length; $i++) {
-				$data = array(
-					'assetTagId' => null,
-					'assetId' => $json->assetId,
-					'tagId' => $json->tagId[$i]
-				);
-				$model->insert($data);
-			}
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		} else {
-			$model->deleteById($assetId);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		}
-		die();
-	}
-
-	public function addTagLocation()
-	{
-		$model = new AssetTagLocationModel();
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		if ($json->assetId != '' && count($json->tagLocationId) > 0) {
-			$length = count($json->tagLocationId);
-			$model->deleteById($assetId);
-			for ($i = 0; $i < $length; $i++) {
-				$data = array(
-					'assetTagLocationId' => null,
-					'assetId' => $json->assetId,
-					'tagLocationId' => $json->tagLocationId[$i]
-				);
-				$model->insert($data);
-			}
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		} else {
-			$model->deleteById($assetId);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		}
-		die();
-	}
-
-	public function updateOperation()
-	{
-		$assetModel = new AssetModel();
-		$statusModel = new AssetStatusModel();
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		$statusId = $json->assetStatusId;
-		$assetStatus = $statusModel->where('assetStatusId', $statusId)->get()->getResult();
-		if (count($assetStatus) < 1) {
-			$statusData = array(
-				'assetStatusId' => $json->assetStatusId,
-				'assetStatusName' => $json->assetStatusName,
-			);
-			$statusModel->insert($statusData);
-			$data = array(
-				'assetStatusId' => $json->assetStatusId
-			);
-			$assetModel->update($assetId, $data);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		} else {
-			$data = array(
-				'assetStatusId' => $json->assetStatusId,
-			);
-			$assetModel->update($assetId, $data);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		}
-		die();
-	}
-
-	public function getParam()
-	{
-		$dummy = array(
-			"parameterName" => "PING",
-			"photo" => "photo.jpg",
-			"description" => "desc Parameter",
-			"uom" => "ms",
-			"min" => 35,
-			"max" => 65,
-			"showOn" => "Running, Standby",
-		);
-		echo json_encode($dummy);
-	}
-
 	public function add()
 	{
 		$modelAsset = new AssetModel();
 		$modelTag = new TagModel();
-		$modelLocation = new TagLocationModel();
-		$modelStatus = new AssetStatusModel();
+		$modelLocation = new LocationModel();
+		$modelStatus = new StatusAssetModel();
 		$data = array(
 			'title' => "Add Asset",
 		);
@@ -379,7 +119,7 @@ class Asset extends BaseController
 				'description' => $json->description,
 				'latitude' => $json->latitude,
 				'longitude' => $json->longitude,
-				'frequencyType' => $json->frequencyType,
+				'schType' => $json->schType,
 				'tag' => $json->tag,
 				'location' => $json->location,
 			);
@@ -389,6 +129,454 @@ class Asset extends BaseController
 		}
 	}
 
+	public function detail($assetId)
+	{
+		$model = new AssetModel();
+		$parameterModel = new ParameterModel();
+		$assetStatusModel = new AssetStatusModel();
+		$assetTaggingModel = new AssetTaggingModel();
+
+		$assetData = $model->getById($assetId);
+		$assetParameter = $this->db->table('tblm_parameter')->where('assetId', $assetId)->orderBy('sortId', 'asc')->get()->getResultArray();
+
+		// get value normal parameter
+		$paramNormal = $this->db->table('tblm_parameter')->select('normal')->get()->getResultArray();
+		$normalArray = [];
+		foreach ($paramNormal as $key => $value) {
+			array_push($normalArray, $value['normal']);
+		}
+		$normal = array_filter(array_unique(explode(",", implode("," ,$normalArray))));
+
+		// get value abnormal parameter
+		$paramAbnormal = $this->db->table('tblm_parameter')->select('abnormal')->get()->getResultArray();
+		$abnormalArray = [];
+		foreach ($paramAbnormal as $key => $value) {
+			array_push($abnormalArray, $value['abnormal']);
+		}
+		$abnormal = array_filter(array_unique(explode(",", implode("," ,$abnormalArray))));
+
+		$tagging = $assetTaggingModel->where('assetId', $assetId)->findAll();
+		$tagData = $this->db->table('tblm_tag')->get()->getResult();
+		$statusData = $this->db->table('tblm_assetStatus')->get()->getResult();
+		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
+
+		$data = array(
+			'title' => 'Detail Asset',
+			'subtitle' => 'Detail',
+		);
+
+		$data["breadcrumbs"] = [
+			[
+				"title"	=> "Home",
+				"link"	=> "Dashboard"
+			],
+			[
+				"title"	=> "Asset",
+				"link"	=> "Asset"
+			],
+			[
+				"title"	=> "Detail",
+				"link"	=> "detail"
+			],
+		];
+
+		$data['parameter']		= $assetParameter;
+		$data['normal']			= $normal;
+		$data['abnormal']		= $abnormal;
+		$data['assetData']		= $assetData;
+		$data['tagData']		= $tagData;
+		$data['locationData']	= $locationData;
+		$data['statusData']		= $statusData;
+		$data['tagging']		= $tagging;
+		return $this->template->render('Master/Asset/detail2', $data);
+	}
+
+	public function saveSetting()
+	{
+		$assetModel = new AssetModel();
+		$assetTagLocationModel = new AssetTagLocationModel();
+		$assetTagModel = new AssetTagModel();
+		$assetStatusModel = new StatusAssetModel();
+		$assetTaggingModel = new AssetTaggingModel();
+		$parameterModel = new ParameterModel();
+
+		$post = $this->request->getPost();
+		$assetId = $post['assetId'];
+
+		// $test = $parameterModel->findColumn('normal');
+		// $tblmParam = $this->db->table('tblm_parameter');
+		// $tblmParam->select('normal');
+		// $tblmParam->groupBy('normal');
+		// $queryParam = $tblmParam->get()->getResult();
+		// var_dump($queryParam);
+		// var_dump(array_unique($test));
+
+		if (isset($post['assetId'])) {
+
+			// asset
+			$dataAsset = array(
+				'assetId' => $post['assetId'],
+				'assetName' => $post['assetName'],
+				'assetNumber' => $post['assetNumber'],
+				'description' => $post['assetDesc'],
+				'schType' => $post['schType'],
+				'schFrequency' => $post['schFrequency'] == '' ? null : (int)$post['schFrequency'],
+				'schWeekDays' => $post['schWeekDays'],
+				'schWeeks' => $post['schWeeks'],
+				'schDays' => $post['schDays'],
+				'latitude' => $post['latitude'],
+				'longitude' => $post['longitude'],
+			);
+			$assetModel->update($assetId, $dataAsset);
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
+
+			// taglocation
+			$tagLocation = explode(",", $post['locationId']);
+			$lengthTagLocation = count($tagLocation);
+			$whereTagLocation = $tagLocation[0];
+			if ($whereTagLocation != '') {
+				$assetTagLocationModel->deleteById($assetId);
+				for ($i = 0; $i < $lengthTagLocation; $i++) {
+					$dataTagLocation = array(
+						'assetTagLocationId' => null,
+						'assetId' => $assetId,
+						'tagLocationId' => $tagLocation[$i]
+					);
+					$assetTagLocationModel->insert($dataTagLocation);
+					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+				}
+			} else {
+				$assetTagLocationModel->deleteById($assetId);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+			}
+
+			// tag
+			$tag = explode(",", $post['tagId']);
+			$lengthTag = count($tag);
+			$whereTag = $tag[0];
+			if ($whereTag != '') {
+				$assetTagModel->deleteById($assetId);
+				for ($i = 0; $i < $lengthTag; $i++) {
+					$dataTag = array(
+						'assetTagId' => null,
+						'assetId' => $assetId,
+						'tagId' => $tag[$i]
+					);
+					$assetTagModel->insert($dataTag);
+					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+				}
+			} else {
+				$assetTagModel->deleteById($assetId);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+			}
+
+			// asset status
+			$assetStatusId = $post['assetStatusId'];
+			$assetStatus = $assetStatusModel->where('assetStatusId', $assetStatusId)->get()->getResult();
+			$lengthAssetStatus = count($assetStatus);
+			if ($lengthAssetStatus < 1) {
+				$dataStatus = array(
+					'assetStatusId' => $post['assetStatusId'],
+					'assetstatusName' => $post['assetStatusName']
+				);
+				$assetStatusModel->insert($dataStatus);
+				$dataAssetStatus = array(
+					'assetStatusId' => $post['assetStatusId']
+				);
+				$assetModel->update($assetId, $dataAssetStatus);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataStatus));
+			} else {
+				$dataAssetStatus = array(
+					'assetStatusId' => $post['assetStatusId'],
+				);
+				$assetModel->update($assetId, $dataAssetStatus);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+			}
+
+			// asset tagging
+			$assetTagging = $assetTaggingModel->where('assetId', $assetId)->get()->getResult();
+			$lengthTagging = count($assetTagging);
+			$assetTaggingId = $post['assetTaggingId'];
+			if ($post['assetTaggingValue'] != '') {
+				if ($lengthTagging > 0) {
+					$dataAssetTagging = array(
+						'assetId' => $assetId,
+						'assetTaggingValue' => $post['assetTaggingValue'],
+						'assetTaggingtype' => $post['assetTaggingType'],
+						'description' => $post['assetTaggingDescription'],
+					);
+					$assetTaggingModel->update($assetTaggingId, $dataAssetTagging);
+					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAssetTagging));
+				} else {
+					$dataAssetTagging = array(
+						'assetId' => $assetId,
+						'assetTaggingValue' => $post['assetTaggingValue'],
+						'assetTaggingtype' => $post['assetTaggingType'],
+						'description' => $post['assetTaggingDescription']
+					);
+					$assetTaggingModel->insert($dataAssetTagging);
+					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAssetTagging));
+				}
+			} else {
+				$assetTaggingModel->deleteById($assetId);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $post));
+			}
+
+			// asset parameter
+			$lengthParam = count($post['parameter']);
+			if ($post['parameter'][0] != '') {
+				for ($i = 0; $i < $lengthParam; $i++) {
+					$file = $this->request->getFile('photo' . json_decode($post['parameter'][$i])->parameterId);
+					if ($file != '') {
+						$name = "IMG_" . $file->getRandomName();
+						$file->move('../public/assets/uploads/img', $name);
+						$dataParam = array(
+							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
+							'assetId' => $assetId,
+							'sortId' => (json_decode($post['parameter'][$i])->sortId) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->sortId,
+							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
+							'photo' => $name,
+							'description' => json_decode($post['parameter'][$i])->description,
+							'uom' => json_decode($post['parameter'][$i])->uom,
+							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
+							'max' => (json_decode($post['parameter'][$i])->max) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->max,
+							'normal' => json_decode($post['parameter'][$i])->normal,
+							'abnormal' => json_decode($post['parameter'][$i])->abnormal,
+							'option' => json_decode($post['parameter'][$i])->option,
+							'inputType' => json_decode($post['parameter'][$i])->inputType,
+							'showOn' => json_decode($post['parameter'][$i])->showOn,
+						);
+						$parameterModel->insert($dataParam);
+						// var_dump($dataParam);
+					} else {
+						$dataParam = array(
+							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
+							'assetId' => $assetId,
+							'sortId' => (json_decode($post['parameter'][$i])->sortId) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->sortId,
+							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
+							'photo' => '',
+							'description' => json_decode($post['parameter'][$i])->description,
+							'uom' => json_decode($post['parameter'][$i])->uom,
+							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
+							'max' => (json_decode($post['parameter'][$i])->max) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->max,
+							'normal' => json_decode($post['parameter'][$i])->normal,
+							'abnormal' => json_decode($post['parameter'][$i])->abnormal,
+							'option' => json_decode($post['parameter'][$i])->option,
+							'inputType' => json_decode($post['parameter'][$i])->inputType,
+							'showOn' => json_decode($post['parameter'][$i])->showOn,
+						);
+						$parameterModel->insert($dataParam);
+						// var_dump($dataParam);
+					}
+				}
+			}
+		} else {
+			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
+		}
+		die();
+	}
+
+	public function update()
+	{
+		$model = new AssetModel();
+		$json = $this->request->getJSON();
+		$assetId = $json->assetId;
+		if (!empty($json->assetName) && !empty($json->assetNumber) && !empty($json->description)) {
+			$data = array(
+				'assetName' => $json->assetName,
+				'assetNumber' => $json->assetNumber,
+				'description' => $json->description
+			);
+			$model->update($assetId, $data);
+			echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
+		} else {
+			echo json_encode(array('status' => 'error', 'message' => 'All field cannot be empty!'));
+		}
+		die();
+	}
+
+	public function delete()
+	{
+		$model = new AssetModel();
+		$json  = $this->request->getJSON();
+		if (!empty($json->assetId)) {
+			$model->delete($json->assetId);
+			echo json_encode(array('status' => 'success', 'message' => 'success delete data', 'data' => $json));
+		} else {
+			echo json_encode(array('status' => 'error', 'message' => 'Bad Request!', 'data' => $json));
+		}
+		die();
+	}
+
+	public function updateTag()
+	{
+		$assetTagModel = new AssetTagModel();
+		$json = $this->request->getJSON();
+		$assetId = $json->assetId;
+		if ($json->assetId != '' && count($json->tagId) > 0) {
+			$length = count($json->tagId);
+			$assetTagModel->deleteById($assetId);
+			for ($i = 0; $i < $length; $i++) {
+				$data = array(
+					'assetTagId' => null,
+					'assetId' => $json->assetId,
+					'tagId' => $json->tagId[$i]
+				);
+				$assetTagModel->insert($data);
+			}
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+		} else {
+			$assetTagModel->deleteById($assetId);
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+		}
+		die();
+	}
+
+	public function updateTagLocation()
+	{
+		$assetTagLocationModel = new AssetTagLocationModel();
+		$json = $this->request->getJSON();
+		$assetId = $json->assetId;
+		if ($json->assetId != '' && count($json->tagLocationId) > 0) {
+			$length = count($json->tagLocationId);
+			$assetTagLocationModel->deleteById($assetId);
+			for ($i = 0; $i < $length; $i++) {
+				$data = array(
+					'assetTagLocationId' => null,
+					'assetId' => $json->assetId,
+					'tagLocationId' => $json->tagLocationId[$i]
+				);
+				$assetTagLocationModel->insert($data);
+			}
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+		} else {
+			$assetTagLocationModel->deleteById($assetId);
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+		}
+		die();
+	}
+
+	public function updateOperation()
+	{
+		$assetModel = new AssetModel();
+		$statusModel = new AssetStatusModel();
+		$json = $this->request->getJSON();
+		$assetId = $json->assetId;
+		$assetStatusId = $json->assetStatusId;
+		$assetStatus = $assetStatusModel->where('assetStatusId', $assetStatusId)->get()->getResult();
+		if (count($assetStatus) < 1) {
+			$statusData = array(
+				'assetStatusId' => $json->assetStatusId,
+				'assetStatusName' => $json->assetStatusName,
+			);
+			$assetStatusModel->insert($statusData);
+			$data = array(
+				'assetStatusId' => $json->assetStatusId
+			);
+			$assetModel->update($assetId, $data);
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+		} else {
+			$data = array(
+				'assetStatusId' => $json->assetStatusId,
+			);
+			$assetModel->update($assetId, $data);
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+		}
+		die();
+	}
+
+	public function updateTagging()
+	{
+		$assetTaggingModel = new AssetTaggingModel();
+		$builder = $this->db->table('tblm_assetTagging');
+		$json = $this->request->getJSON();
+		$assetId = $json->assetId;
+		$builder->where('assetId', $assetId);
+		$result = $builder->get()->getResult();
+		$assetTaggingId = $json->assetTaggingId;
+		if ($json->assetId != '') {
+			if (count($result) > 0) {
+				$data = array(
+					'assetId' => $assetId,
+					'assetTaggingValue' => $json->assetTaggingValue,
+					'assetTaggingtype' => $json->assetTaggingType,
+					'description' => $json->description
+				);
+				$assetTaggingModel->update($assetTaggingId, $data);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+			} else {
+				$dataTagging = array(
+					'assetTaggingId' => null,
+					'assetId' => $assetId,
+					'assetTaggingValue' => $json->assetTaggingValue,
+					'assetTaggingtype' => $json->assetTaggingType,
+					'description' => $json->description
+				);
+				$assetTaggingModel->insert($dataTagging);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $dataTagging));
+			}
+		} else {
+			echo json_encode(array('status' => 'success', 'message' => 'Bad Request!'));
+		}
+		die();
+	}
+
+	public function addTag()
+	{
+		$tagModel = new TagModel();
+		$assetTagModel = new AssetTagModel();
+		$json = $this->request->getJSON();
+		if ($json->tagName != '') {
+			$data = array(
+				'tagId' => $json->tagId,
+				'tagName' => $json->tagName,
+				'description' => $json->description
+			);
+			$tagModel->insert($data);
+			$dataAssetTag = array(
+				'assetTagId' => null,
+				'assetId' => $json->assetId,
+				'tagId' => $json->tagId
+			);
+			$assetTagModel->insert($dataAssetTag);
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully added data.', 'data' => $data));
+		} else {
+			echo json_encode(array('status' => 'success', 'message' => 'Field tag name cannot be empty!'));
+		}
+		die();
+	}
+
+	public function addTagLocation()
+	{
+		$tagLocationModel = new LocationModel();
+		$assetTagLocationModel = new AssetTagLocationModel();
+		$json = $this->request->getJSON();
+		if ($json->tagLocationName != '') {
+			$data = array(
+				'tagLocationId' => $json->tagLocationId,
+				'tagLocationName' => $json->tagLocationName,
+				'latitude' => $json->latitude,
+				'longitude' => $json->longitude,
+				'description' => $json->description
+			);
+			$tagLocationModel->insert($data);
+			$dataAssetTagLocation = array(
+				'assetTagLocationId' => null,
+				'assetId' => $json->assetId,
+				'tagLocationId' => $json->tagLocationId
+			);
+			$assetTagLocationModel->insert($dataAssetTagLocation);
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully added data.', 'data' => $data));
+		} else {
+			echo json_encode(array('status' => 'success', 'message' => 'Field location name cannot be empty!'));
+		}
+		die();
+	}
+
+	public function download()
+	{
+		return $this->response->download('../public/download/param1.xlsx', null);
+	}
 	public function uploadFile()
 	{
 		$file = $this->request->getFile('importParam');
@@ -432,25 +620,25 @@ class Asset extends BaseController
 
 	public function insertParameter()
 	{
-		$model = new ParameterModel();
+		$parameterModel = new ParameterModel();
 		$json = $this->request->getJSON();
-		$dataParam = $json->dataParam;
+		$dataParameter = $json->dataParam;
 		$assetId = $json->assetId;
-		$length = count($dataParam);
+		$length = count($dataParameter);
 		for ($i = 0; $i < $length; $i++) {
 			$data = [
 				'parameterId' => null,
 				'assetId' => $assetId,
 				'sortId' => null,
-				'parameterName' => $dataParam[$i]->parameterName,
-				'description' => $dataParam[$i]->description,
-				(($dataParam[$i]->inputType == "input") ? 'uom' : 'option') => $dataParam[$i]->uom,
-				(is_string($dataParam[$i]->min) ? 'abnormal' : 'min') => $dataParam[$i]->min,
-				(is_string($dataParam[$i]->max) ? 'normal' : 'max') => $dataParam[$i]->max,
-				'inputType' => $dataParam[$i]->inputType,
-				'showOn' => $dataParam[$i]->showOn,
+				'parameterName' => $dataParameter[$i]->parameterName,
+				'description' => $dataParameter[$i]->description,
+				(($dataParameter[$i]->inputType == "input") ? 'uom' : 'option') => $dataParameter[$i]->uom,
+				(is_string($dataParameter[$i]->min) ? 'abnormal' : 'min') => $dataParameter[$i]->min,
+				(is_string($dataParameter[$i]->max) ? 'normal' : 'max') => $dataParameter[$i]->max,
+				'inputType' => $dataParameter[$i]->inputType,
+				'showOn' => $dataParameter[$i]->showOn,
 			];
-			$model->insert($data);
+			$parameterModel->insert($data);
 		}
 		echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
 		die();
@@ -458,31 +646,60 @@ class Asset extends BaseController
 
 	public function addParameter()
 	{
-		$model = new ParameterModel();
-		$file = $this->request->getFile('photo');
-		$json = $this->request->getJSON();
-		if (isset($json)) {
-			$data = array(
-				'test' => $file,
-				'parameterId' => $json->parameterId,
-				'assetId' => $json->assetId,
-				'sortId' => $json->sortId,
-				'parameterName' => $json->parameterName,
-				'photo' => $json->photo,
-				'description' => $json->description,
-				'uom' => $json->uom,
-				'min' => $json->min,
-				'max' => $json->max,
-				'normal' => $json->normal,
-				'abnormal' => $json->abnormal,
-				'option' => $json->option,
-				'inputType' => $json->inputType,
-				'showOn' => $json->showOn,
-			);
-			// $model->insert($data);
-			echo json_encode(array('status' => 'success', 'message' => 'Success add parameter', 'data' => $data));
-			die();
+		$parameterModel = new ParameterModel();
+		$request = \Config\Services::request();
+		$post = $this->request->getPost();
+		$file = $request->getFile('photo');
+		if ($file != null) {
+			$name = 'IMG_' . time() . '.png';
+			$file->move('../uploads/img', $name);
+			if ($post['assetId'] != '' && $post['parameterName'] != '') {
+				$data = array(
+					'parameterId' => $post['parameterId'],
+					'assetId' => $post['assetId'],
+					'sortId' => $post['sortId'],
+					'parameterName' => $post['parameterName'],
+					'photo' => $name,
+					'description' => $post['description'],
+					'uom' => $post['uom'],
+					'min' => $post['min'],
+					'max' => $post['max'],
+					'normal' => $post['normal'],
+					'abnormal' => $post['abnormal'],
+					'option' => $post['option'],
+					'inputType' => $post['inputType'],
+					'showOn' => $post['showOn'],
+				);
+				$parameterModel->insert($data);
+				echo json_encode(array('status' => 'success', 'message' => 'Success add parameter', 'data' => $data, 'file' => $file));
+			} else {
+				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
+			}
+		} else {
+			if ($post['assetId'] != '' && $post['parameterName'] != '') {
+				$data = array(
+					'parameterId' => $post['parameterId'],
+					'assetId' => $post['assetId'],
+					'sortId' => $post['sortId'],
+					'parameterName' => $post['parameterName'],
+					'photo' => '',
+					'description' => $post['description'],
+					'uom' => $post['uom'],
+					'min' => $post['min'],
+					'max' => $post['max'],
+					'normal' => $post['normal'],
+					'abnormal' => $post['abnormal'],
+					'option' => $post['option'],
+					'inputType' => $post['inputType'],
+					'showOn' => $post['showOn'],
+				);
+				$parameterModel->insert($data);
+				echo json_encode(array('status' => 'success', 'message' => 'Success update parameter', 'data' => $data, 'file' => $file));
+			} else {
+				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
+			}
 		}
+		die();
 	}
 
 	public function editParameter()
@@ -496,6 +713,73 @@ class Asset extends BaseController
 	}
 
 	public function updateParameter()
+	{
+		$parameterModel = new ParameterModel();
+		$builder = $this->db->table('tblm_parameter');
+		$request = \Config\Services::request();
+		$post = $this->request->getPost();
+		$parameterId = $post['parameterId'];
+		$builder->select('photo')->where('parameterId', $parameterId);
+		$photo = $builder->get()->getResult();
+		$file = $request->getFile('photo');
+		$isNull = ($file == NULL) ? 'true' : 'false';
+		if ($isNull == 'false') {
+			if ($photo[0]->photo != '') {
+				unlink('../public/assets/uploads/img/' . $photo[0]->photo);
+			}
+			$name = "IMG_" . $file->getRandomName();
+			$file->move('../public/assets/uploads/img', $name);
+			if ($post['assetId'] != '' && $post['parameterName'] != '') {
+				$data = array(
+					'assetId' => $post['assetId'],
+					'sortId' => $post['sortId'] == "null" || "" || 0 ? null : $post['sortId'],
+					'parameterName' => $post['parameterName'],
+					'photo' => $name,
+					'description' => $post['description'],
+					'uom' => $post['uom'],
+					'min' => $post['min'] == "null" || "" || 0 ? null : $post['min'],
+					'max' => $post['max'] == "null" || "" || 0 ? null : $post['max'],
+					'normal' => $post['normal'],
+					'abnormal' => $post['abnormal'],
+					'option' => $post['option'],
+					'inputType' => $post['inputType'],
+					'showOn' => $post['showOn'],
+				);
+				$parameterModel->update($parameterId, $data);
+				echo json_encode(array('status' => 'success', 'message' => 'Success update parameter', 'data' => $data, 'file' => $file));
+				die();
+			} else {
+				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
+			}
+		} else if ($isNull == 'true') {
+			if ($post['assetId'] != '' && $post['parameterName'] != '') {
+				// var_dump($post['min']);
+				$data = array(
+					'assetId' => $post['assetId'],
+					'sortId' => $post['sortId'] == "null" || "" || 0 ? null : $post['sortId'],
+					'parameterName' => $post['parameterName'],
+					'photo' => $post['photo'],
+					'description' => $post['description'],
+					'uom' => $post['uom'],
+					'min' => $post['min'] == "null" || "" || 0 ? null : $post['min'],
+					'max' => $post['max'] == "null" || "" || 0 ? null : $post['max'],
+					'normal' => $post['normal'],
+					'abnormal' => $post['abnormal'],
+					'option' => $post['option'],
+					'inputType' => $post['inputType'],
+					'showOn' => $post['showOn'],
+				);
+				$parameterModel->update($parameterId, $data);
+				echo json_encode(array('status' => 'success', 'message' => 'Success update parameter test', 'data' => $data));
+				die();
+			} else {
+				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
+			}
+		}
+		die();
+	}
+
+	public function updateParameter2()
 	{
 		$model = new ParameterModel();
 		$json = $this->request->getJSON();
@@ -530,12 +814,20 @@ class Asset extends BaseController
 		die();
 	}
 
-	public function dataTag()
+	public function sortingParameter()
 	{
-		$modelTag = new TagModel();
-		$data = array(
-			'data' => $modelTag->findAll()
-		);
-		return json_encode($data);
+		$parameterModel = new ParameterModel();
+		$json = $this->request->getJSON();
+		$data = $json->data;
+		$length = count(($data));
+		// var_dump($data);
+		foreach ($data as $key => $value) {
+			$dataSort = array(
+				'sortId' => $value[0]
+			);
+			$parameterModel->update($value[1], $dataSort);
+		}
+		echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
+		die();
 	}
 }
