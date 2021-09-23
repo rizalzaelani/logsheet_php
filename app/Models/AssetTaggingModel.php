@@ -11,4 +11,9 @@ class AssetTaggingModel extends Model
     protected $primaryKey       = 'assetTaggingId';
     protected $useAutoIncrement = true;
     protected $allowedFields    = ['assetTaggingId', 'assetId', 'assetTaggingValue', '', 'assetTaggingType', 'description'];
+
+    public function deleteById($assetId)
+    {
+        return $this->builder('tblm_assetTagging')->where('assetId', $assetId)->delete();
+    }
 }

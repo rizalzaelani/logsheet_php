@@ -11,7 +11,7 @@ class TagLocationModel extends Model
     protected $primaryKey           = 'tagLocationId';
     protected $returnType           = 'array';
     protected $allowedFields        = ['tagLocationId', 'tagLocationName', 'latitude', 'longitude', 'description'];
-    protected $createdField         = 'created_at';
+    protected $createdField         = 'createdAt';
 
     public function getById($id)
     {

@@ -52,7 +52,7 @@ class Tag extends BaseController
     {
         $model = new TagModel();
         $data = $this->request->getJSON();
-        if (isset($data)) {
+        if ($data->tagName != '' && $data->description != '') {
             $dt = array(
                 'tagId' => $data->tagId,
                 'userId' => $data->userId,
@@ -60,8 +60,10 @@ class Tag extends BaseController
                 'description' => $data->description
             );
             $model->insert($dt);
-            echo json_encode(array('status' => 'success', 'message' => 'success add tag', 'data' => $dt));
-            die();
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully added tag.', 'data' => $dt));
+        }else{
+            echo json_encode(array('status' => 'failed', 'message' => 'All fields cannot be empty'));
         }
+        die();
     }
 }

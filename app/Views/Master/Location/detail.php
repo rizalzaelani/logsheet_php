@@ -21,89 +21,53 @@
                 <div class="d-flex justify-content-between mb-1">
                     <h4><?= $title ?></h4>
                     <h5 class="header-icon">
-                        <a href="javascript:;" class="dt-search" data-target="#tableLocation"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
-                        <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Location</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="<?= base_url('/Location/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
-                            <a class="dropdown-item" href="<?= base_url('/Location/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
-                        </div>
+                        <a href="<?= base_url('Location'); ?>" class="btn btn-sm btn-success"><i class="fa fa-arrow-left"></i> Back</a>
                     </h5>
                 </div>
                 <div class="row mt-2">
                     <div class="col-6 h-100">
-                        <table class="table mt-2">
-                            <tr class="mt-2">
-                                <th>Location Name</th>
-                                <td>:</td>
-                                <td><?= $location['tagLocationName']; ?></td>
-                            </tr>
-                            <tr class="mt-2">
-                                <th>Latitude</th>
-                                <td>:</td>
-                                <td><?= $location['latitude']; ?></td>
-                            </tr>
-                            <tr class="mt-2">
-                                <th>Longitude</th>
-                                <td>:</td>
-                                <td><?= $location['longitude']; ?></td>
-                            </tr>
-                            <tr class="mt-2">
-                                <th>Description</th>
-                                <td>:</td>
-                                <td><?= $location['description']; ?></td>
-                            </tr>
-                            <tr class="mt-1">
-                                <th>Action</th>
-                                <td>:</td>
-                                <th class="d-flex justify-content-start align-items-center">
-                                    <button class="btn btn-sm mr-1" type="button" @click="editLocation()" id="btnEdit"><i class="fa fa-edit mr-1"></i>Edit</button>
-                                    <button class="btn btn-sm mr-1" type="button" @click="deleteLocation()"><i class="fa fa-trash mr-1"></i>Delete</button>
-                                </th>
-                            </tr>
-                        </table>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label for="tagLocationName">Location Name</label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="tagLocationName" v-model="tagLocationName" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label for="latitude">Latitude</label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="latitude" v-model="latitude" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label for="longitude">Longitude</label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="longitude" v-model="longitude" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label for="description">Description</label>
+                            </div>
+                            <div class="col-8">
+                                <textarea class="form-control" id="description" v-model="description" rows="5" readonly></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-12 d-flex justify-content-end align-items-center">
+                                <button class="btn btn-sm btn-outline-primary" type="button" @click="editLocation()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="cancelEditLocation()" id="btnCancelEdit"><i class="fa fa-times"></i> Cancel</button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="saveEditLocation()" id="btnSaveEdit"><i class="fa fa-save"></i> Save</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-6 imgMap h-100" style="border: 1px solid #d8dbe0;">
                         <div class="mt-2 mb-2" id="mapLocation" style="width: 100% !important; height: 300px"></div>
-                    </div>
-                </div>
-
-                <!-- Modal Edit-->
-                <div class="modal fade" id="modalLocation" tabindex="-1" role="dialog" aria-labelledby="modalLocationTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalLocationTitle">Edit Location</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="form-group">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="tagLocationName">Tag Location Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="tagLocationName"></i></label>
-                                        <input id="tagLocationName" type="text" class="form-control" required v-model="location">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="latitude">Latitude <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="latitude"></i></label>
-                                        <input id="latitude" type="text" class="form-control" required v-model="latitude">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="longitude">Longitude <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="longitude"></i></label>
-                                        <input id="longitude" type="text" class="form-control" required v-model="longitude">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="longitude"></i></label>
-                                        <input id="description" type="text" class="form-control" required v-model="description">
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button class="btn btn-primary" @click="update()">Save changes</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -120,36 +84,44 @@
         data: {
             myModal: '',
             tagLocationId: "<?= $location['tagLocationId']; ?>",
-            location: "<?= $location['tagLocationName']; ?>",
+            tagLocationName: "<?= $location['tagLocationName']; ?>",
             latitude: "<?= $location['latitude']; ?>",
             longitude: "<?= $location['longitude']; ?>",
             description: "<?= $location['description']; ?>",
         },
         methods: {
             editLocation() {
-                this.myModal = new coreui.Modal(document.getElementById('modalLocation'), {});
-                this.myModal.show();
+                $("input[type=text]").removeAttr("readonly");
+                $('textarea[id=description]').removeAttr("readonly");
+                $('#btnCancelEdit').show();
+                $('#btnEdit').hide();
+                $('#btnSaveEdit').show();
             },
-            update() {
+            cancelEditLocation(){
+                $("input[type=text]").attr("readonly", "readonly");
+                $('textarea[id=description]').attr("readonly", "readonly");
+                $('#btnEdit').show();
+                $('#btnCancelEdit').hide();
+                $('#btnSaveEdit').hide();
+            },
+            saveEditLocation() {
                 axios.post("<?= base_url('Location/update'); ?>", {
                     tagLocationId: this.tagLocationId,
-                    tagLocationName: this.location,
+                    tagLocationName: this.tagLocationName,
                     latitude: this.latitude,
                     longitude: this.longitude,
                     description: this.description
                 }).then(res => {
                     if (res.data.status == 'success') {
-                        this.myModal.hide();
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
                                 confirmButton: 'btn btn-success mr-1',
-                                cancelButton: 'btn btn-danger'
                             },
                             buttonsStyling: false
                         })
                         swalWithBootstrapButtons.fire({
                             title: 'Success!',
-                            text: 'You have successfully update data.',
+                            text: res.data.message,
                             icon: 'success'
                         }).then(okay => {
                             if (okay) {
@@ -190,7 +162,7 @@
                             if (res.data.status == 'success') {
                                 swalWithBootstrapButtons.fire({
                                     title: 'Success!',
-                                    text: 'You have successfully deleted this data.',
+                                    text: res.data.message,
                                     icon: 'success',
                                     allowOutsideClick: false
                                 }).then(okay => {

@@ -14,7 +14,7 @@
 $assetTagId = (array_values(array_unique(explode(",", $assetData['tagId']))));
 $assetLocationId = (array_values(array_unique(explode(",", $assetData['tagLocationId']))));
 $assetStatus = array($assetData['assetStatusId']);
-$assetTaggingType = array('rfid', 'coordinate', 'uhf');
+$assetTaggingType = array('rfid', 'coordinat', 'uhf');
 ?>
 <div class="row" id="app">
     <div class="col-12">
@@ -25,15 +25,15 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" id="detail_tab" @click="detailTab()">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-list-rich"></use>
-                                </svg> Detail <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read equipment data, edit, and delete the data. And also you can read the log of changes that have occurred to the equipment data.</div>"></i></a></li>
+                                </svg> Detail <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read equipment data, edit, and delete the data. And also you can read the log of changes that have occurred to the equipment data.</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="parameter_tab" @click="parameterTab()">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
-                                </svg> Parameter <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read the parameter data of an equipment</div>"></i></a></li>
+                                </svg> Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read the parameter data of an equipment</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" id="setting_tab" @click="settingTab()">
                                 <svg class="c-icon">
                                     <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
-                                </svg> Setting <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>In this tab, you can change the settings on an equipment</div>"></i></a></li>
+                                </svg> Setting <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>In this tab, you can change the settings on an equipment</div>"></i></a></li>
                         <li class="nav-item ml-auto">
                             <a href="<?= base_url('/Asset'); ?>" class="btn btn-sm btn-success" style="display: flex;"><i class="fa fa-arrow-left"></i> Back</a>
                         </li>
@@ -147,6 +147,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                     foreach ($parameter as $key) : ?>
                                         <tr>
                                             <td style="display: none;"><?= $i++; ?></td>
+                                            <td class="text-center" style="display: none;"><?= $key['parameterId']; ?></td>
                                             <td class="text-center"><?= $key['parameterName']; ?></td>
                                             <td class="text-center"><?= $key['description']; ?></td>
                                             <td class="text-center">
@@ -181,7 +182,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                                 ?>
                                             </td>
                                             <td class="text-center"><?= $key['showOn']; ?></td>
-                                            <td class="text-center"><i class="fa fa-bars"></i></td>
+                                            <td class="text-center handle" style="cursor: move;"><i class="fa fa-bars"></i></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -195,63 +196,51 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                 <form enctype="multipart/form-data" method="post">
                                     <div class="form-group row d-flex align-items-center">
                                         <div class="col-3">
-                                            <label for="asset">Asset</label>
+                                            <label for="assetName">Asset<span class="required">*</span></label>
                                         </div>
                                         <div class="col-9">
-                                            <input type="text" class="form-control" id="asset" name="asset" v-model="assetName" readonly>
+                                            <input type="text" class="form-control" id="assetName" name="assetName" v-model="assetName" placeholder="Asset Name" required>
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group row d-flex align-items-center">
                                         <div class="col-3">
-                                            <label for="asset">Number</label>
+                                            <label for="assetNumber">Number<span class="required">*</span></label>
                                         </div>
                                         <div class="col-9">
-                                            <input type="text" class="form-control" name="asset" v-model="assetNumber" readonly>
+                                            <input type="text" class="form-control" id="assetNumber" name="assetNumber" v-model="assetNumber" placeholder="Asset Number" required>
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group row d-flex">
                                         <div class="col-3">
-                                            <label for="asset">Description</label>
+                                            <label for="asssetDesc">Description</label>
                                         </div>
                                         <div class="col-9">
-                                            <textarea type="text" class="form-control" name="asset" v-model="assetDesc" rows="8" readonly></textarea>
+                                            <textarea type="text" class="form-control" id="assetDesc" name="asssetDesc" v-model="assetDesc" rows="8" placeholder="Asset Description"></textarea>
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex justify-content-end">
-                                    <div class="form-group row mb-0">
-                                        <div class="col-md d-flex justify-content-end align-items-center">
-                                            <button class="btn btn-sm mr-1 btn-outline-primary" type="button" @click="editDetail()" id="btnEdit"><i class="fa fa-edit mr-1"></i>Edit</button>
-                                            <div style="display: none;" id="btnCancelEdit">
-                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between btn-outline-primary" type="button" @click="cancelEdit()"><i class="fa fa-times mr-1"></i> Cancel</button>
-                                            </div>
-                                            <div id="btnDelete">
-                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between btn-outline-primary" type="button" @click="deleteAsset()"><i class="fa fa-trash mr-1"></i>Delete</button>
-                                            </div>
-                                            <div style="display: none;" id="btnUpdate">
-                                                <button class="btn btn-sm mr-1 d-flex align-items-center justify-content-between btn-outline-primary" type="button" @click="updateAsset()"><i class="fa fa-check mr-1"></i> Update</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                            <div class="col-6 h-100" style="border: 1px solid #d8dbe0;">
-                                <div class="valueDefault mt-2 w-100">
+                            <div class="col-6 h-100">
+                                <div class="valueDefault w-100">
                                     <div class="d-flex justify-content-center align-items-center">
                                         <img src="/img/logo-act.png" alt="Image" class="img-thumbnail">
                                     </div>
                                 </div>
-                                <div style="display: none;" class="input">
+                                <div>
                                     <div class="d-flex align-items-center">
                                         <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" id="logo" accept="image/png, image/jpeg, image/gif" />
                                     </div>
                                 </div>
-                                <div class="mt-1" id="map" style="min-width: 100% !important; height: 200px;"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <!-- modal add parameter-->
                 <div class="modal fade" role="dialog" id="addParameterModal">
                     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
@@ -265,15 +254,24 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                     <div class="form-group">
                                         <form method="post" enctype="multipart/form-data">
                                             <div class="row mb-3">
-                                                <label class="col-3" for="parameter">Parameter <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="parameter"></i></label>
-                                                <input type="text" class="form-control col-9 parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameterName" :required="true">
+                                                <label class="col-3" for="parameter">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="parameter"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <input type="text" class="form-control parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameterName" :required="true">
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="photo">Photo <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
+                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
                                                 <input type="file" class="p-0 col-9 photo" name="photo" @change="photo" accept="image/png, image/jpeg, image/gif">
                                             </div>
+                                            <div style="display: none !important;" class="row mb-3" id="previewImg">
+                                                <div class="col-3"></div>
+                                                <div class="col-9 p-0" id="preview"></div>
+                                            </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="type">Type <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
+                                                <label class="col-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
                                                 <div class="col-9 p-0">
                                                     <select class="form-control type" name="type" placeholder="Select Type">
                                                         <option value="" selected disabled>Select Type</option>
@@ -282,58 +280,64 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                                         <option value="checkbox">Checkbox</option>
                                                         <option value="textarea">Free Text</option>
                                                     </select>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3 typeInput">
-                                                <label class="col-3" for="min">Min <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
-                                                <input type="text" class="form-control col-9 min" name="min" placeholder="Min Value" v-model="param.min">
+                                                <label class="col-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
+                                                <input type="number" class="form-control col-9 min" name="min" placeholder="Min Value" v-model="param.min">
                                             </div>
                                             <div class="row mb-3 typeInput">
-                                                <label class="col-3" for="max">Max <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
-                                                <input type="text" class="form-control col-9 max" name="max" placeholder="Max Value" v-model="param.max">
+                                                <label class="col-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
+                                                <input type="number" class="form-control col-9 max" name="max" placeholder="Max Value" v-model="param.max">
                                             </div>
                                             <div class="row mb-3 typeInput">
-                                                <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
+                                                <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
                                                 <input type="text" class="form-control col-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
                                             </div>
                                             <div class="row mb-3 typeSelect" style="display: none;">
-                                                <label class="col-3" for="normal">Normal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
+                                                <label class="col-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
                                                 <div class="col-9 p-0">
                                                     <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple>
-                                                        <option value="item 1">item 1</option>
-                                                        <option value="item 2">item 2</option>
-                                                        <option value="item 3">item 3</option>
+                                                        <?php foreach ($normal as $key) : ?>
+                                                            <option value="<?= $key; ?>"><?= $key; ?></option>
+                                                        <?php endforeach; ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row mb-3 typeSelect" style="display: none;">
-                                                <label class="col-3" for="abnormal">Abnormal <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
+                                                <label class="col-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
                                                 <div class="col-9 p-0">
                                                     <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple>
-                                                        <option value="item 1">item 1</option>
-                                                        <option value="item 2">item 2</option>
-                                                        <option value="item 3">item 3</option>
+                                                    <?php foreach ($abnormal as $key) : ?>
+                                                            <option value="<?= $key; ?>"><?= $key; ?></option>
+                                                        <?php endforeach; ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row mb-3 typeCheckbox" style="display: none;">
-                                                <label class="col-3">Option <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
+                                                <label class="col-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
                                                 <div class="col-9 p-0">
                                                     <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="showOn">Parameter Status <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
+                                                <label class="col-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
                                                 <div class="col-9 p-0">
                                                     <select class="form-control showOn" name="showOn" id="showOn" multiple>
                                                         <option value="Running">Running</option>
                                                         <option value="Standby">Standby</option>
                                                         <option value="Repair">Repair</option>
                                                     </select>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
+                                                <label class="col-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
                                                 <textarea class="form-control col-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
                                             </div>
                                         </form>
@@ -341,9 +345,10 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel" @click="btnCancel()"><i class=" fa fa-times"></i> Cancel</button>
+                                <button type="button" class="btn btn-danger" id="cancel" @click="btnCancel()"><i class=" fa fa-times"></i> Cancel</button>
                                 <button type="submit" class="btn btn-success" @click="addParam()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
-                                <button type="button" class="btn btn-success" @click="updateParameter()" style="display: none;" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
+                                <button type="button" class="btn btn-success" @click="updateParameter()" style="display: none;" id="btnUpdateParameter"><i class="fa fa-check"></i> Save Changes</button>
+                                <button type="button" class="btn btn-success" @click="updateParam()" style="display: none;" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
                             </div>
                         </div>
                     </div>
@@ -360,6 +365,19 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                             </div>
                             <div class="modal-body">
                                 <div class="container">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
+                                            </div>
+                                            <div>
+                                                <b><i>Ketentuan Upload File</i></b>
+                                                <ol>
+                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <form action="post" enctype="multipart/form-data">
                                             <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
@@ -417,11 +435,11 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                 <div class="form-group">
                                     <form action="">
                                         <div class="mb-3">
-                                            <label for="addTagName">Tag Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
+                                            <label for="addTagName">Tag Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
                                             <input id="addTagName" type="text" class="form-control" required v-model="addTagName" placeholder="Tag Name">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="addTagDesc">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
+                                            <label for="addTagDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
                                             <textarea id="addTagDesc" class="form-control" required v-model="addTagDesc" rows="8" placeholder="Description of tag"></textarea>
                                         </div>
                                     </form>
@@ -450,25 +468,25 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                     <div class="col-6">
                                         <form action="">
                                             <div class="mb-3">
-                                                <label for="addTagName">Tag Location Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
+                                                <label for="addTagName">Tag Location Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
                                                 <input id="addTagName" type="text" class="form-control" required v-model="addLocationName" placeholder="Tag Location Name">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="latitude">Latitude <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Latitude"></i></label>
+                                                <label for="latitude">Latitude <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Latitude"></i></label>
                                                 <input id="latitude" type="text" class="form-control" required v-model="addLocationLatitude" placeholder="Location Latitude">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="longitude">Longitude <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Longitude"></i></label>
+                                                <label for="longitude">Longitude <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Longitude"></i></label>
                                                 <input id="longitude" type="text" class="form-control" required v-model="addLocationLongitude" placeholder="Location Longitude">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="addTagDesc">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
+                                                <label for="addTagDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
                                                 <textarea id="addTagDesc" class="form-control" required v-model="addLocationDesc" rows="8" placeholder="Description of tag location"></textarea>
                                             </div>
                                         </form>
                                     </div>
                                     <div class="col-6">
-                                        <div id="mapAddLocation" style="min-width: 100% !important; height: 350px;"></div>
+                                        <div id="mapAddLocation" style="min-width: 100% !important; height: 500px;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -525,30 +543,19 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
             <div class="row">
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
                             <h5 class="p-0 m-0">
-                                <b>Asset Location</b>
+                                <b>
+                                    <svg class="c-icon">
+                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-location-pin"></use>
+                                    </svg> Asset Location</b>
                             </h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <button class="btn btn-sm btn-outline-primary" id="btnLocation" @click="btnLocation()">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" id="btnLocationCancel" @click="btnLocationCancel()">
-                                    <i class="fa fa-times"></i>
-                                    Cancel
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnLocationSave" @click="btnLocationSave()">
-                                    <i class="fa fa-save"></i>
-                                    Save
-                                </button>
-                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="location">Location</label>
                             <div class="col-md-9">
-                                <select class="form-control" name="location" id="location" multiple="multiple" readonly="readonly">
+                                <select class="form-control" name="location" id="location" multiple="multiple">
                                     <?php foreach ($locationData as $val) : ?>
                                         <option class="optionLocation" value="<?= $val->tagLocationId; ?>" <?= in_array($val->tagLocationId, $assetLocationId) ? 'selected' : ''; ?>><?= $val->tagLocationName; ?></option>
                                     <?php endforeach; ?>
@@ -559,24 +566,13 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 </div>
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
                             <h5 class="p-0 m-0">
-                                <b>Asset Tag</b>
+                                <b>
+                                    <svg class="c-icon">
+                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-tags"></use>
+                                    </svg> Asset Tag</b>
                             </h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <button class="btn btn-sm btn-outline-primary" id="btnTag" @click="btnTag()">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" id="btnTagCancel" @click="btnTagCancel()">
-                                    <i class="fa fa-times"></i>
-                                    Cancel
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnTagSave" @click="btnTagSave()">
-                                    <i class="fa fa-save"></i>
-                                    Save
-                                </button>
-                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
@@ -584,7 +580,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                             ?>
                             <label class="col-md-3 col-form-label" for="tag">Tag</label>
                             <div class="col-md-9">
-                                <select class="form-control" name="tag" id="tag" multiple readonly>
+                                <select class="form-control" name="tag" id="tag" multiple>
                                     <?php foreach ($tagData as $val) : ?>
                                         <option value="<?= $val->tagId; ?>" <?= in_array($val->tagId, $assetTagId) ? 'selected' : ''; ?>><?= $val->tagName; ?></option>
                                     <?php endforeach; ?>
@@ -603,47 +599,40 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     <div class="card card-main h-100" id="cardLocationTag">
                         <div class="d-flex align-items-center justify-content-between">
                             <h5 class="p-0 m-0">
-                                <b>Schedule</b>
+                                <b><svg class="c-icon">
+                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-calendar"></use>
+                                    </svg> Schedule</b>
                             </h5>
-                            <div>
-                                <button class="btn btn-sm btn-outline-primary" id="btnSchedule" @click="btnSchedule()">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnScheduleCancel" @click="btnScheduleCancel()">
-                                    <i class="fa fa-times"></i>
-                                    Cancel
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnScheduleSave" @click="btnScheduleSaave()">
-                                    <i class="fa fa-save"></i>
-                                    Save
-                                </button>
-                            </div>
                         </div>
                         <hr>
                         <div>
                             <form method="post" enctype="multipart/form-data">
                                 <div class="form-group row d-flex align-items-center">
                                     <div class="col-3">
-                                        <label for="schType">Frequency</label>
+                                        <label for="schType">Frequency<span class="required">*</span></label>
                                     </div>
                                     <div class="col-9">
-                                        <select class="form-control" name="schType" id="schType" readonly="readonly">
+                                        <select class="form-control" name="schType" id="schType">
                                             <option value="" selected disabled>Select Frequency</option>
                                             <option value="Daily">Daily</option>
                                             <option value="Weekly">Weekly</option>
                                             <option value="Monthly">Monthly</option>
                                         </select>
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="mt-3" id="daily" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <label for="frequency">Recur every</label>
                                             <div class="input-group mb-2">
-                                                <input type="text" class="form-control" id="frequency" placeholder="1">
+                                                <input type="text" class="form-control" id="schFrequency" v-model="schFrequency" placeholder="1">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">/ Day</div>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Please choose a factor of 24.
                                                 </div>
                                             </div>
                                         </div>
@@ -652,65 +641,23 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                 <div class="mt-2" id="weekly" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <label for="frequency">Recur every</label>
                                             <div class="input-group mb-2">
-                                                <input type="text" class="form-control" id="frequency" placeholder="1">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">/ Weeks</div>
+                                                <div class="w-100">
+                                                    <select name="schWeekDays" id="schWeekDays" multiple>
+                                                        <option value="Su">Sunday</option>
+                                                        <option value="Mo">Monday</option>
+                                                        <option value="Tu">Tuesday</option>
+                                                        <option value="We">Wednesday</option>
+                                                        <option value="Th">Thursday</option>
+                                                        <option value="Fr">Friday</option>
+                                                        <option value="Sa">Saturday</option>
+                                                    </select>
                                                 </div>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-1">
-                                                <input class="form-check-input" id="sunday" type="checkbox" value="Sunday">
-                                                <label class="form-check-label" for="sunday">Sunday</label>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-1">
-                                                <input class="form-check-input" id="monday" type="checkbox" value="Monday">
-                                                <label class="form-check-label" for="monday">Monday</label>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-1">
-                                                <input class="form-check-input" id="tuesday" type="checkbox" value="Tuesday">
-                                                <label class="form-check-label" for="tuesday">Tuesday</label>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-1">
-                                                <input class="form-check-input" id="wednesday" type="checkbox" value="Wednesday">
-                                                <label class="form-check-label" for="wednesday">Wednesday</label>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-1">
-                                                <input class="form-check-input" id="thursday" type="checkbox" value="Thursday">
-                                                <label class="form-check-label" for="thursday">Thursday</label>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-1">
-                                                <input class="form-check-input" id="friday" type="checkbox" value="Friday">
-                                                <label class="form-check-label" for="friday">Friday</label>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-1">
-                                                <input class="form-check-input" id="saturday" type="checkbox" value="Saturday">
-                                                <label class="form-check-label" for="saturday">Saturday</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mt-2" id="monthly" style="display: none;">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="monthly">Months</label>
-                                            <select name="monthly" class="form-control monthly">
-                                                <option value="" selected disabled>Select Month</option>
-                                                <option value="January">January</option>
-                                                <option value="February">February</option>
-                                                <option value="March">March</option>
-                                                <option value="April">April</option>
-                                                <option value="May">May</option>
-                                                <option value="June">June</option>
-                                                <option value="July">July</option>
-                                                <option value="August">August</option>
-                                                <option value="September">September</option>
-                                                <option value="October">October</option>
-                                                <option value="November">November</option>
-                                                <option value="December">December</option>
-                                            </select>
-                                        </div>
-                                    </div>
                                     <div class="row">
                                         <div class="col">
                                             <div class="form-check">
@@ -722,7 +669,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                                         </label>
                                                     </div>
                                                     <div class="col-11">
-                                                        <select name="monthly" class="form-control days" multiple>
+                                                        <select name="monthly" class="form-control days" id="monthlyDays" multiple readonly>
                                                             <?php for ($i = 1; $i <= 31; $i++) {  ?>
                                                                 <option value="<?= $i; ?>"><?= $i; ?></option>
                                                             <?php } ?>
@@ -733,30 +680,35 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                             </div>
                                             <div class="form-check">
                                                 <div class="row mt-2">
-                                                    <div class="col-1 d-flex align-items-center">
+                                                    <div class="col-1">
                                                         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="on">
                                                         <label class="form-check-label mr-1" for="gridRadios2">
                                                             On:
                                                         </label>
                                                     </div>
-                                                    <div class="col-11 d-flex justify-content-between align-iems-center">
-                                                        <select name="onMonth" class="form-control on onMonth mr-1" id="onMonth">
-                                                            <option value="First">First</option>
-                                                            <option value="Second">Second</option>
-                                                            <option value="Third">Third</option>
-                                                            <option value="Fourth">Fourth</option>
-                                                            <option value="Last">Last</option>
-                                                        </select>
-                                                        <select name="onDays" class="form-control on onDays mr-1" multiple>
-                                                            <option value="all">Select all days</option>
-                                                            <option value="Sunday">Sunday</option>
-                                                            <option value="Monday">Monday</option>
-                                                            <option value="Tuesday">Tuesday</option>
-                                                            <option value="Wednesday">Wednesday</option>
-                                                            <option value="Thursday">Thursday</option>
-                                                            <option value="Friday">Friday</option>
-                                                            <option value="Saturday">Saturday</option>
-                                                        </select>
+                                                    <div class="col-11">
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <select name="onMonth" class="form-control on mr-1" id="monthlyOn" multiple readonly>
+                                                                    <option value="First">First</option>
+                                                                    <option value="Second">Second</option>
+                                                                    <option value="Third">Third</option>
+                                                                    <option value="Fourth">Fourth</option>
+                                                                    <option value="Last">Last</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <select name="onDays" class="form-control on mr-1" id="monthlyOnDays" multiple readonly>
+                                                                    <option value="Su">Sunday</option>
+                                                                    <option value="Mo">Monday</option>
+                                                                    <option value="Tu">Tuesday</option>
+                                                                    <option value="We">Wednesday</option>
+                                                                    <option value="Th">Thursday</option>
+                                                                    <option value="Fr">Friday</option>
+                                                                    <option value="Sa">Saturday</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -771,34 +723,26 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     <div class="card card-main h-100" id="cardLocationTag">
                         <div class="d-flex align-items-center justify-content-between">
                             <h5 class="p-0 m-0">
-                                <b>Change Operation Mode</b>
+                                <b>
+                                    <svg class="c-icon">
+                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
+                                    </svg> Change Operation Mode</b>
                             </h5>
-                            <div>
-                                <button class="btn btn-sm btn-outline-primary" id="btnOperation" @click="btnOperation()">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnOperationCancel" @click="btnOperationCancel">
-                                    <i class="fa fa-times"></i>
-                                    Cancel
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnOperationSave" @click="btnOperationSave()">
-                                    <i class="fa fa-save"></i>
-                                    Save
-                                </button>
-                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
                             <div class="col-3">
-                                <label for="operation">Operation</label>
+                                <label for="operation">Operation<span class="required">*</span></label>
                             </div>
                             <div class="col-9">
-                                <select name="operation" id="operation" readonly="readonly">
+                                <select name="operation" id="operation">
                                     <?php foreach ($statusData as $key) : ?>
                                         <option value="<?= $key->assetStatusId; ?>" <?= in_array($key->assetStatusId, $assetStatus) ? 'selected' : ''; ?>><?= $key->assetStatusName ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Field cannot be empty.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -815,53 +759,45 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                             <h5 class="p-0 m-0">
                                 <b>Asset Tagging</b>
                             </h5>
-                            <div>
-                                <button class="btn btn-sm btn-outline-primary" id="btnTagging" @click="btnTagging()">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnCancelTagging" @click="btnCancelTagging()">
-                                    <i class="fa fa-times"></i>
-                                    Cancel
-                                </button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary" id="btnSaveTagging" @click="btnSaveTagging()">
-                                    <i class="fa fa-save"></i>
-                                    Save
-                                </button>
-                            </div>
                         </div>
                         <hr>
                         <form enctype="multipart/form-data" method="post">
                             <div class="form-group row d-flex align-items-center">
                                 <div class="col-3">
-                                    <label for="asset">Value</label>
+                                    <label for="asset">Value<span class="required">*</span></label>
                                 </div>
                                 <div class="col-9">
-                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTaggingValue" readonly>
+                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTaggingValue" required>
+                                    <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                 </div>
                             </div>
                             <div class="form-group row d-flex align-items-center">
 
                                 <div class="col-3">
-                                    <label for="asset">Type</label>
+                                    <label for="asset">Type<span class="required">*</span></label>
                                 </div>
                                 <div class="col-9">
-                                    <select name="tagging" id="taggingType" readonly="readonly">
-                                        <?php foreach ($tagging as $key) : ?>
-                                            <option value="<?= $key['assetTaggingtype']; ?>" selected><?= $key['assetTaggingtype']; ?></option>
-                                        <?php endforeach; ?>
+                                    <select name="tagging" id="taggingType">
                                         <?php foreach ($assetTaggingType as $key) : ?>
                                             <option value="<?= $key; ?>"><?= $key; ?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-3">
-                                    <label for="asset">Description</label>
+                                    <label for="asset">Description<span class="required">*</span></label>
                                 </div>
                                 <div class="col-9">
-                                    <textarea class="form-control" id="descTagging" placeholder="Description" v-model="assetTaggingDescription" name="tagging" readonly rows="8"></textarea>
+                                    <textarea class="form-control" id="descTagging" placeholder="Description" v-model="assetTaggingDescription" name="tagging" rows="8"></textarea>
+                                    <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                 </div>
                             </div>
                         </form>
@@ -892,6 +828,25 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                     </label>
                                 </td>
                             </tr>
+                            <tr class="mt-1" id="assetLat" style="display: none;">
+                                <td>Latitude</td>
+                                <td>:</td>
+                                <td>
+                                    <input type="text" class="form-control" placeholder="Latitude value" v-model="latitude">
+                                </td>
+                            </tr>
+                            <tr class="mt-1" id="assetLong" style="display: none;">
+                                <td>Longitude</td>
+                                <td>:</td>
+                                <td>
+                                    <input type="text" class="form-control" placeholder="Longitude value" v-model="longitude">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" id="divMap" style="display: none;">
+                                    <div class="mt-1" id="map" style="min-width: 100% !important; height: 200px;"></div>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -901,7 +856,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
         <!-- parameter -->
         <div class="card card-main" id="cardParameter" style="display: none;">
             <div class="mt-2 d-flex justify-content-between align-items-center">
-                <h5><b>Parameter</b></h5>
+                <h5><b>Parameter<span class="required">*</span></b></h5>
                 <div>
                     <button class="btn btn-sm btn-outline-primary" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
                     <button class="btn btn-sm btn-outline-primary" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
@@ -910,22 +865,59 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
             <div class="table-responsive mt-2">
                 <table class="table dt-responsive table-hover w-100 display" id="tableParameter">
                     <thead class="bg-primary">
+
                         <tr>
-                            <th class="text-center">No</th>
                             <th class="text-center">Parameter</th>
                             <th class="text-center">Description</th>
                             <th class="text-center">UoM</th>
                             <th class="text-center">Min</th>
                             <th class="text-center">Max</th>
                             <th class="text-center">Show On</th>
+                            <th class="text-center"><i>Status</i></th>
                             <th width="10%" class="text-center" style="border-top-right-radius: 5px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-for="(items, i) in params" :key="i">
+                            <td class="text-center">{{ items.parameterName}}</td>
+                            <td class="text-center">{{ items.description}}</td>
+                            <td class="text-center" v-if="items.uom != ''">
+                                {{ items.uom }}
+                            </td>
+                            <td class="text-center" v-else-if="items.option != ''">
+                                {{ items.option }}
+                            </td>
+                            <td class="text-center" v-else>
+                                <i>(Empty)</i>
+                            </td>
+                            <td class="text-center" v-if="items.min != null">
+                                {{ items.min }}
+                            </td>
+                            <td class="text-center" v-else-if="items.abnormal != ''">
+                                {{ items.abnormal }}
+                            </td>
+                            <td class="text-center" v-else>
+                                <i>(Empty)</i>
+                            </td>
+                            <td class="text-center" v-if="items.max != null">
+                                {{ items.max }}
+                            </td>
+                            <td class="text-center" v-else-if="items.normal != ''">
+                                {{ items.normal }}
+                            </td>
+                            <td class="text-center" v-else>
+                                <i>(Empty)</i>
+                            </td>
+                            <td class="text-center">{{ items.showOn}}</td>
+                            <td class="text-center"><i class="text-success">(New)</i></td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-success mr-1" @click="editParam(i)"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" @click="removeParam(i)"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
                         <?php $i = 1;
                         foreach ($parameter as $key) : ?>
                             <tr>
-                                <td><?= $i++; ?></td>
                                 <td class="text-center"><?= $key['parameterName']; ?></td>
                                 <td class="text-center"><?= $key['description']; ?></td>
                                 <td class="text-center">
@@ -963,16 +955,20 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                     ?>
                                 </td>
                                 <td class="text-center"><?= $key['showOn']; ?></td>
+                                <td class="text-center"><i>(Added)</i></td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
                                     <button class="btn btn-sm btn-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
-                        </td>
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="card card-main" id="btnSaveSetting" style="display: none;">
+            <button class="btn btn-outline-primary text-center w-100" @click="btnSaveSetting()"><i class="fa fa-save"></i> Save Changes</button>
         </div>
     </div>
     <?= $this->endSection(); ?>
@@ -983,10 +979,15 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
     <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
     <script src="https://cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
+    <!-- <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"></script> -->
     <script>
         let v = new Vue({
             el: '#app',
             data: {
+                assetId: `<?= $assetData['assetId']; ?>`,
                 assetName: `<?= $assetData['assetName']; ?>`,
                 assetNumber: `<?= $assetData['assetNumber']; ?>`,
                 assetDesc: `<?= $assetData['description']; ?>`,
@@ -997,13 +998,22 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 myModal: '',
                 checked: '',
                 file: '',
+                latitude: <?= $assetData['latitude']; ?>,
+                longitude: <?= $assetData['longitude']; ?>,
+                schType: "<?= $assetData['schType']; ?>",
+                schWeeks: "<?= $assetData['schWeeks']; ?>",
+                schWeekDays: "<?= $assetData['schWeekDays']; ?>",
+                schDays: "<?= $assetData['schDays']; ?>",
+                schFrequency: "<?= $assetData['schFrequency']; ?>",
                 assetTaggingId: `<?php foreach ($tagging as $key) {
                                         echo $key['assetTaggingId'];
                                     } ?>`,
                 assetTaggingValue: `<?php foreach ($tagging as $key) {
                                         echo $key['assetTaggingValue'];
                                     } ?>`,
-                assetTaggingType: '',
+                assetTaggingType: `<?php foreach ($tagging as $key) {
+                                        echo $key['assetTaggingtype'];
+                                    } ?>`,
                 assetTaggingDescription: `<?php foreach ($tagging as $key) {
                                                 echo $key['description'];
                                             } ?>`,
@@ -1015,7 +1025,6 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 addLocationDesc: '',
                 param: {
                     parameterId: uuidv4(),
-                    assetId: `<?= $assetData['assetId']; ?>`,
                     sortId: null,
                     parameterName: '',
                     photo: '',
@@ -1023,23 +1032,118 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     uom: '',
                     min: null,
                     max: null,
-                    normal: [],
-                    abnormal: [],
+                    normal: '',
+                    abnormal: '',
                     option: '',
                     inputType: '',
-                    showOn: []
-                }
-            },
-            mounted() {
-                this.getDataParameter();
+                    showOn: ''
+                },
+                params: [],
+                tableParam: '',
             },
             methods: {
+                editParam(index) {
+                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                    $('#btnAddParam').hide();
+                    $('#titleModalAdd').hide();
+                    $('#btnUpdateParameter').hide();
+                    $('#btnUpdateParam').show();
+                    $('#titleModalEdit').show();
+                    this.myModal.show();
+                    let data = this.params[index];
+                    this.param = {
+                        parameterId: this.params[index].parameterId,
+                        sortId: null,
+                        parameterName: this.params[index].parameterName,
+                        photo: this.params[index].photo,
+                        description: this.params[index].description,
+                        uom: this.params[index].uom,
+                        min: this.params[index].min,
+                        max: this.params[index].max,
+                        normal: this.params[index].normal,
+                        abnormal: this.params[index].abnormal,
+                        option: this.params[index].option,
+                        inputType: this.params[index].inputType,
+                        showOn: this.params[index].showOn,
+                        i: index,
+                    }
+                    if (this.param.photo != "") {
+                            $('#previewImg').show();
+                            $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
+                        } else if (this.param.photo == "" || this.param.photo == null) {
+                            $('#previewImg').hide();
+                        }
+                        if (v.param.inputType != '') {
+                            $('.type').val(v.param.inputType).trigger("change");
+                        }
+                        if (v.param.normal != '' || v.param.abnormal != '') {
+                            $('#normal').val(v.param.normal.split(",")).trigger('change');
+                            $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
+                        }
+                        if (this.param.showOn != '') {
+                            $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                        }
+                },
+                updateParam() {
+                    index = this.param.i;
+                    this.params[index] = {
+                        parameterId: this.param.parameterId,
+                        sortId: this.param.sortId,
+                        parameterName: this.param.parameterName,
+                        photo: this.param.photo,
+                        description: this.param.description,
+                        uom: this.param.uom,
+                        min: this.param.min,
+                        max: this.param.max,
+                        normal: this.param.normal,
+                        abnormal: this.param.abnormal,
+                        option: this.param.option,
+                        inputType: this.param.inputType,
+                        showOn: this.param.showOn,
+                        i: index,
+                    }
+                    // $('#addParameterModal').modal('hide');
+                },
+                removeParam(index) {
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-danger ml-1'
+                        },
+                        buttonsStyling: false
+                    })
+                    swalWithBootstrapButtons.fire({
+                        title: 'Delete this data?',
+                        text: "You will delete this data!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: "<i class='fa fa-times'></i> Cancel",
+                        confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
+                        reverseButtons: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.params.splice(index, 1)
+                                .then(res => {
+                                    if (res.data.status == 'success') {
+                                        swalWithBootstrapButtons.fire({
+                                            title: 'Success!',
+                                            text: 'You have successfully deleted this data.',
+                                            icon: 'success',
+                                            allowOutsideClick: false
+                                        })
+                                    }
+                                })
+                        }
+                    })
+
+                },
                 detailTab() {
                     $('#cardChangeLog').show();
                     $('#cardParameter').hide();
                     $('#cardLocationTag').hide();
                     $('#cardScheduleOpt').hide();
                     $('#cardAssetTagging').hide();
+                    $('#btnSaveSetting').hide();
                 },
                 parameterTab() {
                     $('#cardChangeLog').hide();
@@ -1047,6 +1151,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     $('#cardLocationTag').hide();
                     $('#cardScheduleOpt').hide();
                     $('#cardAssetTagging').hide();
+                    $('#btnSaveSetting').hide();
                 },
                 settingTab() {
                     $('#cardParameter').show();
@@ -1054,24 +1159,135 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     $('#cardScheduleOpt').show();
                     $('#cardAssetTagging').show();
                     $('#cardChangeLog').hide();
+                    $('#btnSaveSetting').show();
                 },
-                getDataParameter() {
-                    $('#tableParam').DataTable({
-                        dom: 't',
-                        paging: false,
-                        rowReorder: {
-                            selector: 'td:last-child'
-                        },
-                    });
-                },
-                updateAsset() {
-                    axios.post("<?= base_url('Asset/update') ?>", {
-                        assetId: this.param.assetId,
-                        assetName: this.assetName,
-                        assetNumber: this.assetNumber,
-                        description: this.assetDesc
+                btnSaveSetting() {
+                    let factorFrom = 24;
+                    let schFreq = [];
+                    for (let index = 1; index <= factorFrom; index++) {
+                        if (factorFrom % index == 0) {
+                            schFreq.push(index)
+                        }
+                    }
+                    let isFactorOf = schFreq.includes(parseInt(this.schFrequency));
+
+                    if (this.assetName == "" || this.assetNumber == "" || this.schType == '' || this.statusName == '' || this.assetTaggingValue == '' || this.assetTaggingType == '' || this.assetTaggingDescription == '' || $('#tableParameter tbody tr').length < 1) {
+                        const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: "Invalid value!",
+                                icon: 'error'
+                            })
+
+                            if (this.assetName != '' && $('#assetName').hasClass('is-invalid')) {
+                                $('#assetName').removeClass('is-invalid');
+                            }
+                            if(this.assetNumber != '' && $('#assetNumber').hasClass('is-invalid')){
+                                $('#assetNumber').removeClass('is-invalid');
+                            }
+                            if(this.schType != '' && $('#schType').hasClass('is-invalid')){
+                                $('#schType').removeClass('is-invalid');
+                            }
+                            if(isFactorOf != false && $('#schFrequency').hasClass('is-invalid')){
+                                $('#schFrequency').removeClass('is-invalid');
+                            }
+                            if(this.statusName != '' && $('#operation').hasClass('is-invalid')){
+                                $('#operation').removeClass('is-invalid')
+                            }
+                            if (this.assetTaggingValue != '' && $('#tagging').hasClass('is-invalid')) {
+                                $('#tagging').removeClass('is-invalid');
+                            }
+                            if (this.assetTaggingType != '' && $('#taggingType').hasClass('is-invalid')) {
+                                $('#taggingType').removeClass('is-invalid');
+                            }
+                            if (this.assetTaggingDescription != '' && $('#descTagging').hasClass('is-invalid')) {
+                                $('#descTagging').removeClass('is-invalid');
+                            }
+                            if ($('#tableParameter tbody tr').length >= 1) {
+                                $('#cardParameter').removeClass('card-border');
+                            }
+
+                            if (this.assetName == '') {
+                                $('#assetName').addClass('is-invalid');
+                            }
+                            if(this.assetNumber == ''){
+                                $('#assetNumber').addClass('is-invalid');
+                            }
+                            if(this.schType == ''){
+                                $('#schType').addClass('is-invalid');
+                            }
+                            if (this.schType == "Daily") {
+                                if(isFactorOf == false){
+                                    $('#schFrequency').addClass('is-invalid');
+                                }
+                            }
+                            if(this.statusName == ''){
+                                $('#operation').addClass('is-invalid')
+                            }
+                            if (this.assetTaggingValue == '') {
+                                $('#tagging').addClass('is-invalid');
+                            }
+                            if (this.assetTaggingType == '') {
+                                $('#taggingType').addClass('is-invalid');
+                            }
+                            if (this.assetTaggingDescription == '') {
+                                $('#descTagging').addClass('is-invalid');
+                            }
+                            if ($('#tableParameter tbody tr').length < 1) {
+                                $('#cardParameter').addClass('card-border');
+                            }
+                    }else{
+                    let formdata = new FormData();
+                    // asset
+                    formdata.append('assetId', this.assetId);
+                    formdata.append('assetName', this.assetName);
+                    formdata.append('assetNumber', this.assetNumber);
+                    formdata.append('assetDesc', this.assetDesc);
+                    formdata.append('latitude', this.latitude);
+                    formdata.append('longitude', this.longitude);
+                    formdata.append('schType', this.schType);
+                    formdata.append('schFrequency', this.schFrequency);
+                    formdata.append('schWeekDays', this.schWeekDays);
+                    formdata.append('schWeeks', this.schWeeks);
+                    formdata.append('schDays', this.schDays);
+
+                    // tag location
+                    formdata.append('tagId', this.assetTag);
+                    formdata.append('locationId', this.assetLocation);
+                    // status
+                    formdata.append('assetStatusId', this.statusId);
+                    formdata.append('assetStatusName', this.statusName);
+                    // tagging
+                    formdata.append('assetTaggingId', this.assetTaggingId);
+                    formdata.append('assetTaggingValue', this.assetTaggingValue);
+                    formdata.append('assetTaggingType', this.assetTaggingType);
+                    formdata.append('assetTaggingDescription', this.assetTaggingDescription);
+                    // parameter
+
+                    if (this.params.length > 0) {
+                        let param = this.params;
+                        param.forEach((item, k) => {
+                            formdata.append('parameter[]', JSON.stringify(item));
+                            // formdata.append('photo[]', item['photo']);
+                            formdata.append('photo' + item['parameterId'], this.params[k]['photo']);
+                        });
+                        for (let index = 0; index < this.params.length; index++) {
+                            console.log(this.params[index]['photo']);
+                        }
+                    } else {
+                        formdata.append('parameter[]', this.params);
+                    }
+                    axios({
+                        url: "<?= base_url('Asset/saveSetting'); ?>",
+                        data: formdata,
+                        method: "POST"
                     }).then(res => {
-                        if (res.data.status == 'success') {
+                        if (res.status == 200) {
                             const swalWithBootstrapButtons = swal.mixin({
                                 customClass: {
                                     confirmButton: 'btn btn-success mr-1',
@@ -1080,7 +1296,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                             })
                             swalWithBootstrapButtons.fire({
                                 title: 'Success!',
-                                text: 'You have successfully update this data.',
+                                text: 'You have successfully updated data.',
                                 icon: 'success'
                             }).then(okay => {
                                 if (okay) {
@@ -1108,7 +1324,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                             })
                         }
                     })
-
+                }
                 },
                 deleteAsset() {
                     const swalWithBootstrapButtons = swal.mixin({
@@ -1209,67 +1425,18 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 addParameter() {
                     $('#btnAddParam').show();
                     $('#titleModalAdd').show();
+                    $('#btnUpdateParameter').hide();
                     $('#btnUpdateParam').hide();
                     $('#titleModalEdit').hide();
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     this.myModal.show();
                 },
-                photo(event){
-                    this.photo = event.target.files[0];
+                photo(event) {
+                    this.param.photo = event.target.files[0];
                 },
                 addParam() {
-                    let photo = document.querySelector('#photo');
-                    let formdata = new FormData();
-                    formdata.append('parameterId', this.param.parameterId);
-                    formdata.append('assetId', this.param.assetId);
-                    formdata.append('sortId', this.param.sortId);
-                    formdata.append('parameterName', this.param.parameterName);
-                    formdata.append('photo', this.file);
-                    formdata.append('description', this.param.description);
-                    formdata.append('uom', this.param.uom);
-                    formdata.append('min', this.param.min);
-                    formdata.append('max', this.param.max);
-                    formdata.append('normal', this.param.normal.toString());
-                    formdata.append('abnormal', this.param.abnormal.toString());
-                    formdata.append('option', this.param.option);
-                    formdata.append('inputType', this.param.inputType);
-                    formdata.append('showOn', this.param.showOn.toString());
-                    axios({
-                        url: '<?= base_url('Asset/addParameter'); ?>',
-                        method: 'POST',
-                        data: formdata,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            this.myModal.hide();
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                    cancelButton: 'btn btn-danger'
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reoading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        }else if(res.data.status == 'failed'){
-                            const swalWithBootstrapButtons = swal.mixin({
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
+                        const swalWithBootstrapButtons = swal.mixin({
                                 customClass: {
                                     confirmButton: 'btn btn-danger',
                                 },
@@ -1277,45 +1444,113 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                             })
                             swalWithBootstrapButtons.fire({
                                 title: 'Failed!',
-                                text: res.data.message,
+                                text: "Invalid value!",
                                 icon: 'error'
                             })
+
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
                         }
-                    })
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    }else{
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+                        
+                        this.params.push(this.param);
+                        this.param = {
+                            parameterId: uuidv4(),
+                            sortId: null,
+                            parameterName: '',
+                            photo: '',
+                            description: '',
+                            uom: '',
+                            min: null,
+                            max: null,
+                            normal: '',
+                            abnormal: '',
+                            option: '',
+                            inputType: '',
+                            showOn: '',
+                        }
+                        $('.type').val('').trigger("change");
+                        $('#showOn').val('').trigger('change');
+                    }
                 },
                 editParameter($parameterId) {
                     $('#btnAddParam').hide();
                     $('#titleModalAdd').hide();
-                    $('#btnUpdateParam').show();
+                    $('#btnUpdateParam').hide();
+                    $('#btnUpdateParameter').show();
                     $('#titleModalEdit').show();
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                    this.myModal.show();
                     axios.post("<?= base_url('Asset/editParameter'); ?>", {
                         parameterId: $parameterId
                     }).then(res => {
                         if (res.data.data != '') {
                             let dt = res.data.data[0];
                             this.param.parameterId = $parameterId,
-                            this.param.sortId = dt.sortId,
-                            this.param.parameterName = dt.parameterName;
+                                this.param.sortId = dt.sortId,
+                                this.param.parameterName = dt.parameterName;
                             this.param.photo = dt.photo;
                             this.param.description = dt.description;
                             this.param.uom = dt.uom;
                             this.param.min = dt.min;
                             this.param.max = dt.max;
                             this.param.normal = dt.normal;
-                            this.param.abnormal = dt.normal;
+                            this.param.abnormal = dt.abnormal;
                             this.param.option = dt.option;
                             this.param.inputType = dt.inputType;
                             this.param.showOn = dt.showOn;
                         }
+                        console.log(res.data.data);
+                    }).then(y => {
+                        if (this.param.photo != "") {
+                            $('#previewImg').show();
+                            $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
+                        } else if (this.param.photo == "" || this.param.photo == null) {
+                            $('#previewImg').hide();
+                        }
+                        if (v.param.inputType != '') {
+                            $('.type').val(v.param.inputType).trigger("change");
+                        }
+                        if (v.param.normal != '' || v.param.abnormal != '') {
+                            $('#normal').val(v.param.normal.split(",")).trigger('change');
+                            $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
+                        }
+                        if (this.param.showOn != '') {
+                            $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                        }
                     })
-                    this.myModal.show();
                 },
                 updateParameter() {
                     let photo = document.querySelector('#photo');
                     let formdata = new FormData();
+                    console.log(this.file)
                     formdata.append('parameterId', this.param.parameterId);
-                    formdata.append('assetId', this.param.assetId);
+                    formdata.append('assetId', this.assetId);
                     formdata.append('sortId', this.param.sortId);
                     formdata.append('parameterName', this.param.parameterName);
                     formdata.append('photo', (this.file == '' ? this.param.photo : this.file))
@@ -1362,7 +1597,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                                     location.reload();
                                 }
                             })
-                        }else if(res.data.status == 'failed'){
+                        } else if (res.data.status == 'failed') {
                             const swalWithBootstrapButtons = swal.mixin({
                                 customClass: {
                                     confirmButton: 'btn btn-danger',
@@ -1467,128 +1702,27 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     })
                 },
                 btnCancel() {
-                    this.param.sortId = '',
-                        this.param.parameterName = '';
-                    this.param.photo = '';
-                    this.param.description = '';
-                    this.param.uom = '';
-                    this.param.min = '';
-                    this.param.max = '';
-                    this.param.normal = [];
-                    this.param.abnormal = [];
-                    this.param.option = '';
-                    this.param.inputType = '';
-                    this.param.showOn = '';
-                },
-                btnLocation() {
-                    $('#location').removeAttr("readonly");
-                    $('#btnLocationCancel').show();
-                    $('#btnLocationSave').show();
-                    $('#btnLocation').hide();
-                },
-                btnLocationCancel() {
-                    $('#location').attr("readonly", "readonly");
-                    $('#btnLocationCancel').hide();
-                    $('#btnLocationSave').hide();
-                    $('#btnLocation').show();
-                },
-                btnLocationSave() {
-                    axios.post('<?= base_url('Asset/updateTagLocation'); ?>', {
-                        assetId: this.param.assetId,
-                        tagLocationId: this.assetLocation
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        } else {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: 'Bad request!',
-                                icon: 'error'
-                            })
-                        }
-                    })
-                },
-                btnTag() {
-                    $('#tag').removeAttr("readonly");
-                    $('#btnTagCancel').show();
-                    $('#btnTagSave').show();
-                    $('#btnTag').hide();
-                },
-                btnTagCancel() {
-                    $('#tag').attr("readonly", "readonly");
-                    $('#btnTagCancel').hide();
-                    $('#btnTagSave').hide();
-                    $('#btnTag').show();
-                },
-                btnTagSave() {
-                    axios.post('<?= base_url('Asset/updateTag'); ?>', {
-                        assetId: this.param.assetId,
-                        tagId: this.assetTag,
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        } else if (res.data.status == 'failed') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: 'Bad Request!',
-                                icon: 'error'
-                            })
-                        }
-                    })
+                    this.param = {
+                        parameterId: uuidv4(),
+                        sortId: null,
+                        parameterName: '',
+                        photo: '',
+                        description: '',
+                        uom: '',
+                        min: null,
+                        max: null,
+                        normal: '',
+                        abnormal: '',
+                        option: '',
+                        inputType: '',
+                        showOn: '',
+                    }
+                    $('#addParameterModal').modal('hide');
+                    $('#imgParam').remove();
+                    $('.type').val('').trigger("change");
+                    $('#showOn').val('').trigger('change');
+                    $('#normal').val('').trigger('change');
+                    $('#abnormal').val('').trigger('change');
                 },
                 btnSchedule() {
                     $('#schType').removeAttr("readonly");
@@ -1602,170 +1736,40 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     $('#btnScheduleSave').hide();
                     $('#btnSchedule').show();
                 },
-                btnOperation() {
-                    $('#operation').removeAttr("readonly");
-                    $('#btnOperationCancel').show();
-                    $('#btnOperationSave').show();
-                    $('#btnOperation').hide();
-                },
-                btnOperationCancel() {
-                    $('#operation').attr("readonly", "readonly");
-                    $('#btnOperationCancel').hide();
-                    $('#btnOperationSave').hide();
-                    $('#btnOperation').show();
-                },
-                btnOperationSave() {
-                    axios.post("<?= base_url('Asset/updateOperation'); ?>", {
-                        assetId: this.param.assetId,
-                        assetStatusId: this.statusId,
-                        assetStatusName: this.statusName
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        }
-                    })
-                },
-                btnTagging() {
-                    let input = $('input[name=tagging]');
-                    input.removeAttr("readonly");
-                    $('#descTagging').removeAttr("readonly");
-                    $('#taggingType').removeAttr("readonly");
-                    $('#btnCancelTagging').show();
-                    $('#btnSaveTagging').show();
-                    $('#btnTagging').hide();
-                },
-                btnCancelTagging() {
-                    this.assetTaggingValue = `<?php foreach ($tagging as $key) {
-                                                    echo $key['assetTaggingValue'];
-                                                } ?>`;
-                    this.assetTaggingType = `<?php foreach ($tagging as $key) {
-                                                    echo $key['description'];
-                                                } ?>`;
-                    let input = $('input[name=tagging]');
-                    input.attr("readonly", "readonly");
-                    $('#descTagging').attr("readonly", "readonly");
-                    $('#taggingType').attr("readonly", "readonly");
-                    $('#btnCancelTagging').hide();
-                    $('#btnSaveTagging').hide();
-                    $('#btnTagging').show();
-                },
-                btnSaveTagging() {
-                    axios.post("<?= base_url('Asset/updateTagging'); ?>", {
-                        assetTaggingId: this.assetTaggingId,
-                        assetId: this.param.assetId,
-                        assetTaggingValue: this.assetTaggingValue,
-                        assetTaggingType: this.assetTaggingType,
-                        description: this.assetTaggingDescription
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            if (res.data.status == 'success') {
-                                const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-success mr-1',
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: res.data.message,
-                                    icon: 'success'
-                                })
-                                .then(okay => {
-                                    if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Reloading page..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
-                                        location.reload();
-                                    }
-                                })
-                            }
-                        }
-                    })
-                },
-                editDetail() {
-                    let input = $('input[name=asset]');
-                    let textarea = $('textarea[name=asset]');
-                    input.removeAttr("readonly");
-                    textarea.removeAttr("readonly");
-                    $('#btnCancelEdit').show();
-                    $('#btnUpdate').show();
-                    $('#btnEdit').hide();
-                    $('.input').show();
-                    $('.valueDefault').hide();
-                },
-                cancelEdit() {
-                    let input = $('input[name=asset]');
-                    let textarea = $('textarea[name=asset]');
-                    input.attr("readonly", "readonly");
-                    textarea.attr("readonly", "readonly");
-                    this.assetName = `<?= $assetData['assetName']; ?>`;
-                    this.assetNumber = `<?= $assetData['assetNumber']; ?>`;
-                    this.assetDesc = `<?= $assetData['description']; ?>`;
-                    $('#btnCancelEdit').hide();
-                    $('#btnUpdate').hide();
-                    $('#btnEdit').show();
-                    $('.input').hide();
-                    $('.valueDefault').show();
-                },
                 modalAddTag() {
                     this.myModal = new coreui.Modal(document.getElementById('modalAddTag'));
                     this.myModal.show();
                 },
                 addTag() {
                     axios.post('<?= base_url('Asset/addTag'); ?>', {
-                        assetId: this.param.assetId,
+                        assetId: this.assetId,
                         tagId: uuidv4(),
                         tagName: this.addTagName,
                         description: this.addTagDesc
                     }).then(res => {
                         this.myModal.hide();
                         const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-success mr-1',
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: res.data.message,
-                                    icon: 'success'
-                                }).then(okay => {
-                                    if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Reloading page..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
-                                        location.reload();
+                            customClass: {
+                                confirmButton: 'btn btn-success mr-1',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Success!',
+                            text: res.data.message,
+                            icon: 'success'
+                        }).then(okay => {
+                            if (okay) {
+                                swal.fire({
+                                    title: 'Please Wait!',
+                                    text: 'Reloading page..',
+                                    onOpen: function() {
+                                        swal.showLoading()
                                     }
                                 })
+                                location.reload();
+                            }
+                        })
                     })
                 },
                 modalAddLocation() {
@@ -1782,14 +1786,25 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                         });
                         map.addControl(new mapboxgl.FullscreenControl());
                         map.resize();
-                        const marker = new mapboxgl.Marker()
+                        const marker = new mapboxgl.Marker({
+                            draggable: true
+                        })
                             .setLngLat([109.005913, -7.727989])
                             .addTo(map);
+
+                        function onDragEnd(params) {
+                            const lnglat = marker.getLngLat();
+                            let lat = lnglat.lat;
+                            let long = lnglat.lng;
+                            v.addLocationLatitude = lat;
+                            v.addLocationLongitude = long;
+                        }
+                        marker.on('dragend', onDragEnd);
                     })
                 },
                 addTagLocation() {
                     axios.post("<?= base_url('Asset/addTagLocation'); ?>", {
-                        assetId: this.param.assetId,
+                        assetId: this.assetId,
                         tagLocationId: uuidv4(),
                         tagLocationName: this.addLocationName,
                         latitude: this.addLocationLatitude,
@@ -1799,33 +1814,77 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                         if (res.data.status == 'success') {
                             this.myModal.hide();
                             const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-success mr-1',
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: res.data.message,
-                                    icon: 'success'
-                                }).then(okay => {
-                                    if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Reloading page..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
-                                        location.reload();
-                                    }
-                                })
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: res.data.message,
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
                         }
                     })
                 }
             }
         });
 
+        $(function(){
+            $('tbody').sortable({
+                cursor: "move",
+                handle: '.handle',
+                stop: function(event, ui){
+                    $(this).find('tr').each(function(i){
+                        $(this).find('td:first').text(i+1);
+                    })
+
+                    var getParameter = [];
+                    $('#tableParam tr').each(function(){
+                        var rowDataArray = [];
+                        var actualData = $(this).find('td');
+                        if (actualData.length > 0) {
+                            actualData.each(function(){
+                                rowDataArray.push($(this).text());
+                            })
+                            getParameter.push(rowDataArray);
+                        }
+                    })
+                    axios.post("<?= base_url('Asset/sortingParameter'); ?>", {
+                        assetId: v.assetId,
+                        data: getParameter
+                    })
+                }
+            });
+        })
+        // if (window.history && history.pushState) {
+        //     addEventListener('load', function() {
+        //         history.pushState(null, null, null); // creates new history entry with same URL
+        //         addEventListener('popstate', function() {
+        //             var stayOnPage = confirm("Would you like to save this changes?");
+        //             if (!stayOnPage) {
+        //                 history.back()
+        //             } else {
+        //                 v.btnSaveSetting();
+        //             }
+        //         });
+        //     });
+        // }
+
+        window.onbeforeunload = function() {
+            return true;
+        }
         // Get value selected location, tag, operation mode
 
         $(document).ready(function() {
@@ -1843,6 +1902,15 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
             let text = $('#operation :selected').text();
             v.statusId = selected;
             v.statusName = text;
+        })
+
+        $(document).ready(function() {
+            if (v.assetTaggingType != '') {
+                $('#taggingType').val(v.assetTaggingType).trigger("change");
+            }else{
+                let selected = $('#taggingType').val();
+                v.assetTaggingType = selected;
+            }
         })
 
         // On change tag, location, operation mode
@@ -1897,33 +1965,69 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 })
             }
         })
+
         $('.latlong').on('change', function() {
             if ($(this).is(':checked')) {
-                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                const map = new mapboxgl.Map({
-                    container: 'map', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                    center: [109.005913, -7.727989], // starting position [lng, lat]
-                    zoom: 14, // starting zoom
-                });
-                map.addControl(new mapboxgl.FullscreenControl());
-                map.resize();
-                const marker = new mapboxgl.Marker({
-                        draggable: true,
-                    })
-                    .setLngLat([109.005913, -7.727989])
-                    .addTo(map);
+                $('#assetLat').show();
+                $('#assetLong').show();
+                
+                if (v.latitude == '' && v.longitude == '') {
+                    mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                    const map = new mapboxgl.Map({
+                        container: 'map', // container ID
+                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                        center: [109.005913, -7.727989], // starting position [lng, lat]
+                        zoom: 14, // starting zoom
+                    });
+                    map.addControl(new mapboxgl.FullscreenControl());
+                    map.resize();
+                    const marker = new mapboxgl.Marker({
+                            draggable: true,
+                        })
+                        .setLngLat([109.005913, -7.727989])
+                        .addTo(map);
 
-                function onDragEnd(params) {
-                    const lnglat = marker.getLngLat();
-                    coordinates.style.display = 'block';
-                    coordinates.innerHTML = `Longitude: ${lnglat.lng}<br />Latitude: ${lnglat.lat}`;
-                }
+                    function onDragEnd(params) {
+                        const lnglat = marker.getLngLat();
+                        // coordinates.style.display = 'block';
+                        let lat = lnglat.lat;
+                        let long = lnglat.lng;
+                        v.latitude = lat;
+                        v.longitude = long;
+                    }
+                    marker.on('dragend', onDragEnd);
+                } else {
+                    mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                    const map = new mapboxgl.Map({
+                        container: 'map', // container ID
+                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                        center: [v.longitude, v.latitude], // starting position [lng, lat]
+                        zoom: 14, // starting zoom
+                    });
+                    map.addControl(new mapboxgl.FullscreenControl());
+                    map.resize();
+                    const marker = new mapboxgl.Marker({
+                            draggable: true,
+                        })
+                        .setLngLat([v.longitude, v.latitude])
+                        .addTo(map);
+                        function onDragEnd(params) {
+                            const lnglat = marker.getLngLat();
+                            // coordinates.style.display = 'block';
+                            let lat = lnglat.lat;
+                            let long = lnglat.lng;
+                            v.latitude = lat;
+                            v.longitude = long;
+                        }
                 marker.on('dragend', onDragEnd);
-                $('#map').show();
+                }
+
+                $('#divMap').show();
                 $('#map').addClass('w-100');
             } else if (!($(this).is(':checked'))) {
-                $('#map').hide();
+                $('#divMap').hide();
+                $('#assetLat').hide();
+                $('#assetLong').hide();
             } else {
                 swal.fire({
                     icon: 'error',
@@ -1932,33 +2036,8 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 })
             }
         })
-        $('.latlong').on('change', function() {
-            if ($(this).is(':checked')) {
-                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                const map = new mapboxgl.Map({
-                    container: 'mapSetting', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                    center: [109.005913, -7.727989], // starting position [lng, lat]
-                    zoom: 14, // starting zoom
-                });
-                map.addControl(new mapboxgl.FullscreenControl());
-                map.resize();
-                const marker = new mapboxgl.Marker()
-                    .setLngLat([109.005913, -7.727989])
-                    .addTo(map);
 
-                $('#mapSetting').show();
-                $('#mapSetting').addClass('w-100');
-            } else if (!($(this).is(':checked'))) {
-                $('#mapSetting').hide();
-            } else {
-                swal.fire({
-                    icon: 'error',
-                    title: 'Failed',
-                    text: 'Failed Load Map'
-                })
-            }
-        })
+       
 
         $(document).ready(function() {
             FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
@@ -2058,8 +2137,9 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
         }
 
 
-        $('#tableParam tbody tr td:last-child').addClass('cursor-move');
-        // select2 edit asset
+        // $('#tableParam tbody tr td:last-child').addClass('cursor-move');
+
+        // // select2 edit asset
         $(document).ready(function() {
             $('#tag').select2({
                 theme: 'coreui',
@@ -2089,36 +2169,35 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 }
             });
         });
-
+        
+        // select2 schedule
         $(document).ready(function() {
             $('#schType').select2({
                 theme: 'coreui',
                 placeholder: "Select Frequency",
             });
-        });
 
-        $(document).ready(function() {
+            $('#schWeekDays').select2({
+                theme: 'coreui',
+                placeholder: 'Select Days'
+            })
+
             $('.monthly').select2({
                 theme: 'coreui',
                 placeholder: "Select Month",
             });
-        });
 
-        $(document).ready(function() {
             $('.days').select2({
                 theme: 'coreui',
                 placeholder: "Select Days",
             });
-        });
 
-        $(document).ready(function() {
-            $('.onMonth').select2({
+            $('#monthlyOn').select2({
                 theme: 'coreui',
+                placeholder: "Select Item"
             });
-        });
 
-        $(document).ready(function() {
-            $('.onDays').select2({
+            $('#monthlyOnDays').select2({
                 theme: 'coreui',
                 placeholder: "Select All Days",
             });
@@ -2131,9 +2210,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 placeholder: "Select Type",
                 dropdownParent: $('#addParameterModal'),
             });
-        });
 
-        $(document).ready(function() {
             $('.normal').select2({
                 theme: 'coreui',
                 placeholder: "Select Item",
@@ -2152,9 +2229,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     }
                 }
             });
-        });
 
-        $(document).ready(function() {
             $('.abnormal').select2({
                 theme: 'coreui',
                 placeholder: "Select Item",
@@ -2173,9 +2248,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                     }
                 }
             });
-        });
 
-        $(document).ready(function() {
             $('.showOn').select2({
                 theme: 'coreui',
                 placeholder: "Parameter Status",
@@ -2225,12 +2298,12 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
 
         $('.normal').on('change', function() {
             let data = $('.normal').val();
-            v.param.normal = data;
+            v.param.normal = data.toString();
         })
 
         $('.abnormal').on('change', function() {
             let data = $('.abnormal').val();
-            v.param.abnormal = data;
+            v.param.abnormal = data.toString();
         })
 
         $('.normalAbnormal').on('change', function() {
@@ -2245,7 +2318,7 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
 
         $('.showOn').on('change', function() {
             let data = $('.showOn').val();
-            v.param.showOn = data;
+            v.param.showOn = data.toString();
         })
 
         $('.type').on('change', function() {
@@ -2253,18 +2326,35 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
                 $('.typeSelect').show();
                 $('.typeCheckbox').show();
                 $('.typeInput').hide();
+                v.param.min = null;
+                v.param.max = null;
+                v.param.uom = '';
             } else if ($(this).val() == 'checkbox') {
                 $('.typeCheckbox').show();
                 $('.typeSelect').hide();
                 $('.typeInput').hide();
+                v.param.min = null;
+                v.param.max = null;
+                v.param.uom = '';
+                v.param.normal = '';
+                v.param.abnormal = '';
             } else if ($(this).val() == 'input') {
                 $('.typeInput').show();
                 $('.typeSelect').hide();
                 $('.typeCheckbox').hide();
+                v.param.option = '';
+                v.param.normal = '';
+                v.param.abnormal = '';
             } else {
                 $('.typeInput').hide();
                 $('.typeSelect').hide();
                 $('.typeCheckbox').hide();
+                v.param.min = null;
+                v.param.max = null;
+                v.param.uom = '';
+                v.param.normal = '';
+                v.param.abnormal = '';
+                v.param.option = '';
             }
         })
 
@@ -2284,30 +2374,155 @@ $assetTaggingType = array('rfid', 'coordinate', 'uhf');
             }
         })
 
+        $(document).ready(function(){
+            if (v.schType != '') {
+                $('#schType').val(v.schType).trigger("change");
+            }
+
+            if (v.schFrequency != null || v.schFrequency != '') {
+                $('#schFrequency').val(v.schFrequency);
+            }
+
+            if (v.schWeeks != '') {
+                $('#monthlyOn').val(v.schWeeks.split(",")).trigger("change");
+                $('#gridRadios2').click();
+            }
+
+            if (v.schDays != '') {
+                $('#monthlyDays').val(v.schDays.split(",")).trigger("change");
+                $('#gridRadios1').click();
+            }
+
+            if (v.schWeekDays != '') {
+                $('#monthlyOnDays').val(v.schWeekDays.split(",")).trigger("change");
+                $('#schWeekDays').val(v.schWeekDays.split(",")).trigger("change");
+            }
+        })
+
         $('#schType').on('change', function() {
             if ($(this).val() == 'Daily') {
                 $('#daily').show();
                 $('#weekly').hide();
                 $('#monthly').hide();
+                v.schType = $(this).val();
+
+                $('#schWeekDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Days'
+                    });
+                });
+
+                $('#monthlyDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Days'
+                    });
+                });
+
+                $('#monthlyOn').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Item'
+                    });
+                });
+
+                $('#monthlyOnDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select All Days'
+                    });
+                });
+
             } else if ($(this).val() == 'Weekly') {
                 $('#weekly').show();
                 $('#daily').hide();
                 $('#monthly').hide();
+                v.schType = $(this).val();
+                v.schFrequency = null;
+                $('#monthlyDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Days'
+                    });
+                });
+
+                $('#monthlyOn').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Item'
+                    });
+                });
+
+                $('#monthlyOnDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select All Days'
+                    });
+                });
+
+
             } else if ($(this).val() == 'Monthly') {
+                $('#schWeekDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Days'
+                    });
+                });
+
                 $('#monthly').show();
                 $('#daily').hide();
                 $('#weekly').hide();
+                v.schType = $(this).val();
+                v.schFrequency = null;
             }
+        })
+
+        $('#schWeekDays').on('change', function(){
+            v.schWeekDays = $(this).val().toString();
+        })
+
+        $('#monthlyDays').on('change', function(){
+            v.schDays = $(this).val().toString();
+        })
+
+        $('#monthlyOn').on('change', function(){
+            v.schWeeks = $(this).val().toString();
+        })
+
+        $('#monthlyOnDays').on('change', function(){
+            v.schWeekDays = $(this).val().toString();
         })
 
         //radio monthly
         $('input[type="radio"][name="gridRadios"]').on('change', function() {
             if ($(this).val() == "days") {
-                $('.on').attr('disabled', true);
-                $('.days').attr('disabled', false);
+                $('#monthlyOn').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Item'
+                    });
+                });
+                $('#monthlyOnDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select All Days'
+                    });
+                });
+                $('.on').attr('readonly', true);
+                $('.days').attr('readonly', false);
+                v.schWeeks = '';
+                
             } else if ($(this).val() == "on") {
-                $('.days').attr('disabled', true);
-                $('.on').attr('disabled', false);
+                $('#monthlyDays').each(function(){
+                    $(this).select2('destroy').val("").select2({
+                        theme: 'coreui',
+                        placeholder: 'Select Days'
+                    });
+                });
+                $('.days').attr('readonly', true);
+                $('.on').attr('readonly', false);
+                v.schDays = '';
             }
         })
     </script>

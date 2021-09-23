@@ -68,8 +68,11 @@ $routes->get('/Asset/detailData', 'Master/Asset::detailData');
 $routes->get('/Asset/detailData/(:any)', 'Master/Asset::detailData/$1');
 
 $routes->post('/Asset/addTag', 'Master\Asset::addTag');
+$routes->post('/Asset/updateTag', 'Master\Asset::updateTag');
+$routes->post('/Asset/updateTagLocation', 'Master\Asset::updateTagLocation');
 $routes->post('/Asset/addTagLocation', 'Master\Asset::addTagLocation');
 $routes->post('/Asset/updateOperation', 'Master\Asset::updateOperation');
+$routes->post('/Asset/updateTagging', 'Master\Asset::updateTagging');
 $routes->add('/Asset/uploadFile', 'Master\Asset::uploadFile');
 $routes->post('Asset/insertParameter', 'Master\Asset::insertParameter');
 $routes->post('/Asset/addParameter', 'Master/Asset::addParameter');
@@ -77,10 +80,16 @@ $routes->post('/Asset/editParameter', 'Master/Asset::editParameter');
 $routes->post('/Asset/updateParameter', 'Master/Asset::updateParameter');
 $routes->post('/Asset/deleteParameter', 'Master/Asset::deleteParameter');
 
+$routes->post('/Asset/saveSetting', 'Master/Asset::saveSetting');
+$routes->post('/Asset/sortingParameter', 'Master/Asset::sortingParameter');
+
 $routes->add('/Location', 'Master/location::index');
 $routes->post('/Location/datatable', 'Master/Location::datatable');
 // $routes->add('/Location/detail', 'Master/location::detail');
 $routes->add('/Location/detail/(:any)', 'Master\Location::detail/$1');
+$routes->add('/Location/detail/(:any)', 'Master\Location::detail/$1');
+$routes->add('/Location/add', 'Master\Location::add');
+$routes->add('/Location/addTagLocation', 'Master\Location::addTagLocation');
 $routes->post('/Location/update', 'Master\Location::update');
 $routes->add('/Location/delete', 'Master\Location::delete');
 
