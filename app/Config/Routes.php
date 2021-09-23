@@ -94,6 +94,7 @@ $routes->add('/VersionApps', 'Setting/VersionApps::index');
 
 $routes->get('/Transaction', 'Transaction/Transaction::index');
 $routes->get('/Transaction/detail', 'Transaction/Transaction::detail');
+$routes->post('/Transaction/datatable', 'Transaction/Transaction::datatable');
 
 $routes->get('/ScheduleTrx/generateSchedule', 'Transaction/ScheduleTrx::generateSchedule');
 

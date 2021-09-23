@@ -61,27 +61,18 @@
 				</div>
 				<!-- datatable -->
 				<div class="table-responsive">
-					<table class="table table-hover w-100 nowrap" id="tableTrx">
+					<table class="table table-hover" id="tableTrx">
 						<thead class="bg-primary">
 							<tr>
-								<th style="width: 60px;">Scanned</th>
-								<th>Asset</th>
+								<th>Scanned</th>
+								<th>Asset Name</th>
+								<th>Asset Number</th>
 								<th>Tag</th>
 								<th>Location</th>
-								<th>Status</th>
+								<th>Schedule Type</th>
 							</tr>
 						</thead>
-						<tbody>
-							<?php for ($i = 1; $i <= 15; $i++) { ?>
-								<tr>
-									<td class="text-center"><?= date("d M Y H:i", strtotime(date("Y-m-d") . " + " . $i . " days")); ?></td>
-									<td>Asset</td>
-									<td>CCTV</td>
-									<td>Gedung Mesin</td>
-									<td>Normal</td>
-								</tr>
-							<?php } ?>
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>
@@ -101,7 +92,7 @@
 			table: null
 		}),
 		mounted() {
-			this.getData();
+			this.GetData();
 
 			let search = $(".dt-search-input input[data-target='#tableTrx']");
 			search.unbind().bind("keypress", function(e) {
@@ -112,25 +103,93 @@
 			});
 
 			$(document).on('click', '#tableTrx tbody tr', function() {
-				window.location.href = "<?= site_url('Transaction/detail') ?>?trxId=" + $(this).attr("data-id");
+				window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
 			});
 		},
 		methods: {
-			getData() {
-				table = $('#tableTrx').DataTable({
-					scrollY: "calc(100vh - 272px)",
-					language: {
-						lengthMenu: "Showing _MENU_ ",
-						info: "of _MAX_ entries",
-						infoEmpty: 'of 0 entries',
-					},
-					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
-					'createdRow': function(row, data, dataIndex) {
-						$(row).attr('data-id', "1");
-						$(row).addClass('cursor-pointer');
-					},
-				});
-			}
+			GetData() {
+				return new Promise(async (resolve, reject) => {
+					try {
+						this.table = await $('#tableTrx').DataTable({
+							drawCallback: function(settings) {
+								$(document).ready(function() {
+									$('[data-toggle="tooltip"]').tooltip();
+								})
+							},
+							processing: true,
+							serverSide: true,
+							scrollY: "calc(100vh - 272px)",
+							responsive: true,
+							language: {
+								processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+								lengthMenu: "Showing _MENU_ ",
+								info: "of _MAX_ entries",
+								infoEmpty: 'of 0 entries',
+							},
+							dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+							ajax: {
+								url: "<?= base_url('/Transaction/datatable') ?>",
+								type: "POST",
+								data: {},
+								complete: () => {
+									resolve();
+								}
+							},
+							columns: [{
+									data: "scheduleFrom",
+								},
+								{
+									data: "assetName",
+								},
+								{
+									data: "assetNumber",
+								},
+								{
+									data: "tagName",
+								},
+								{
+									data: "tagLocationName",
+								},
+								{
+									data: "schType",
+								},
+							],
+							order: [0, 'asc'],
+							columnDefs: [{
+									targets: "_all",
+									className: "dt-head-center",
+								},
+								{
+									targets: [3, 4],
+									render: function(data) {
+										if (data != '-') {
+											// unique = Array.from(new Set(data));
+											var dt = Array.from(new Set(data.split(',')));
+											var list_dt = '';
+											$.each(dt, function(key, value) {
+												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
+											})
+											return list_dt;
+										} else {
+											return data;
+										}
+									}
+								}
+							],
+							'createdRow': function(row, data) {
+								row.setAttribute("data-id", data.scheduleTrxId);
+								row.classList.add("cursor-pointer");
+								row.setAttribute("data-toggle", "tooltip");
+								row.setAttribute("data-html", "true");
+								row.setAttribute("title", "<div>Click to go to asset detail</div>");
+							},
+						});
+					} catch (er) {
+						console.log(er)
+						reject(er);
+					}
+				})
+			},
 		}
 	})
 </script>

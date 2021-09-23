@@ -15,7 +15,7 @@ class ScheduleTrxModel extends Model
 
     public function getById($id)
     {
-        return $this->builder()->where($this->primaryKey, $id)->get()->getRowArray();
+        return $this->builder("vw_scheduleTrx")->where($this->primaryKey, $id)->get()->getRowArray();
     }
 
     public function getAll(array $where = null){
