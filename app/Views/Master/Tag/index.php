@@ -56,18 +56,18 @@
                                     <form action="">
                                         <div class="mb-3">
                                             <label for="tagname">Tag Name <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
-                                            <input id="tagname" type="text" class="form-control" required v-model="tagName">
+                                            <input id="tagname" type="text" class="form-control" required v-model="tagName" placeholder="Tag Name">
                                         </div>
                                         <div class="mb-3">
                                             <label for="description">Description <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
-                                            <input id="description" type="text" class="form-control" required v-model="description">
+                                            <textarea id="description" type="text" rows="5" class="form-control" required v-model="description" placeholder="Description"></textarea>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" @click="add()"><i class="fa fa-plus"></i> Add</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
+                                <button type="button" class="btn btn-success" @click="add()"><i class="fa fa-plus"></i> Add Tag</button>
                             </div>
                         </div>
                     </div>
@@ -169,8 +169,32 @@
                         })
                         swalWithBootstrapButtons.fire({
                             title: 'Success!',
-                            text: "Success add tag.",
+                            text: res.data.message,
                             icon: 'success',
+                            allowOutsideClick: false
+                        }).then(okay => {
+                            if (okay) {
+                                swal.fire({
+                                    title: 'Please Wait!',
+                                    text: 'Reloading page..',
+                                    onOpen: function() {
+                                        swal.showLoading()
+                                    }
+                                })
+                                location.reload();
+                            }
+                        })
+                    }else{
+                        const swalWithBootstrapButtons = Swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: res.data.message,
+                            icon: 'error',
                             allowOutsideClick: false
                         })
                     }

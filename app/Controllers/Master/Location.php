@@ -3,6 +3,7 @@
 namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
+use App\Models\AssetTagLocationModel;
 use App\Models\LocationModel;
 
 class Location extends BaseController
@@ -73,6 +74,48 @@ class Location extends BaseController
         return $this->template->render('Master/Location/detail', $data);
     }
 
+    public function add()
+    {
+        $model = new LocationModel();
+        $data = array(
+            'title' => 'Add Tag Location',
+        );
+        $data["breadcrumbs"] = [
+            [
+                "title"    => "Home",
+                "link"    => "Dashboard"
+            ],
+            [
+                "title"    => "Location",
+                "link"    => "Location"
+            ],
+            [
+                "title"    => "Add",
+                "link"    => "add"
+            ],
+        ];
+        return $this->template->render('Master/Location/add', $data);
+    }
+
+    public function addTagLocation()
+    {
+        $model = new LocationModel();
+        $json = $this->request->getJSON();
+        if ($json->tagLocationName != '') {
+            $data = array(
+                'tagLocationName' => $json->tagLocationName,
+                'latitude' => $json->latitude,
+                'longitude' => $json->longitude,
+                'description' => $json->description
+            );
+            $model->insert($data);
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+        }else{
+            echo json_encode(array('status' => 'failed', 'message' => 'Field location name cannot be empty!'));
+        }
+        die();
+    }
+
     public function update()
     {
         $model = new LocationModel();
@@ -86,19 +129,21 @@ class Location extends BaseController
                 'description' => $json->description
             );
             $model->update($id, $data);
-            echo json_encode(array('status' => 'success', 'message' => 'success add tag', 'data' => $data));
-            die();
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
         }
+        die();
     }
 
     public function delete()
     {
-        $model = new LocationModel();
-        $where = $this->request->getJSON('tagLocationId');
+        $locationModel = new LocationModel();
+        $assetLocationModel = new AssetTagLocationModel();
+        $tagLocationId = $this->request->getJSON('tagLocationId');
         if (isset($where)) {
-            $model->delete($where);
-            echo json_encode(array('status' => 'success', 'message' => 'success delete data', 'data' => $where));
-            die();
+            $assetLocationModel->deleteTagLocationId($tagLocationId);
+            $locationModel->delete($tagLocationId);
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data', 'data' => $where));
         }
+        die();
     }
 }

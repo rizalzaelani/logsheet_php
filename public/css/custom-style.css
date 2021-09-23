@@ -95,7 +95,7 @@ a {
   max-height: calc(100vh - 700px);
 }
 .filepond--root .filepond--drop-label {
-  min-height: 9em !important;
+  min-height: 7em !important;
 }
 /* end filepond */
 
@@ -282,6 +282,12 @@ div.dataTables_wrapper div.dataTables_length label {
 /* end table-fix-width */
 
 /* input */
+.required {
+  color: red !important;
+}
+.card-border{
+  border: 1px solid red !important;
+}
 
 .input-transparent {
   background-color: rgba(0, 0, 0, 0) !important;
