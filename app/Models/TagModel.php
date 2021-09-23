@@ -11,5 +11,5 @@ class TagModel extends Model
 	protected $primaryKey           = 'tagId';
 	protected $returnType           = 'array';
 	protected $allowedFields        = ['tagId', 'userId', 'tagName', 'description', 'creatdeAt'];
-	protected $createdField         = 'created_at';
+	protected $createdField         = 'createdAt';
 }

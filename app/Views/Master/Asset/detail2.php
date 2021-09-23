@@ -2,11 +2,6 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
-<link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.dataTables.min.css">
-<link href="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css" rel="stylesheet" />
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
-<script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
-<script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -975,14 +970,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
 
     <?= $this->section('customScripts'); ?>
     <!-- Custom Script Js -->
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
-    <script src="https://cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
-    <!-- <script
-  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-  crossorigin="anonymous"></script> -->
     <script>
         let v = new Vue({
             el: '#app',
@@ -1085,24 +1072,67 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         }
                 },
                 updateParam() {
-                    index = this.param.i;
-                    this.params[index] = {
-                        parameterId: this.param.parameterId,
-                        sortId: this.param.sortId,
-                        parameterName: this.param.parameterName,
-                        photo: this.param.photo,
-                        description: this.param.description,
-                        uom: this.param.uom,
-                        min: this.param.min,
-                        max: this.param.max,
-                        normal: this.param.normal,
-                        abnormal: this.param.abnormal,
-                        option: this.param.option,
-                        inputType: this.param.inputType,
-                        showOn: this.param.showOn,
-                        i: index,
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: "Invalid value!",
+                                icon: 'error'
+                            })
+
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    }else{
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        index = this.param.i;
+                        this.params[index] = {
+                            parameterId: this.param.parameterId,
+                            sortId: this.param.sortId,
+                            parameterName: this.param.parameterName,
+                            photo: this.param.photo,
+                            description: this.param.description,
+                            uom: this.param.uom,
+                            min: this.param.min,
+                            max: this.param.max,
+                            normal: this.param.normal,
+                            abnormal: this.param.abnormal,
+                            option: this.param.option,
+                            inputType: this.param.inputType,
+                            showOn: this.param.showOn,
+                            i: index,
+                        }
                     }
-                    // $('#addParameterModal').modal('hide');
                 },
                 removeParam(index) {
                     const swalWithBootstrapButtons = Swal.mixin({
@@ -1477,7 +1507,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.param.showOn != '') {
                             $('.showOn').removeClass('is-invalid');
                         }
-                        
+
                         this.params.push(this.param);
                         this.param = {
                             parameterId: uuidv4(),
@@ -1546,59 +1576,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     })
                 },
                 updateParameter() {
-                    let photo = document.querySelector('#photo');
-                    let formdata = new FormData();
-                    console.log(this.file)
-                    formdata.append('parameterId', this.param.parameterId);
-                    formdata.append('assetId', this.assetId);
-                    formdata.append('sortId', this.param.sortId);
-                    formdata.append('parameterName', this.param.parameterName);
-                    formdata.append('photo', (this.file == '' ? this.param.photo : this.file))
-                    formdata.append('description', this.param.description);
-                    formdata.append('uom', this.param.uom);
-                    formdata.append('min', this.param.min);
-                    formdata.append('max', this.param.max);
-                    formdata.append('normal', this.param.normal.toString());
-                    formdata.append('abnormal', this.param.abnormal.toString());
-                    formdata.append('option', this.param.option);
-                    formdata.append('inputType', this.param.inputType);
-                    formdata.append('showOn', this.param.showOn.toString());
-                    axios({
-                        url: '<?= base_url('Asset/updateParameter'); ?>',
-                        method: 'POST',
-                        data: formdata,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            this.myModal.hide();
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                    cancelButton: 'btn btn-danger'
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reoading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        } else if (res.data.status == 'failed') {
-                            const swalWithBootstrapButtons = swal.mixin({
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
+                        const swalWithBootstrapButtons = swal.mixin({
                                 customClass: {
                                     confirmButton: 'btn btn-danger',
                                 },
@@ -1606,11 +1585,95 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             })
                             swalWithBootstrapButtons.fire({
                                 title: 'Failed!',
-                                text: res.data.message,
+                                text: "Invalid value!",
                                 icon: 'error'
                             })
+
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
                         }
-                    })
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    }else{
+                        let photo = document.querySelector('#photo');
+                        let formdata = new FormData();
+                        formdata.append('parameterId', this.param.parameterId);
+                        formdata.append('assetId', this.assetId);
+                        formdata.append('sortId', this.param.sortId);
+                        formdata.append('parameterName', this.param.parameterName);
+                        formdata.append('photo', (this.file == '' ? this.param.photo : this.file))
+                        formdata.append('description', this.param.description);
+                        formdata.append('uom', this.param.uom);
+                        formdata.append('min', this.param.min);
+                        formdata.append('max', this.param.max);
+                        formdata.append('normal', this.param.normal.toString());
+                        formdata.append('abnormal', this.param.abnormal.toString());
+                        formdata.append('option', this.param.option);
+                        formdata.append('inputType', this.param.inputType);
+                        formdata.append('showOn', this.param.showOn.toString());
+                        axios({
+                            url: '<?= base_url('Asset/updateParameter'); ?>',
+                            method: 'POST',
+                            data: formdata,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }).then(res => {
+                            if (res.data.status == 'success') {
+                                this.myModal.hide();
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-success mr-1',
+                                        cancelButton: 'btn btn-danger'
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Success!',
+                                    text: res.data.message,
+                                    icon: 'success'
+                                }).then(okay => {
+                                    if (okay) {
+                                        swal.fire({
+                                            title: 'Please Wait!',
+                                            text: 'Reoading page..',
+                                            onOpen: function() {
+                                                swal.showLoading()
+                                            }
+                                        })
+                                        location.reload();
+                                    }
+                                })
+                            } else if (res.data.status == 'failed') {
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-danger',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Failed!',
+                                    text: res.data.message,
+                                    icon: 'error'
+                                })
+                            }
+                        })   
+                    }
                 },
                 updateParameter2() {
                     axios.post("<?= base_url('Asset/updateParameter'); ?>", {

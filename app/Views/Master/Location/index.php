@@ -23,7 +23,7 @@
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Location</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="<?= base_url('/Location/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
+                            <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
                             <a class="dropdown-item" href="<?= base_url('/Location/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
@@ -78,6 +78,70 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- modal import location-->
+                <div class="modal fade" role="dialog" id="importLocationModal">
+                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="titleModalAdd">Upload File</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <a href="<?= base_url('/Location/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
+                                            </div>
+                                            <div>
+                                                <b><i>Ketentuan Upload File</i></b>
+                                                <ol>
+                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <form action="post" enctype="multipart/form-data">
+                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="fileImportLocation" id="fileImportLocation" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- modal table import location-->
+                <div class="modal fade" role="dialog" id="listImport">
+                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="titleModalAdd">List Parameter</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <table class="table w-100" id="tableImport">
+                                        <thead>
+                                            <tr>
+                                                <th>Location</th>
+                                                <th>Latitude</th>
+                                                <th>Longitude</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
+                                <button type="button" class="btn btn-success" @click="insertLocation()" id="btnAddLocation"><i class="fa fa-plus"></i> Add Location</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -91,8 +155,9 @@
         el: '#app',
         data: {
             data: null,
-            modalLocation: null,
-            table: null
+            modalLocation: '',
+            table: null,
+            dataLocation: '',
         },
         mounted() {
             this.getData();
@@ -173,7 +238,115 @@
                 this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
                 this.modalLocation.show();
             },
+            uploadFile() {
+                this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
+                this.modalLocation.show();
+            },
+            insertLocation() {
+                axios.post("<?= base_url('Location/insertLocation'); ?>", {
+                    dataLocation: importList,
+                    tagLocationId: uuidv4()
+                }).then(res => {
+                    console.log(res);
+                    if (res.data.status == 'success') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-success',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire(
+                            'Success!',
+                            'You have successfully add Location.',
+                            'success'
+                        ).then(okay => {
+                            if (okay) {
+                                swal.fire({
+                                    title: 'Please Wait!',
+                                    text: 'Reloading page..',
+                                    onOpen: function() {
+                                        swal.showLoading()
+                                    }
+                                })
+                                location.reload();
+                            }
+                        })
+                    }
+                })
+            }
         }
     })
+
+    $(document).ready(function() {
+        FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+        let pond = $('#fileImportLocation').filepond({
+            acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
+            allowMultiple: false,
+            instantUpload: true,
+            credits: false,
+            server: {
+                process: {
+                    url: "<?= base_url('Location/uploadFile'); ?>",
+                    method: 'post',
+                    onload: (res) => {
+                        var rsp = JSON.parse(res);
+                        if (rsp.status == "success") {
+                            importList = rsp.data;
+                            if (importList.length > 0) {
+                                loadListImport(importList);
+                                $('#importLocationModal').modal('hide');
+                                this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
+                                this.myModal.show();
+                                $('#fileImportLocation').filepond('removeFiles');
+                            }
+                        } else if (rsp.status == "failed") {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger'
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire(
+                                rsp.message,
+                                '',
+                                'error'
+                            )
+                        }
+                    }
+                }
+            }
+        });
+    })
+
+    var loadListImport = (importList) => {
+        var table = $('#tableImport').DataTable({
+            "processing": false,
+            "serverSide": false,
+            "scrollX": false,
+            "paging": false,
+            "dom": `<"d-flex justify-content-between align-items-center"<i><f>>t`,
+            "data": importList,
+            "columns": [{
+                    "data": "locationName"
+                },
+                {
+                    "data": "latitude"
+                },
+                {
+                    "data": "longitude"
+                },
+                {
+                    "data": "description"
+                },
+            ],
+            "columnDefs": [{
+                'targets': 0,
+                'searchable': false,
+                'orderable': false,
+                'className': 'dt-body-center',
+            }],
+            "order": [0, 'asc'],
+        });
+    }
 </script>
 <?= $this->endSection(); ?>

@@ -17,4 +17,9 @@ class AssetTagModel extends Model
     {
         return $this->builder('tblmb_assetTag')->where('assetId', $assetId)->delete();
     }
+
+    public function deleteByIdTag($tagId)
+    {
+        return $this->builder('tblmb_assetTag')->where('tagId', $tagId)->delete();
+    }
 }

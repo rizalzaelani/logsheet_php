@@ -92,10 +92,19 @@ $routes->add('/Location/add', 'Master\Location::add');
 $routes->add('/Location/addTagLocation', 'Master\Location::addTagLocation');
 $routes->post('/Location/update', 'Master\Location::update');
 $routes->add('/Location/delete', 'Master\Location::delete');
+$routes->add('/Location/download', 'Master\Location::download');
+$routes->add('/Location/uploadFile', 'Master\Location::uploadFile');
+$routes->add('/Location/insertLocation', 'Master\Location::insertLocation');
 
 $routes->add('/Tag', 'Master/Tag::index');
 $routes->post('/Tag/datatable', 'Master/Tag::datatable');
 $routes->post('/Tag/add', 'Master/Tag::add');
+$routes->post('/Tag/edit', 'Master/Tag::edit');
+$routes->post('/Tag/update', 'Master/Tag::update');
+$routes->post('/Tag/deleteTag', 'Master/Tag::deleteTag');
+$routes->add('/Tag/download', 'Master\Tag::download');
+$routes->add('/Tag/uploadFile', 'Master\Tag::uploadFile');
+$routes->add('/Tag/insertTag', 'Master\Tag::insertTag');
 
 $routes->add('/Notification', 'Setting/Notification::index');
 $routes->add('/Application', 'Setting/Application::index');

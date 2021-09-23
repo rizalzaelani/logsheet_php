@@ -60,8 +60,9 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-12 d-flex justify-content-end align-items-center">
-                                <button class="btn btn-sm btn-outline-primary" type="button" @click="editLocation()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-outline-primary mr-1" type="button" @click="editLocation()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
                                 <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="cancelEditLocation()" id="btnCancelEdit"><i class="fa fa-times"></i> Cancel</button>
+                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="deleteLocation()" id="btnDelete"><i class="fa fa-trash"></i> Delete</button>
                                 <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="saveEditLocation()" id="btnSaveEdit"><i class="fa fa-save"></i> Save</button>
                             </div>
                         </div>
@@ -96,13 +97,15 @@
                 $('#btnCancelEdit').show();
                 $('#btnEdit').hide();
                 $('#btnSaveEdit').show();
+                $('#btnDelete').show();
             },
-            cancelEditLocation(){
+            cancelEditLocation() {
                 $("input[type=text]").attr("readonly", "readonly");
                 $('textarea[id=description]').attr("readonly", "readonly");
                 $('#btnEdit').show();
                 $('#btnCancelEdit').hide();
                 $('#btnSaveEdit').hide();
+                $('#btnDelete').hide();
             },
             saveEditLocation() {
                 axios.post("<?= base_url('Location/update'); ?>", {
@@ -174,7 +177,7 @@
                                                 swal.showLoading()
                                             }
                                         })
-                                        window.location.href = "<?= base_url('Asset'); ?>";
+                                        window.location.href = "<?= base_url('Location/'); ?>";
                                     }
                                 })
                             }

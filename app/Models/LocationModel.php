@@ -12,5 +12,4 @@ class LocationModel extends Model
     protected $returnType           = 'array';
     protected $allowedFields        = ['tagLocationId', 'tagLocationName', 'latitude', 'longitude', 'description'];
     protected $createdField         = 'createdAt';
-
 }

@@ -32,9 +32,9 @@ class Database extends Config
 	 */
 	public $default = [
 		'DSN'      => '',
-		'hostname' => '66.48.42.15',
-		'username' => 'admin',
-		'password' => '**cinta=nocola##',
+		'hostname' => 'localhost',
+		'username' => 'root',
+		'password' => 'root',
 		'database' => 'db_logsheetdigital',
 		'DBDriver' => 'MySQLi',
 		'DBPrefix' => '',
