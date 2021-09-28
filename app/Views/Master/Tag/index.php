@@ -145,29 +145,21 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-    let v = new Vue({
+    const {
+        onMounted,
+        ref
+    } = Vue;
+    let v = Vue.createApp({
         el: '#app',
-        data: {
-            data: '',
-            table: '',
-            modalTag: '',
-            tagName: '',
-            description: '',
-            tagId: null,
-        },
-        mounted() {
-            this.getData();
+        setup() {
+            var data = ref('');
+            var table = ref('');
+            var modalTag = ref('');
+            var tagName = ref('');
+            var description = ref('');
+            var tagId = ref(null);
 
-            let search = $(".dt-search-input input[data-target='#tableTag']");
-            search.unbind().bind("keypress", function(e) {
-                if (e.which == 13 || e.keyCode == 13) {
-                    let searchData = search.val();
-                    v.table.search(searchData).draw();
-                }
-            });
-        },
-        methods: {
-            getData() {
+            function getData() {
                 return new Promise(async (resolve, reject) => {
                     try {
                         this.table = await $('#tableTag').DataTable({
@@ -206,7 +198,7 @@
                                 data: "tagId",
                                 render: function(data, type, row, meta) {
                                     return `<div class='d-flex justify-content-center align-items-center'><button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editTag(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
-                                    <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteTag(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
+                                        <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteTag(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
                                 },
                             }]
                         });
@@ -215,16 +207,18 @@
                         reject(er);
                     }
                 })
-            },
-            handleAdd() {
+            };
+
+            function handleAdd() {
                 $('#btnAdd').show();
                 $('#btnEdit').hide();
                 $('#modalTagTitle').show();
                 $('#editTagTitle').hide();
                 this.modalTag = new coreui.Modal(document.getElementById('modalTag'), {});
                 this.modalTag.show();
-            },
-            add() {
+            };
+
+            function add() {
                 axios.post("<?= base_url('Tag/add'); ?>", {
                     tagId: this.tagId,
                     userId: '3f0857bf-0fab-11ec-95b6-5600026457d1',
@@ -270,8 +264,9 @@
                         })
                     }
                 })
-            },
-            update() {
+            };
+
+            function update() {
                 if (this.tagName != '' && this.description != '') {
                     axios.post("<?= base_url('Tag/update'); ?>", {
                         tagId: this.tagId,
@@ -302,7 +297,7 @@
                                     location.reload();
                                 }
                             })
-                        } else {
+                        } else if (res.data.status == 'failed') {
                             const swalWithBootstrapButtons = Swal.mixin({
                                 customClass: {
                                     confirmButton: 'btn btn-danger',
@@ -317,13 +312,28 @@
                             })
                         }
                     })
+                } else {
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    })
+                    swalWithBootstrapButtons.fire({
+                        title: 'Failed!',
+                        text: 'All fields cannot be empty.',
+                        icon: 'error',
+                        allowOutsideClick: false
+                    })
                 }
-            },
-            uploadFile() {
+            };
+
+            function uploadFile() {
                 this.modalLocation = new coreui.Modal(document.getElementById('importTagModal'), {});
                 this.modalLocation.show();
-            },
-            insertTag() {
+            };
+
+            function insertTag() {
                 axios.post("<?= base_url('Tag/insertTag'); ?>", {
                     dataTag: importList,
                 }).then(res => {
@@ -351,11 +361,50 @@
                                 location.reload();
                             }
                         })
+                    } else {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire(
+                            'Failed!',
+                            res.data.message,
+                            'error'
+                        )
                     }
                 })
+            };
+
+            onMounted(() => {
+                getData();
+
+                let search = $(".dt-search-input input[data-target='#tableTag']");
+                search.unbind().bind("keypress", function(e) {
+                    if (e.which == 13 || e.keyCode == 13) {
+                        let searchData = search.val();
+                        v.table.search(searchData).draw();
+                    }
+                });
+            });
+
+            return {
+                data,
+                table,
+                modalTag,
+                tagName,
+                description,
+                tagId,
+                getData,
+                handleAdd,
+                add,
+                update,
+                uploadFile,
+                insertTag
             }
-        }
-    })
+        },
+    }).mount('#app');
 
     function editTag(data) {
         $('#btnAdd').hide();
@@ -513,6 +562,5 @@
             "order": [0, 'asc'],
         });
     }
-
 </script>
 <?= $this->endSection(); ?>

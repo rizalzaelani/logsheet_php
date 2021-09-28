@@ -151,31 +151,16 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-    let v = new Vue({
+    const { onMounted, ref} = Vue;
+    let v = Vue.createApp({
         el: '#app',
-        data: {
-            data: null,
-            modalLocation: '',
-            table: null,
-            dataLocation: '',
-        },
-        mounted() {
-            this.getData();
+        setup(){
+            var data = ref(null);
+            var modalLocation = ref('');
+            var table = ref(null);
+            var dataLocation = ref('');
 
-            let search = $(".dt-search-input input[data-target='#tableLocation']");
-            search.unbind().bind("keypress", function(e) {
-                if (e.which == 13 || e.keyCode == 13) {
-                    let searchData = search.val();
-                    v.table.search(searchData).draw();
-                }
-            });
-
-            $(document).on('click', '#tableLocation tbody tr', function() {
-                window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
-            });
-        },
-        methods: {
-            getData() {
+            getData = () => {
                 return new Promise(async (resolve, reject) => {
                     try {
                         this.table = await $('#tableLocation').DataTable({
@@ -233,16 +218,16 @@
                     }
                 })
 
-            },
-            handleAdd() {
+            };
+            handleAdd = () => {
                 this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
                 this.modalLocation.show();
             },
-            uploadFile() {
+            uploadFile = () => {
                 this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
                 this.modalLocation.show();
             },
-            insertLocation() {
+            insertLocation = () => {
                 axios.post("<?= base_url('Location/insertLocation'); ?>", {
                     dataLocation: importList,
                     tagLocationId: uuidv4()
@@ -274,8 +259,32 @@
                     }
                 })
             }
-        }
-    })
+            onMounted(() => {
+                getData();
+                let search = $(".dt-search-input input[data-target='#tableLocation']");
+                search.unbind().bind("keypress", function(e) {
+                    if (e.which == 13 || e.keyCode == 13) {
+                        let searchData = search.val();
+                        v.table.search(searchData).draw();
+                    }
+                });
+    
+                $(document).on('click', '#tableLocation tbody tr', function() {
+                    window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
+                });
+            });
+
+            return {
+                data,
+                modalLocation,
+                table,
+                dataLocation,
+                getData,
+                uploadFile,
+                dataLocation
+            }
+        },
+    }).mount('#app');
 
     $(document).ready(function() {
         FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);

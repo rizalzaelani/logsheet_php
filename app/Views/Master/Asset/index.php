@@ -38,32 +38,33 @@
 				<div class="row mt-2 collapse" id="filterDT">
 					<div class="col-4">
 						<div class="form-group" id="filterCompany">
-							<select class="form-control bg-transparent select2-multiple w-100 company" name="company" id="company" multiple="multiple">
+							<select class="form-control bg-transparent select2-multiple w-100 asset" name="asset" id="asset" multiple="multiple">
 								<option value="all">All</option>
-								<option value="IPC">IPC</option>
+								<?php foreach ($asset as $key) : ?>
+									<option value="<?= $key; ?>"><?= $key; ?></option>
+								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
 					<div class="col-4">
 						<fieldset class="form-group">
 							<div class="" id="filterArea">
-								<select class="form-control bg-transparent select2-multiple w-100 area" name="area" id="area" multiple="multiple">
+								<select class="form-control bg-transparent select2-multiple w-100 location" name="location" id="location" multiple="multiple">
 									<option value="all">All</option>
-									<option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
-									<option value="GEDUNG KAS">GEDUNG KAS</option>
-									<option value="GEDUNG MAINTENANCE">GEDUNG MAINTENANCE</option>
-									<option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
+									<?php foreach ($tagLocation as $key) : ?>
+										<option value="<?= $key; ?>"><?= $key; ?></option>
+									<?php endforeach; ?>
 								</select>
 							</div>
 						</fieldset>
 					</div>
 					<div class="col-4">
 						<div class="form-group" id="filterUnit">
-							<select class="form-control bg-transparent select2-multiple w-100 unit" name="unit" id="unit" multiple="multiple">
+							<select class="form-control bg-transparent select2-multiple w-100 tag" name="tag" id="tag" multiple="multiple">
 								<option value="all">All</option>
-								<option value="CCTV">CCTV</option>
-								<option value="ROUTER">ROUTER</option>
-								<option value="IT">IT</option>
+								<?php foreach ($tag as $key) : ?>
+									<option value="<?= $key; ?>"><?= $key; ?></option>
+								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
@@ -72,8 +73,8 @@
 					<table class="table table-hover w-100 display" id="tableEq" @current-items="getFiltered()">
 						<thead class="bg-primary">
 							<tr>
-								<th>Asset</th>
 								<th>Number</th>
+								<th>Asset</th>
 								<th>Tag</th>
 								<th>Location</th>
 								<th>Description</th>
@@ -156,29 +157,14 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-	let v = new Vue({
+	const { onMounted, ref, reactive } = Vue;
+	let v = Vue.createApp({
 		el: '#app',
-		data: () => ({
-			myModal: null,
-			table: null
-		}),
-		mounted() {
-			this.GetData()
+		setup(){
+			var myModal = ref(null);
+			var table = ref(null);
 
-			let search = $(".dt-search-input input[data-target='#tableEq']");
-			search.unbind().bind("keypress", function(e) {
-				if (e.which == 13 || e.keyCode == 13) {
-					let searchData = search.val();
-					v.table.search(searchData).draw();
-				}
-			});
-
-			$(document).on('click', '#tableEq tbody tr', function() {
-				window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
-			});
-		},
-		methods: {
-			GetData() {
+			function GetData() {
 				return new Promise(async (resolve, reject) => {
 					try {
 						this.table = await $('#tableEq').DataTable({
@@ -206,13 +192,14 @@
 									resolve();
 								}
 							},
-							columns: [{
-									data: "assetName",
-									name: "assetName",
-								},
+							columns: [
 								{
 									data: "assetNumber",
 									name: "assetNumber",
+								},
+								{
+									data: "assetName",
+									name: "assetName",
 								},
 								{
 									data: "tagName",
@@ -266,12 +253,12 @@
 						reject(er);
 					}
 				})
-			},
-			handleAdd() {
+			};
+			function handleAdd() {
 				this.myModal = new coreui.Modal(document.getElementById('exampleModalScrollable'), {});
 				this.myModal.show();
-			},
-			add() {
+			};
+			function add() {
 				if (this.company != null && this.area != null && this.unit != null && this.equipment != null) {
 					axios.post("<?= base_url('Asset/add'); ?>", {
 							adminequip_id: this.adminequip_id,
@@ -325,9 +312,30 @@
 						allowOutsideClick: false
 					})
 				}
-			},
-		}
-	});
+			};
+			onMounted(() => {
+				GetData()
+				let search = $(".dt-search-input input[data-target='#tableEq']");
+				search.unbind().bind("keypress", function(e) {
+					if (e.which == 13 || e.keyCode == 13) {
+						let searchData = search.val();
+						v.table.search(searchData).draw();
+					}
+				});
+	
+				$(document).on('click', '#tableEq tbody tr', function() {
+					window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
+				});
+			});
+			return {
+				myModal,
+				table,
+				GetData,
+				handleAdd,
+				add
+			}
+		},
+	}).mount('#app');
 
 	$('#filter').click(function() {
 		let filt = document.querySelector('#filter');
@@ -340,6 +348,42 @@
 		// let select = document.querySelector('.select2-container ');
 	})
 
+	$('#asset').on('change', function() {
+		let valArea = $('#location').val() ?? '';
+		let valUnit = $('#tag').val() ?? '';
+		let filter = v.table.columns(1).search($(this).val());
+		if (valArea != '' && valUnit != '') {
+			filter.columns(2).search(valArea).columns(3).search(valUnit);
+		}
+		filter.draw();
+	})
+
+	$('#location').on('change', function() {
+		let valCompany = $('#asset').val() ?? '';
+		let valUnit = $('#tag').val() ?? '';
+		var value = $(this).val();
+		let filter = v.table.columns(2).search(value);
+		if (valCompany != '' && valUnit != '') {
+			filter.columns(1).search(valCompany).columns(3).search(valUnit);
+		}
+		filter.draw();
+	})
+
+	$('#tag').on('change', function() {
+		let valCompany = $('#asset').val() ?? '';
+		let valArea = $('#location').val();
+		let filter = v.table.columns(3).search($(this).val());
+		if (valCompany != '' && valArea != '') {
+			filter.columns(1).search(valCompany).columns(2).search(valArea);
+		}
+		filter.draw();
+	})
+
+	$('#asset').select2({
+		theme: 'coreui',
+		placeholder: "Select Asset",
+		allowClear: true
+	})
 	$('#tag').select2({
 		theme: 'coreui',
 		placeholder: "Select Tag",
