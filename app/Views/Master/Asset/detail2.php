@@ -1022,7 +1022,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 var checked = ref('');
                 var file = ref('');
                 var setSch = ref('');
-                var schMonthlyWeekDays = ref("<?= $assetData['schWeekDays']; ?>");
                 var onDays = ref('');
                 var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging[0]) . ")" : "reactive({
                     assetTaggingId: null,
@@ -1414,7 +1413,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 };
 
                 function btnSaveSetting() {
-                    this.submited == true;
+                    this.submited = ref(true);
                     let factorFrom = 24;
                     let schFreq = [];
                     for (let index = 1; index <= factorFrom; index++) {
@@ -1452,7 +1451,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
                             $('#monthlyDays').removeClass('is-invalid');
                         }
-                        if (this.schMonthlyWeekDays != '' && $('#monthlyOnDays').hasClass('is-invalid')) {
+                        if (this.assetData.schWeekDays != '' && $('#monthlyOnDays').hasClass('is-invalid')) {
                             $('#monthlyOnDays').removeClass('is-invalid');
                         }
                         if (this.assetData.schWeeks != '' && $('#monthlyOn').hasClass('is-invalid')) {
@@ -1499,13 +1498,13 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     $('#monthlyDays').addClass('is-invalid');
                                 }
                             } else if (v.onDays == 'on') {
-                                if (v.assetData.schWeeks == '' || v.schMonthlyWeekDays == '') {
+                                if (v.assetData.schWeeks == '' || v.assetData.schWeekDays == '') {
                                     if (v.assetData.schWeeks == '') {
                                         $('#monthlyOn').addClass('is-invalid');
                                     } else {
                                         $('#monthlyOn').removeClass('is-invalid');
                                     }
-                                    if (v.schMonthlyWeekDays == '') {
+                                    if (v.assetData.schWeekDays == '') {
                                         $('#monthlyOnDays').addClass('is-invalid');
                                     } else {
                                         $('#monthlyOnDays').removeClass('is-invalid');
@@ -1567,7 +1566,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
                             $('#monthlyDays').removeClass('is-invalid');
                         }
-                        if (this.schMonthlyWeekDays != '' && $('#monthlyOnDays').hasClass('is-invalid')) {
+                        if (this.assetData.schWeekDays != '' && $('#monthlyOnDays').hasClass('is-invalid')) {
                             $('#monthlyOnDays').removeClass('is-invalid');
                         }
                         if (isFactorOf != false && $('#schFrequency').hasClass('is-invalid')) {
@@ -1644,7 +1643,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                         return;
                                     }
                                 } else if (v.onDays == 'on') {
-                                    if (v.assetData.schWeeks == '' || v.schMonthlyWeekDays == '') {
+                                    if (v.assetData.schWeeks == '' || v.assetData.schWeekDays == '') {
                                         const swalWithBootstrapButtons = swal.mixin({
                                             customClass: {
                                                 confirmButton: 'btn btn-danger',
@@ -1661,7 +1660,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                         } else {
                                             $('#monthlyOn').removeClass('is-invalid');
                                         }
-                                        if (v.schMonthlyWeekDays == '') {
+                                        if (v.assetData.schWeekDays == '') {
                                             $('#monthlyOnDays').addClass('is-invalid');
                                         } else {
                                             $('#monthlyOnDays').removeClass('is-invalid');
@@ -1681,7 +1680,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         formdata.append('longitude', this.assetData.longitude);
                         formdata.append('schType', this.assetData.schType);
                         formdata.append('schFrequency', this.assetData.schFrequency);
-                        formdata.append('schWeekDays', this.assetData.schWeekDays == '' ? this.schMonthlyWeekDays : this.assetData.schWeekDays);
+                        formdata.append('schWeekDays', this.assetData.schWeekDays);
                         formdata.append('schWeeks', this.assetData.schWeeks);
                         formdata.append('schDays', this.assetData.schDays);
 
@@ -2121,7 +2120,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     let dataSchDays         = assetData.schDays;
                     let dataSchWeekDays     = assetData.schWeekDays;
                     let dataSchWeeks        = assetData.schWeeks;
-                    let dataSchMonthlyWeekDays = schMonthlyWeekDays.value;
 
                     let dataTaggingId       = assetTagging.assetTaggingId;
                     let dataTaggingValue    = assetTagging.assetTaggingValue;
@@ -2139,9 +2137,11 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     let dataLocationDesc    = addLocationDesc;
                     let dataTempPhoto       = tempPhoto;
                     let dataParams          = params.value.length;
-                    // || dataStatusName != v.statusName || dataSetSch != v.setSch || dataSchMonthlyWeekDays != v.schMonthlyWeekDays || dataOnDays != v.onDays
+                    // || dataStatusName != v.statusName || dataSetSch != v.setSch || dataOnDays != v.onDays
                     window.addEventListener('beforeunload', function(e){
-                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchMonthlyWeekDays != v.schMonthlyWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName ||  dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype || dataTaggingDesc != v.assetTagging.description) {
+                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName ||  dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype || dataTaggingDesc != v.assetTagging.description) {
+                            console.log(dataSchWeekDays)
+                            console.log(v.schWeekDays)
                             if (v.submited == true) {
                                 return;
                             }else{
@@ -2158,7 +2158,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     checked, 
                     file,
                     setSch,
-                    schMonthlyWeekDays,
                     onDays,
                     assetTagging,
                     addTagName,
@@ -2739,15 +2738,15 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
                 $('#monthlyDays').val("").trigger("change");
                 $('#monthlyOn').val("").trigger("change");
-                $('#monthlyOnDays').val("").trigger("change");
+                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
 
 
             } else if ($(this).val() == 'Monthly') {
-                $('#schWeekDays').val("").trigger("change");
+                $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
                 $('#monthly').show();
                 $('#daily').hide();
                 $('#weekly').hide();
-                $('#monthlyOnDays').val(v.schMonthlyWeekDays.split(",")).trigger("change");
+                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
                 v.assetData.schType = $(this).val();
                 v.assetData.schFrequency = null;
             }
@@ -2777,8 +2776,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
             }
 
-            if (v.schMonthlyWeekDays != '') {
-                $('#monthlyOnDays').val(v.schMonthlyWeekDays.split(",")).trigger("change");
+            if (v.assetData.schWeekDays != '') {
+                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
             }
         })
 
@@ -2795,7 +2794,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
         })
 
         $('#monthlyOnDays').on('change', function() {
-            v.schMonthlyWeekDays = $(this).val().toString();
+            v.assetData.schWeekDays = $(this).val().toString();
         })
 
         //radio monthly
