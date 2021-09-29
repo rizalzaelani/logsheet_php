@@ -3,23 +3,9 @@
 namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
-use App\Models\AssetModel;
-use App\Models\AssetTaggingModel;
-use App\Models\AssetTagLocationModel;
 use App\Models\TagModel;
-use App\Models\LocationModel;
-use App\Models\StatusAssetModel;
 use App\Models\AssetTagModel;
-use App\Models\ParameterModel;
-use CodeIgniter\API\ResponseTrait;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Reader\XLSX\Reader;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
-use Box\Spout\Common\Entity\Style\Color;
-use Box\Spout\Common\Entity\Style\Border;
-use Box\Spout\Common\Entity\Row;
 
 class Tag extends BaseController
 {
@@ -78,7 +64,7 @@ class Tag extends BaseController
             $model->insert($dt);
             echo json_encode(array('status' => 'success', 'message' => 'You have successfully added tag.', 'data' => $dt));
         } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'All fields cannot be empty'));
+            echo json_encode(array('status' => 'failed', 'message' => 'All fields cannot be empty.'));
         }
         die();
     }
@@ -98,12 +84,16 @@ class Tag extends BaseController
         $model = new TagModel();
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
-        $data = array(
-            'tagName' => $json->tagName,
-            'description' => $json->description,
-        );
-        $model->update($tagId, $data);
-        echo json_encode(array('status' => 'success', 'message' => 'You have successfully update data.', 'data' => $data));
+        if ($json->tagName != '' && $json->description != '') {
+            $data = array(
+                'tagName' => $json->tagName,
+                'description' => $json->description,
+            );
+            $model->update($tagId, $data);
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully update data.', 'data' => $data));
+        }else{
+            echo json_encode(array('status' => 'failed', 'message' => 'All fields cannot be empty.', 'data' => $json));
+        }
         die();
     }
 
