@@ -53,6 +53,7 @@ $routes->add('/Asset/exportCsv', 'Master/Asset::exportCsv');
 $routes->add('/Asset/exportOds', 'Master/Asset::exportOds');
 $routes->add('/Asset/add', 'Master/Asset::add');
 $routes->add('/Asset/save', 'Master/Asset::save');
+$routes->add('/Asset/addAsset', 'Master/Asset::addAsset');
 $routes->get('/Asset/detail/(:any)', 'Master\Asset::detail/$1');
 $routes->get('/Asset/detail2/(:any)', 'Master\Asset::detail2/$1');
 // $routes->get('/Asset/detail/', 'Master/Asset::detail');

@@ -10,7 +10,7 @@ class AssetTaggingModel extends Model
     protected $table            = 'tblm_assetTagging';
     protected $primaryKey       = 'assetTaggingId';
     protected $useAutoIncrement = true;
-    protected $allowedFields    = ['assetTaggingId', 'assetId', 'assetTaggingValue', '', 'assetTaggingType', 'description'];
+    protected $allowedFields    = ['assetTaggingId', 'assetId', 'assetTaggingValue', '', 'assetTaggingtype', 'description'];
 
     public function deleteById($assetId)
     {

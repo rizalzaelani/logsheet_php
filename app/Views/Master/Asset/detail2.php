@@ -83,7 +83,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             $assetTagValue = (array_values(array_unique(explode(",", $assetData['tagName']))));
                                             $length = count($assetTagValue);
                                             for ($i = 0; $i < $length; $i++) { ?>
-                                                <span class="badge badge-dark p-1 mt-1" style="font-size: 13px;">
+                                                <span class="badge badge-dark p-1 mt-1 mr-1" style="font-size: 13px;">
                                                     <?= $assetTagValue[$i]; ?>
                                                 </span>
                                             <?php }
@@ -97,7 +97,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             <?php $assetLocationValue = (array_values(array_unique(explode(",", $assetData['tagLocationName']))));
                                             $length = count($assetLocationValue);
                                             for ($i = 0; $i < $length; $i++) { ?>
-                                                <span class="badge badge-dark p-1 mt-1" style="font-size: 13px;">
+                                                <span class="badge badge-dark p-1 mt-1 mr-1" style="font-size: 13px;">
                                                     <?= $assetLocationValue[$i]; ?>
                                                 </span>
                                             <?php }
@@ -108,7 +108,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             </div>
                             <div class="col-6 imgMap" style="border: 1px solid #d8dbe0;">
                                 <img src="/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
-                                <div class="mt-1" id="mapDetail" style="width: 100% !important; height: 170px"></div>
+                                <div class="mt-1" id="mapDetail" style="width: 100% !important; height: 170px; display: none"></div>
                             </div>
                         </div>
                     </div>
@@ -186,7 +186,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     </div>
                     <!-- tab setting -->
                     <div class="tab-pane" id="setting" role="tabpanel">
-                        <div class="row mt-3">
+                        <div class="row row-eq-height mt-3">
                             <div class="col-6 h-100">
                                 <form enctype="multipart/form-data" method="post">
                                     <div class="form-group row d-flex align-items-center">
@@ -194,7 +194,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             <label for="assetName">Asset<span class="required">*</span></label>
                                         </div>
                                         <div class="col-9">
-                                            <input type="text" class="form-control" id="assetName" name="assetName" v-model="assetName" placeholder="Asset Name" required>
+                                            <input type="text" class="form-control" id="assetName" name="assetName" v-model="assetData.assetName" placeholder="Asset Name" required>
                                             <div class="invalid-feedback">
                                                 Field cannot be empty.
                                             </div>
@@ -205,7 +205,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             <label for="assetNumber">Number<span class="required">*</span></label>
                                         </div>
                                         <div class="col-9">
-                                            <input type="text" class="form-control" id="assetNumber" name="assetNumber" v-model="assetNumber" placeholder="Asset Number" required>
+                                            <input type="text" class="form-control" id="assetNumber" name="assetNumber" v-model="assetData.assetNumber" placeholder="Asset Number" required>
                                             <div class="invalid-feedback">
                                                 Field cannot be empty.
                                             </div>
@@ -216,7 +216,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             <label for="asssetDesc">Description</label>
                                         </div>
                                         <div class="col-9">
-                                            <textarea type="text" class="form-control" id="assetDesc" name="asssetDesc" v-model="assetDesc" rows="8" placeholder="Asset Description"></textarea>
+                                            <textarea type="text" class="form-control" id="assetDesc" name="asssetDesc" v-model="assetData.description" rows="8" placeholder="Asset Description"></textarea>
                                         </div>
                                     </div>
                                 </form>
@@ -258,14 +258,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
-                                                <input type="file" class="p-0 col-9 photo" name="photo" @change="photo" accept="image/png, image/jpeg, image/gif">
-                                            </div>
-                                            <div style="display: none !important;" class="row mb-3" id="previewImg">
-                                                <div class="col-3"></div>
-                                                <div class="col-9 p-0" id="preview"></div>
-                                            </div>
-                                            <div class="row mb-3">
                                                 <label class="col-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
                                                 <div class="col-9 p-0">
                                                     <select class="form-control type" name="type" placeholder="Select Type">
@@ -296,9 +288,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 <label class="col-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
                                                 <div class="col-9 p-0">
                                                     <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple>
-                                                        <?php foreach ($normal as $key) : ?>
-                                                            <option value="<?= $key; ?>"><?= $key; ?></option>
-                                                        <?php endforeach; ?>
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -306,9 +296,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 <label class="col-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
                                                 <div class="col-9 p-0">
                                                     <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple>
-                                                    <?php foreach ($abnormal as $key) : ?>
-                                                            <option value="<?= $key; ?>"><?= $key; ?></option>
-                                                        <?php endforeach; ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -335,15 +322,25 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 <label class="col-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
                                                 <textarea class="form-control col-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
                                             </div>
+                                            <div class="row mb-3">
+                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <input type="file" class="photo w-100" name="photo" @change="photo" accept="image/png, image/jpeg, image/gif">
+                                                </div>
+                                            </div>
+                                            <div style="display: none !important;" class="row mb-3" id="previewImg">
+                                                <div class="col-3"></div>
+                                                <div class="col-9 p-0" id="preview"></div>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" id="cancel" @click="btnCancel()"><i class=" fa fa-times"></i> Cancel</button>
-                                <button type="submit" class="btn btn-success" @click="addParam()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
+                                <button type="button" class="btn btn-danger" id="cancel" @click="btnCancelModalParam()"><i class=" fa fa-times"></i> Cancel</button>
+                                <button type="submit" class="btn btn-success" @click="addTempParameter()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
                                 <button type="button" class="btn btn-success" @click="updateParameter()" style="display: none;" id="btnUpdateParameter"><i class="fa fa-check"></i> Save Changes</button>
-                                <button type="button" class="btn btn-success" @click="updateParam()" style="display: none;" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
+                                <button type="button" class="btn btn-success" @click="updateTempParameter()" style="display: none;" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
                             </div>
                         </div>
                     </div>
@@ -417,8 +414,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 </div>
 
                 <!-- modal add tag -->
-                <div class="modal fade" id="modalAddTag" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal fade" id="modalAddTag" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true" style="z-index: 3000;">
+                    <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="modalTagTitle">Add Tag</h5>
@@ -449,7 +446,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 </div>
 
                 <!-- modal add location -->
-                <div class="modal fade" id="modalAddLocation" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true">
+                <div class="modal fade" id="modalAddLocation" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true" style="z-index: 3000;">
                     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -504,7 +501,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <table class="table table-hover">
                         <thead class="bg-primary">
                             <tr>
-                                <th>#</th>
                                 <th>Date</th>
                                 <th>Asset</th>
                                 <th>Number</th>
@@ -517,7 +513,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         <tbody>
                             <?php for ($i = 1; $i < 6; $i++) { ?>
                                 <tr>
-                                    <td><?= $i; ?></td>
                                     <td>13-02-2021 12.30.00</td>
                                     <td>log asset</td>
                                     <td>log number</td>
@@ -540,10 +535,12 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <div class="card card-main h-100" id="cardLocationTag">
                         <div class="d-flex align-items-center">
                             <h5 class="p-0 m-0">
-                                <b>
+                                <b class="d-flex justify-content-start align-item-center">
                                     <svg class="c-icon">
                                         <use xlink:href="/icons/coreui/svg/linear.svg#cil-location-pin"></use>
-                                    </svg> Asset Location</b>
+                                    </svg>
+                                    <p class="m-0"> Asset Tag Location</p>
+                                </b>
                             </h5>
                         </div>
                         <hr>
@@ -563,10 +560,12 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <div class="card card-main h-100" id="cardLocationTag">
                         <div class="d-flex align-items-center">
                             <h5 class="p-0 m-0">
-                                <b>
-                                    <svg class="c-icon">
+                                <b class="d-flex justify-content-start align-item-center">
+                                    <svg class="c-icon mr-1">
                                         <use xlink:href="/icons/coreui/svg/linear.svg#cil-tags"></use>
-                                    </svg> Asset Tag</b>
+                                    </svg>
+                                    <p class="m-0"> Asset Tag</p>
+                                </b>
                             </h5>
                         </div>
                         <hr>
@@ -594,9 +593,12 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <div class="card card-main h-100" id="cardLocationTag">
                         <div class="d-flex align-items-center justify-content-between">
                             <h5 class="p-0 m-0">
-                                <b><svg class="c-icon">
+                                <b class="d-flex justify-content-start align-item-center">
+                                    <svg class="c-icon mr-1">
                                         <use xlink:href="/icons/coreui/svg/linear.svg#cil-calendar"></use>
-                                    </svg> Schedule</b>
+                                    </svg>
+                                    <p class="m-0"> Schedule</p>
+                                </b>
                             </h5>
                         </div>
                         <hr>
@@ -604,7 +606,21 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             <form method="post" enctype="multipart/form-data">
                                 <div class="form-group row d-flex align-items-center">
                                     <div class="col-3">
-                                        <label for="schType">Frequency<span class="required">*</span></label>
+                                        <label for="setSch">Set As<span class="required">*</span></label>
+                                    </div>
+                                    <div class="col-9">
+                                        <select class="form-control" name="setSch" id="setSch">
+                                            <option value="Manual" selected>Manual</option>
+                                            <option value="Automatic">Automatic</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row d-flex align-items-center schType">
+                                    <div class="col-3">
+                                        <label for="schType">Schedule<span class="required">*</span></label>
                                     </div>
                                     <div class="col-9">
                                         <select class="form-control" name="schType" id="schType">
@@ -622,7 +638,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     <div class="row">
                                         <div class="col">
                                             <div class="input-group mb-2">
-                                                <input type="text" class="form-control" id="schFrequency" v-model="schFrequency" placeholder="1">
+                                                <input type="text" class="form-control" id="schFrequency" v-model="assetData.schFrequency" placeholder="1">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">/ Day</div>
                                                 </div>
@@ -647,43 +663,49 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                         <option value="Fr">Friday</option>
                                                         <option value="Sa">Saturday</option>
                                                     </select>
+                                                    <div class="invalid-feedback">
+                                                        Filed cannot be empty.
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-2" id="monthly" style="display: none;">
+                                <div id="monthly" style="display: none;">
                                     <div class="row">
                                         <div class="col">
                                             <div class="form-check">
-                                                <div class="row mt-2">
-                                                    <div class="col-1 d-flex align-items-center">
+                                                <div class="row">
+                                                    <div class="col-3">
                                                         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="days">
                                                         <label class="form-check-label mr-1" for="gridRadios1">
-                                                            Days:
+                                                            Days
                                                         </label>
                                                     </div>
-                                                    <div class="col-11">
+                                                    <div class="col-9 pl-0" id="days" style="display: none;">
                                                         <select name="monthly" class="form-control days" id="monthlyDays" multiple readonly>
                                                             <?php for ($i = 1; $i <= 31; $i++) {  ?>
                                                                 <option value="<?= $i; ?>"><?= $i; ?></option>
                                                             <?php } ?>
                                                             <option value="Last">Last</option>
                                                         </select>
+                                                        <div class="invalid-feedback">
+                                                            Field cannot be empty.
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-check">
                                                 <div class="row mt-2">
-                                                    <div class="col-1">
+                                                    <div class="col-3">
                                                         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="on">
                                                         <label class="form-check-label mr-1" for="gridRadios2">
-                                                            On:
+                                                            On
                                                         </label>
                                                     </div>
-                                                    <div class="col-11">
+                                                    <div class="col-9 pl-0" id="on" style="display: none">
                                                         <div class="row">
-                                                            <div class="col-6">
+                                                            <div class="col-6 pr-1">
                                                                 <select name="onMonth" class="form-control on mr-1" id="monthlyOn" multiple readonly>
                                                                     <option value="First">First</option>
                                                                     <option value="Second">Second</option>
@@ -691,8 +713,11 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                                     <option value="Fourth">Fourth</option>
                                                                     <option value="Last">Last</option>
                                                                 </select>
+                                                                <div class="invalid-feedback">
+                                                                    Field cannot be empty.
+                                                                </div>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-6 pl-1">
                                                                 <select name="onDays" class="form-control on mr-1" id="monthlyOnDays" multiple readonly>
                                                                     <option value="Su">Sunday</option>
                                                                     <option value="Mo">Monday</option>
@@ -702,6 +727,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                                     <option value="Fr">Friday</option>
                                                                     <option value="Sa">Saturday</option>
                                                                 </select>
+                                                                <div class="invalid-feedback">
+                                                                    Field cannot be empty.
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -718,10 +746,12 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <div class="card card-main h-100" id="cardLocationTag">
                         <div class="d-flex align-items-center justify-content-between">
                             <h5 class="p-0 m-0">
-                                <b>
-                                    <svg class="c-icon">
+                                <b class="d-flex justify-content-start align-item-center">
+                                    <svg class="c-icon mr-1">
                                         <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
-                                    </svg> Change Operation Mode</b>
+                                    </svg>
+                                    <p class="m-0"> Change Operation Mode</p>
+                                </b>
                             </h5>
                         </div>
                         <hr>
@@ -762,10 +792,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     <label for="asset">Value<span class="required">*</span></label>
                                 </div>
                                 <div class="col-9">
-                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTaggingValue" required>
+                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
                                     <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                        Field cannot be empty.
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group row d-flex align-items-center">
@@ -775,13 +805,14 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 </div>
                                 <div class="col-9">
                                     <select name="tagging" id="taggingType">
+                                        <option value="" selected disabled>Select Tagging Type</option>
                                         <?php foreach ($assetTaggingType as $key) : ?>
                                             <option value="<?= $key; ?>"><?= $key; ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                     <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                        Field cannot be empty.
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -789,10 +820,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     <label for="asset">Description<span class="required">*</span></label>
                                 </div>
                                 <div class="col-9">
-                                    <textarea class="form-control" id="descTagging" placeholder="Description" v-model="assetTaggingDescription" name="tagging" rows="8"></textarea>
+                                    <textarea class="form-control" id="descTagging" placeholder="Description" v-model="assetTagging.description" name="tagging" rows="8"></textarea>
                                     <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                        Field cannot be empty.
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -827,14 +858,14 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 <td>Latitude</td>
                                 <td>:</td>
                                 <td>
-                                    <input type="text" class="form-control" placeholder="Latitude value" v-model="latitude">
+                                    <input type="text" class="form-control" placeholder="Latitude value" v-model="assetData.latitude">
                                 </td>
                             </tr>
                             <tr class="mt-1" id="assetLong" style="display: none;">
                                 <td>Longitude</td>
                                 <td>:</td>
                                 <td>
-                                    <input type="text" class="form-control" placeholder="Longitude value" v-model="longitude">
+                                    <input type="text" class="form-control" placeholder="Longitude value" v-model="assetData.longitude">
                                 </td>
                             </tr>
                             <tr>
@@ -851,9 +882,16 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
         <!-- parameter -->
         <div class="card card-main" id="cardParameter" style="display: none;">
             <div class="mt-2 d-flex justify-content-between align-items-center">
-                <h5><b>Parameter<span class="required">*</span></b></h5>
+                <h5>
+                    <b class="d-flex justify-content-start align-item-center">
+                        <svg class="c-icon mr-1">
+                            <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
+                        </svg>
+                        <p class="m-0"> Parameter<span class="required">*</span></p>
+                    </b>
+                </h5>
                 <div>
-                    <button class="btn btn-sm btn-outline-primary" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
+                    <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
                     <button class="btn btn-sm btn-outline-primary" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
                 </div>
             </div>
@@ -906,8 +944,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             <td class="text-center">{{ items.showOn}}</td>
                             <td class="text-center"><i class="text-success">(New)</i></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-success mr-1" @click="editParam(i)"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-sm btn-danger" @click="removeParam(i)"><i class="fa fa-trash"></i></button>
+                                <button class="btn btn-sm btn-success mr-1" @click="editTempParameter(i)"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                         <?php $i = 1;
@@ -963,54 +1001,41 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
         </div>
 
         <div class="card card-main" id="btnSaveSetting" style="display: none;">
-            <button class="btn btn-outline-primary text-center w-100" @click="btnSaveSetting()"><i class="fa fa-save"></i> Save Changes</button>
+            <button class="btn btn-outline-primary text-center w-100" id="btnSaveSetting" @click="btnSaveSetting()"><i class="fa fa-save"></i> Save Changes</button>
         </div>
     </div>
     <?= $this->endSection(); ?>
-
     <?= $this->section('customScripts'); ?>
     <!-- Custom Script Js -->
     <script>
-        let v = new Vue({
+        const {
+            onMounted,
+            reactive,
+            ref,
+            computed
+        } = Vue;
+        const v = Vue.createApp({
             el: '#app',
-            data: {
-                assetId: `<?= $assetData['assetId']; ?>`,
-                assetName: `<?= $assetData['assetName']; ?>`,
-                assetNumber: `<?= $assetData['assetNumber']; ?>`,
-                assetDesc: `<?= $assetData['description']; ?>`,
-                statusId: '',
-                statusName: '',
-                assetLocation: [],
-                assetTag: [],
-                myModal: '',
-                checked: '',
-                file: '',
-                latitude: <?= $assetData['latitude']; ?>,
-                longitude: <?= $assetData['longitude']; ?>,
-                schType: "<?= $assetData['schType']; ?>",
-                schWeeks: "<?= $assetData['schWeeks']; ?>",
-                schWeekDays: "<?= $assetData['schWeekDays']; ?>",
-                schDays: "<?= $assetData['schDays']; ?>",
-                schFrequency: "<?= $assetData['schFrequency']; ?>",
-                assetTaggingId: `<?php foreach ($tagging as $key) {
-                                        echo $key['assetTaggingId'];
-                                    } ?>`,
-                assetTaggingValue: `<?php foreach ($tagging as $key) {
-                                        echo $key['assetTaggingValue'];
-                                    } ?>`,
-                assetTaggingType: `<?php foreach ($tagging as $key) {
-                                        echo $key['assetTaggingtype'];
-                                    } ?>`,
-                assetTaggingDescription: `<?php foreach ($tagging as $key) {
-                                                echo $key['description'];
-                                            } ?>`,
-                addTagName: '',
-                addTagDesc: '',
-                addLocationName: '',
-                addLocationLatitude: '',
-                addLocationLongitude: '',
-                addLocationDesc: '',
-                param: {
+            setup() {
+                var assetData = reactive(<?= json_encode($assetData); ?>);
+                var myModal = ref('');
+                var checked = ref('');
+                var file = ref('');
+                var setSch = ref('');
+                var onDays = ref('');
+                var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging[0]) . ")" : "reactive({
+                    assetTaggingId: null,
+                    assetTaggingValue: '',
+                    assetTaggingtype: '',
+                    description: '',
+                })" ?>;
+                var addTagName = ref('');
+                var addTagDesc = ref('');
+                var addLocationName = ref('');
+                var addLocationLatitude = ref('');
+                var addLocationLongitude = ref('');
+                var addLocationDesc = ref('');
+                var param = reactive({
                     parameterId: uuidv4(),
                     sortId: null,
                     parameterName: '',
@@ -1024,12 +1049,239 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     option: '',
                     inputType: '',
                     showOn: ''
-                },
-                params: [],
-                tableParam: '',
-            },
-            methods: {
-                editParam(index) {
+                });
+                var tempPhoto = ref('');
+                var params = ref([]);
+                var submited = ref(false);
+
+                function detailTab() {
+                    $('#cardChangeLog').show();
+                    $('#cardParameter').hide();
+                    $('#cardLocationTag').hide();
+                    $('#cardScheduleOpt').hide();
+                    $('#cardAssetTagging').hide();
+                    $('#btnSaveSetting').hide();
+                };
+
+                function parameterTab() {
+                    $('#cardChangeLog').hide();
+                    $('#cardParameter').hide();
+                    $('#cardLocationTag').hide();
+                    $('#cardScheduleOpt').hide();
+                    $('#cardAssetTagging').hide();
+                    $('#btnSaveSetting').hide();
+                };
+
+                function settingTab() {
+                    $('#cardParameter').show();
+                    $('#cardLocationTag').show();
+                    $('#cardScheduleOpt').show();
+                    $('#cardAssetTagging').show();
+                    $('#cardChangeLog').hide();
+                    $('#btnSaveSetting').show();
+                };
+
+                function modalAddTag() {
+                    this.myModal = new coreui.Modal(document.getElementById('modalAddTag'));
+                    this.myModal.show();
+                };
+
+                function addTag() {
+                    axios.post('<?= base_url('Asset/addTag'); ?>', {
+                        assetId: this.assetData.assetId,
+                        tagId: uuidv4(),
+                        tagName: this.addTagName,
+                        description: this.addTagDesc
+                    }).then(res => {
+                        if (res.data.status == 'success') {
+                            this.myModal.hide();
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: res.data.message,
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        } else {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: res.data.message,
+                                icon: 'error'
+                            })
+                        }
+                    })
+                };
+
+                function modalAddLocation() {
+                    this.myModal = new coreui.Modal(document.getElementById('modalAddLocation'));
+                    this.myModal.show();
+                    // add location map
+                    $(document).ready(function() {
+                        mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                        const map = new mapboxgl.Map({
+                            container: 'mapAddLocation', // container ID
+                            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                            center: [109.005913, -7.727989], // starting position [lng, lat]
+                            zoom: 14, // starting zoom
+                        });
+                        map.addControl(new mapboxgl.FullscreenControl());
+                        map.resize();
+                        const marker = new mapboxgl.Marker({
+                                draggable: true
+                            })
+                            .setLngLat([109.005913, -7.727989])
+                            .addTo(map);
+
+                        function onDragEnd(params) {
+                            const lnglat = marker.getLngLat();
+                            let lat = lnglat.lat;
+                            let long = lnglat.lng;
+                            v.addLocationLatitude = lat;
+                            v.addLocationLongitude = long;
+                        }
+                        marker.on('dragend', onDragEnd);
+                    })
+                };
+
+                function addTagLocation() {
+                    if (this.addLocationName == '') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger'
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: 'Field location name cannot be empty!.',
+                            icon: 'error',
+                            allowOutsideClick: false
+                        })
+                    } else {
+                        axios.post("<?= base_url('Asset/addTagLocation'); ?>", {
+                            assetId: this.assetData.assetId,
+                            tagLocationId: uuidv4(),
+                            tagLocationName: this.addLocationName,
+                            latitude: this.addLocationLatitude,
+                            longitude: this.addLocationLongitude,
+                            description: this.addLocationDesc
+                        }).then(res => {
+                            if (res.data.status == 'success') {
+                                this.myModal.hide();
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-success mr-1',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Success!',
+                                    text: res.data.message,
+                                    icon: 'success'
+                                }).then(okay => {
+                                    if (okay) {
+                                        swal.fire({
+                                            title: 'Please Wait!',
+                                            text: 'Reloading page..',
+                                            onOpen: function() {
+                                                swal.showLoading()
+                                            }
+                                        })
+                                        location.reload();
+                                    }
+                                })
+                            }
+                        })
+                    }
+                };
+
+                function addTempParameter() {
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
+                            icon: 'error'
+                        })
+
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    } else {
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        this.params.push(this.param);
+                        this.param = {
+                            parameterId: uuidv4(),
+                            sortId: null,
+                            parameterName: '',
+                            photo: '',
+                            description: '',
+                            uom: '',
+                            min: null,
+                            max: null,
+                            normal: '',
+                            abnormal: '',
+                            option: '',
+                            inputType: '',
+                            showOn: '',
+                        }
+                        $('.type').val('').trigger("change");
+                        $('#showOn').val('').trigger('change');
+                    }
+                };
+
+                function editTempParameter(index) {
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     $('#btnAddParam').hide();
                     $('#titleModalAdd').hide();
@@ -1055,35 +1307,36 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         i: index,
                     }
                     if (this.param.photo != "") {
-                            $('#previewImg').show();
-                            $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
-                        } else if (this.param.photo == "" || this.param.photo == null) {
-                            $('#previewImg').hide();
-                        }
-                        if (v.param.inputType != '') {
-                            $('.type').val(v.param.inputType).trigger("change");
-                        }
-                        if (v.param.normal != '' || v.param.abnormal != '') {
-                            $('#normal').val(v.param.normal.split(",")).trigger('change');
-                            $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
-                        }
-                        if (this.param.showOn != '') {
-                            $('#showOn').val(this.param.showOn.split(",")).trigger('change');
-                        }
-                },
-                updateParam() {
+                        $('#previewImg').show();
+                        $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
+                    } else if (this.param.photo == "" || this.param.photo == null) {
+                        $('#previewImg').hide();
+                    }
+                    if (v.param.inputType != '') {
+                        $('.type').val(v.param.inputType).trigger("change");
+                    }
+                    if (v.param.normal != '' || v.param.abnormal != '') {
+                        $('#normal').val(v.param.normal.split(",")).trigger('change');
+                        $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
+                    }
+                    if (this.param.showOn != '') {
+                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                    }
+                };
+
+                function updateTempParameter() {
                     if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
                         const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: "Invalid value!",
-                                icon: 'error'
-                            })
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
+                            icon: 'error'
+                        })
 
                         if (this.param.parameterName != '') {
                             $('.parameter').removeClass('is-invalid');
@@ -1104,7 +1357,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.param.showOn == '') {
                             $('.showOn').addClass('is-invalid');
                         }
-                    }else{
+                    } else {
                         if (this.param.parameterName != '') {
                             $('.parameter').removeClass('is-invalid');
                         }
@@ -1133,8 +1386,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             i: index,
                         }
                     }
-                },
-                removeParam(index) {
+                };
+
+                function removeTempParameter(index) {
                     const swalWithBootstrapButtons = Swal.mixin({
                         customClass: {
                             confirmButton: 'btn btn-success',
@@ -1153,45 +1407,13 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     }).then((result) => {
                         if (result.isConfirmed) {
                             this.params.splice(index, 1)
-                                .then(res => {
-                                    if (res.data.status == 'success') {
-                                        swalWithBootstrapButtons.fire({
-                                            title: 'Success!',
-                                            text: 'You have successfully deleted this data.',
-                                            icon: 'success',
-                                            allowOutsideClick: false
-                                        })
-                                    }
-                                })
                         }
                     })
 
-                },
-                detailTab() {
-                    $('#cardChangeLog').show();
-                    $('#cardParameter').hide();
-                    $('#cardLocationTag').hide();
-                    $('#cardScheduleOpt').hide();
-                    $('#cardAssetTagging').hide();
-                    $('#btnSaveSetting').hide();
-                },
-                parameterTab() {
-                    $('#cardChangeLog').hide();
-                    $('#cardParameter').hide();
-                    $('#cardLocationTag').hide();
-                    $('#cardScheduleOpt').hide();
-                    $('#cardAssetTagging').hide();
-                    $('#btnSaveSetting').hide();
-                },
-                settingTab() {
-                    $('#cardParameter').show();
-                    $('#cardLocationTag').show();
-                    $('#cardScheduleOpt').show();
-                    $('#cardAssetTagging').show();
-                    $('#cardChangeLog').hide();
-                    $('#btnSaveSetting').show();
-                },
-                btnSaveSetting() {
+                };
+
+                function btnSaveSetting() {
+                    this.submited = ref(true);
                     let factorFrom = 24;
                     let schFreq = [];
                     for (let index = 1; index <= factorFrom; index++) {
@@ -1199,164 +1421,341 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             schFreq.push(index)
                         }
                     }
-                    let isFactorOf = schFreq.includes(parseInt(this.schFrequency));
+                    let isFactorOf = schFreq.includes(parseInt(this.assetData.schFrequency));
 
-                    if (this.assetName == "" || this.assetNumber == "" || this.schType == '' || this.statusName == '' || this.assetTaggingValue == '' || this.assetTaggingType == '' || this.assetTaggingDescription == '' || $('#tableParameter tbody tr').length < 1) {
+                    if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || this.assetTagging.description == '' || $('#tableParameter tbody tr').length < 1) {
                         const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: "Invalid value!",
-                                icon: 'error'
-                            })
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
+                            icon: 'error'
+                        })
 
-                            if (this.assetName != '' && $('#assetName').hasClass('is-invalid')) {
-                                $('#assetName').removeClass('is-invalid');
-                            }
-                            if(this.assetNumber != '' && $('#assetNumber').hasClass('is-invalid')){
-                                $('#assetNumber').removeClass('is-invalid');
-                            }
-                            if(this.schType != '' && $('#schType').hasClass('is-invalid')){
-                                $('#schType').removeClass('is-invalid');
-                            }
-                            if(isFactorOf != false && $('#schFrequency').hasClass('is-invalid')){
-                                $('#schFrequency').removeClass('is-invalid');
-                            }
-                            if(this.statusName != '' && $('#operation').hasClass('is-invalid')){
-                                $('#operation').removeClass('is-invalid')
-                            }
-                            if (this.assetTaggingValue != '' && $('#tagging').hasClass('is-invalid')) {
-                                $('#tagging').removeClass('is-invalid');
-                            }
-                            if (this.assetTaggingType != '' && $('#taggingType').hasClass('is-invalid')) {
-                                $('#taggingType').removeClass('is-invalid');
-                            }
-                            if (this.assetTaggingDescription != '' && $('#descTagging').hasClass('is-invalid')) {
-                                $('#descTagging').removeClass('is-invalid');
-                            }
-                            if ($('#tableParameter tbody tr').length >= 1) {
-                                $('#cardParameter').removeClass('card-border');
-                            }
+                        if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
+                            $('#assetName').removeClass('is-invalid');
+                        }
+                        if (this.assetData.assetNumber != '' && $('#assetNumber').hasClass('is-invalid')) {
+                            $('#assetNumber').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
+                            $('#schType').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schWeekDays != '' && $('#schWeekDays').hasClass('is-invalid')) {
+                            $('#schWeekDays').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
+                            $('#monthlyDays').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schWeekDays != '' && $('#monthlyOnDays').hasClass('is-invalid')) {
+                            $('#monthlyOnDays').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schWeeks != '' && $('#monthlyOn').hasClass('is-invalid')) {
+                            $('#monthlyOn').removeClass('is-invalid');
+                        }
+                        if (isFactorOf != false && $('#schFrequency').hasClass('is-invalid')) {
+                            $('#schFrequency').removeClass('is-invalid');
+                        }
+                        if (this.statusName != '' && $('#operation').hasClass('is-invalid')) {
+                            $('#operation').removeClass('is-invalid')
+                        }
+                        if (this.assetTagging.assetTaggingValue != '' && $('#tagging').hasClass('is-invalid')) {
+                            $('#tagging').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
+                            $('#taggingType').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.description != '' && $('#descTagging').hasClass('is-invalid')) {
+                            $('#descTagging').removeClass('is-invalid');
+                        }
+                        if ($('#tableParameter tbody tr').length >= 1) {
+                            $('#cardParameter').removeClass('card-border');
+                        }
 
-                            if (this.assetName == '') {
-                                $('#assetName').addClass('is-invalid');
+                        if (this.assetData.assetName == '') {
+                            $('#assetName').addClass('is-invalid');
+                        }
+                        if (this.assetData.assetNumber == '') {
+                            $('#assetNumber').addClass('is-invalid');
+                        }
+                        if (this.assetData.schType == '') {
+                            $('#schType').addClass('is-invalid');
+                        } else if (this.assetData.schType == "Daily") {
+                            if (isFactorOf == false) {
+                                $('#schFrequency').addClass('is-invalid');
                             }
-                            if(this.assetNumber == ''){
-                                $('#assetNumber').addClass('is-invalid');
+                        } else if (this.assetData.schType == 'Weekly') {
+                            if (this.assetData.schWeekDays == '') {
+                                $('#schWeekDays').addClass('is-invalid');
                             }
-                            if(this.schType == ''){
-                                $('#schType').addClass('is-invalid');
-                            }
-                            if (this.schType == "Daily") {
-                                if(isFactorOf == false){
-                                    $('#schFrequency').addClass('is-invalid');
+                        } else if (this.assetData.schType == 'Monthly') {
+                            if (v.onDays == 'days') {
+                                if (v.assetData.schDays == '') {
+                                    $('#monthlyDays').addClass('is-invalid');
+                                }
+                            } else if (v.onDays == 'on') {
+                                if (v.assetData.schWeeks == '' || v.assetData.schWeekDays == '') {
+                                    if (v.assetData.schWeeks == '') {
+                                        $('#monthlyOn').addClass('is-invalid');
+                                    } else {
+                                        $('#monthlyOn').removeClass('is-invalid');
+                                    }
+                                    if (v.assetData.schWeekDays == '') {
+                                        $('#monthlyOnDays').addClass('is-invalid');
+                                    } else {
+                                        $('#monthlyOnDays').removeClass('is-invalid');
+                                    }
                                 }
                             }
-                            if(this.statusName == ''){
-                                $('#operation').addClass('is-invalid')
-                            }
-                            if (this.assetTaggingValue == '') {
-                                $('#tagging').addClass('is-invalid');
-                            }
-                            if (this.assetTaggingType == '') {
-                                $('#taggingType').addClass('is-invalid');
-                            }
-                            if (this.assetTaggingDescription == '') {
-                                $('#descTagging').addClass('is-invalid');
-                            }
-                            if ($('#tableParameter tbody tr').length < 1) {
-                                $('#cardParameter').addClass('card-border');
-                            }
-                    }else{
-                    let formdata = new FormData();
-                    // asset
-                    formdata.append('assetId', this.assetId);
-                    formdata.append('assetName', this.assetName);
-                    formdata.append('assetNumber', this.assetNumber);
-                    formdata.append('assetDesc', this.assetDesc);
-                    formdata.append('latitude', this.latitude);
-                    formdata.append('longitude', this.longitude);
-                    formdata.append('schType', this.schType);
-                    formdata.append('schFrequency', this.schFrequency);
-                    formdata.append('schWeekDays', this.schWeekDays);
-                    formdata.append('schWeeks', this.schWeeks);
-                    formdata.append('schDays', this.schDays);
-
-                    // tag location
-                    formdata.append('tagId', this.assetTag);
-                    formdata.append('locationId', this.assetLocation);
-                    // status
-                    formdata.append('assetStatusId', this.statusId);
-                    formdata.append('assetStatusName', this.statusName);
-                    // tagging
-                    formdata.append('assetTaggingId', this.assetTaggingId);
-                    formdata.append('assetTaggingValue', this.assetTaggingValue);
-                    formdata.append('assetTaggingType', this.assetTaggingType);
-                    formdata.append('assetTaggingDescription', this.assetTaggingDescription);
-                    // parameter
-
-                    if (this.params.length > 0) {
-                        let param = this.params;
-                        param.forEach((item, k) => {
-                            formdata.append('parameter[]', JSON.stringify(item));
-                            // formdata.append('photo[]', item['photo']);
-                            formdata.append('photo' + item['parameterId'], this.params[k]['photo']);
-                        });
-                        for (let index = 0; index < this.params.length; index++) {
-                            console.log(this.params[index]['photo']);
+                        }
+                        if (this.statusName == '') {
+                            $('#operation').addClass('is-invalid')
+                        }
+                        if (this.assetTagging.assetTaggingValue == '') {
+                            $('#tagging').addClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
+                            $('#taggingType').addClass('is-invalid');
+                        }
+                        if (this.assetTagging.description == '') {
+                            $('#descTagging').addClass('is-invalid');
+                        }
+                        if ($('#tableParameter tbody tr').length < 1) {
+                            $('#cardParameter').addClass('card-border');
                         }
                     } else {
-                        formdata.append('parameter[]', this.params);
-                    }
-                    axios({
-                        url: "<?= base_url('Asset/saveSetting'); ?>",
-                        data: formdata,
-                        method: "POST"
-                    }).then(res => {
-                        if (res.status == 200) {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: 'You have successfully updated data.',
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        } else if (res.data.status == 'error') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: res.data.message,
-                                icon: 'error'
-                            })
+                        const factorFrom = 24;
+                        const schFreq = [];
+                        for (let index = 1; index <= factorFrom; index++) {
+                            if (factorFrom % index == 0) {
+                                schFreq.push(index)
+                            }
                         }
-                    })
-                }
-                },
-                deleteAsset() {
+                        let isFactorOf = schFreq.includes(parseInt(this.assetData.schFrequency));
+                        if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
+                            $('#assetName').removeClass('is-invalid');
+                        }
+                        if (this.assetData.assetNumber != '' && $('#assetNumber').hasClass('is-invalid')) {
+                            $('#assetNumber').removeClass('is-invalid');
+                        }
+                        if (this.statusName != '' && $('#operation').hasClass('is-invalid')) {
+                            $('#operation').removeClass('is-invalid')
+                        }
+                        if (this.assetTagging.assetTaggingValue != '' && $('#tagging').hasClass('is-invalid')) {
+                            $('#tagging').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
+                            $('#taggingType').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.description != '' && $('#descTagging').hasClass('is-invalid')) {
+                            $('#descTagging').removeClass('is-invalid');
+                        }
+                        if ($('#tableParameter tbody tr').length >= 1) {
+                            $('#cardParameter').removeClass('card-border');
+                        }
+                        if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
+                            $('#schType').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schWeekDays != '' && $('#schWeekDays').hasClass('is-invalid')) {
+                            $('#schWeekDays').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
+                            $('#monthlyDays').removeClass('is-invalid');
+                        }
+                        if (this.assetData.schWeekDays != '' && $('#monthlyOnDays').hasClass('is-invalid')) {
+                            $('#monthlyOnDays').removeClass('is-invalid');
+                        }
+                        if (isFactorOf != false && $('#schFrequency').hasClass('is-invalid')) {
+                            $('#schFrequency').removeClass('is-invalid');
+                        }
+                        if (this.setSch == 'Manual') {
+                            this.assetData.schType = '';
+                            this.assetData.schWeeks = '';
+                            this.assetData.schWeekDays = '';
+                            this.assetData.schDays = '';
+                            this.assetData.schFrequency = '';
+                        } else if (this.setSch == 'Automatic') {
+                            if (this.assetData.schType == '') {
+                                $('#schType').addClass('is-invalid');
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-danger',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Failed!',
+                                    text: "Invalid value!",
+                                    icon: 'error'
+                                })
+                                return;
+                            } else if (this.assetData.schType == 'Daily') {
+                                if (isFactorOf == false) {
+                                    $('#schFrequency').addClass('is-invalid');
+                                    const swalWithBootstrapButtons = swal.mixin({
+                                        customClass: {
+                                            confirmButton: 'btn btn-danger',
+                                        },
+                                        buttonsStyling: false
+                                    })
+                                    swalWithBootstrapButtons.fire({
+                                        title: 'Failed!',
+                                        text: "Invalid value!",
+                                        icon: 'error'
+                                    })
+                                    return;
+                                }
+                            } else if (this.assetData.schType == 'Weekly') {
+                                if (this.assetData.schWeekDays == '') {
+                                    $('#schWeekDays').addClass('is-invalid');
+                                    const swalWithBootstrapButtons = swal.mixin({
+                                        customClass: {
+                                            confirmButton: 'btn btn-danger',
+                                        },
+                                        buttonsStyling: false
+                                    })
+                                    swalWithBootstrapButtons.fire({
+                                        title: 'Failed!',
+                                        text: "Invalid value!",
+                                        icon: 'error'
+                                    })
+                                    return;
+                                }
+                            } else if (this.assetData.schType == 'Monthly') {
+                                if (v.onDays == 'days') {
+                                    if (v.assetData.schDays == '') {
+                                        $('#monthlyDays').addClass('is-invalid');
+                                        const swalWithBootstrapButtons = swal.mixin({
+                                            customClass: {
+                                                confirmButton: 'btn btn-danger',
+                                            },
+                                            buttonsStyling: false
+                                        })
+                                        swalWithBootstrapButtons.fire({
+                                            title: 'Failed!',
+                                            text: "Invalid value!",
+                                            icon: 'error'
+                                        })
+                                        return;
+                                    }
+                                } else if (v.onDays == 'on') {
+                                    if (v.assetData.schWeeks == '' || v.assetData.schWeekDays == '') {
+                                        const swalWithBootstrapButtons = swal.mixin({
+                                            customClass: {
+                                                confirmButton: 'btn btn-danger',
+                                            },
+                                            buttonsStyling: false
+                                        })
+                                        swalWithBootstrapButtons.fire({
+                                            title: 'Failed!',
+                                            text: "Invalid value!",
+                                            icon: 'error'
+                                        })
+                                        if (v.assetData.schWeeks == '') {
+                                            $('#monthlyOn').addClass('is-invalid');
+                                        } else {
+                                            $('#monthlyOn').removeClass('is-invalid');
+                                        }
+                                        if (v.assetData.schWeekDays == '') {
+                                            $('#monthlyOnDays').addClass('is-invalid');
+                                        } else {
+                                            $('#monthlyOnDays').removeClass('is-invalid');
+                                        }
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        let formdata = new FormData();
+                        // asset
+                        formdata.append('assetId', this.assetData.assetId);
+                        formdata.append('assetName', this.assetData.assetName);
+                        formdata.append('assetNumber', this.assetData.assetNumber);
+                        formdata.append('assetDesc', this.assetData.description);
+                        formdata.append('latitude', this.assetData.latitude);
+                        formdata.append('longitude', this.assetData.longitude);
+                        formdata.append('schType', this.assetData.schType);
+                        formdata.append('schFrequency', this.assetData.schFrequency);
+                        formdata.append('schWeekDays', this.assetData.schWeekDays);
+                        formdata.append('schWeeks', this.assetData.schWeeks);
+                        formdata.append('schDays', this.assetData.schDays);
+
+                        // tag location
+                        formdata.append('tagId', this.assetData.tagId);
+                        formdata.append('locationId', this.assetData.tagLocationId);
+                        // status
+                        formdata.append('assetStatusId', this.assetData.assetStatusId);
+                        formdata.append('assetStatusName', this.assetData.assetStatusName);
+                        // tagging
+                        formdata.append('assetTaggingId', this.assetTagging.assetTaggingId);
+                        formdata.append('assetTaggingValue', this.assetTagging.assetTaggingValue);
+                        formdata.append('assetTaggingType', this.assetTagging.assetTaggingtype);
+                        formdata.append('assetTaggingDescription', this.assetTagging.description);
+                        // parameter
+
+                        if (this.params.length > 0) {
+                            let param = this.params;
+                            param.forEach((item, k) => {
+                                formdata.append('parameter[]', JSON.stringify(item));
+                                // formdata.append('photo[]', item['photo']);
+                                formdata.append('photo' + item['parameterId'], this.params[k]['photo']);
+                            });
+                            for (let index = 0; index < this.params.length; index++) {
+                                console.log(this.params[index]['photo']);
+                            }
+                        } else {
+                            formdata.append('parameter[]', this.params);
+                        }
+                        axios({
+                            url: "<?= base_url('Asset/saveSetting'); ?>",
+                            data: formdata,
+                            method: "POST"
+                        }).then(res => {
+                            if (res.status == 200) {
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-success mr-1',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Success!',
+                                    text: 'You have successfully updated data.',
+                                    icon: 'success'
+                                }).then(okay => {
+                                    if (okay) {
+                                        swal.fire({
+                                            title: 'Please Wait!',
+                                            text: 'Reloading page..',
+                                            onOpen: function() {
+                                                swal.showLoading()
+                                            }
+                                        })
+                                        location.reload();
+                                    }
+                                })
+                            } else if (res.data.status == 'error') {
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-danger',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Failed!',
+                                    text: res.data.message,
+                                    icon: 'error'
+                                })
+                            }
+                        })
+                    }
+                };
+
+                function deleteAsset() {
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
                             confirmButton: 'btn btn-success mr-1',
@@ -1374,7 +1773,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     }).then((result) => {
                         if (result.isConfirmed) {
                             axios.post("<?= base_url('Asset/delete'); ?>", {
-                                assetId: this.param.assetId
+                                assetId: this.assetData.assetId
                             }).then(res => {
                                 if (res.data.status == 'success') {
                                     swalWithBootstrapButtons.fire({
@@ -1412,47 +1811,13 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             })
                         }
                     })
-                },
-                importParameter() {
-                    this.myModal = new coreui.Modal(document.getElementById('importParameterModal'), {
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    this.myModal.show();
-                },
-                insertParam() {
-                    axios.post("<?= base_url('Asset/insertParameter'); ?>", {
-                        dataParam: importList,
-                        assetId: this.param.assetId
-                    }).then(res => {
-                        console.log(res);
-                        if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire(
-                                'Success!',
-                                'You have successfully add parameter.',
-                                'success'
-                            ).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        }
-                    })
-                },
-                addParameter() {
+                };
+
+                function photo(event) {
+                    this.param.photo = event.target.files[0];
+                };
+
+                function addParameter() {
                     $('#btnAddParam').show();
                     $('#titleModalAdd').show();
                     $('#btnUpdateParameter').hide();
@@ -1460,75 +1825,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     $('#titleModalEdit').hide();
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     this.myModal.show();
-                },
-                photo(event) {
-                    this.param.photo = event.target.files[0];
-                },
-                addParam() {
-                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: "Invalid value!",
-                                icon: 'error'
-                            })
+                };
 
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-                    }else{
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        this.params.push(this.param);
-                        this.param = {
-                            parameterId: uuidv4(),
-                            sortId: null,
-                            parameterName: '',
-                            photo: '',
-                            description: '',
-                            uom: '',
-                            min: null,
-                            max: null,
-                            normal: '',
-                            abnormal: '',
-                            option: '',
-                            inputType: '',
-                            showOn: '',
-                        }
-                        $('.type').val('').trigger("change");
-                        $('#showOn').val('').trigger('change');
-                    }
-                },
-                editParameter($parameterId) {
+                function editParameter($parameterId) {
                     $('#btnAddParam').hide();
                     $('#titleModalAdd').hide();
                     $('#btnUpdateParam').hide();
@@ -1555,7 +1854,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             this.param.inputType = dt.inputType;
                             this.param.showOn = dt.showOn;
                         }
-                        console.log(res.data.data);
                     }).then(y => {
                         if (this.param.photo != "") {
                             $('#previewImg').show();
@@ -1567,27 +1865,40 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             $('.type').val(v.param.inputType).trigger("change");
                         }
                         if (v.param.normal != '' || v.param.abnormal != '') {
-                            $('#normal').val(v.param.normal.split(",")).trigger('change');
-                            $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
+                            $lengthNormal = v.param.normal.split(",").length;
+                            $lengthAbnormal = v.param.abnormal.split(",").length;
+                            if ($lengthNormal > 0) {
+                                var dataNormal = v.param.normal.split(",");
+                                for (let index = 0; index < dataNormal.length; index++) {
+                                    $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
+                                }
+                            }
+                            if ($lengthAbnormal > 0) {
+                                var dataAbnormal = v.param.abnormal.split(",");
+                                for (let index = 0; index < dataAbnormal.length; index++) {
+                                    $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
+                                }
+                            }
                         }
                         if (this.param.showOn != '') {
                             $('#showOn').val(this.param.showOn.split(",")).trigger('change');
                         }
                     })
-                },
-                updateParameter() {
+                };
+
+                function updateParameter() {
                     if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
                         const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: "Invalid value!",
-                                icon: 'error'
-                            })
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
+                            icon: 'error'
+                        })
 
                         if (this.param.parameterName != '') {
                             $('.parameter').removeClass('is-invalid');
@@ -1608,11 +1919,11 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.param.showOn == '') {
                             $('.showOn').addClass('is-invalid');
                         }
-                    }else{
+                    } else {
                         let photo = document.querySelector('#photo');
                         let formdata = new FormData();
                         formdata.append('parameterId', this.param.parameterId);
-                        formdata.append('assetId', this.assetId);
+                        formdata.append('assetId', this.assetData.assetId);
                         formdata.append('sortId', this.param.sortId);
                         formdata.append('parameterName', this.param.parameterName);
                         formdata.append('photo', (this.file == '' ? this.param.photo : this.file))
@@ -1672,55 +1983,11 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     icon: 'error'
                                 })
                             }
-                        })   
+                        })
                     }
-                },
-                updateParameter2() {
-                    axios.post("<?= base_url('Asset/updateParameter'); ?>", {
-                        parameterId: this.param.parameterId,
-                        assetId: this.param.assetId,
-                        sortId: this.param.sortId,
-                        parameterName: this.param.parameterName,
-                        photo: '',
-                        description: this.param.description,
-                        uom: this.param.uom,
-                        min: this.param.min,
-                        max: this.param.max,
-                        normal: this.param.normal.toString(),
-                        abnormal: this.param.abnormal.toString(),
-                        option: this.param.option,
-                        inputType: this.param.inputType,
-                        showOn: this.param.showOn.toString()
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            this.myModal.hide();
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                    cancelButton: 'btn btn-danger'
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: 'You have successfully update this data.',
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        }
-                    })
-                },
-                deleteParameter($parameterId) {
+                };
+
+                function deleteParameter($parameterId) {
                     const swalWithBootstrapButtons = Swal.mixin({
                         customClass: {
                             confirmButton: 'btn btn-success',
@@ -1763,8 +2030,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             })
                         }
                     })
-                },
-                btnCancel() {
+                };
+
+                function btnCancelModalParam() {
                     this.param = {
                         parameterId: uuidv4(),
                         sortId: null,
@@ -1781,112 +2049,46 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         showOn: '',
                     }
                     $('#addParameterModal').modal('hide');
+                    $('#previewImg').hide();
                     $('#imgParam').remove();
                     $('.type').val('').trigger("change");
                     $('#showOn').val('').trigger('change');
                     $('#normal').val('').trigger('change');
                     $('#abnormal').val('').trigger('change');
-                },
-                btnSchedule() {
-                    $('#schType').removeAttr("readonly");
-                    $('#btnScheduleCancel').show();
-                    $('#btnScheduleSave').show();
-                    $('#btnSchedule').hide();
-                },
-                btnScheduleCancel() {
-                    $('#schType').attr("readonly", "readonly");
-                    $('#btnScheduleCancel').hide();
-                    $('#btnScheduleSave').hide();
-                    $('#btnSchedule').show();
-                },
-                modalAddTag() {
-                    this.myModal = new coreui.Modal(document.getElementById('modalAddTag'));
-                    this.myModal.show();
-                },
-                addTag() {
-                    axios.post('<?= base_url('Asset/addTag'); ?>', {
-                        assetId: this.assetId,
-                        tagId: uuidv4(),
-                        tagName: this.addTagName,
-                        description: this.addTagDesc
-                    }).then(res => {
-                        this.myModal.hide();
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success mr-1',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Success!',
-                            text: res.data.message,
-                            icon: 'success'
-                        }).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
-                        })
-                    })
-                },
-                modalAddLocation() {
-                    this.myModal = new coreui.Modal(document.getElementById('modalAddLocation'));
-                    this.myModal.show();
-                    // add location map
-                    $(document).ready(function() {
-                        mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                        const map = new mapboxgl.Map({
-                            container: 'mapAddLocation', // container ID
-                            style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                            center: [109.005913, -7.727989], // starting position [lng, lat]
-                            zoom: 14, // starting zoom
-                        });
-                        map.addControl(new mapboxgl.FullscreenControl());
-                        map.resize();
-                        const marker = new mapboxgl.Marker({
-                            draggable: true
-                        })
-                            .setLngLat([109.005913, -7.727989])
-                            .addTo(map);
+                    $('.optNormal').remove();
+                    $('.optAbnormal').remove();
+                    $('.parameter').removeClass('is-invalid');
+                    $('.type').removeClass('is-invalid');
+                    $('.showOn').removeClass('is-invalid');
 
-                        function onDragEnd(params) {
-                            const lnglat = marker.getLngLat();
-                            let lat = lnglat.lat;
-                            let long = lnglat.lng;
-                            v.addLocationLatitude = lat;
-                            v.addLocationLongitude = long;
-                        }
-                        marker.on('dragend', onDragEnd);
-                    })
-                },
-                addTagLocation() {
-                    axios.post("<?= base_url('Asset/addTagLocation'); ?>", {
-                        assetId: this.assetId,
-                        tagLocationId: uuidv4(),
-                        tagLocationName: this.addLocationName,
-                        latitude: this.addLocationLatitude,
-                        longitude: this.addLocationLongitude,
-                        description: this.addLocationDesc
+                };
+
+                function importParameter() {
+                    this.myModal = new coreui.Modal(document.getElementById('importParameterModal'), {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    this.myModal.show();
+                };
+
+                function insertParam() {
+                    axios.post("<?= base_url('Asset/insertParameter'); ?>", {
+                        dataParam: importList,
+                        assetId: this.assetData.assetId
                     }).then(res => {
+                        console.log(res);
                         if (res.data.status == 'success') {
-                            this.myModal.hide();
                             const swalWithBootstrapButtons = swal.mixin({
                                 customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
+                                    confirmButton: 'btn btn-success',
                                 },
                                 buttonsStyling: false
                             })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
-                                icon: 'success'
-                            }).then(okay => {
+                            swalWithBootstrapButtons.fire(
+                                'Success!',
+                                'You have successfully add parameter.',
+                                'success'
+                            ).then(okay => {
                                 if (okay) {
                                     swal.fire({
                                         title: 'Please Wait!',
@@ -1900,207 +2102,267 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             })
                         }
                     })
-                }
-            }
-        });
+                };
 
-        $(function(){
+                onMounted(() => {
+                    let dataAssetName       = assetData.assetName;
+                    let dataAssetNumber     = assetData.assetNumber;
+                    let dataAssetDesc       = assetData.description;
+                    let dataAssetLat        = assetData.latitude;
+                    let dataAssetLong       = assetData.longitude;
+                    let dataAssetTag        = assetData.tagId;
+                    let dataAssetLocation   = assetData.tagLocationId;
+                    let dataAssetStatusName = assetData.assetStatusName;
+                    let dataAssetStatusId   = assetData.assetStatusId;
+
+                    let dataSchType         = assetData.schType;
+                    let dataSchFrequency    = assetData.schFrequency;
+                    let dataSchDays         = assetData.schDays;
+                    let dataSchWeekDays     = assetData.schWeekDays;
+                    let dataSchWeeks        = assetData.schWeeks;
+
+                    let dataTaggingId       = assetTagging.assetTaggingId;
+                    let dataTaggingValue    = assetTagging.assetTaggingValue;
+                    let dataTaggingType     = assetTagging.assetTaggingtype;
+                    let dataTaggingDesc     = assetTagging.description;
+                    let dataChecked         = checked;
+                    let dataFile            = file;
+                    let dataSetSch          = setSch;
+                    let dataOnDays          = onDays;
+                    let dataAddTagName      = addTagName;
+                    let dataAddTagDesc      = addTagDesc;
+                    let dataLocationName    = addLocationName;
+                    let dataLocationLatitude = addLocationLatitude;
+                    let dataLocationLongitude = addLocationLongitude;
+                    let dataLocationDesc    = addLocationDesc;
+                    let dataTempPhoto       = tempPhoto;
+                    let dataParams          = params.value.length;
+                    // || dataStatusName != v.statusName || dataSetSch != v.setSch || dataOnDays != v.onDays
+                    window.addEventListener('beforeunload', function(e){
+                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName ||  dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype || dataTaggingDesc != v.assetTagging.description) {
+                            console.log(dataSchWeekDays)
+                            console.log(v.schWeekDays)
+                            if (v.submited == true) {
+                                return;
+                            }else{
+                                e.preventDefault();
+                                e.returnValue = '';
+                            }
+                        }
+                    })
+                });
+
+                return {
+                    assetData,
+                    myModal,
+                    checked, 
+                    file,
+                    setSch,
+                    onDays,
+                    assetTagging,
+                    addTagName,
+                    addTagDesc,
+                    addLocationName,
+                    addLocationLatitude,
+                    addLocationLongitude,
+                    addLocationDesc,
+                    param,
+                    tempPhoto,
+                    params,
+                    submited,
+                    detailTab,
+                    parameterTab,
+                    settingTab,
+                    modalAddTag,
+                    addTag,
+                    modalAddLocation,
+                    addTagLocation,
+                    addTempParameter,
+                    editTempParameter,
+                    updateTempParameter,
+                    removeTempParameter,
+                    btnSaveSetting,
+                    deleteAsset,
+                    photo,
+                    addParameter,
+                    editParameter,
+                    updateParameter,
+                    deleteParameter,
+                    btnCancelModalParam,
+                    importParameter,
+                    insertParam
+                }
+            },
+        }).mount('#app');
+
+        $(function() {
             $('tbody').sortable({
                 cursor: "move",
                 handle: '.handle',
-                stop: function(event, ui){
-                    $(this).find('tr').each(function(i){
-                        $(this).find('td:first').text(i+1);
+                stop: function(event, ui) {
+                    $(this).find('tr').each(function(i) {
+                        $(this).find('td:first').text(i + 1);
                     })
 
                     var getParameter = [];
-                    $('#tableParam tr').each(function(){
+                    $('#tableParam tr').each(function() {
                         var rowDataArray = [];
                         var actualData = $(this).find('td');
                         if (actualData.length > 0) {
-                            actualData.each(function(){
+                            actualData.each(function() {
                                 rowDataArray.push($(this).text());
                             })
                             getParameter.push(rowDataArray);
                         }
                     })
                     axios.post("<?= base_url('Asset/sortingParameter'); ?>", {
-                        assetId: v.assetId,
+                        assetId: v.assetData.assetId,
                         data: getParameter
                     })
                 }
             });
         })
-        // if (window.history && history.pushState) {
-        //     addEventListener('load', function() {
-        //         history.pushState(null, null, null); // creates new history entry with same URL
-        //         addEventListener('popstate', function() {
-        //             var stayOnPage = confirm("Would you like to save this changes?");
-        //             if (!stayOnPage) {
-        //                 history.back()
-        //             } else {
-        //                 v.btnSaveSetting();
-        //             }
-        //         });
-        //     });
-        // }
 
-        window.onbeforeunload = function() {
-            return true;
-        }
         // Get value selected location, tag, operation mode
-
         $(document).ready(function() {
-            let selected = $('#tag').val();
-            v.assetTag = selected;
-        })
+            $('#operation').val(v.assetData.assetStatusId).trigger("change");
+            let selectedTag = $('#tag').val();
+            v.assetData.tagId = selectedTag;
 
-        $(document).ready(function() {
-            let selected = $('#location').val();
-            v.assetLocation = selected;
-        })
+            let selectedTagLocation = $('#location').val();
+            v.assetData.tagLocationId = selectedTagLocation;
 
-        $(document).ready(function() {
-            let selected = $('#operation').val();
+            let selectedOperation = $('#operation').val();
             let text = $('#operation :selected').text();
-            v.statusId = selected;
-            v.statusName = text;
+            v.assetData.assetStatusId = selectedOperation;
+            v.assetData.assetStatusName = text;
         })
 
         $(document).ready(function() {
-            if (v.assetTaggingType != '') {
-                $('#taggingType').val(v.assetTaggingType).trigger("change");
-            }else{
+            if (v.assetTagging.assetTaggingtype != '') {
+                $('#taggingType').val(v.assetTagging.assetTaggingtype).trigger("change");
+            } else {
                 let selected = $('#taggingType').val();
-                v.assetTaggingType = selected;
+                v.assetTagging.assetTaggingtype = selected;
             }
         })
 
         // On change tag, location, operation mode
         $('#location').on('change', function() {
             let data = $(this).val();
-            v.assetLocation = data;
+            v.assetData.tagLocationId = data;
         })
 
         $('#tag').on('change', function() {
             let data = $(this).val();
-            v.assetTag = data;
+            v.assetData.tagId = data;
         })
 
         $('#operation').on('change', function() {
             let data = $(this).val();
             let text = $('#operation :selected').text();
-            v.statusId = data;
-            v.statusName = text;
+            v.assetData.assetStatusId = data;
+            v.assetData.assetStatusName = text;
         })
 
         $('#taggingType').on('change', function() {
             let data = $(this).val();
-            v.assetTaggingType = data;
+            v.assetTagging.assetTaggingtype = data;
         })
 
-        $('.latlong').on('change', function() {
-            if ($(this).is(':checked')) {
+        $(document).ready(function() {
+            mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+            const map = new mapboxgl.Map({
+                container: 'mapDetail', // container ID
+                style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                center: [v.assetData.longitude, v.assetData.latitude], // starting position [lng, lat]
+                zoom: 14, // starting zoom
+            });
+            map.addControl(new mapboxgl.FullscreenControl());
+            map.resize();
+            const marker = new mapboxgl.Marker()
+                .setLngLat([v.assetData.longitude, v.assetData.latitude])
+                .addTo(map);
+        })
+
+        $(document).ready(function() {
+            if (v.assetData.latitude == '' && v.assetData.longitude == '') {
                 mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
                 const map = new mapboxgl.Map({
-                    container: 'mapDetail', // container ID
+                    container: 'map', // container ID
                     style: 'mapbox://styles/mapbox/streets-v11', // style URL
                     center: [109.005913, -7.727989], // starting position [lng, lat]
                     zoom: 14, // starting zoom
                 });
                 map.addControl(new mapboxgl.FullscreenControl());
                 map.resize();
-                const marker = new mapboxgl.Marker()
+                const marker = new mapboxgl.Marker({
+                        draggable: true,
+                    })
                     .setLngLat([109.005913, -7.727989])
                     .addTo(map);
 
-                $('#mapDetail').show();
-                $('#mapDetail').addClass('w-100');
-                $('.imgMap').removeClass('d-flex align-items-center');
-            } else if (!($(this).is(':checked'))) {
-                $('.imgMap').addClass('d-flex align-items-center');
-                $('#mapDetail').hide();
+                function onDragEnd(params) {
+                    const lnglat = marker.getLngLat();
+                    // coordinates.style.display = 'block';
+                    let lat = lnglat.lat;
+                    let long = lnglat.lng;
+                    v.assetData.latitude = lat;
+                    v.assetData.longitude = long;
+                }
+                marker.on('dragend', onDragEnd);
             } else {
-                swal.fire({
-                    icon: 'error',
-                    title: 'Failed',
-                    text: 'Failed Load Map'
-                })
+                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                const map = new mapboxgl.Map({
+                    container: 'map', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                    center: [v.assetData.longitude, v.assetData.latitude], // starting position [lng, lat]
+                    zoom: 14, // starting zoom
+                });
+                map.addControl(new mapboxgl.FullscreenControl());
+                map.resize();
+                const marker = new mapboxgl.Marker({
+                        draggable: true,
+                    })
+                    .setLngLat([v.assetData.longitude, v.assetData.latitude])
+                    .addTo(map);
+
+                function onDragEnd(params) {
+                    const lnglat = marker.getLngLat();
+                    // coordinates.style.display = 'block';
+                    let lat = lnglat.lat;
+                    let long = lnglat.lng;
+                    v.assetData.latitude = lat;
+                    v.assetData.longitude = long;
+                }
+                marker.on('dragend', onDragEnd);
             }
         })
 
         $('.latlong').on('change', function() {
             if ($(this).is(':checked')) {
+                v.checked = true;
                 $('#assetLat').show();
                 $('#assetLong').show();
-                
-                if (v.latitude == '' && v.longitude == '') {
-                    mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                    const map = new mapboxgl.Map({
-                        container: 'map', // container ID
-                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                        center: [109.005913, -7.727989], // starting position [lng, lat]
-                        zoom: 14, // starting zoom
-                    });
-                    map.addControl(new mapboxgl.FullscreenControl());
-                    map.resize();
-                    const marker = new mapboxgl.Marker({
-                            draggable: true,
-                        })
-                        .setLngLat([109.005913, -7.727989])
-                        .addTo(map);
-
-                    function onDragEnd(params) {
-                        const lnglat = marker.getLngLat();
-                        // coordinates.style.display = 'block';
-                        let lat = lnglat.lat;
-                        let long = lnglat.lng;
-                        v.latitude = lat;
-                        v.longitude = long;
-                    }
-                    marker.on('dragend', onDragEnd);
-                } else {
-                    mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                    const map = new mapboxgl.Map({
-                        container: 'map', // container ID
-                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                        center: [v.longitude, v.latitude], // starting position [lng, lat]
-                        zoom: 14, // starting zoom
-                    });
-                    map.addControl(new mapboxgl.FullscreenControl());
-                    map.resize();
-                    const marker = new mapboxgl.Marker({
-                            draggable: true,
-                        })
-                        .setLngLat([v.longitude, v.latitude])
-                        .addTo(map);
-                        function onDragEnd(params) {
-                            const lnglat = marker.getLngLat();
-                            // coordinates.style.display = 'block';
-                            let lat = lnglat.lat;
-                            let long = lnglat.lng;
-                            v.latitude = lat;
-                            v.longitude = long;
-                        }
-                marker.on('dragend', onDragEnd);
-                }
 
                 $('#divMap').show();
                 $('#map').addClass('w-100');
+
+                //map detail
+                $('#mapDetail').show();
+                $('#mapDetail').addClass('w-100');
+                $('.imgMap').removeClass('d-flex align-items-center');
             } else if (!($(this).is(':checked'))) {
+                v.checked = false;
                 $('#divMap').hide();
                 $('#assetLat').hide();
                 $('#assetLong').hide();
-            } else {
-                swal.fire({
-                    icon: 'error',
-                    title: 'Failed',
-                    text: 'Failed Load Map'
-                })
+
+                //map detail
+                $('.imgMap').addClass('d-flex align-items-center');
+                $('#mapDetail').hide();
             }
         })
-
-       
 
         $(document).ready(function() {
             FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
@@ -2117,7 +2379,23 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 styleButtonProcessItemPosition: 'right bottom',
             });
         })
+        // $(document).ready(function() {
+        //     FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+        //     let pond = $('.photo').filepond({
+        //         acceptedFileTypes: ['image/png', 'image/jpeg'],
+        //         allowImagePreview: true,
+        //         imagePreviewMaxHeight: 200,
+        //         allowImageCrop: true,
+        //         allowMultiple: false,
+        //         credits: false,
+        //         styleLoadIndicatorPosition: 'center bottom',
+        //         styleProgressIndicatorPosition: 'right bottom',
+        //         styleButtonRemoveItemPosition: 'left bottom',
+        //         styleButtonProcessItemPosition: 'right bottom',
+        //     });
+        // })
 
+        // import parameter
         $(document).ready(function() {
             FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
             let pond = $('#fileImportParam').filepond({
@@ -2199,11 +2477,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             });
         }
 
-
-        // $('#tableParam tbody tr td:last-child').addClass('cursor-move');
-
-        // // select2 edit asset
+        // select2 setting asset
         $(document).ready(function() {
+            // tag, location
             $('#tag').select2({
                 theme: 'coreui',
                 placeholder: "Select Tag",
@@ -2212,13 +2488,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 },
                 language: {
                     noResults: function() {
-                        return `<button class="btn btn-sm btn-primary" onclick="v.modalAddTag()">Add</button>`;
+                        return `<button class="btn btn-sm btn-primary" onclick="v.modalAddTag()"><i class="fa fa-plus"></i> Add</button>`;
                     }
                 }
             });
-        });
-
-        $(document).ready(function() {
             $('#location').select2({
                 theme: 'coreui',
                 placeholder: "Select Tag Location",
@@ -2227,14 +2500,17 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 },
                 language: {
                     noResults: function() {
-                        return `<button class="btn btn-sm btn-primary" onclick="v.modalAddLocation()">Add</button>`;
+                        return `<button class="btn btn-sm btn-primary" onclick="v.modalAddLocation()"><i class="fa fa-plus"></i> Add</button>`;
                     }
                 }
             });
-        });
-        
-        // select2 schedule
-        $(document).ready(function() {
+
+            // schedule
+            $('#setSch').select2({
+                theme: 'coreui',
+                placeholder: "Select Item",
+            });
+
             $('#schType').select2({
                 theme: 'coreui',
                 placeholder: "Select Frequency",
@@ -2264,10 +2540,32 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 theme: 'coreui',
                 placeholder: "Select All Days",
             });
-        });
 
-        // select2 add parameter
-        $(document).ready(function() {
+            // operation
+            $('#operation').select2({
+                theme: 'coreui',
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: uuidv4(),
+                        text: term,
+                        newTag: true // add additional parameters
+                    }
+                }
+            });
+
+            // tagging
+            $('#taggingType').select2({
+                theme: 'coreui',
+                placeholder: 'Select Tagging Type'
+            });
+
+            // parameter
             $('.type').select2({
                 theme: 'coreui',
                 placeholder: "Select Type",
@@ -2327,33 +2625,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             });
         }
 
-        $(document).ready(function() {
-            $('#operation').select2({
-                theme: 'coreui',
-                tags: true,
-                createTag: function(params) {
-                    var term = $.trim(params.term);
-
-                    if (term === '') {
-                        return null;
-                    }
-                    return {
-                        id: uuidv4(),
-                        text: term,
-                        newTag: true // add additional parameters
-                    }
-                }
-            })
-        })
-
-
-        $(document).ready(function() {
-            $('#taggingType').select2({
-                theme: 'coreui',
-                placeholder: 'Select Tagging Type'
-            })
-        })
-
+        // select2 parameter on change
         $('.type').on('change', function() {
             let data = $('.type option:selected').val();
             v.param.inputType = data;
@@ -2421,44 +2693,23 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             }
         })
 
-        $('.typeEdit').on('change', function() {
-            if ($(this).val() == 'select') {
-                $('.typeSelectEdit').show();
-                $('.typeInputEdit').hide();
-                $('.typeCheckboxEdit').hide();
-            } else if ($(this).val() == 'checkbox') {
-                $('.typeCheckboxEdit').show();
-                $('.typeSelectEdit').hide();
-                $('.typeInputEdit').hide();
+        $(document).ready(function() {
+            if (v.assetData.schType != '') {
+                $('#setSch').val('Automatic').trigger("change");
             } else {
-                $('.typeInputEdit').show();
-                $('.typeSelectEdit').hide();
-                $('.typeCheckboxEdit').hide();
+                $('#setSch').val('Manual').trigger("change");
             }
         })
-
-        $(document).ready(function(){
-            if (v.schType != '') {
-                $('#schType').val(v.schType).trigger("change");
-            }
-
-            if (v.schFrequency != null || v.schFrequency != '') {
-                $('#schFrequency').val(v.schFrequency);
-            }
-
-            if (v.schWeeks != '') {
-                $('#monthlyOn').val(v.schWeeks.split(",")).trigger("change");
-                $('#gridRadios2').click();
-            }
-
-            if (v.schDays != '') {
-                $('#monthlyDays').val(v.schDays.split(",")).trigger("change");
-                $('#gridRadios1').click();
-            }
-
-            if (v.schWeekDays != '') {
-                $('#monthlyOnDays').val(v.schWeekDays.split(",")).trigger("change");
-                $('#schWeekDays').val(v.schWeekDays.split(",")).trigger("change");
+        // select2 schedule on change
+        $('#setSch').on('change', function() {
+            v.setSch = $(this).val();
+            if ($(this).val() == 'Manual') {
+                $('.schType').addClass('hide');
+                $('#daily').hide();
+                $('#weekly').hide();
+                $('#monthly').hide();
+            } else if ($(this).val() == 'Automatic') {
+                $('.schType').removeClass('hide');
             }
         })
 
@@ -2467,125 +2718,104 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 $('#daily').show();
                 $('#weekly').hide();
                 $('#monthly').hide();
-                v.schType = $(this).val();
+                v.assetData.schType = $(this).val();
 
-                $('#schWeekDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Days'
-                    });
-                });
+                $('#schWeekDays').val("").trigger("change");
 
-                $('#monthlyDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Days'
-                    });
-                });
+                $('#monthlyDays').val("").trigger("change");
 
-                $('#monthlyOn').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Item'
-                    });
-                });
+                $('#monthlyOn').val("").trigger("change");
 
-                $('#monthlyOnDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select All Days'
-                    });
-                });
+                $('#monthlyOnDays').val("").trigger("change");
 
             } else if ($(this).val() == 'Weekly') {
                 $('#weekly').show();
                 $('#daily').hide();
                 $('#monthly').hide();
-                v.schType = $(this).val();
-                v.schFrequency = null;
-                $('#monthlyDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Days'
-                    });
-                });
+                v.assetData.schType = $(this).val();
+                v.assetData.schFrequency = null;
 
-                $('#monthlyOn').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Item'
-                    });
-                });
-
-                $('#monthlyOnDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select All Days'
-                    });
-                });
+                $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
+                $('#monthlyDays').val("").trigger("change");
+                $('#monthlyOn').val("").trigger("change");
+                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
 
 
             } else if ($(this).val() == 'Monthly') {
-                $('#schWeekDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Days'
-                    });
-                });
-
+                $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
                 $('#monthly').show();
                 $('#daily').hide();
                 $('#weekly').hide();
-                v.schType = $(this).val();
-                v.schFrequency = null;
+                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
+                v.assetData.schType = $(this).val();
+                v.assetData.schFrequency = null;
             }
         })
 
-        $('#schWeekDays').on('change', function(){
-            v.schWeekDays = $(this).val().toString();
+        // set value schedule
+        $(document).ready(function() {
+            if (v.assetData.schType != '') {
+                $('#schType').val(v.assetData.schType).trigger("change");
+            }
+
+            if (v.assetData.schFrequency != null || v.assetData.schFrequency != '') {
+                $('#schFrequency').val(v.assetData.schFrequency);
+            }
+
+            if (v.assetData.schWeeks != '') {
+                $('#monthlyOn').val(v.assetData.schWeeks.split(",")).trigger("change");
+                $('#gridRadios2').click();
+            }
+
+            if (v.assetData.schDays != '') {
+                $('#monthlyDays').val(v.assetData.schDays.split(",")).trigger("change");
+                $('#gridRadios1').click();
+            }
+
+            if (v.assetData.schWeekDays != '') {
+                $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
+            }
+
+            if (v.assetData.schWeekDays != '') {
+                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
+            }
         })
 
-        $('#monthlyDays').on('change', function(){
-            v.schDays = $(this).val().toString();
+        $('#schWeekDays').on('change', function() {
+            v.assetData.schWeekDays = $(this).val().toString();
         })
 
-        $('#monthlyOn').on('change', function(){
-            v.schWeeks = $(this).val().toString();
+        $('#monthlyDays').on('change', function() {
+            v.assetData.schDays = $(this).val().toString();
         })
 
-        $('#monthlyOnDays').on('change', function(){
-            v.schWeekDays = $(this).val().toString();
+        $('#monthlyOn').on('change', function() {
+            v.assetData.schWeeks = $(this).val().toString();
+        })
+
+        $('#monthlyOnDays').on('change', function() {
+            v.assetData.schWeekDays = $(this).val().toString();
         })
 
         //radio monthly
         $('input[type="radio"][name="gridRadios"]').on('change', function() {
             if ($(this).val() == "days") {
-                $('#monthlyOn').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Item'
-                    });
-                });
-                $('#monthlyOnDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select All Days'
-                    });
-                });
+                $('#monthlyOn').val("").trigger("change");
+                $('#monthlyOnDays').val("").trigger("change");
                 $('.on').attr('readonly', true);
                 $('.days').attr('readonly', false);
-                v.schWeeks = '';
-                
+                $('#days').show();
+                $('#on').hide();
+                v.assetData.schWeeks = '';
+                v.onDays = "days";
             } else if ($(this).val() == "on") {
-                $('#monthlyDays').each(function(){
-                    $(this).select2('destroy').val("").select2({
-                        theme: 'coreui',
-                        placeholder: 'Select Days'
-                    });
-                });
+                $('#monthlyDays').val("").trigger("change");
                 $('.days').attr('readonly', true);
                 $('.on').attr('readonly', false);
-                v.schDays = '';
+                $('#days').hide();
+                $('#on').show();
+                v.assetData.schDays = '';
+                v.onDays = "on";
             }
         })
     </script>

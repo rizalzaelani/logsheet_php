@@ -31,7 +31,7 @@
                                 <label for="tagLocationName">Location Name</label>
                             </div>
                             <div class="col-8">
-                                <input type="text" class="form-control" id="tagLocationName" v-model="tagLocationName" readonly>
+                                <input type="text" class="form-control" id="tagLocationName" v-model="tagLocation.tagLocationName" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -39,7 +39,7 @@
                                 <label for="latitude">Latitude</label>
                             </div>
                             <div class="col-8">
-                                <input type="text" class="form-control" id="latitude" v-model="latitude" readonly>
+                                <input type="text" class="form-control" id="latitude" v-model="tagLocation.latitude" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -47,7 +47,7 @@
                                 <label for="longitude">Longitude</label>
                             </div>
                             <div class="col-8">
-                                <input type="text" class="form-control" id="longitude" v-model="longitude" readonly>
+                                <input type="text" class="form-control" id="longitude" v-model="tagLocation.longitude" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -55,7 +55,7 @@
                                 <label for="description">Description</label>
                             </div>
                             <div class="col-8">
-                                <textarea class="form-control" id="description" v-model="description" rows="5" readonly></textarea>
+                                <textarea class="form-control" id="description" v-model="tagLocation.description" rows="5" readonly></textarea>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -80,40 +80,36 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-    let v = new Vue({
+    const { reactive, ref } = Vue;
+    let v = Vue.createApp({
         el: '#app',
-        data: {
-            myModal: '',
-            tagLocationId: "<?= $location['tagLocationId']; ?>",
-            tagLocationName: "<?= $location['tagLocationName']; ?>",
-            latitude: "<?= $location['latitude']; ?>",
-            longitude: "<?= $location['longitude']; ?>",
-            description: "<?= $location['description']; ?>",
-        },
-        methods: {
-            editLocation() {
+        setup() {
+            var tagLocation = reactive(<?= json_encode($location) ?>);
+            var myModal = ref('');
+
+            function editLocation() {
                 $("input[type=text]").removeAttr("readonly");
                 $('textarea[id=description]').removeAttr("readonly");
                 $('#btnCancelEdit').show();
                 $('#btnEdit').hide();
                 $('#btnSaveEdit').show();
                 $('#btnDelete').show();
-            },
-            cancelEditLocation() {
+            };
+            function cancelEditLocation() {
                 $("input[type=text]").attr("readonly", "readonly");
                 $('textarea[id=description]').attr("readonly", "readonly");
                 $('#btnEdit').show();
                 $('#btnCancelEdit').hide();
                 $('#btnSaveEdit').hide();
                 $('#btnDelete').hide();
-            },
-            saveEditLocation() {
+            };
+            function saveEditLocation() {
                 axios.post("<?= base_url('Location/update'); ?>", {
-                    tagLocationId: this.tagLocationId,
-                    tagLocationName: this.tagLocationName,
-                    latitude: this.latitude,
-                    longitude: this.longitude,
-                    description: this.description
+                    tagLocationId: this.tagLocation.tagLocationId,
+                    tagLocationName: this.tagLocation.tagLocationName,
+                    latitude: this.tagLocation.latitude,
+                    longitude: this.tagLocation.longitude,
+                    description: this.tagLocation.description
                 }).then(res => {
                     if (res.data.status == 'success') {
                         const swalWithBootstrapButtons = swal.mixin({
@@ -140,8 +136,8 @@
                         })
                     }
                 })
-            },
-            deleteLocation() {
+            };
+            function deleteLocation() {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -160,7 +156,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         axios.post("<?= base_url('Location/delete'); ?>", {
-                            tagLocationId: this.tagLocationId
+                            tagLocationId: this.tagLocation.tagLocationId
                         }).then(res => {
                             if (res.data.status == 'success') {
                                 swalWithBootstrapButtons.fire({
@@ -177,29 +173,38 @@
                                                 swal.showLoading()
                                             }
                                         })
-                                        window.location.href = "<?= base_url('Location/'); ?>";
+                                        window.tagLocation.href = "<?= base_url('Location/'); ?>";
                                     }
                                 })
                             }
                         })
                     }
                 })
-            }
-        }
-    })
+            };
+
+            return {
+                tagLocation,
+                myModal,
+                editLocation,
+                cancelEditLocation,
+                saveEditLocation,
+                deleteLocation
+            };
+        },
+    }).mount('#app');
     $(document).ready(function() {
         mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
         const map = new mapboxgl.Map({
             container: 'mapLocation', // container ID
             style: 'mapbox://styles/mapbox/streets-v11', // style URL
-            center: [<?= $location['longitude']; ?>, <?= $location['latitude']; ?>], // starting position [lng, lat]
+            center: [v.tagLocation.longitude, v.tagLocation.latitude], // starting position [lng, lat]
             zoom: 14, // starting zoom
         });
         map.addControl(new mapboxgl.FullscreenControl());
         map.resize();
         const marker = new mapboxgl.Marker()
-            .setLngLat([<?= $location['longitude']; ?>, <?= $location['latitude']; ?>])
+            .setLngLat([v.tagLocation.longitude, v.tagLocation.latitude])
             .addTo(map);
-    })
+    });
 </script>
 <?= $this->endSection(); ?>

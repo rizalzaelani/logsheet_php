@@ -77,16 +77,16 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-    let v = new Vue({
+    const { ref } = Vue;
+    let v = Vue.createApp({
         el: '#app',
-        data: {
-            tagLocationName: '',
-            latitude: '',
-            longitude: '',
-            description: '',
-        },
-        methods: {
-            addLocation() {
+        setup() {
+            var tagLocationName = ref('');
+            var latitude = ref('');
+            var longitude = ref('');
+            var description = ref('');
+
+            function addLocation() {
                 axios.post("<?= base_url('Location/addTagLocation'); ?>", {
                     tagLocationName: this.tagLocationName,
                     latitude: this.latitude,
@@ -130,9 +130,17 @@
                         })
                     }
                 })
-            },
-        }
-    })
+            };
+
+            return {
+                tagLocationName,
+                latitude,
+                longitude,
+                description,
+                addLocation,
+            }
+        },
+    }).mount('#app');
 
     mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
             const map = new mapboxgl.Map({
