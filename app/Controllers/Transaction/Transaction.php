@@ -5,6 +5,7 @@ namespace App\Controllers\Transaction;
 use App\Controllers\BaseController;
 use App\Models\ScheduleTrxModel;
 use App\Models\TransactionModel;
+use DateTime;
 
 class Transaction extends BaseController
 {
@@ -89,5 +90,76 @@ class Transaction extends BaseController
 			'message' => 'success'
 		);
 		echo json_encode($output);
+	}
+
+	public function approveTrx(){
+        $isValid = $this->validate([
+            'scheduleTrxId' => 'required',
+            'approvedNotes' => 'required',
+        ]);
+
+		$dateNow = new DateTime();
+
+        if (!$isValid) {
+            return $this->response->setJson([
+                'status' => 400,
+                'message' => $this->validator->getErrors(),
+                'data' => []
+            ], 400);
+        }
+		
+		$scheduleTrxModel = new ScheduleTrxModel();
+		$trxModel = new TransactionModel();
+
+		$scheduleTrxId = $this->request->getVar("scheduleTrxId");
+		$approvedNotes = $this->request->getVar("approvedNotes");
+		$condition = "Normal";
+		
+		$getNormalAbnormal = $scheduleTrxModel->checkNormalAbnormal($scheduleTrxId);
+		if(!empty($getNormalAbnormal)){
+			$trxData = $trxModel->getAll(["scheduleTrxId" => $scheduleTrxId]);
+			$updateTrx = [];
+			foreach($trxData as $row){
+				array_filter($getNormalAbnormal, function($val) use ($row){
+					if($val["abnormal"]	== 1 && $val["trxId"] == $row["trxId"]){
+						array_push($updateTrx, array(
+							"trxId" => $val["trxId"],
+							"condition" => "Finding" 
+						));
+						return true;
+					}
+				});
+			}
+		}
+
+		$cekSch = $scheduleTrxModel->getById($scheduleTrxId);
+		if(empty($cekSch)){
+            return $this->response->setJson([
+                'status' => 404,
+                'message' => "Schedule Transaction is Not Found",
+                'data' => []
+            ], 404);
+		}
+
+		if(!empty($updateTrx)){
+			$condition = "Finding";
+
+			$trxModel->updateBatch($updateTrx, 'trxId');
+		}
+
+		$dataUpdate = [
+			"approvedNotes" => $approvedNotes,
+			"approvedAt" => $dateNow->format("Y-m-d H:i:s"),
+			"approvedBy" => $_SESSION["username"] ?? "user01",
+			"condition" => $condition
+		];
+
+		$scheduleTrxModel->update($scheduleTrxId, $dataUpdate);
+
+		return $this->response->setJson([
+			'status' => 200,
+			'message' => "Transaction Approved Successfully",
+			'data' => []
+		], 200);
 	}
 }

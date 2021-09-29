@@ -18,43 +18,71 @@
                 <table class="table mt-2">
                     <tr class="mt-1">
                         <th>Asset</th>
-                        <td>: IPC</td>
+                        <td>: <?= $findingData['assetName'] ?></td>
                     </tr>
                     <tr class="mt-1">
-                        <th>Number</th>
-                        <td>: 001</td>
+                        <th>Asset Number</th>
+                        <td>: <?= $findingData['assetNumber'] ?></td>
                     </tr>
                     <tr class="mt-1">
                         <th>Tag</th>
-                        <td>: ROUTER, CCTV</td>
+                        <td>:
+                            <?php
+                            if ($findingData['tagName'] != '-') {
+                                $assetTagValue = (array_values(array_unique(explode(",", $findingData['tagName']))));
+                                $length = count($assetTagValue);
+                                for ($i = 0; $i < $length; $i++) { ?>
+                                    <span class="badge badge-primary p-1 mt-1" style="font-size: 13px;">
+                                        <?= $assetTagValue[$i]; ?>
+                                    </span>
+                            <?php }
+                            } else {
+                                echo "-";
+                            }
+                            ?>
+                        </td>
                     </tr>
                     <tr class="mt-1">
                         <th>Location</th>
-                        <td>: GEDUNG FINANCE</td>
+                        <td>:
+                            <?php
+                            if ($findingData['tagLocationName'] != '-') {
+                                $assetTagValue = (array_values(array_unique(explode(",", $findingData['tagLocationName']))));
+                                $length = count($assetTagValue);
+                                for ($i = 0; $i < $length; $i++) { ?>
+                                    <span class="badge badge-primary p-1 mt-1" style="font-size: 13px;">
+                                        <?= $assetTagValue[$i]; ?>
+                                    </span>
+                            <?php }
+                            } else {
+                                echo "-";
+                            }
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <th>Parameter</th>
-                        <td>Frequency</td>
+                        <td>: <?= $findingData['parameterName'] ?></td>
                     </tr>
                     <tr>
-                        <th>Tag. No.</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>Spec Standard</th>
-                        <td>49 - 51 (Hz)</td>
+                        <th>Description</th>
+                        <td>: <?= $findingData['description'] ?></td>
                     </tr>
                     <tr>
                         <th>Min / Abnormal</th>
-                        <td>49</td>
+                        <td>: <?= ($findingData['option'] ?? '') == '' ? $findingData['min'] : $findingData['abnormal'] ?></td>
                     </tr>
                     <tr>
                         <th>Max / Normal</th>
-                        <td>51</td>
+                        <td>: <?= ($findingData['option'] ?? '') == '' ? $findingData['max'] : $findingData['normal'] ?></td>
+                    </tr>
+                    <tr>
+                        <th>Unit Of Measure</th>
+                        <td>: <?= $findingData['uom'] ?></td>
                     </tr>
                     <tr>
                         <th>Value</th>
-                        <td style="word-break: break-all;">48</td>
+                        <td>: <?= $findingData['value'] ?></td>
                     </tr>
                 </table>
             </div>
@@ -110,11 +138,10 @@
 <!-- Custom Script Js -->
 
 <script>
-    let v = new Vue({
-        el: '#app',
-        data: () => ({
-            data: null
-        }),
+    let v = Vue.createApp({
+        setup() {
+            const findingData = <?= json_encode($findingData) ?>;
+        },
         mounted() {
 
         },

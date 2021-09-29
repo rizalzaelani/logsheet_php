@@ -85,29 +85,28 @@
 <!-- Custom Script Js -->
 
 <script>
-	let v = new Vue({
-		el: '#app',
-		data: () => ({
-			data: null,
-			table: null
-		}),
-		mounted() {
-			this.GetData();
+	let v = Vue.createApp({
+		setup() {
+			var data = null;
+			var table = null;
 
-			let search = $(".dt-search-input input[data-target='#tableTrx']");
-			search.unbind().bind("keypress", function(e) {
-				if (e.which == 13 || e.keyCode == 13) {
-					let searchData = search.val();
-					table.search(searchData).draw();
-				}
-			});
+			Vue.onMounted(() => {
+				getData();
 
-			$(document).on('click', '#tableTrx tbody tr', function() {
-				window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
+				let search = $(".dt-search-input input[data-target='#tableTrx']");
+				search.unbind().bind("keypress", function(e) {
+					if (e.which == 13 || e.keyCode == 13) {
+						let searchData = search.val();
+						table.search(searchData).draw();
+					}
+				});
+
+				$(document).on('click', '#tableTrx tbody tr', function() {
+					window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
+				});
 			});
-		},
-		methods: {
-			GetData() {
+			
+			const getData = () => {
 				return new Promise(async (resolve, reject) => {
 					try {
 						this.table = await $('#tableTrx').DataTable({
@@ -189,8 +188,14 @@
 						reject(er);
 					}
 				})
-			},
+			}
+
+			return {
+				data,
+				table,
+				getData
+			};
 		}
-	})
+	}).mount("#app")
 </script>
 <?= $this->endSection(); ?>

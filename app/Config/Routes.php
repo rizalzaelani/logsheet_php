@@ -113,12 +113,14 @@ $routes->add('/VersionApps', 'Setting/VersionApps::index');
 $routes->get('/Transaction', 'Transaction/Transaction::index');
 $routes->get('/Transaction/detail', 'Transaction/Transaction::detail');
 $routes->post('/Transaction/datatable', 'Transaction/Transaction::datatable');
+$routes->post('/Transaction/approveTrx', 'Transaction/Transaction::approveTrx');
 
 $routes->get('/ScheduleTrx/generateSchedule', 'Transaction/ScheduleTrx::generateSchedule');
 
 $routes->get('/Finding', 'Finding/Finding::index');
 $routes->get('/Finding/detailList', 'Finding/Finding::detailList');
 $routes->get('/Finding/detail', 'Finding/Finding::detail');
+$routes->get('/Finding/issue', 'Finding/Finding::issue');
 
 $routes->get('/ReportingAsset', 'Reporting/Asset::index');
 $routes->get('/ReportingAsset/detail', 'Reporting/Asset::detail');

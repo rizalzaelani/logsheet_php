@@ -26,4 +26,8 @@ class ScheduleTrxModel extends Model
 
         return $query->get()->getResultArray();
     }
+
+    public function checkNormalAbnormal($scheduleTrxId){
+        return $this->db->query("call sp_normalAbnormalTrx('" . $scheduleTrxId . "')")->getResultArray();
+    }
 }

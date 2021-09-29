@@ -33,9 +33,9 @@
 </head>
 
 <body class="c-app">
-  <?= $this->include('Layout/components/sidebar'); ?>
+  <?= $this->include('Layout/Components/sidebar'); ?>
   <div class="c-wrapper">
-    <?= $this->include('Layout/components/header'); ?>
+    <?= $this->include('Layout/Components/header'); ?>
     <div class="c-body">
       <main class="c-main">
         <div class="container-fluid">
@@ -53,7 +53,7 @@
   <?php endif; ?>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue@next"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>

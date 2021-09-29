@@ -24,6 +24,8 @@ class BundleConfig
 			base_url('/vendors/filepond/filepond.jquery.js'),
 			// base_url('/vendors/mapbox/mapbox-gl.js.map'),
 			base_url('/vendors/jquery-ui/jquery-ui.js'),
+			base_url('/js/main.js'),
+			base_url('/js/string-manipulation.js'),
 		);
 		return $plugin;
 	}
