@@ -192,7 +192,7 @@
             </div>
 
             <!-- modal add tag -->
-            <div class="modal fade" id="modalAddTag" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true">
+            <div class="modal fade" id="modalAddTag" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true" style="z-index: 3000;">
                 <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -224,7 +224,7 @@
             </div>
 
             <!-- modal add location -->
-            <div class="modal fade" id="modalAddLocation" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true">
+            <div class="modal fade" id="modalAddLocation" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true" style="z-index: 3000;">
                 <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -238,8 +238,8 @@
                                 <div class="col-6">
                                     <form action="">
                                         <div class="mb-3">
-                                            <label for="addTagName">Tag Location Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
-                                            <input id="addTagName" type="text" class="form-control" required v-model="addLocation.addLocationName" placeholder="Tag Location Name">
+                                            <label for="addLocName">Tag Location Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
+                                            <input id="addLocName" type="text" class="form-control" required v-model="addLocation.addLocationName" placeholder="Tag Location Name">
                                         </div>
                                         <div class="mb-3">
                                             <label for="latitude">Latitude <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Latitude"></i></label>
@@ -250,8 +250,8 @@
                                             <input id="longitude" type="text" class="form-control" required v-model="addLocation.addLocationLongitude" placeholder="Location Longitude">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="addTagDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
-                                            <textarea id="addTagDesc" class="form-control" required v-model="addLocation.addLocationDesc" rows="8" placeholder="Description of tag location"></textarea>
+                                            <label for="addLocDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
+                                            <textarea id="addLocDesc" class="form-control" required v-model="addLocation.addLocationDesc" rows="8" placeholder="Description of tag location"></textarea>
                                         </div>
                                     </form>
                                 </div>
@@ -548,7 +548,7 @@
                                     <select name="tagging" id="taggingType" class="form-control">
                                         <option value="" selected disabled>Select Type</option>
                                         <option value="rfid">rfid</option>
-                                        <option value="coordinate">coordinate</option>
+                                        <option value="coordinat">coordinat</option>
                                         <option value="uhf">uhf</option>
                                     </select>
                                     <div class="invalid-feedback">
