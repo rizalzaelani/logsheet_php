@@ -129,7 +129,6 @@ class Asset extends BaseController
 
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
-		// die();
 		if (isset($post['assetId'])) {
 			// asset
 			$dataAsset = array(
@@ -216,31 +215,19 @@ class Asset extends BaseController
 			}
 
 			// asset tagging
-			$assetTagging = $assetTaggingModel->where('assetId', $assetId)->get()->getResult();
-			$lengthTagging = count($assetTagging);
 			$assetTaggingId = $post['assetTaggingId'];
-			if ($post['assetTaggingValue'] != '') {
-				if ($lengthTagging > 0) {
+			if ($post['assetTaggingType'] != '') {
 					$dataAssetTagging = array(
-						'assetId' => $assetId,
-						'assetTaggingValue' => $post['assetTaggingValue'],
-						'assetTaggingtype' => $post['assetTaggingType'],
-						'description' => $post['assetTaggingDescription'],
-					);
-					$assetTaggingModel->update($assetTaggingId, $dataAssetTagging);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAssetTagging));
-				} else {
-					$dataAssetTagging = array(
+						'assetTaggingId' => $assetTaggingId,
 						'assetId' => $assetId,
 						'assetTaggingValue' => $post['assetTaggingValue'],
 						'assetTaggingtype' => $post['assetTaggingType'],
 						'description' => $post['assetTaggingDescription']
 					);
 					$assetTaggingModel->insert($dataAssetTagging);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAssetTagging));
-				}
+					echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $dataAssetTagging));
 			} else {
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $post));
+				echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
 			}
 
 			// asset parameter

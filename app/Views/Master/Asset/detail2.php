@@ -460,8 +460,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     <div class="col-6">
                                         <form action="">
                                             <div class="mb-3">
-                                                <label for="addTagName">Tag Location Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
-                                                <input id="addTagName" type="text" class="form-control" required v-model="addLocationName" placeholder="Tag Location Name">
+                                                <label for="addLocName">Tag Location Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
+                                                <input id="addLocName" type="text" class="form-control" required v-model="addLocationName" placeholder="Tag Location Name">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="latitude">Latitude <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Latitude"></i></label>
@@ -472,8 +472,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 <input id="longitude" type="text" class="form-control" required v-model="addLocationLongitude" placeholder="Location Longitude">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="addTagDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
-                                                <textarea id="addTagDesc" class="form-control" required v-model="addLocationDesc" rows="8" placeholder="Description of tag location"></textarea>
+                                                <label for="addLocDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
+                                                <textarea id="addLocDesc" class="form-control" required v-model="addLocationDesc" rows="8" placeholder="Description of tag location"></textarea>
                                             </div>
                                         </form>
                                     </div>
