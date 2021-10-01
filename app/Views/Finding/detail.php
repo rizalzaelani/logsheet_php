@@ -6,7 +6,7 @@
 
 <?= $this->section('content') ?>
 <div class="row" id="app">
-    <div class="col-sm-6">
+    <div class="col-sm-7">
         <div class="card card-main">
             <div class="card-body">
                 <div class="d-flex justify-content-between mt-1 mb-2">
@@ -32,7 +32,7 @@
                                 $assetTagValue = (array_values(array_unique(explode(",", $findingData['tagName']))));
                                 $length = count($assetTagValue);
                                 for ($i = 0; $i < $length; $i++) { ?>
-                                    <span class="badge badge-primary p-1 mt-1" style="font-size: 13px;">
+                                    <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
                                         <?= $assetTagValue[$i]; ?>
                                     </span>
                             <?php }
@@ -50,7 +50,7 @@
                                 $assetTagValue = (array_values(array_unique(explode(",", $findingData['tagLocationName']))));
                                 $length = count($assetTagValue);
                                 for ($i = 0; $i < $length; $i++) { ?>
-                                    <span class="badge badge-primary p-1 mt-1" style="font-size: 13px;">
+                                    <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
                                         <?= $assetTagValue[$i]; ?>
                                     </span>
                             <?php }
@@ -88,43 +88,38 @@
             </div>
         </div>
 
-        <div class="card card-main">
-            <div class="card-body">
-                <div class="d-flex justify-content-between mt-1 mb-2">
-                    <h4>Form Timeline</h4>
-                </div>
-                <div>
-                    <input type="hidden" name="deviasiId" value="2b958001-69e5-4421-b3c1-7eb0d21e0d8a">
-                    <div class="form-group d-none">
-                        <span class="irs js-irs-0"><span class="irs"><span class="irs-line" tabindex="0"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span><span class="irs-min" style="visibility: hidden;">0</span><span class="irs-max" style="visibility: visible;">100</span><span class="irs-from" style="visibility: hidden;">0</span><span class="irs-to" style="visibility: hidden;">0</span><span class="irs-single" style="left: 0.341129%;">1</span></span><span class="irs-grid"></span><span class="irs-bar" style="left: 1.56874%; width: 0.968625%;"></span><span class="irs-bar-edge"></span><span class="irs-shadow shadow-single" style="display: none;"></span><span class="irs-slider single" style="left: 0.968625%;"></span></span><input type="text" class="form-control irs-hidden-input" id="deviasi_progress" name="deviasi_progress" value="" tabindex="-1" readonly="">
+        <?php if($findingData['condition'] == "Open"){ ?>
+            <div class="card card-main">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mt-1 mb-2">
+                        <h4>Form Timeline</h4>
                     </div>
-                    <div class="form-group">
-                        <label>Notes</label>
-                        <textarea class="form-control" name="notes" rows="3" placeholder="Notes..."></textarea>
-                    </div>
-                    <div class="form-group d-flex justify-content-between">
-                        <button class="btn btn-primary" id="btnTimelineUpdate" type="submit"><i class="fa fa-sync"></i> Update</button>
-                        <button class="btn btn-outline-primary" id="btnCloseDeviasi" type="button" onclick="" style="margin-left: 10px;"><i class="fa fa-check"></i> Close Finding</button>
+                    <div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea class="form-control" name="notes" rows="3" placeholder="Notes..." v-model="timelineNotes"></textarea>
+                        </div>
+                        <div class="form-group d-flex justify-content-between">
+                            <button class="btn btn-primary" type="button" @click="updateFindingLog();"><i class="fa fa-sync"></i> Update</button>
+                            <button class="btn btn-outline-primary" @click="closeFinding();" id="closeFinding" type="button" style="margin-left: 10px;"><i class="fa fa-check"></i> Close Finding</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        <?php } ?>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-5">
         <div class="card card-main">
             <div class="card-body">
                 <div class="d-flex justify-content-between mt-1 mb-4">
                     <h4>Timeline</h4>
                 </div>
                 <div class="history-tl-container">
-                    <ul class="tl" id="listTimeline">
-                        <li class="tl-item dot-danger">
-                            <div class="item-detail">13 August 2021 13:56:29 <b><i>admin@gmail.com</i></b></div>
-                            <div class="item-title"><b>admin</b> Finding Opened By admin@gmail.com</div>
-                        </li>
-                        <li class="tl-item dot-success">
-                            <div class="item-detail">13 August 2021 13:56:42 <b><i>admin@gmail.com</i></b></div>
-                            <div class="item-title"><b>admin</b> test</div>
+                    <ul class="tl" id="listTimeline" v-for="(val, key) in timelineData">
+                        <li class="tl-item" :class="key == 0 ? 'dot-danger' : (key == (timelineData.length - 1) & '<?= $findingData['condition'] ?>' == 'Closed' ? 'dot-primary' : 'dot-success')">
+                            <div class="item-detail">{{ moment(val.createdAt).format("DD MMM YYYY HH:mm:ss") }}</div>
+                            <div class="item-title font-weight-bold mb-2">{{ val.createdBy }}</div>
+                            <div class="item-notes">{{ val.notes }}</div>
                         </li>
                     </ul>
                 </div>
@@ -141,6 +136,107 @@
     let v = Vue.createApp({
         setup() {
             const findingData = <?= json_encode($findingData) ?>;
+
+            let timelineData = Vue.reactive([]);
+            const timelineNotes = Vue.ref("");
+
+            //Function
+            const getFindingLog = () => {
+                axios.get("<?= site_url("Finding/getFindingLog") ?>?findingId=" + findingData.findingId) //, { findingId: findingData.findingId })
+                    .then((res) => {
+                        xhrThrowRequest(res)
+                            .then(() => {
+                                timelineData.splice(0);
+                                timelineData.push(...res.data.data);
+                            })
+                            .catch((rej) => {
+                                if (rej.throw) {
+                                    throw new Error(rej.message);
+                                }
+                            });
+                    });
+            }
+
+            const updateFindingLog = () => {
+                let response = axios.post("<?= site_url("Finding/addFindingLog") ?>", {
+                    findingId: findingData.findingId,
+                    notes: timelineNotes.value
+                }).then((res) => {
+                    xhrThrowRequest(res)
+                        .then(() => {
+                            // Swal.fire({
+                            //     title: res.data.message,
+                            //     icon: "success",
+                            //     timer: 3000,
+                            //     toast: true,
+                            // });
+
+                            timelineData.push(res.data.data);
+
+                            // getFindingLog();
+                        })
+                        .catch((rej) => {
+                            if (rej.throw) {
+                                throw new Error(rej.message);
+                            }
+                        });
+                });
+            };
+
+            const closeFinding = () => {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Do You Want to Close this Finding",
+                    icon: "warning",
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.value) {
+                        Swal.fire({
+                            title: "Wait a minute, Data on Processing",
+                            icon: "info",
+                            showCancelButton: false,
+                            showConfirmButton: false
+                        });
+
+                        document.getElementById("closeFinding").innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Closing Finding';
+                        document.getElementById("closeFinding").setAttribute("disabled", true);
+
+                        axios.post("<?= base_url("Finding/closeFinding") ?>?findingId=" + findingData.findingId)
+                            .then((res) => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        Swal.fire({
+                                            title: res.data.message,
+                                            icon: "success",
+                                        }).then(() => {
+                                            window.location.reload();
+                                        })
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
+                                        }
+                                        
+                                        document.getElementById("closeFinding").innerHTML = '<i class="fa fa-check"></i> Close Finding';
+                                        document.getElementById("closeFinding").removeAttribute("disabled");
+                                    });
+                            });
+                    }
+                });
+            }
+
+            Vue.onMounted(() => {
+                getFindingLog();
+            });
+
+            return {
+                findingData,
+                timelineData,
+                timelineNotes,
+                updateFindingLog,
+                moment,
+                closeFinding
+            };
         },
         mounted() {
 
@@ -148,6 +244,6 @@
         methods: {
 
         }
-    })
+    }).mount("#app")
 </script>
 <?= $this->endSection(); ?>

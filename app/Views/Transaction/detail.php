@@ -35,7 +35,7 @@
                                     $assetTagValue = (array_values(array_unique(explode(",", $scheduleTrxData['tagName']))));
                                     $length = count($assetTagValue);
                                     for ($i = 0; $i < $length; $i++) { ?>
-                                        <span class="badge badge-primary p-1 mt-1" style="font-size: 13px;">
+                                        <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
                                             <?= $assetTagValue[$i]; ?>
                                         </span>
                                     <?php }
@@ -53,7 +53,7 @@
                                     $assetTagValue = (array_values(array_unique(explode(",", $scheduleTrxData['tagLocationName']))));
                                     $length = count($assetTagValue);
                                     for ($i = 0; $i < $length; $i++) { ?>
-                                        <span class="badge badge-primary p-1 mt-1" style="font-size: 13px;">
+                                        <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
                                             <?= $assetTagValue[$i]; ?>
                                         </span>
                                     <?php }
@@ -81,8 +81,8 @@
                     <hr />
                 </div>
                 <div class="col-12">
-                    <div class="table-responsive table-record-fix-width border-bottom">
-                        <table class="table table-responsive-sm table-hover table-bordered table-outline mb-0" id="detailRecord">
+                    <div class="table-responsive table-record-fix-width">
+                        <table class="table table-responsive-sm table-hover table-bordered table-outline" id="detailRecord">
                             <thead>
                                 <tr>
                                     <th class="text-center">No.</th>
@@ -119,7 +119,7 @@
 
                                     <?php if ($scheduleTrxData["approvedAt"] != null) { ?>
                                         <td class="text-center">
-                                            <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val)).class != ''" :class="(checkAbnormal(val)).class">{{ checkAbnormal(val).name }}</a>
+                                            <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
                                         </td>
                                     <?php } ?>
                                 </tr>
@@ -213,19 +213,19 @@
             },
             checkAbnormal(val, approvedAt) {
                 if (!isNullEmptyOrUndefined(approvedAt)) {
-                    if (val.status != 'Normal' & val.status != '' & val.status != null & val.status != undefined) {
-                        if (val.deviasiId == null) {
+                    if (val.condition != 'Normal' & val.condition != '' & val.condition != null & val.condition != undefined) {
+                        if (val.findingId == null) {
                             return {
                                 'class': 'btn-danger',
                                 'name': 'Follow Up'
                             };
                         } else {
-                            if (val.status == 'Closed') {
+                            if (val.condition == 'Closed') {
                                 return {
                                     'class': 'btn-primary',
                                     'name': 'Is Closed'
                                 };
-                            } else if (val.status == 'Open') {
+                            } else if (val.condition == 'Open') {
                                 return {
                                     'class': 'btn-warning',
                                     'name': 'Is Followed Up'

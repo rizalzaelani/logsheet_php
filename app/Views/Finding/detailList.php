@@ -2,6 +2,7 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -19,29 +20,57 @@
                 <div class="col-sm-6">
                     <table class="table mt-2">
                         <tr class="mt-1">
-                            <th>Asset</th>
-                            <td>: IPC</td>
+                            <th style="width: 200px;">Asset</th>
+                            <td>: <?= $scheduleTrxData["assetName"] ?></td>
                         </tr>
                         <tr class="mt-1">
-                            <th>Number</th>
-                            <td>: 001</td>
+                            <th>Asset Number</th>
+                            <td>: <?= $scheduleTrxData["assetNumber"] ?></td>
                         </tr>
                         <tr class="mt-1">
                             <th>Tag</th>
-                            <td>: ROUTER, CCTV</td>
+                            <td>:
+                                <?php
+                                if($scheduleTrxData['tagName'] != '-'){
+                                    $assetTagValue = (array_values(array_unique(explode(",", $scheduleTrxData['tagName']))));
+                                    $length = count($assetTagValue);
+                                    for ($i = 0; $i < $length; $i++) { ?>
+                                        <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
+                                            <?= $assetTagValue[$i]; ?>
+                                        </span>
+                                    <?php }
+                                } else {
+                                    echo "-";
+                                }
+                                ?>
+                            </td>
                         </tr>
                         <tr class="mt-1">
                             <th>Location</th>
-                            <td>: GEDUNG FINANCE</td>
+                            <td>:
+                                <?php
+                                if($scheduleTrxData['tagLocationName'] != '-'){
+                                    $assetTagValue = (array_values(array_unique(explode(",", $scheduleTrxData['tagLocationName']))));
+                                    $length = count($assetTagValue);
+                                    for ($i = 0; $i < $length; $i++) { ?>
+                                        <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
+                                            <?= $assetTagValue[$i]; ?>
+                                        </span>
+                                    <?php }
+                                } else {
+                                    echo "-";
+                                }
+                                ?>
+                            </td>
                         </tr>
 
                         <tr class="mt-1">
-                            <th>Frequency</th>
-                            <td>: WEEKLY</td>
+                            <th>Schedule Type</th>
+                            <td>: <?= $scheduleTrxData["schType"] ?></td>
                         </tr>
                         <tr class="mt-1">
                             <th>Description</th>
-                            <td>: DESC</td>
+                            <td>: <?= $scheduleTrxData["description"] ?></td>
                         </tr>
                     </table>
                 </div>
@@ -52,35 +81,55 @@
                     <hr />
                 </div>
                 <div class="col-12">
-                    <div class="table-responsive table-record-fix-width">
-                        <table class="table table-responsive-sm table-hover table-bordered table-outline mb-0" id="detailRecord" style="">
+                    <div class="table-responsive table-record-fix-width border-bottom">
+                        <table class="table table-responsive-sm table-hover table-bordered table-outline mb-0" id="detailRecord">
                             <thead>
                                 <tr>
                                     <th class="text-center">No.</th>
                                     <th class="text-center">Parameter</th>
-                                    <th class="text-center">Tag No</th>
-                                    <th class="text-center">Spec Standard</th>
+                                    <th class="text-center">Description</th>
                                     <th class="text-center">Min / Abnormal</th>
                                     <th class="text-center">Max / Normal</th>
                                     <th class="text-center">UoM / Option</th>
                                     <th class="text-center">Value</th>
-                                    <th class="text-center">Action</th>
+                                    <?php if ($scheduleTrxData["approvedAt"] != null) { ?>
+                                        <th class="text-center">Action</th>
+                                    <?php } ?>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="text-center">1</td>
-                                    <td>Frequency</td>
-                                    <td class="text-center"></td>
-                                    <td class="text-center">49 - 51 (Hz)</td>
-                                    <td class="text-center">49</td>
-                                    <td class="text-center">51</td>
-                                    <td class="text-center">Hz</td>
-                                    <td class=" text-center text-danger font-weight-bold">48</td>
-                                    <td><a href="<?= base_url("Finding/detail") ?>?findingId=2b958001-69e5-4421-b3c1-7eb0d21e0d8a" class="btn btn-info btn-block">Is Open</a></td>
+                                <tr v-for="(val, key) in recordParameterData">
+                                    <td class="text-center">{{ key+1 }}</td>
+                                    <td>{{ val.parameterName }}</td>
+                                    <td class="text-center">{{ val.description }}</td>
+
+                                    <td class="text-center">
+                                        <span v-if="!val.option" :class="!val.min ? 'font-italic' : ''">{{ !val.min ? "(Empty)" : val.min }}</span>
+                                        <span v-else :class="!val.abnormal ? 'font-italic' : ''">{{ !val.abnormal ? "(Empty)" : val.abnormal }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" : val.max }}</span>
+                                        <span v-else :class="!val.normal ? 'font-italic' : ''">{{ !val.normal ? "(Empty)" : val.normal }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" : val.uom }}</span>
+                                        <span v-else :class="!val.option ? 'font-italic' : ''">{{ !val.option ? "(Empty)" : val.option }}</span>
+                                    </td>
+                                    <td class="text-center" :class="checkAbnormal(val)">{{ !val.value ? "(Empty)" : val.value }}</td>
+
+                                    <?php if ($scheduleTrxData["approvedAt"] != null) { ?>
+                                        <td class="text-center">
+                                            <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
+                                        </td>
+                                    <?php } ?>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                <div class="col-12 my-4">
+                    <div class="row">
+                        <div class="col-12"></div>
                     </div>
                 </div>
             </div>
@@ -93,17 +142,92 @@
 <!-- Custom Script Js -->
 
 <script>
-    let v = new Vue({
-        el: '#app',
-        data: () => ({
-            data: null
-        }),
-        mounted() {
+    let v = Vue.createApp({
+        setup() {
+            var recordParameterData = <?= json_encode($trxData ?? []) ?>;
 
+            var test = Vue.ref('');
+
+            Vue.onMounted(() => {
+                // console.log("adshad");
+            });
+
+            return {
+                recordParameterData,
+                isNullEmptyOrUndefined,
+                xhrThrowRequest,
+                test
+            }
         },
         methods: {
-
+            checkAbnormal(val, approvedAt) {
+                if (!isNullEmptyOrUndefined(approvedAt)) {
+                    if (val.condition != 'Normal' & val.condition != '' & val.condition != null & val.condition != undefined) {
+                        if (val.findingId == null) {
+                            return {
+                                'class': 'btn-danger',
+                                'name': 'Follow Up'
+                            };
+                        } else {
+                            if (val.condition == 'Closed') {
+                                return {
+                                    'class': 'btn-primary',
+                                    'name': 'Is Closed'
+                                };
+                            } else if (val.condition == 'Open') {
+                                return {
+                                    'class': 'btn-warning',
+                                    'name': 'Is Followed Up'
+                                };
+                            } else {
+                                return {
+                                    'class': 'btn-danger',
+                                    'name': 'Follow Up'
+                                };
+                            }
+                        }
+                    } else {
+                        return {
+                            'class': '',
+                            'name': 'Normal'
+                        };
+                    }
+                } else {
+                    if (val.inputType == "input") {
+                        if ((val.min != null & val.max != null & val.value >= val.min & val.value <= val.max) || (val.min != null & val.max == null & val.value >= val.min) || (val.min == null & val.max != null & val.value <= val.max) || (val.min == null & val.max == null) || isNaN(val.value)) {
+                            return {
+                                'class': '',
+                                'name': 'Normal'
+                            };
+                        } else {
+                            return {
+                                'class': 'btn-danger',
+                                'name': 'Follow Up'
+                            };
+                        }
+                    } else if (val.inputType == "select") {
+                        let itmAbnormal = val.abnormal.toLowerCase().split(",");
+                        let isContain = _.includes(itmAbnormal, val.value.toLowerCase());
+                        if (isNullEmptyOrUndefined(val.abnormal) || isNullEmptyOrUndefined(val.option) || isContain == false) {
+                            return {
+                                'class': '',
+                                'name': 'Normal'
+                            };
+                        } else {
+                            return {
+                                'class': 'btn-danger',
+                                'name': 'Follow Up'
+                            };
+                        }
+                    } else {
+                        return {
+                            'class': '',
+                            'name': 'Normal'
+                        };
+                    }
+                }
+            }
         }
-    })
+    }).mount("#app")
 </script>
 <?= $this->endSection(); ?>

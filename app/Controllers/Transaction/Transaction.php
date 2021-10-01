@@ -65,15 +65,13 @@ class Transaction extends BaseController
 			],
 		];
 		return $this->template->render('Transaction/detail', $data);
-		// print("<pre />");
-		// print_r($data);
 	}
 
 	public function datatable()
 	{
 		$table = 'vw_scheduleTrx';
-		$column_order = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'schType', 'scheduleTrxId');
-		$column_search = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'schType', 'scheduleTrxId');
+		$column_order = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'approvedAt', 'scheduleTrxId');
+		$column_search = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'approvedAt', 'scheduleTrxId');
 		$order = array('createdAt' => 'asc');
 		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);

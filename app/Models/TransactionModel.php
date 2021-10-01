@@ -21,4 +21,8 @@ class TransactionModel extends Model
 
         return $query->get()->getResultArray();
     }
+
+    public function getBySchIdIn(array $schTrxId){
+        return $this->builder("vw_transaction")->whereIn("scheduleTrxId", $schTrxId)->get()->getResultArray();
+    }
 }
