@@ -5,6 +5,7 @@ namespace App\Controllers\Finding;
 use App\Controllers\BaseController;
 use App\Models\FindingLogModel;
 use App\Models\FindingModel;
+use App\Models\ScheduleTrxModel;
 use App\Models\TransactionModel;
 use DateTime;
 use Exception;
@@ -23,10 +24,25 @@ class Finding extends BaseController
 
 	public function detailList()
 	{
-		$data = array(
-			'title' => 'Detail Finding',
-			'subtitle' => 'Detail Finding'
-		);
+		$scheduleTrxId = $this->request->getVar("scheduleTrxId") ?? "";
+
+		if($scheduleTrxId == ""){
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		}
+
+		$scheduleTrxModel = new ScheduleTrxModel();
+		$trxModel = new TransactionModel();
+
+		$getSchedule = $scheduleTrxModel->getById($scheduleTrxId);
+		if(empty($getSchedule)){
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		}
+
+		$data["scheduleTrxData"] = $getSchedule;
+		$data["trxData"] = $trxModel->getAll(["scheduleTrxId" => $scheduleTrxId, "condition !=" => "Normal"]);
+
+		$data['title'] = 'Detail Finding';
+		$data['subtitle'] = 'Detail Finding';
 
 		$data["breadcrumbs"] = [
 			[
@@ -56,8 +72,8 @@ class Finding extends BaseController
 		$findingId = $this->request->getVar('findingId');
 
 		$checkFinding = $findingModel->getById($findingId);
-		if(empty($checkFinding)){
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		if (empty($checkFinding)) {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 		}
 
 		$data["findingData"] = $checkFinding;
@@ -82,23 +98,52 @@ class Finding extends BaseController
 		return $this->template->render('Finding/detail', $data);
 	}
 
-	public function issue(){
+	public function datatable()
+	{
+		$table = 'vw_scheduleTrx';
+		$column_order = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'condition', 'scheduleTrxId');
+		$column_search = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'condition', 'scheduleTrxId');
+		$order = array('createdAt' => 'asc');
+		$request = \Config\Services::request();
+		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
+		$where = [
+			'scannedAt IS NOT NULL' => null,
+			'approvedAt IS NOT NULL' => null,
+			'condition !=' => 'Normal'
+		];
+		$list = $DTModel->datatable($where);
+		$output = array(
+			"draw" => $request->getPost('draw'),
+			"recordsTotal" => $DTModel->count_all($where),
+			"recordsFiltered" => $DTModel->count_filtered($where),
+			"data" => $list,
+			'status' => 200,
+			'message' => 'success'
+		);
+		echo json_encode($output);
+	}
+
+	public function issue()
+	{
+		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
 		$findingModel = new FindingModel();
+		$findingLogModel = new FindingLogModel();
 
 		$dateNow = new DateTime();
 
 		$trxId = $this->request->getVar('trxId') ?? '';
 
 		$checkTrx = $trxModel->where('trxId', $trxId)->get()->getRowArray();
-		if(empty($checkTrx)){
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		if (empty($checkTrx)) {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 		}
 
 		try {
 			$checkFinding = $findingModel->where("trxId", $trxId)->get()->getRowArray();
 			$findingId = uuidv4();
-			if(empty($checkFinding)){
+			$condition = "Open";
+			if (empty($checkFinding)) {
 				$dtInsertFinding = array(
 					"findingId" => $findingId,
 					"trxId" => $checkTrx["trxId"],
@@ -107,15 +152,204 @@ class Finding extends BaseController
 					"openedBy" => $_SESSION["username"] ?? "user01",
 					"findingPriority" => "Low"
 				);
-
+				
+				$dataInsertLog = array(
+					"findingLogId" => null,
+					"findingId" => $findingId,
+					"notes" => "Finding Opened By " . ($_SESSION["username"] ?? "user01"),
+					"createdBy" => $_SESSION["username"] ?? "user01"
+				);
+				
 				$findingModel->insert($dtInsertFinding);
+				$findingLogModel->insert($dataInsertLog);
+				
 			} else {
 				$findingId = $checkFinding["findingId"];
+				$condition = $checkFinding["condition"];
 			}
 
-			return redirect()->to("/Finding/detail?findingId=".$findingId);
+			$trxModel->update($checkTrx["trxId"], ["condition" => $condition]);
+
+			$getCondAllTrx = $trxModel->where("scheduleTrxId", $checkTrx["scheduleTrxId"])->select("condition")->distinct()->get()->getResultArray();
+			$scheduleCond = "Normal";
+			if (!empty(array_filter($getCondAllTrx, function ($val) {
+				return $val["condition"] == "Finding";
+			}))) {
+				$scheduleCond = "Finding";
+			} else if (!empty(array_filter($getCondAllTrx, function ($val) {
+				return $val["condition"] == "Open";
+			}))) {
+				$scheduleCond = "Open";
+			} else if (!empty(array_filter($getCondAllTrx, function ($val) {
+				return $val["condition"] == "Closed";
+			}))) {
+				$scheduleCond = "Closed";
+			}
+
+			$scheduleTrxModel->update($checkTrx["scheduleTrxId"], ["condition" => $scheduleCond]);
+
+			return redirect()->to("/Finding/detail?findingId=" . $findingId);
 		} catch (Exception $e) {
-            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+		}
+	}
+
+	public function closeFinding()
+	{
+		$scheduleTrxModel = new ScheduleTrxModel();
+		$trxModel = new TransactionModel();
+		$findingModel = new FindingModel();
+		$findingLogModel = new FindingLogModel();
+
+		$dateNow = new DateTime();
+
+		$findingId = $this->request->getVar('findingId') ?? '';
+
+		$checkFinding = $findingModel->where("findingId", $findingId)->get()->getRowArray();
+		if (empty($checkFinding)) {
+			return $this->response->setJSON([
+				'status' => 404,
+				'message' => "Data Finding Not Found",
+				'data' => []
+			], 404);
+		}
+
+		try {
+			$dtUpdateFinding = array(
+				"closedAt" => $dateNow->format("Y-m-d H:i:s"),
+				"closedBy" => $_SESSION["username"] ?? "user01",
+				"condition" => "Closed"
+			);
+				
+			$dataInsertLog = array(
+				"findingLogId" => null,
+				"findingId" => $findingId,
+				"notes" => "Finding Opened By " . ($_SESSION["username"] ?? "user01"),
+				"createdBy" => $_SESSION["username"] ?? "user01"
+			);
+			
+			$findingModel->update($findingId, $dtUpdateFinding);
+			$findingLogModel->insert($dataInsertLog);
+
+			$checkTrx = $trxModel->find($checkFinding["trxId"]);
+			if (empty($checkTrx)) {
+				return $this->response->setJSON([
+					'status' => 404,
+					'message' => "Data Transaction Not Found",
+					'data' => []
+				], 404);
+			}
+
+			$trxModel->update($checkFinding["trxId"], ["condition" => "Closed"]);
+
+			$getCondAllTrx = $trxModel->where("scheduleTrxId", $checkTrx["scheduleTrxId"])->select("condition")->distinct()->get()->getResultArray();
+			$scheduleCond = "Normal";
+			if (!empty(array_filter($getCondAllTrx, function ($val) {
+				return $val["condition"] == "Finding";
+			}))) {
+				$scheduleCond = "Finding";
+			} else if (!empty(array_filter($getCondAllTrx, function ($val) {
+				return $val["condition"] == "Open";
+			}))) {
+				$scheduleCond = "Open";
+			} else if (!empty(array_filter($getCondAllTrx, function ($val) {
+				return $val["condition"] == "Closed";
+			}))) {
+				$scheduleCond = "Closed";
+			}
+
+			$scheduleTrxModel->update($checkTrx["scheduleTrxId"], ["condition" => $scheduleCond]);
+
+			return $this->response->setJSON([
+				'status' => 200,
+				'message' => "Finding Successfully Closed",
+				'data' => []
+			], 200);
+		} catch (Exception $e) {
+			return $this->response->setJSON([
+				'status' => 500,
+				'message' => $e->getMessage(),
+				'data' => []
+			], 500);
+		}
+	}
+
+	public function getFindingLog()
+	{
+		$isValid = $this->validate([
+			'findingId' => 'required',
+		]);
+
+		if (!$isValid) {
+			return $this->response->setJSON([
+				'status' => 400,
+				'message' => $this->validator->getErrors(),
+				'data' => []
+			], 400);
+		}
+
+		$findingLogModel = new FindingLogModel();
+
+		$findingLogData = $findingLogModel->where("findingId", $this->request->getVar("findingId"))->orderBy("createdAt", "asc")->get()->getResultArray();
+
+		return $this->response->setJSON([
+			'status' => 200,
+			'message' => "success get data",
+			'data' => $findingLogData
+		], 200);
+	}
+
+	public function addFindingLog()
+	{
+		$isValid = $this->validate([
+			'findingId' => 'required',
+			'notes' => 'required',
+		]);
+
+		if (!$isValid) {
+			return $this->response->setJSON([
+				'status' => 400,
+				'message' => $this->validator->getErrors(),
+				'data' => []
+			], 400);
+		}
+
+		$findingId = $this->request->getVar("findingId");
+		$notes = $this->request->getVar("notes");
+
+		$findingModel = new FindingModel();
+		$findingLogModel = new FindingLogModel();
+
+		$checkFinding = $findingModel->find($findingId);
+		if (empty($checkFinding)) {
+			return $this->response->setJSON([
+				'status' => 404,
+				'message' => "Finding Data is Not Found",
+				'data' => []
+			], 404);
+		}
+
+		$dataInsert = array(
+			"findingLogId" => null,
+			"findingId" => $findingId,
+			"notes" => $notes,
+			"createdBy" => $_SESSION["username"] ?? "user01"
+		);
+
+		try {
+			$findingLogModel->insert($dataInsert);
+
+			return $this->response->setJSON([
+				'status' => 200,
+				'message' => "success get data",
+				'data' => $dataInsert
+			], 200);
+		} catch (Exception $e) {
+			return $this->response->setJSON([
+				'status' => 500,
+				'message' => $e->getMessage(),
+				'data' => []
+			]);
 		}
 	}
 }

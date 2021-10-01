@@ -88,3 +88,37 @@ const xhrThrowRequest = (res) => {
         }
     });
 }
+
+// loader
+
+let isXhrRequest = new Promise((resolve) => {
+    hideShowLoader();
+    resolve(true);
+});
+
+(function() {
+    isXhrRequest.then(() => {
+        document.getElementById("loader").classList.add("d-none");
+    });
+})();
+
+function hideShowLoader() {
+    // loading
+    axios.interceptors.request.use((config) => {
+        document.getElementById("loader").classList.remove("d-none");
+        return config;
+    }, (error) => {
+        document.getElementById("loader").classList.remove("d-none");
+        return Promise.reject(error);
+    });
+
+    axios.interceptors.response.use((response) => {
+        document.getElementById("loader").classList.add("d-none");
+        return response;
+    }, (error) => {
+        document.getElementById("loader").classList.add("d-none");
+        return Promise.reject(error);
+    });
+}
+
+// end loader

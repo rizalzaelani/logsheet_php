@@ -32,11 +32,13 @@ class Asset extends BaseController
 		$asset			= $assetModel->findColumn('assetName');
 		$tag			= $tagModel->findColumn('tagName');
 		$tagLocation	= $tagLocationModel->findColumn('tagLocationName');
-		$data = array(
-			'title' => 'Asset',
-			'subtitle' => 'Asset',
-		);
 
+		$data['asset']			= $asset;
+		$data['tag']			= $tag;
+		$data['tagLocation']	= $tagLocation;
+		
+		$data['title'] = 'Asset';
+		$data['subtitle'] = 'Asset';
 		$data["breadcrumbs"] = [
 			[
 				"title"	=> "Home",
@@ -47,9 +49,6 @@ class Asset extends BaseController
 				"link"	=> "Asset"
 			],
 		];
-		$data['asset']			= $asset;
-		$data['tag']			= $tag;
-		$data['tagLocation']	= $tagLocation;
 		return $this->template->render('Master/Asset/index', $data);
 	}
 

@@ -122,10 +122,15 @@ $routes->get('/Finding', 'Finding/Finding::index');
 $routes->get('/Finding/detailList', 'Finding/Finding::detailList');
 $routes->get('/Finding/detail', 'Finding/Finding::detail');
 $routes->get('/Finding/issue', 'Finding/Finding::issue');
+$routes->get('/Finding/getFindingLog', 'Finding/Finding::getFindingLog');
+$routes->post('/Finding/datatable', 'Finding/Finding::datatable');
+$routes->post('/Finding/addFindingLog', 'Finding/Finding::addFindingLog');
+$routes->post('/Finding/closeFinding', 'Finding/Finding::closeFinding');
 
 $routes->get('/ReportingAsset', 'Reporting/Asset::index');
 $routes->get('/ReportingAsset/detail', 'Reporting/Asset::detail');
 $routes->add('/ReportingAsset/tableDetail', 'Reporting/Asset::tableDetail');
+$routes->post('/ReportingAsset/datatable', 'Reporting/Asset::datatable');
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');

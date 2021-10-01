@@ -69,7 +69,7 @@
 								<th>Asset Number</th>
 								<th>Tag</th>
 								<th>Location</th>
-								<th>Schedule Type</th>
+								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -150,7 +150,7 @@
 									data: "tagLocationName",
 								},
 								{
-									data: "schType",
+									data: "approvedAt",
 								},
 							],
 							order: [0, 'asc'],
@@ -166,21 +166,27 @@
 											var dt = Array.from(new Set(data.split(',')));
 											var list_dt = '';
 											$.each(dt, function(key, value) {
-												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
-											})
+												list_dt += '<span class="badge badge-dark p-1 mr-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
+											});
 											return list_dt;
 										} else {
 											return data;
 										}
+									}
+								},
+								{
+									targets: -1,
+									render: function(data){
+										return isNullEmptyOrUndefined(data) ? "Waiting" : "Approved"
 									}
 								}
 							],
 							'createdRow': function(row, data) {
 								row.setAttribute("data-id", data.scheduleTrxId);
 								row.classList.add("cursor-pointer");
-								row.setAttribute("data-toggle", "tooltip");
-								row.setAttribute("data-html", "true");
-								row.setAttribute("title", "<div>Click to go to asset detail</div>");
+								// row.setAttribute("data-toggle", "tooltip");
+								// row.setAttribute("data-html", "true");
+								// row.setAttribute("title", "<div>Click to go to asset detail</div>");
 							},
 						});
 					} catch (er) {

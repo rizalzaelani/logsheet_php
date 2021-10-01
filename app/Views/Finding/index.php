@@ -64,24 +64,15 @@
 					<table class="table table-hover w-100" id="tableFinding">
 						<thead class="bg-primary">
 							<tr>
-								<th style="width: 20px;">#</th>
-								<th>Asset</th>
+								<th>Scanned</th>
+								<th>Asset Name</th>
+								<th>Asset Number</th>
 								<th>Tag</th>
 								<th>Location</th>
 								<th>Condition</th>
 							</tr>
 						</thead>
-						<tbody>
-							<?php for ($i = 1; $i <= 15; $i++) { ?>
-								<tr>
-									<td class="text-center"><?= $i; ?></td>
-									<td>Asset</td>
-									<td>CCTV</td>
-									<td>Gedung Mesin</td>
-									<td>Normal</td>
-								</tr>
-							<?php } ?>
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>
@@ -94,44 +85,113 @@
 <!-- Custom Script Js -->
 
 <script>
-	let v = new Vue({
+	let v = Vue.createApp({
 		el: '#app',
-		data: () => ({
-			data: null,
-			table: null
-		}),
-		mounted() {
-			this.getData();
+		setup() {
+			const table = null;
 
-			let search = $(".dt-search-input input[data-target='#tableFinding']");
-			search.unbind().bind("keypress", function(e) {
-				if (e.which == 13 || e.keyCode == 13) {
-					let searchData = search.val();
-					table.search(searchData).draw();
-				}
-			});
-
-			$(document).on('click', '#tableFinding tbody tr', function() {
-				window.location.href = "<?= site_url('Finding/detailList') ?>?trxId=" + $(this).attr("data-id");
-			});
-		},
-		methods: {
-			getData() {
-				table = $('#tableFinding').DataTable({
-					scrollY: "calc(100vh - 272px)",
-					language: {
-						lengthMenu: "Showing _MENU_ ",
-						info: "of _MAX_ entries",
-						infoEmpty: 'of 0 entries',
-					},
-					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
-					'createdRow': function(row, data, dataIndex) {
-						$(row).attr('data-id', "1");
-						$(row).addClass('cursor-pointer');
-					},
-				});
+			const getData = () => {
+				return new Promise(async (resolve, reject) => {
+					try {
+						this.table = await $('#tableFinding').DataTable({
+							drawCallback: function(settings) {
+								$(document).ready(function() {
+									$('[data-toggle="tooltip"]').tooltip();
+								})
+							},
+							processing: true,
+							serverSide: true,
+							scrollY: "calc(100vh - 272px)",
+							responsive: true,
+							language: {
+								processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+								lengthMenu: "Showing _MENU_ ",
+								info: "of _MAX_ entries",
+								infoEmpty: 'of 0 entries',
+							},
+							dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+							ajax: {
+								url: "<?= base_url('/Finding/datatable') ?>",
+								type: "POST",
+								data: {},
+								complete: () => {
+									resolve();
+								}
+							},
+							columns: [{
+									data: "scheduleFrom",
+								},
+								{
+									data: "assetName",
+								},
+								{
+									data: "assetNumber",
+								},
+								{
+									data: "tagName",
+								},
+								{
+									data: "tagLocationName",
+								},
+								{
+									data: "condition",
+								},
+							],
+							order: [0, 'asc'],
+							columnDefs: [{
+									targets: "_all",
+									className: "dt-head-center",
+								},
+								{
+									targets: [3, 4],
+									render: function(data) {
+										if (data != '-') {
+											// unique = Array.from(new Set(data));
+											var dt = Array.from(new Set(data.split(',')));
+											var list_dt = '';
+											$.each(dt, function(key, value) {
+												list_dt += '<span class="badge badge-dark p-1 mr-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
+											});
+											return list_dt;
+										} else {
+											return data;
+										}
+									}
+								}
+							],
+							'createdRow': function(row, data) {
+								row.setAttribute("data-id", data.scheduleTrxId);
+								row.classList.add("cursor-pointer");
+								// row.setAttribute("data-toggle", "tooltip");
+								// row.setAttribute("data-html", "true");
+								// row.setAttribute("title", "<div>Click to go to asset detail</div>");
+							},
+						});
+					} catch (er) {
+						console.log(er)
+						reject(er);
+					}
+				})
 			}
+
+			Vue.onMounted(() => {
+				getData();
+
+				let search = $(".dt-search-input input[data-target='#tableFinding']");
+				search.unbind().bind("keypress", function(e) {
+					if (e.which == 13 || e.keyCode == 13) {
+						let searchData = search.val();
+						table.search(searchData).draw();
+					}
+				});
+
+				$(document).on('click', '#tableFinding tbody tr', function() {
+					window.location.href = "<?= site_url('Finding/detailList') ?>?scheduleTrxId=" + $(this).attr("data-id");
+				});
+			});
+
+			return { table, getData }
 		}
-	})
+	}).mount("#app");
 </script>
 <?= $this->endSection(); ?>

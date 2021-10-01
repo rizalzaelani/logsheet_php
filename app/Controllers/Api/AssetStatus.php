@@ -29,7 +29,6 @@ class AssetStatus extends ResourceController
         }
 
         $where["userId"] = $this->request->getVar("userId");
-
         return $this->respond([
             "status"    => 200,
             "message"   => "Success Get Data Asset Status",

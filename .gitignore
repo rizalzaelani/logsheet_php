@@ -41,6 +41,7 @@ $RECYCLE.BIN/
 #-------------------------
 # These should never be under version control,
 # as it poses a security risk.
+.env
 .vagrant
 Vagrantfile
 
@@ -82,6 +83,7 @@ phpunit
 #-------------------------
 # Composer
 #-------------------------
+vendor/
 
 #-------------------------
 # IDE / Development Files
@@ -91,7 +93,7 @@ phpunit
 _modules/*
 
 # phpenv local config
-# .php-version
+.php-version
 
 # Jetbrains editors (PHPStorm, etc)
 .idea/
@@ -117,7 +119,7 @@ nb-configuration.xml
 /api/
 
 # Visual Studio Code
-# .vscode/3
+.vscode/
 
 /results/
 /phpunit*.xml
