@@ -21,7 +21,7 @@
 						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
-							<a class="dropdown-item " href="javascript:;" @click="newRelease()"><i class="fa fa-plus mr-2"></i> New Release</a>
+							<a class="dropdown-item " href="javascript:;" @click="handleModal()"><i class="fa fa-plus mr-2"></i> New Release</a>
 							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>
 					</h5>
@@ -34,26 +34,11 @@
 								<tr>
 									<th>Released At</th>
 									<th>Name</th>
-									<th>Type</th>
 									<th>Version</th>
 									<th>By</th>
 									<th width="25%">Action</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
-									<td>10-09-2021</td>
-									<td>Name</td>
-									<td>Type</td>
-									<td>1.0</td>
-									<td>By</td>
-									<td>
-										<button class="btn btn-sm btn-outline-info"><i class="fa fa-eye"></i> Detail</button>
-										<button class="btn btn-sm btn-outline-success"><i class="fa fa-edit"></i> Edit</button>
-										<button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i> Delete</button>
-									</td>
-								</tr>
-							</tbody>
 						</table>
 					</div>
 				</div>
@@ -66,7 +51,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalReleaseTitle">New Release</h5>
-					<!-- <h5 style="display: none;" class="modal-title" id="editTagTitle">Edit Tag</h5> -->
+					<h5 style="display: none;" class="modal-title" id="editReleaseTitle">Edit Version App</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -75,27 +60,83 @@
 					<div class="form-group">
 						<form action="">
 							<div class="mb-3">
-								<label for="applicationName">Application Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Application Name"></i></label>
+								<label for="applicationName">Application Name</label>
 								<input id="applicationName" type="text" class="form-control" required v-model="applicationName" placeholder="Application Name">
+								<div class="invalid-feedback">
+                                    Field cannot be empty.
+                                </div>
 							</div>
 							<div class="mb-3">
-								<label for="version">Version <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Version"></i></label>
-								<textarea id="version" type="text" rows="5" class="form-control" required v-model="version" placeholder="Version"></textarea>
+								<label for="version">Version</label>
+								<input id="version" type="text" class="form-control" required v-model="version" placeholder="Version"></input>
+								<div class="invalid-feedback">
+                                    Field cannot be empty.
+                                </div>
 							</div>
 							<div class="mb-3">
-								<label for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Type"></i></label>
-								<select name="type" id="type" class="form-control">
-									<option value="">Select Type</option>
-									<option value="Mobile">Mobile Application</option>
-								</select>
+								<label for="description">Description</label>
+								<textarea id="description" type="text" rows="5" class="form-control" required v-model="description" placeholder="Description"></textarea>
+								<div class="invalid-feedback">
+                                    Field cannot be empty.
+                                </div>
+							</div>
+							<div class="mb-3">
+								<label for="file">File</label>
+								<input id="file" type="file" class="form-control" v-on:change="handleFile()"></input>
 							</div>
 						</form>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
-					<button type="button" class="btn btn-success" @click="add()" id="btnAdd"><i class="fa fa-plus"></i> Add Tag</button>
+					<button type="button" class="btn btn-danger" @click="btnCancel()" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
+					<button type="button" class="btn btn-success" @click="newRelease()" id="btnAdd"><i class="fa fa-plus"></i> Add Application</button>
 					<button style="display: none;" type="button" class="btn btn-success" @click="update()" id="btnEdit"><i class="fa fa-check"></i> Save Changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal Detail-->
+	<div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalDetailTitle">Detail Version App</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<tr>
+							<th>Name</th>
+							<td>{{ applicationName }}</td>
+						</tr>
+						<tr>
+							<th>Version</th>
+							<td>{{ version }}</td>
+						</tr>
+						<tr>
+							<th>Description</th>
+							<td>{{ description }}</td>
+						</tr>
+						<tr>
+							<th>By</th>
+							<td>{{ userId }}</td>
+						</tr>
+						<tr>
+							<th>Date</th>
+							<td>{{ createdAt }}</td>
+						</tr>
+						<tr>
+							<th>Application</th>
+							<td>
+								<button class="btn btn-outline-primary">Download</button>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
 				</div>
 			</div>
 		</div>
@@ -115,6 +156,13 @@
 		setup() {
 			var table = ref('');
 			var myModal = ref('');
+			var userId = ref('');
+			var versionAppId = ref('');
+			var applicationName = ref('');
+			var version = ref('');
+			var description = ref('');
+			var createdAt = ref('');
+			var file = '';
 
 			onMounted(() => {
 				getData();
@@ -129,28 +177,401 @@
 			});
 
 			function getData() {
-				this.table = $('#tableVersionApps').DataTable({
-					scrollY: "calc(100vh - 272px)",
-					language: {
-						lengthMenu: "Showing _MENU_ ",
-						info: "of _MAX_ entries",
-						infoEmpty: 'of 0 entries',
-					},
-					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
-				});
-			};
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        this.table = await $('#tableVersionApps').DataTable({
+                            processing: true,
+                            serverSide: true,
+                            responsive: true,
+                            autoWidth: true,
+                            scrollY: "calc(100vh - 272px)",
+                            language: {
+                                processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+                                lengthMenu: "Showing _MENU_ ",
+                                info: "of _MAX_ entries",
+                                infoEmpty: 'of 0 entries',
+                            },
+                            dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+                            ajax: {
+                                url: "<?= base_url('/VersionApps/datatable'); ?>",
+                                type: "POST",
+                                data: {},
+                                complete: () => {
+                                    resolve();
+                                }
+                            },
+                            columns: [{
+                                    data: "createdAt",
+                                    name: "createdAt",
+									render: function (data) {
+										return moment(data).format('LLLL');
+									}
+                                },
+                                {
+                                    data: "name",
+                                    name: "name"
+                                },
+								{
+                                    data: "version",
+                                    name: "version"
+                                },
+								{
+                                    data: "userId",
+                                    name: "UserId"
+                                },
+                            ],
+                            order: [0, 'asc'],
+                            columnDefs: [{
+                                targets: 4,
+                                data: "versionAppId",
+                                render: function(data, type, row, meta) {
+                                    return `<div class='d-flex justify-content-start align-items-center'>
+										<button class='btn btn-outline-primary btn-sm mr-1' id=` + data + ` onclick="detailApps(` + `'` + data + `'` + `)"><i class='fa fa-eye'></i> Detail</button>
+										<button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editApps(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
+                                        <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteApps(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
+                                },
+                            },
+							]
+                        });
+                    } catch (er) {
+                        console.log(er)
+                        reject(er);
+                    }
+                })
+            };
 
-			function newRelease() {
+			function handleModal() {
+				$('#modalReleaseTitle').show();
+				$('#btnAdd').show();
+				$('#editReleaseTitle').hide();
+				$('#btnEdit').hide();
 				this.myModal = new coreui.Modal(document.getElementById('modalRelease'));
 				this.myModal.show();
-			};
+			}
+
+			function newRelease() {
+				if (v.applicationName != '') {
+					$('#applicationName').removeClass('is-invalid');
+				}
+				if (v.version != '') {
+					$('#version').removeClass('is-invalid');
+				}
+				if (v.description != '') {
+					$('#description').removeClass('is-invalid');
+				}
+				if (this.applicationName != '' && this.version != '' && this.description != '') {
+					var formdata = new FormData();
+					formdata.append('versionAppId', uuidv4());
+					formdata.append('userId', uuidv4());
+					formdata.append('name', this.applicationName);
+					formdata.append('version', this.version);
+					formdata.append('description', this.description);
+					formdata.append('fileApp', this.file);
+					axios({
+						url: '<?= base_url('VersionApps/new') ?>',
+						data: formdata,
+						method: 'POST'
+					}).then(res => {
+						if (res.data.status == 'success') {
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-success mr-1',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Success!',
+                                    text: res.data.message,
+                                    icon: 'success'
+                                }).then(okay => {
+                                    if (okay) {
+                                        swal.fire({
+                                            title: 'Please Wait!',
+                                            text: 'Reloading page..',
+                                            onOpen: function() {
+                                                swal.showLoading()
+                                            }
+                                        })
+                                        location.reload();
+                                    }
+                                })
+                            } else if (res.data.status == 'failed') {
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-danger',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Failed!',
+                                    text: res.data.message,
+                                    icon: 'error'
+                                })
+                            }
+					})
+				}else{
+                    const swalWithBootstrapButtons = swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    })
+                    swalWithBootstrapButtons.fire({
+                        title: 'Failed!',
+                        text: 'Invalid value.',
+                        icon: 'error'
+                    })
+					if (v.applicationName == '') {
+						$('#applicationName').addClass('is-invalid');
+					}
+					if (v.version == '') {
+						$('#version').addClass('is-invalid');
+					}
+					if (v.description == '') {
+						$('#description').addClass('is-invalid');
+					}
+				}
+			}
+
+			function uuidv4() {
+            	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                	var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                	return v.toString(16);
+            	});
+        	}
+
+			function btnCancel() {
+				this.applicationName = '';
+				this.version = '';
+				this.description = '';
+			}
+
+			function update() {
+				if (v.applicationName != '') {
+					$('#applicationName').removeClass('is-invalid');
+				}
+				if (v.version != '') {
+					$('#version').removeClass('is-invalid');
+				}
+				if (v.description != '') {
+					$('#description').removeClass('is-invalid');
+				}
+				if (v.applicationName != '' && v.version != '' && v.description != '') {
+					let formdata = new FormData();
+					formdata.append('userId', v.userId);
+					formdata.append('versionAppId', v.versionAppId);
+					formdata.append('name', v.applicationName);
+					formdata.append('version', v.version);
+					formdata.append('description', v.description);
+					axios({
+						url: 'VersionApps/update',
+						method: 'POST',
+						data: formdata
+					}).then(res => {
+						if (res.data.status == 'success') {
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-success mr-1',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Success!',
+                                    text: res.data.message,
+                                    icon: 'success'
+                                }).then(okay => {
+                                    if (okay) {
+                                        swal.fire({
+                                            title: 'Please Wait!',
+                                            text: 'Reloading page..',
+                                            onOpen: function() {
+                                                swal.showLoading()
+                                            }
+                                        })
+                                        location.reload();
+                                    }
+                                })
+                            } else{
+                                const swalWithBootstrapButtons = swal.mixin({
+                                    customClass: {
+                                        confirmButton: 'btn btn-danger',
+                                    },
+                                    buttonsStyling: false
+                                })
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Failed!',
+                                    text: res.data.message,
+                                    icon: 'error'
+                                })
+                            }
+					})
+				}else{
+					const swalWithBootstrapButtons = swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                    })
+                    swalWithBootstrapButtons.fire({
+                        title: 'Failed!',
+                        text: 'All Field cannot be empty.',
+                        icon: 'error'
+                    })
+					if (v.applicationName == '') {
+						$('#applicationName').addClass('is-invalid');
+					}
+					if (v.version == '') {
+						$('#version').addClass('is-invalid');
+					}
+					if (v.description == '') {
+						$('#description').addClass('is-invalid');
+					}
+				}
+			}
+
 			return {
 				table,
 				myModal,
+				userId,
+				versionAppId,
+				applicationName,
+				version,
+				description,
+				createdAt,
+				file,
+
 				getData,
-				newRelease
+				handleModal,
+				newRelease,
+				uuidv4,
+				detailApps,
+				editApps,
+				btnCancel,
+				update
 			}
 		},
 	}).mount('#app');
+
+	function detailApps(id) {
+		axios.post("VersionApps/detail", {
+			versionAppId: id
+		}).then(res => {
+			if (res.data.status == 'success') {
+				v.myModal = new coreui.Modal(document.getElementById('modalDetail'));
+				v.myModal.show();
+				let data = res.data.data;
+				let date = moment(data.createdAt).format('LLLL');
+				v.applicationName = data.name
+				v.version = data.version
+				v.description = data.description
+				v.userId = data.userId,
+				v.createdAt = date
+			}else{
+				const swalWithBootstrapButtons = swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-danger',
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Failed!',
+                    text: res.data.message,
+                    icon: 'error'
+                })
+			}
+		})
+	}
+
+	function editApps(id) {
+		axios.post("VersionApps/edit", {
+			versionAppId: id
+		}).then(res => {
+			if (res.data.status == 'success') {
+				$('#modalReleaseTitle').hide();
+				$('#btnAdd').hide();
+				$('#editReleaseTitle').show();
+				$('#btnEdit').show();
+				v.myModal = new coreui.Modal(document.getElementById('modalRelease'));
+				v.myModal.show()
+				let data = res.data.data;
+				v.versionAppId = data.versionAppId;
+				v.applicationName = data.name;
+				v.version = data.version;
+				v.description = data.description;
+				v.userId = data.userId;
+			}else{
+				const swalWithBootstrapButtons = swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-danger',
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Failed!',
+                    text: res.data.message,
+                    icon: 'error'
+                })
+			}
+		})
+	}
+
+	function deleteApps(id) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger ml-1'
+            },
+            buttonsStyling: false
+        })
+        swalWithBootstrapButtons.fire({
+            title: 'Delete this data?',
+            text: "You will delete this data!",
+            icon: 'warning',
+            showCancelButton: true,
+            cancelButtonText: "<i class='fa fa-times'></i> Cancel",
+            confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
+            reverseButtons: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post("<?= base_url('VersionApps/delete'); ?>", {
+                    versionAppId: id
+                }).then(res => {
+                    if (res.data.status == 'success') {
+                        swalWithBootstrapButtons.fire({
+                            title: 'Success!',
+                            text: 'You have successfully deleted this data.',
+                            icon: 'success',
+                            allowOutsideClick: false
+                        }).then(okay => {
+                            if (okay) {
+                                swal.fire({
+                                    title: 'Please Wait!',
+                                    text: 'Reloading page..',
+                                    onOpen: function() {
+                                        swal.showLoading()
+                                    }
+                                })
+                                location.reload();
+                            }
+                        })
+                    } else {
+                        const swalWithBootstrapButtons = Swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: 'Bad Request!',
+                            icon: 'error',
+                            allowOutsideClick: false
+                        })
+                    }
+                })
+            }
+        })
+    }
 </script>
 <?= $this->endSection(); ?>

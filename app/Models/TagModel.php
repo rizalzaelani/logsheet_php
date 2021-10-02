@@ -10,7 +10,7 @@ class TagModel extends Model
     protected $table                = 'tblm_tag';
     protected $primaryKey           = 'tagId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['tagId', 'userId', 'tagName', 'description', 'creatdeAt'];
+    protected $allowedFields        = ['tagId', 'userId', 'tagName', 'description', 'createdAt'];
     protected $createdField         = 'created_at';
 
     public function getById($id)

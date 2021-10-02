@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
+                                <button type="button" class="btn btn-danger" @click="btnCancel()" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
                                 <button type="button" class="btn btn-success" @click="add()" id="btnAdd"><i class="fa fa-plus"></i> Add Tag</button>
                                 <button style="display: none;" type="button" class="btn btn-success" @click="update()" id="btnEdit"><i class="fa fa-check"></i> Save Changes</button>
                             </div>
@@ -377,6 +377,11 @@
                 })
             };
 
+            function btnCancel() {
+                this.tagName = '';
+                this.description = '';
+            }
+
             onMounted(() => {
                 getData();
 
@@ -401,7 +406,8 @@
                 add,
                 update,
                 uploadFile,
-                insertTag
+                insertTag,
+                btnCancel
             }
         },
     }).mount('#app');
@@ -412,8 +418,6 @@
         $('#modalTagTitle').hide();
         $('#editTagTitle').show();
 
-        v.modalTag = new coreui.Modal(document.getElementById('modalTag'), {});
-        v.modalTag.show();
         axios.post("<?= base_url('Tag/edit'); ?>", {
             tagId: data
         }).then(res => {
@@ -422,6 +426,8 @@
                 v.tagId = dataTag.tagId;
                 v.tagName = dataTag.tagName;
                 v.description = dataTag.description;
+                v.modalTag = new coreui.Modal(document.getElementById('modalTag'), {});
+                v.modalTag.show();
             } else {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
