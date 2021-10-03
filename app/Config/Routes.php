@@ -142,6 +142,8 @@ $routes->post('/VersionApps/detail', 'Setting/VersionApps::detail');
 $routes->post('/VersionApps/edit', 'Setting/VersionApps::edit');
 $routes->post('/VersionApps/update', 'Setting/VersionApps::update');
 $routes->post('/VersionApps/delete', 'Setting/VersionApps::delete');
+$routes->post('/VersionApps/download', 'Setting/VersionApps::download');
+$routes->add('/VersionApps/download/(:any)', 'Setting\VersionApps::download/$1');
 
 /*
  * --------------------------------------------------------------------

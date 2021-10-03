@@ -51,19 +51,23 @@ class VersionApps extends BaseController
 	{
 		$model = new VersionAppsModel();
 		$post = $this->request->getPost();
+		$file = $this->request->getFile('fileApp');
 		if ($post['name'] != '') {
+			$file = $this->request->getFile('fileApp');
+			$name = $post['name'] . '_' . 'v' . $post['version'] . '.apk';
+			$file->move('../public/assets/uploads/apk', $name);
 			$data = array(
 				'versionAppId' => $post['versionAppId'],
 				'userId' => $post['userId'],
 				'name' => $post['name'],
 				'version' => $post['version'],
 				'description' => $post['description'],
-				'fileApp' => $post['fileApp']
+				'fileApp' => $name
 			);
 			$model->insert($data);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $post));
+			echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $data));
 		}else{
-			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
+			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post, 'file' => $file));
 		}
 		die();
 	}
@@ -80,6 +84,14 @@ class VersionApps extends BaseController
 			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $data));
 		}
 		die();
+	}
+
+	public function download($id)
+	{
+		$versionAppsModel = new VersionAppsModel();
+		$appsData = $versionAppsModel->where('versionAppId', $id)->get()->getResultArray();
+		$apk = $appsData[0]['fileApp'];
+		return $this->response->download('../public/assets/uploads/apk/' . $apk, null);
 	}
 
 	public function edit()
@@ -102,17 +114,40 @@ class VersionApps extends BaseController
 		$post = $this->request->getPost();
 		$versionAppId = $post['versionAppId'];
 		if ($versionAppId != '') {
-			$data = array(
-				'userId' => $post['userId'],
-				'name' => $post['name'],
-				'version' => $post['version'],
-				'description' => $post['description'],
-			);
-			$versionAppsModel->update($versionAppId, $data);
-			echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
+			$file = $this->request->getFile('fileApp');
+			if ($file == null) {
+				$dataVersionApps = $versionAppsModel->where('versionAppId', $versionAppId)->get()->getResultArray();
+				$name = $post['name'] . '_' . 'v' . $post['version'] . '.apk';
+				rename('../public/assets/uploads/apk/' . $dataVersionApps[0]['fileApp'], '../public/assets/uploads/apk/' . $name);
+				$data = array(
+					'userId' => $post['userId'],
+					'name' => $post['name'],
+					'version' => $post['version'],
+					'description' => $post['description'],
+					'fileApp' => $name
+				);
+				$versionAppsModel->update($versionAppId, $data);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+			}else{
+				$dataVersionApps = $versionAppsModel->where('versionAppId', $versionAppId)->get()->getResultArray();
+				unlink('../public/assets/uploads/apk/' . $dataVersionApps[0]['fileApp']);
+				$file = $this->request->getFile('fileApp');
+				$name = $post['name'] . '_' . 'v' . $post['version'] . '.apk';
+				$file->move('../public/assets/uploads/apk', $name);
+				$data = array(
+					'userId' => $post['userId'],
+					'name' => $post['name'],
+					'version' => $post['version'],
+					'description' => $post['description'],
+					'fileApp' => $name,
+				);
+				$versionAppsModel->update($versionAppId, $data);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+			}
 		}else{
 			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $data));
 		}
+		die();
 	}
 
 	public function delete()
@@ -121,11 +156,16 @@ class VersionApps extends BaseController
         $json = $this->request->getJSON();
         $versionAppId = $json->versionAppId;
         if ($versionAppId != '') {
-            $versionAppsModel->deleteById($versionAppId);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully deleted data.', 'data' => $json));
+			$data = $versionAppsModel->where('versionAppId', $versionAppId)->get()->getResultArray();
+			$lengthData = count($data);
+			if ($lengthData > 0) {
+				unlink('../public/assets/uploads/apk/' . $data[0]['fileApp']);
+				$versionAppsModel->deleteById($versionAppId);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully deleted data.', 'data' => $json));
+			}
         } else {
             echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
         }
-        die();
+		die();
 	}
 }

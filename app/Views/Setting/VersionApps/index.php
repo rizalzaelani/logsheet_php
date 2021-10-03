@@ -52,13 +52,13 @@
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalReleaseTitle">New Release</h5>
 					<h5 style="display: none;" class="modal-title" id="editReleaseTitle">Edit Version App</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button @click="btnCancel()" type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<form action="">
+						<form action="" method="post" enctype="multipart/form-data">
 							<div class="mb-3">
 								<label for="applicationName">Application Name</label>
 								<input id="applicationName" type="text" class="form-control" required v-model="applicationName" placeholder="Application Name">
@@ -82,7 +82,10 @@
 							</div>
 							<div class="mb-3">
 								<label for="file">File</label>
-								<input id="file" type="file" class="form-control" v-on:change="handleFile()"></input>
+								<input id="file" type="file" ref="file" class="form-control" @change="handleFile()"></input>
+								<div class="invalid-feedback">
+                                    Field cannot be empty.
+                                </div>
 							</div>
 						</form>
 					</div>
@@ -101,7 +104,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalDetailTitle">Detail Version App</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button @click="btnCancel()" type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -130,13 +133,14 @@
 						<tr>
 							<th>Application</th>
 							<td>
-								<button class="btn btn-outline-primary">Download</button>
+								<!-- <button @click="download()" class="btn btn-outline-primary">Download</button> -->
+								<a v-bind:href="downloadApk" class="btn btn-outline-primary">Download</a>
 							</td>
 						</tr>
 					</table>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
+					<button type="button" class="btn btn-danger" @click="btnCancel()" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
 				</div>
 			</div>
 		</div>
@@ -162,7 +166,10 @@
 			var version = ref('');
 			var description = ref('');
 			var createdAt = ref('');
-			var file = '';
+			var fileApp = ref('');
+			var file = ref('');
+			var fileUploaded = ref('');
+			var downloadApk = ref('');
 
 			onMounted(() => {
 				getData();
@@ -259,14 +266,17 @@
 				if (v.description != '') {
 					$('#description').removeClass('is-invalid');
 				}
-				if (this.applicationName != '' && this.version != '' && this.description != '') {
+				if (v.fileUploaded != '') {
+					$('#file').removeClass('is-invalid');
+				}
+				if (this.applicationName != '' && this.version != '' && this.description != '' && this.fileUploaded != '') {
 					var formdata = new FormData();
 					formdata.append('versionAppId', uuidv4());
 					formdata.append('userId', uuidv4());
 					formdata.append('name', this.applicationName);
 					formdata.append('version', this.version);
 					formdata.append('description', this.description);
-					formdata.append('fileApp', this.file);
+					formdata.append('fileApp', this.fileUploaded);
 					axios({
 						url: '<?= base_url('VersionApps/new') ?>',
 						data: formdata,
@@ -330,6 +340,9 @@
 					if (v.description == '') {
 						$('#description').addClass('is-invalid');
 					}
+					if (v.fileUploaded == '') {
+					$('#file').addClass('is-invalid');
+				}
 				}
 			}
 
@@ -342,9 +355,12 @@
         	}
 
 			function btnCancel() {
+				this.versionAppId = '';
 				this.applicationName = '';
 				this.version = '';
 				this.description = '';
+				this.createdAt = '';
+				this.downloadApk = '';
 			}
 
 			function update() {
@@ -357,13 +373,14 @@
 				if (v.description != '') {
 					$('#description').removeClass('is-invalid');
 				}
-				if (v.applicationName != '' && v.version != '' && v.description != '') {
+				if (this.applicationName != '' && this.version != '' && this.description != '') {
 					let formdata = new FormData();
-					formdata.append('userId', v.userId);
-					formdata.append('versionAppId', v.versionAppId);
-					formdata.append('name', v.applicationName);
-					formdata.append('version', v.version);
-					formdata.append('description', v.description);
+					formdata.append('userId', this.userId);
+					formdata.append('versionAppId', this.versionAppId);
+					formdata.append('name', this.applicationName);
+					formdata.append('version', this.version);
+					formdata.append('description', this.description);
+					formdata.append('fileApp', this.fileUploaded == "" ? "" : this.fileUploaded);
 					axios({
 						url: 'VersionApps/update',
 						method: 'POST',
@@ -429,6 +446,17 @@
 					}
 				}
 			}
+			
+			function handleFile() {
+				let fileUploaded = this.$refs.file.files[0];
+				this.fileUploaded = fileUploaded;
+			}
+			
+			function download() {
+				axios.post('VersionApps/download',{
+					data: v.versionAppId
+				})
+			}
 
 			return {
 				table,
@@ -439,7 +467,10 @@
 				version,
 				description,
 				createdAt,
+				fileApp,
 				file,
+				fileUploaded,
+				download,
 
 				getData,
 				handleModal,
@@ -448,7 +479,9 @@
 				detailApps,
 				editApps,
 				btnCancel,
-				update
+				update,
+				handleFile,
+				downloadApk
 			}
 		},
 	}).mount('#app');
@@ -462,11 +495,13 @@
 				v.myModal.show();
 				let data = res.data.data;
 				let date = moment(data.createdAt).format('LLLL');
-				v.applicationName = data.name
-				v.version = data.version
-				v.description = data.description
-				v.userId = data.userId,
-				v.createdAt = date
+				v.versionAppId = data.versionAppId;
+				v.downloadApk = "<?= base_url('VersionApps/download') ?>/" + data.versionAppId;
+				v.applicationName = data.name;
+				v.version = data.version;
+				v.description = data.description;
+				v.userId = data.userId;
+				v.createdAt = date;
 			}else{
 				const swalWithBootstrapButtons = swal.mixin({
                     customClass: {
@@ -495,11 +530,12 @@
 				v.myModal = new coreui.Modal(document.getElementById('modalRelease'));
 				v.myModal.show()
 				let data = res.data.data;
+				v.userId = data.userId;
 				v.versionAppId = data.versionAppId;
 				v.applicationName = data.name;
 				v.version = data.version;
 				v.description = data.description;
-				v.userId = data.userId;
+				v.fileApp = data.fileApp;
 			}else{
 				const swalWithBootstrapButtons = swal.mixin({
                     customClass: {
@@ -545,14 +581,7 @@
                             allowOutsideClick: false
                         }).then(okay => {
                             if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
+                                v.table.draw();
                             }
                         })
                     } else {
