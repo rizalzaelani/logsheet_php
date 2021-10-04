@@ -217,7 +217,7 @@ class Asset extends BaseController
 			$assetTaggingId = $post['assetTaggingId'];
 			if ($post['assetTaggingType'] != '') {
 					$dataAssetTagging = array(
-						'assetTaggingId' => $assetTaggingId,
+						'assetTaggingId' => $post['assetTaggingId'],
 						'assetId' => $assetId,
 						'assetTaggingValue' => $post['assetTaggingValue'],
 						'assetTaggingtype' => $post['assetTaggingType'],
@@ -461,6 +461,7 @@ class Asset extends BaseController
 				} else {
 					$dataAssetTagging = array(
 						'assetId' => $assetId,
+						'assetTaggingId' => $assetTaggingId,
 						'assetTaggingValue' => $post['assetTaggingValue'],
 						'assetTaggingtype' => $post['assetTaggingType'],
 						'description' => $post['assetTaggingDescription']

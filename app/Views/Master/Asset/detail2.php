@@ -988,7 +988,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     ?>
                                 </td>
                                 <td class="text-center"><?= $key['showOn']; ?></td>
-                                <td class="text-center"><i>(Added)</i></td>
+                                <td class="text-center"><i><?= $key['updatedAt'] != $key['createdAt'] ? '(Updated)' : '(Added)'?></i></td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
                                     <button class="btn btn-sm btn-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
@@ -1024,7 +1024,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 var setSch = ref('');
                 var onDays = ref('');
                 var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging[0]) . ")" : "reactive({
-                    assetTaggingId: null,
+                    assetTaggingId: uuidv4(),
                     assetTaggingValue: '',
                     assetTaggingtype: '',
                     description: '',
