@@ -54,6 +54,9 @@
 			<div class="title">
 				<h3 class="mb-0 text-uppercase"><?= $title; ?></h3>
 			</div>
+			<div>
+				<button class="btn btn-outline-primary"></button>
+			</div>
 			<div class="d-flex justify-content-center align-items-center">
 				<div class="mr-1" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
 					<i class=" fa fa-calendar"></i>&nbsp;
@@ -421,26 +424,71 @@
 	})
 
 	$(document).ready(function() {
+
 		var accuDom = document.getElementById('accuration');
 		var accuChart = echarts.init(accuDom);
 		var accuOpt;
 
 		accuOpt = {
 			title: {
-				text: 'Scanning Accuration',
-				left: 'center'
+				text: 'Scanning Accuration'
+			},
+			tooltip: {
+				trigger: 'axis'
+			},
+			legend: {
+				data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+			},
+			grid: {
+				left: '3%',
+				right: '4%',
+				bottom: '3%',
+				containLabel: true
+			},
+			toolbox: {
+				feature: {
+					saveAsImage: {}
+				}
 			},
 			xAxis: {
 				type: 'category',
+				boundaryGap: false,
 				data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 			},
 			yAxis: {
 				type: 'value'
 			},
 			series: [{
-				data: [50, 80, 74, 68, 85, 97, 60],
-				type: 'line'
-			}]
+					name: 'Email',
+					type: 'line',
+					smooth: true,
+					data: [120, 132, 101, 134, 90, 230, 210]
+				},
+				{
+					name: 'Union Ads',
+					type: 'line',
+					smooth: true,
+					data: [220, 182, 191, 234, 290, 330, 310]
+				},
+				{
+					name: 'Video Ads',
+					type: 'line',
+					smooth: true,
+					data: [150, 232, 201, 154, 190, 330, 410]
+				},
+				{
+					name: 'Direct',
+					type: 'line',
+					smooth: true,
+					data: [320, 332, 301, 334, 390, 330, 320]
+				},
+				{
+					name: 'Search Engine',
+					type: 'line',
+					smooth: true,
+					data: [820, 932, 901, 934, 1290, 1330, 1320]
+				}
+			]
 		};
 
 		accuOpt && accuChart.setOption(accuOpt);

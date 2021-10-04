@@ -906,7 +906,6 @@ class Asset extends BaseController
 			}
 		} else if ($isNull == 'true') {
 			if ($post['assetId'] != '' && $post['parameterName'] != '') {
-				// var_dump($post['min']);
 				$data = array(
 					'assetId' => $post['assetId'],
 					'sortId' => $post['sortId'] == "null" || "" || 0 ? null : $post['sortId'],
