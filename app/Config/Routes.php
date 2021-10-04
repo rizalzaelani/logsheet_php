@@ -84,7 +84,7 @@ $routes->post('/Asset/deleteParameter', 'Master/Asset::deleteParameter');
 $routes->post('/Asset/saveSetting', 'Master/Asset::saveSetting');
 $routes->post('/Asset/sortingParameter', 'Master/Asset::sortingParameter');
 
-$routes->add('/Location', 'Master/location::index');
+$routes->add('/Location', 'Master/Location::index');
 $routes->post('/Location/datatable', 'Master/Location::datatable');
 // $routes->add('/Location/detail', 'Master/location::detail');
 $routes->add('/Location/detail/(:any)', 'Master\Location::detail/$1');

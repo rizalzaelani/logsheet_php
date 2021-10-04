@@ -29,9 +29,9 @@ class Asset extends BaseController
 		$tagModel			= new TagModel();
 		$tagLocationModel	= new TagLocationModel();
 
-		$asset			= $assetModel->findColumn('assetName');
-		$tag			= $tagModel->findColumn('tagName');
-		$tagLocation	= $tagLocationModel->findColumn('tagLocationName');
+		$asset			= $assetModel->findColumn('assetName') ?? [];
+		$tag			= $tagModel->findColumn('tagName') ?? [];
+		$tagLocation	= $tagLocationModel->findColumn('tagLocationName') ?? [];
 
 		$data['asset']			= $asset;
 		$data['tag']			= $tag;
@@ -49,6 +49,8 @@ class Asset extends BaseController
 				"link"	=> "Asset"
 			],
 		];
+		// print("<pre />");
+		// print_r($data);
 		return $this->template->render('Master/Asset/index', $data);
 	}
 
