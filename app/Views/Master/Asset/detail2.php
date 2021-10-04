@@ -1261,9 +1261,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         }
 
                         this.params.push(this.param);
-                        this.param = {
+                        this.param = reactive({
                             parameterId: uuidv4(),
-                            sortId: null,
+                            sortId: $('#tableParameter tbody tr').length + 2,
                             parameterName: '',
                             photo: '',
                             description: '',
@@ -1275,7 +1275,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             option: '',
                             inputType: '',
                             showOn: '',
-                        }
+                        })
                         $('.type').val('').trigger("change");
                         $('#showOn').val('').trigger('change');
                     }
@@ -1290,22 +1290,20 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     $('#titleModalEdit').show();
                     this.myModal.show();
                     let data = this.params[index];
-                    this.param = {
-                        parameterId: this.params[index].parameterId,
-                        sortId: null,
-                        parameterName: this.params[index].parameterName,
-                        photo: this.params[index].photo,
-                        description: this.params[index].description,
-                        uom: this.params[index].uom,
-                        min: this.params[index].min,
-                        max: this.params[index].max,
-                        normal: this.params[index].normal,
-                        abnormal: this.params[index].abnormal,
-                        option: this.params[index].option,
-                        inputType: this.params[index].inputType,
-                        showOn: this.params[index].showOn,
-                        i: index,
-                    }
+                    this.param.parameterId = this.params[index].parameterId;
+                    this.param.sortId = this.params[index].sortId;
+                    this.param.parameterName = this.params[index].parameterName;
+                    this.param.photo = this.params[index].photo;
+                    this.param.description = this.params[index].description;
+                    this.param.uom = this.params[index].uom;
+                    this.param.min = this.params[index].min;
+                    this.param.max = this.params[index].max;
+                    this.param.normal = this.params[index].normal;
+                    this.param.abnormal = this.params[index].abnormal;
+                    this.param.option = this.params[index].option;
+                    this.param.inputType = this.params[index].inputType;
+                    this.param.showOn = this.params[index].showOn;
+                    this.param.i = index;
                     if (this.param.photo != "") {
                         $('#previewImg').show();
                         $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
@@ -1406,7 +1404,17 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         reverseButtons: false
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            this.params.splice(index, 1)
+                            var lengthParams = this.params.length;
+                            for (let i = 0; i < lengthParams; i++) {
+                                // console.log(v.params[i].sortId);
+                                if (v.params[i].sortId > v.params[index].sortId) {
+                                    v.params[i].sortId = v.params[i].sortId - 1;
+                                }else{
+                                    v.params[i].sortId = v.params[i].sortId;
+                                }
+                            }
+                            this.params.splice(index, 1);
+                            this.param.sortId = this.param.sortId - 1;
                         }
                     })
 
@@ -2036,7 +2044,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
 
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
-                    this.param.sortId = null;
+                    this.param.sortId = $('#tableParameter tbody tr').length + 1,
                     this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.description = '';
@@ -2231,6 +2239,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             });
         })
 
+        $(document).ready(function(){
+            let lengthTableParam = $('#tableParameter tbody tr').length;
+            v.param.sortId = lengthTableParam + 1;
+        })
         // Get value selected location, tag, operation mode
         $(document).ready(function() {
             $('#operation').val(v.assetData.assetStatusId).trigger("change");
