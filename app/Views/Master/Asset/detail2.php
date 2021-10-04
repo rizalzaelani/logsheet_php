@@ -325,7 +325,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             <div class="row mb-3">
                                                 <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <input type="file" class="photo w-100" name="photo" @change="photo" accept="image/png, image/jpeg, image/gif">
+                                                    <input type="file" ref="file" class="photo w-100" name="photo" @change="photo()" accept="image/png, image/jpeg, image/gif">
                                                 </div>
                                             </div>
                                             <div style="display: none !important;" class="row mb-3" id="previewImg">
@@ -664,7 +664,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                         <option value="Sa">Saturday</option>
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        Filed cannot be empty.
+                                                        Field cannot be empty.
                                                     </div>
                                                 </div>
                                             </div>
@@ -1813,8 +1813,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     })
                 };
 
-                function photo(event) {
-                    this.param.photo = event.target.files[0];
+                function photo() {
+                    let fileUploaded = this.$refs.file.files[0];
+                    this.param.photo = fileUploaded;
+                    // this.param.photo = event.target.files[0];
                 };
 
                 function addParameter() {
@@ -1841,8 +1843,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (res.data.data != '') {
                             let dt = res.data.data[0];
                             this.param.parameterId = $parameterId,
-                                this.param.sortId = dt.sortId,
-                                this.param.parameterName = dt.parameterName;
+                            this.param.sortId = dt.sortId,
+                            this.param.parameterName = dt.parameterName;
                             this.param.photo = dt.photo;
                             this.param.description = dt.description;
                             this.param.uom = dt.uom;
@@ -1926,7 +1928,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         formdata.append('assetId', this.assetData.assetId);
                         formdata.append('sortId', this.param.sortId);
                         formdata.append('parameterName', this.param.parameterName);
-                        formdata.append('photo', (this.file == '' ? this.param.photo : this.file))
+                        formdata.append('photo', this.param.photo);
                         formdata.append('description', this.param.description);
                         formdata.append('uom', this.param.uom);
                         formdata.append('min', this.param.min);
@@ -2033,30 +2035,31 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 };
 
                 function btnCancelModalParam() {
-                    this.param = {
-                        parameterId: uuidv4(),
-                        sortId: null,
-                        parameterName: '',
-                        photo: '',
-                        description: '',
-                        uom: '',
-                        min: null,
-                        max: null,
-                        normal: '',
-                        abnormal: '',
-                        option: '',
-                        inputType: '',
-                        showOn: '',
-                    }
+                    this.param.parameterId = uuidv4();
+                    this.param.sortId = null;
+                    this.param.parameterName = '';
+                    this.param.photo = '';
+                    this.param.description = '';
+                    this.param.uom = '';
+                    this.param.min = null;
+                    this.param.max = null;
+                    this.param.normal = '';
+                    this.param.abnormal = '';
+                    this.param.option = '';
+                    this.param.inputType = '';
+                    this.param.showOn = '';
                     $('#addParameterModal').modal('hide');
                     $('#previewImg').hide();
-                    $('#imgParam').remove();
+
                     $('.type').val('').trigger("change");
                     $('#showOn').val('').trigger('change');
                     $('#normal').val('').trigger('change');
                     $('#abnormal').val('').trigger('change');
+
+                    $('#imgParam').remove();
                     $('.optNormal').remove();
                     $('.optAbnormal').remove();
+
                     $('.parameter').removeClass('is-invalid');
                     $('.type').removeClass('is-invalid');
                     $('.showOn').removeClass('is-invalid');
@@ -2153,30 +2156,35 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 });
 
                 return {
-                    assetData,
+                    detailTab,
+                    parameterTab,
+                    settingTab,
+
                     myModal,
+                    assetData,
                     checked, 
                     file,
                     setSch,
                     onDays,
                     assetTagging,
+
                     addTagName,
                     addTagDesc,
                     addLocationName,
                     addLocationLatitude,
                     addLocationLongitude,
                     addLocationDesc,
+
                     param,
                     tempPhoto,
                     params,
                     submited,
-                    detailTab,
-                    parameterTab,
-                    settingTab,
+
                     modalAddTag,
                     addTag,
                     modalAddLocation,
                     addTagLocation,
+
                     addTempParameter,
                     editTempParameter,
                     updateTempParameter,
@@ -2188,9 +2196,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     editParameter,
                     updateParameter,
                     deleteParameter,
-                    btnCancelModalParam,
                     importParameter,
-                    insertParam
+                    insertParam,
+                    btnCancelModalParam,
                 }
             },
         }).mount('#app');
