@@ -787,19 +787,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         </div>
                         <hr>
                         <form enctype="multipart/form-data" method="post">
-                            <div class="form-group row d-flex align-items-center">
-                                <div class="col-3">
-                                    <label for="asset">Value<span class="required">*</span></label>
-                                </div>
-                                <div class="col-9">
-                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
-                                    <div class="invalid-feedback">
-                                        Field cannot be empty.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row d-flex align-items-center">
-
+                        <div class="form-group row d-flex align-items-center">
                                 <div class="col-3">
                                     <label for="asset">Type<span class="required">*</span></label>
                                 </div>
@@ -810,6 +798,17 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             <option value="<?= $key; ?>"><?= $key; ?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Field cannot be empty.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label for="asset">Value<span class="required">*</span></label>
+                                </div>
+                                <div class="col-9">
+                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
                                     <div class="invalid-feedback">
                                         Field cannot be empty.
                                     </div>
@@ -942,10 +941,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 <i>(Empty)</i>
                             </td>
                             <td class="text-center">{{ items.showOn}}</td>
-                            <td class="text-center"><i class="text-success">(New)</i></td>
+                            <td class="text-center"><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-success mr-1" @click="editTempParameter(i)"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-sm btn-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
+                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i)"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                         <?php $i = 1;
@@ -988,10 +987,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     ?>
                                 </td>
                                 <td class="text-center"><?= $key['showOn']; ?></td>
-                                <td class="text-center"><i><?= $key['updatedAt'] != $key['createdAt'] ? '(Updated)' : '(Added)'?></i></td>
+                                <td class="text-center"><?= $key['updatedAt'] != $key['createdAt'] ? '<span class="badge badge-warning text-white">Updated</span>' : '<span class="badge badge-primary text-white">Added</span>'?></td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
