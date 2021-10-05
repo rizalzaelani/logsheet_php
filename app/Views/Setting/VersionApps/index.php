@@ -36,7 +36,7 @@
 									<th>Name</th>
 									<th>Version</th>
 									<th>By</th>
-									<th width="25%">Action</th>
+									<th width="10%">Action</th>
 								</tr>
 							</thead>
 						</table>
@@ -233,10 +233,10 @@
                                 data: "versionAppId",
                                 render: function(data, type, row, meta) {
                                     return `<div class='d-flex justify-content-start align-items-center'>
-										<button class='btn btn-outline-primary btn-sm mr-1' id=` + data + ` onclick="detailApps(` + `'` + data + `'` + `)"><i class='fa fa-eye'></i> Detail</button>
-										<button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editApps(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
-                                        <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteApps(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
+										<button class='btn btn-outline-primary btn-sm mr-1' id=` + data + ` onclick="detailApps(` + `'` + data + `'` + `)"><i class='fa fa-eye'></i> Detail</button>`;
                                 },
+										// <button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editApps(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
+                                        // <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteApps(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
                             },
 							]
                         });
