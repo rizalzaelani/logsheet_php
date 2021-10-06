@@ -10,11 +10,11 @@ class AssetStatusModel extends Model
     protected $table                = 'tblm_assetStatus';
     protected $primaryKey           = 'assetStatusId';
     protected $returnType           = 'array';
+    protected $useSoftDeletes       = true;
     protected $allowedFields        = ['assetStatusId', 'userId', 'assetStatusName', 'createdAt', 'updatedAt', 'deletedAt'];
     protected $createdField         = 'createdAt';
     protected $updatedField         = 'updatedAt';
     protected $deletedField         = 'deletedAt';
-    protected $useSoftDeletes       = true;
     
     public function getAll(array $where = null){
         $query = $this->builder();
@@ -27,6 +27,6 @@ class AssetStatusModel extends Model
 
     public function deleteById($assetStatusId)
     {
-        return $this->builder('tblm_assetStatus')->where('assetStatusId', $assetStatusId)->delete();
+        return $this->builder()->where($this->primaryKey, $assetStatusId)->delete();
     }
 }

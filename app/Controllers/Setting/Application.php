@@ -13,7 +13,7 @@ class Application extends BaseController
         $appSettingModel = new ApplicationSettingModel();
         $assetStatusModel = new AssetStatusModel();
         $appSetting = $appSettingModel->findAll();
-        $assetStatus = $assetStatusModel->getWhere('deletedAt', null)->getResultArray();
+        $assetStatus = $assetStatusModel->orderBy('createdAt', 'asc')->getWhere('deletedAt', null)->getResultArray();
         $data = array(
             'title' => 'Setting Application',
             'subtitle' => 'Setting Application'
@@ -85,15 +85,19 @@ class Application extends BaseController
         $assetStatusModel = new AssetStatusModel();
         $post = $this->request->getPost();
         $lengthStatusName = count($post['statusName']);
-        for ($i=0; $i < $lengthStatusName; $i++) { 
-            $data = array(
-                'assetStatusId' => null,
-                'userId' => $post['userId'],
-                'assetStatusName' => $post['statusName'][$i],
-            );
-            $assetStatusModel->insert($data);
+        if ($lengthStatusName > 0) {
+            for ($i=0; $i < $lengthStatusName; $i++) { 
+                $data = array(
+                    'assetStatusId' => null,
+                    'userId' => $post['userId'],
+                    'assetStatusName' => $post['statusName'][$i],
+                );
+                $assetStatusModel->insert($data);
+            }
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $post));
+        }else{
+            echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
         }
-        echo json_encode(array('status' => 'success', 'message' => '', 'data' => $post));
         die();
     }
 
@@ -104,7 +108,7 @@ class Application extends BaseController
         if ($json != '') {
             $id = $json->assetStatusId;
             $assetStatusModel->deleteById($id);
-            echo json_encode(array('status' => 'success', 'message' => '', 'data' => $id));
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully deleted data.', 'data' => $id));
         }else{
             echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
         }
@@ -120,7 +124,6 @@ class Application extends BaseController
             $data = array(
                 'assetStatusName' => $json->assetStatusName,
             );
-
             $assetStatusModel->update($id, $data);
         }
         die();

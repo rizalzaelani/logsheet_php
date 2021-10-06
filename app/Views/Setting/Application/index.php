@@ -76,9 +76,9 @@
                                             <p class="m-0" id="status<?= $key['assetStatusId'] ?>"><?= $key['assetStatusName']; ?></p>
                                             <input type="text" class="form-control text-center" @keyup.enter="keyupStatus('<?= $key['assetStatusId'] ?>', $event.target.value)" value="<?= $key['assetStatusName'] ?>" id="inputStatus<?= $key['assetStatusId'] ?>" style="display: none">
                                         </td>
-                                        <td class="d-flex justify-content-center align-items-center">
-                                            <button type="button" class="btn btn-sm btn-outline-primary mr-1" @click="editStatus('<?= $key['assetStatusId'] ?>')"><i class="fa fa-edit"></i></button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteStatus('<?= $key['assetStatusId'] ?>')"><i class="fa fa-trash"></i></button>
+                                        <td class="text-center d-flex justify-content-center align-items-center">
+                                            <button type="button" class="btn btn-sm btn-outline-primary mr-1" @click="editStatus('<?= $key['assetStatusId'] ?>')"><i class="fa fa-edit"></i> Edit</button>
+                                            <!-- <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteStatus('<?= $key['assetStatusId'] ?>')"><i class="fa fa-trash"></i></button> -->
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -133,9 +133,9 @@
                         <td class="text-center">
                             <input name="input" id="input${lengthTableStatus + 1}" type="text" class="form-control text-center">
                         </td>
-                        <td>
-                            <div class="d-flex justify-content-end align-items-center">
-                                <button class="btn btn-sm btn-danger" onclick="del(${lengthTableStatus + 1})"><i class="fa fa-trash"></i> Delete</button>
+                        <td style="vertical-align: middle;">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <i type="button" class="fa fa-times text-danger" onclick="del(${lengthTableStatus + 1})"></i>
                             </div>
                         </td>
                     </tr>`
@@ -232,24 +232,11 @@
                         arr.push(actualData);
                     })
                 v.statusName = arr;
-                // var arr = [];
-                // const lengthTableStatus = $('#tableStatus tbody tr').length;
-                // const lengthData = <?= count($assetStatus); ?>;
-                // const dif = lengthTableStatus - lengthData;
-                // if (lengthTableStatus > lengthData) {
-                //     for (let index = lengthData+1; index <= lengthTableStatus; index++) {
-                //         var id = '#input' + index;
-                //         var valueInput = $(id).val();
-                //         arr.push(valueInput);
-                //     }
-                // }
-                // this.statusName = arr;
-
                 var lengthStatusName = this.statusName.length;
                 if (lengthStatusName > 0) {
                     let formdata = new FormData();
                     formdata.append('assetStatusId', null);
-                    formdata.append('userId', this.userId);
+                    formdata.append('userId', this.appSetting.userId);
                     var status = this.statusName;
                     status.forEach((item, i) => {
                         formdata.append('statusName[]', item);
@@ -260,8 +247,55 @@
                         method: 'POST',
                         data: formdata,
                     }).then(res => {
-                        console.log(res);
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-success mr-1',
+                            },
+                            buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: res.data.message,
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        }else{
+                            const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: res.data.message,
+                                icon: 'error'
+                            })
+                        }
                     })
+                }else{
+                    const swalWithBootstrapButtons = swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                        },
+                        buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: 'No changes to save.',
+                            icon: 'warning'
+                        })
                 }
             }
 
@@ -273,17 +307,22 @@
             }
 
             function keyupStatus(id, val) {
-                axios.post("<?= base_url('Application/updateStatus') ?>", {
-                    assetStatusId: id,
-                    assetStatusName: val
-                }).then(res => {
-                    console.log(res);
-                    var statusId = '#status' + id;
-                    var inputStatus = '#inputStatus' + id;
-                    $(statusId).text(val);
+                var statusId = '#status' + id;
+                var inputStatus = '#inputStatus' + id;
+                var textStatus = $(statusId).text();
+                if (val != textStatus) {
+                    axios.post("<?= base_url('Application/updateStatus') ?>", {
+                        assetStatusId: id,
+                        assetStatusName: val
+                    }).then(res => {
+                        $(statusId).text(val);
+                        $(statusId).show();
+                        $(inputStatus).hide();
+                    })
+                }else{
                     $(statusId).show();
                     $(inputStatus).hide();
-                })
+                }
                 // console.log(id);
                 // console.log(val);
             }
@@ -293,7 +332,28 @@
                     assetStatusId: id
                 }).then(res => {
                     if (res.data.status == 'success') {
-                        console.log("success")
+                        const swalWithBootstrapButtons = swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-success mr-1',
+                        },
+                        buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Success!',
+                            text: res.data.message,
+                            icon: 'success'
+                        }).then(okay => {
+                            if (okay) {
+                                swal.fire({
+                                    title: 'Please Wait!',
+                                    text: 'Reloading page..',
+                                    onOpen: function() {
+                                        swal.showLoading()
+                                    }
+                                })
+                                location.reload();
+                            }
+                        })
                     }else{
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
@@ -328,17 +388,6 @@
     function del(idx) {
         var row = '#row' + idx;
         $(row).remove();
-        const lengthTableStatus = $('#tableStatus tbody tr').length;
-        const lengthData = <?= count($assetStatus); ?>;
-        var newIdx = idx+1;
-        for (let index = newIdx; index <= lengthTableStatus; index++) {
-            console.log('input'+(newIdx++));
-            console.log('input'+index);
-            console.log("-----");
-            // var id = 'input' + (idx++);
-            // var newId = 'input' + index;
-            // document.getElementById(id).id = newId;
-        }
     }
 
     $(document).ready(function() {
@@ -366,7 +415,6 @@
         pondRoot.addEventListener('FilePond:addfile', function(){
             let fileUploaded = $('#appLogo').filepond('getFiles');
             v.appSetting.appLogo = fileUploaded[0].file;
-            // console.log(fileUploaded[0].file);
         });
     })
 </script>
