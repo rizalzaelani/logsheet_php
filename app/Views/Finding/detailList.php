@@ -19,59 +19,68 @@
             <div class="row mt-2">
                 <div class="col-sm-6">
                     <table class="table mt-2">
-                        <tr class="mt-1">
+                        <tr>
                             <th style="width: 200px;">Asset</th>
-                            <td>: <?= $scheduleTrxData["assetName"] ?></td>
+                            <td>{{ scheduleTrxData.assetName }}</td>
                         </tr>
-                        <tr class="mt-1">
+                        <tr>
                             <th>Asset Number</th>
-                            <td>: <?= $scheduleTrxData["assetNumber"] ?></td>
+                            <td>{{ scheduleTrxData.assetNumber }}</td>
                         </tr>
-                        <tr class="mt-1">
+                        <tr>
                             <th>Tag</th>
-                            <td>:
-                                <?php
-                                if($scheduleTrxData['tagName'] != '-'){
-                                    $assetTagValue = (array_values(array_unique(explode(",", $scheduleTrxData['tagName']))));
-                                    $length = count($assetTagValue);
-                                    for ($i = 0; $i < $length; $i++) { ?>
-                                        <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
-                                            <?= $assetTagValue[$i]; ?>
-                                        </span>
-                                    <?php }
-                                } else {
-                                    echo "-";
-                                }
-                                ?>
+                            <td>
+                                <template v-if="scheduleTrxData.tagName" v-for="(val, key) in _.uniq(scheduleTrxData.tagName.split(','))">
+                                    <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
+                                </template>
+                                <template v-else>-</template>
                             </td>
                         </tr>
-                        <tr class="mt-1">
+                        <tr>
                             <th>Location</th>
-                            <td>:
-                                <?php
-                                if($scheduleTrxData['tagLocationName'] != '-'){
-                                    $assetTagValue = (array_values(array_unique(explode(",", $scheduleTrxData['tagLocationName']))));
-                                    $length = count($assetTagValue);
-                                    for ($i = 0; $i < $length; $i++) { ?>
-                                        <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
-                                            <?= $assetTagValue[$i]; ?>
-                                        </span>
-                                    <?php }
-                                } else {
-                                    echo "-";
-                                }
-                                ?>
+                            <td>
+                                <template v-if="scheduleTrxData.tagLocationName" v-for="(val, key) in _.uniq(scheduleTrxData.tagLocationName.split(','))">
+                                    <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
+                                </template>
+                                <template v-else>-</template>
                             </td>
                         </tr>
-
-                        <tr class="mt-1">
-                            <th>Schedule Type</th>
-                            <td>: <?= $scheduleTrxData["schType"] ?></td>
+                        <template v-if="scheduleTrxData.descriptionJson">
+                            <template v-for="(val, key) in scheduleTrxData.descriptionJson">
+                                <tr class="mt-1 descJson">
+                                    <th class="text-capitalize">{{val.key.replace(/([A-Z])/g, " $1")}}</th>
+                                    <td>{{ val.value ? val.value : '-' }}</td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template v-else>
+                            <tr>
+                                <th>Description</th>
+                                <td class="pl-0">{{ scheduleTrxData.description }}</td>
+                            </tr>
+                        </template>
+                        <tr>
+                            <th>Scanned At</th>
+                            <td>{{ moment(scheduleTrxData.scannedAt).format("DD MMM YYYY HH:mm") }}</td>
                         </tr>
-                        <tr class="mt-1">
-                            <th>Description</th>
-                            <td>: <?= $scheduleTrxData["description"] ?></td>
+                        <tr>
+                            <th>Scanned By</th>
+                            <td>{{ scheduleTrxData.scannedBy }}</td>
                         </tr>
+                        <tr>
+                            <th>Scanned With</th>
+                            <td>{{ scheduleTrxData.scannedWith }}</td>
+                        </tr>
+                        <template v-if="scheduleTrxData.approvedAt">
+                            <tr>
+                                <th>Approved At</th>
+                                <td>{{ moment(scheduleTrxData.approvedAt).format("DD MMM YYYY HH:mm") }}</td>
+                            </tr>
+                            <tr>
+                                <th>Approved By</th>
+                                <td>{{ scheduleTrxData.approvedBy }}</td>
+                            </tr>
+                        </template>
                     </table>
                 </div>
                 <div class="col-sm-6 d-none d-sm-flex flex-row align-items-center">
@@ -82,7 +91,7 @@
                 </div>
                 <div class="col-12">
                     <div class="table-responsive table-record-fix-width border-bottom">
-                        <table class="table table-responsive-sm table-hover table-bordered table-outline mb-0" id="detailRecord">
+                        <table class="table table-responsive-sm table-hover table-bordered table-outline border-bottom" id="detailRecord">
                             <thead>
                                 <tr>
                                     <th class="text-center">No.</th>
@@ -127,11 +136,6 @@
                         </table>
                     </div>
                 </div>
-                <div class="col-12 my-4">
-                    <div class="row">
-                        <div class="col-12"></div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -144,19 +148,21 @@
 <script>
     let v = Vue.createApp({
         setup() {
+            var scheduleTrxData = <?= json_encode($scheduleTrxData); ?>;
             var recordParameterData = <?= json_encode($trxData ?? []) ?>;
 
-            var test = Vue.ref('');
-
-            Vue.onMounted(() => {
-                // console.log("adshad");
-            });
+            if (IsJsonString(scheduleTrxData?.description)) {
+                scheduleTrxData.descriptionJson = JSON.parse(scheduleTrxData.description);
+            } else {
+                scheduleTrxData.descriptionJson = [];
+            }
 
             return {
+                scheduleTrxData,
                 recordParameterData,
                 isNullEmptyOrUndefined,
                 xhrThrowRequest,
-                test
+                moment
             }
         },
         methods: {

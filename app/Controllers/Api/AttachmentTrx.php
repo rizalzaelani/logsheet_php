@@ -30,6 +30,7 @@ class AttachmentTrx extends ResourceController
         $trxId = $this->request->getVar('trxId');
         $notes = $this->request->getVar('notes');
         $attachment = $this->request->getFile('attachment');
+        $timestamp = $this->request->getFile('timestamp') ?? null;
 
         $trxId = $trxId == "" ? null : $trxId;
 
@@ -81,7 +82,8 @@ class AttachmentTrx extends ResourceController
 				"scheduleTrxId" => $scheduleTrxId,
 				"trxId" => $trxId,
 				"notes" => $notes,
-				"attachment" => base_url() . "/" . $dirPath . "/" . $newfilename
+				"attachment" => base_url() . "/" . $dirPath . "/" . $newfilename,
+                "createdAt" => $timestamp
 			];
 
             $checkAttachSch = $attachmentTrxModel->where("scheduleTrxId", $scheduleTrxId)->orderBy("createdAt", "desc")->get()->getResultArray();

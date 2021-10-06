@@ -3,6 +3,7 @@
 namespace App\Controllers\Transaction;
 
 use App\Controllers\BaseController;
+use App\Models\AttachmentTrxModel;
 use App\Models\ScheduleTrxModel;
 use App\Models\TransactionModel;
 use DateTime;
@@ -39,6 +40,7 @@ class Transaction extends BaseController
 
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
+		$attachmentTrxModel = new AttachmentTrxModel();
 
 		$getSchedule = $scheduleTrxModel->getById($scheduleTrxId);
 		if(empty($getSchedule)){
@@ -47,6 +49,7 @@ class Transaction extends BaseController
 
 		$data["scheduleTrxData"] = $getSchedule;
 		$data["trxData"] = $trxModel->getAll(["scheduleTrxId" => $scheduleTrxId]);
+		$data["attachmentTrxData"] = $attachmentTrxModel->getWhere(["scheduleTrxId" => $scheduleTrxId])->getResultArray();
 
 		$data['title'] = 'Detail Transaction';
 		$data['subtitle'] = 'Detail Transaction';

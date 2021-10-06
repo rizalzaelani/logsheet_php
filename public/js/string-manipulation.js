@@ -22,6 +22,14 @@ function lowerEachWords(str) {
     return str;
 }
 
+function firstLower(s) {
+    if (s != null & s != "") {
+        s = s.replace(/^.{1}/g, s[0].toLowerCase());
+    }
+
+    return s;
+}
+
 function isNullEmptyOrUndefined(value) {
     if (value === "" || value == null || value == undefined) {
         return true;
