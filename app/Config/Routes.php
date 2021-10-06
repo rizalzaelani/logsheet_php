@@ -108,7 +108,6 @@ $routes->add('/Tag/uploadFile', 'Master\Tag::uploadFile');
 $routes->add('/Tag/insertTag', 'Master\Tag::insertTag');
 
 $routes->add('/Notification', 'Setting/Notification::index');
-$routes->add('/Application', 'Setting/Application::index');
 
 $routes->get('/Transaction', 'Transaction/Transaction::index');
 $routes->get('/Transaction/detail', 'Transaction/Transaction::detail');
@@ -144,6 +143,13 @@ $routes->post('/VersionApps/update', 'Setting/VersionApps::update');
 $routes->post('/VersionApps/delete', 'Setting/VersionApps::delete');
 $routes->post('/VersionApps/download', 'Setting/VersionApps::download');
 $routes->add('/VersionApps/download/(:any)', 'Setting\VersionApps::download/$1');
+
+$routes->add('/Application', 'Setting/Application::index');
+$routes->post('/Application/saveSetting', 'Setting/Application::saveSetting');
+$routes->post('/Application/saveStatus', 'Setting/Application::saveStatus');
+$routes->post('/Application/deleteStatus', 'Setting/Application::deleteStatus');
+$routes->post('/Application/updateStatus', 'Setting/Application::updateStatus');
+
 
 /*
  * --------------------------------------------------------------------
