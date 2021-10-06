@@ -338,9 +338,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 <textarea class="form-control col-sm-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
-                                                <div class="col-sm-9 p-0">
-                                                    <input type="file" class="photo w-100" name="photo" @change="photo" accept="image/png, image/jpeg, image/gif">
+                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
+                                                <div class="col-9 p-0">
+                                                    <input type="file" ref="file" class="photo w-100" name="photo" @change="photo()" accept="image/png, image/jpeg, image/gif">
                                                 </div>
                                             </div>
                                             <div style="display: none !important;" class="row mb-3" id="previewImg">
@@ -680,7 +680,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                         <option value="Sa">Saturday</option>
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        Filed cannot be empty.
+                                                        Field cannot be empty.
                                                     </div>
                                                 </div>
                                             </div>
@@ -803,29 +803,28 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         </div>
                         <hr>
                         <form enctype="multipart/form-data" method="post">
-                            <div class="form-group row d-flex align-items-center">
-                                <div class="col-sm-3">
-                                    <label for="asset">Value<span class="required">*</span></label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
-                                    <div class="invalid-feedback">
-                                        Field cannot be empty.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row d-flex align-items-center">
-
-                                <div class="col-sm-3">
+                        <div class="form-group row d-flex align-items-center">
+                                <div class="col-3">
                                     <label for="asset">Type<span class="required">*</span></label>
                                 </div>
-                                <div class="col-sm-9">
+                                <div class="col-9">
                                     <select name="tagging" id="taggingType">
                                         <option value="" selected disabled>Select Tagging Type</option>
                                         <?php foreach ($assetTaggingType as $key) : ?>
                                             <option value="<?= $key; ?>"><?= $key; ?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Field cannot be empty.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row d-flex align-items-center">
+                                <div class="col-3">
+                                    <label for="asset">Value<span class="required">*</span></label>
+                                </div>
+                                <div class="col-9">
+                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
                                     <div class="invalid-feedback">
                                         Field cannot be empty.
                                     </div>
@@ -958,10 +957,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 <i>(Empty)</i>
                             </td>
                             <td class="text-center">{{ items.showOn}}</td>
-                            <td class="text-center"><i class="text-success">(New)</i></td>
+                            <td class="text-center"><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-success mr-1" @click="editTempParameter(i)"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-sm btn-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
+                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i)"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                         <?php $i = 1;
@@ -1004,10 +1003,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     ?>
                                 </td>
                                 <td class="text-center"><?= $key['showOn']; ?></td>
-                                <td class="text-center"><i>(Added)</i></td>
+                                <td class="text-center"><?= $key['updatedAt'] != $key['createdAt'] ? '<span class="badge badge-warning text-white">Updated</span>' : '<span class="badge badge-primary text-white">Added</span>'?></td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -1041,7 +1040,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 var setSch = ref('');
                 var onDays = ref('');
                 var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging[0]) . ")" : "reactive({
-                    assetTaggingId: null,
+                    assetTaggingId: uuidv4(),
                     assetTaggingValue: '',
                     assetTaggingtype: '',
                     description: '',
@@ -1289,9 +1288,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         }
 
                         this.params.push(this.param);
-                        this.param = {
+                        this.param = reactive({
                             parameterId: uuidv4(),
-                            sortId: null,
+                            sortId: $('#tableParameter tbody tr').length + 2,
                             parameterName: '',
                             photo: '',
                             description: '',
@@ -1303,7 +1302,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             option: '',
                             inputType: '',
                             showOn: '',
-                        }
+                        })
                         $('.type').val('').trigger("change");
                         $('#showOn').val('').trigger('change');
                     }
@@ -1318,22 +1317,20 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     $('#titleModalEdit').show();
                     this.myModal.show();
                     let data = this.params[index];
-                    this.param = {
-                        parameterId: this.params[index].parameterId,
-                        sortId: null,
-                        parameterName: this.params[index].parameterName,
-                        photo: this.params[index].photo,
-                        description: this.params[index].description,
-                        uom: this.params[index].uom,
-                        min: this.params[index].min,
-                        max: this.params[index].max,
-                        normal: this.params[index].normal,
-                        abnormal: this.params[index].abnormal,
-                        option: this.params[index].option,
-                        inputType: this.params[index].inputType,
-                        showOn: this.params[index].showOn,
-                        i: index,
-                    }
+                    this.param.parameterId = this.params[index].parameterId;
+                    this.param.sortId = this.params[index].sortId;
+                    this.param.parameterName = this.params[index].parameterName;
+                    this.param.photo = this.params[index].photo;
+                    this.param.description = this.params[index].description;
+                    this.param.uom = this.params[index].uom;
+                    this.param.min = this.params[index].min;
+                    this.param.max = this.params[index].max;
+                    this.param.normal = this.params[index].normal;
+                    this.param.abnormal = this.params[index].abnormal;
+                    this.param.option = this.params[index].option;
+                    this.param.inputType = this.params[index].inputType;
+                    this.param.showOn = this.params[index].showOn;
+                    this.param.i = index;
                     if (this.param.photo != "") {
                         $('#previewImg').show();
                         $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
@@ -1434,7 +1431,17 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         reverseButtons: false
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            this.params.splice(index, 1)
+                            var lengthParams = this.params.length;
+                            for (let i = 0; i < lengthParams; i++) {
+                                // console.log(v.params[i].sortId);
+                                if (v.params[i].sortId > v.params[index].sortId) {
+                                    v.params[i].sortId = v.params[i].sortId - 1;
+                                }else{
+                                    v.params[i].sortId = v.params[i].sortId;
+                                }
+                            }
+                            this.params.splice(index, 1);
+                            this.param.sortId = this.param.sortId - 1;
                         }
                     })
 
@@ -1846,8 +1853,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     })
                 };
 
-                function photo(event) {
-                    this.param.photo = event.target.files[0];
+                function photo() {
+                    let fileUploaded = this.$refs.file.files[0];
+                    this.param.photo = fileUploaded;
+                    // this.param.photo = event.target.files[0];
                 };
 
                 function addParameter() {
@@ -1874,8 +1883,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (res.data.data != '') {
                             let dt = res.data.data[0];
                             this.param.parameterId = $parameterId,
-                                this.param.sortId = dt.sortId,
-                                this.param.parameterName = dt.parameterName;
+                            this.param.sortId = dt.sortId,
+                            this.param.parameterName = dt.parameterName;
                             this.param.photo = dt.photo;
                             this.param.description = dt.description;
                             this.param.uom = dt.uom;
@@ -1959,7 +1968,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         formdata.append('assetId', this.assetData.assetId);
                         formdata.append('sortId', this.param.sortId);
                         formdata.append('parameterName', this.param.parameterName);
-                        formdata.append('photo', (this.file == '' ? this.param.photo : this.file))
+                        formdata.append('photo', this.param.photo);
                         formdata.append('description', this.param.description);
                         formdata.append('uom', this.param.uom);
                         formdata.append('min', this.param.min);
@@ -2066,30 +2075,31 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 };
 
                 function btnCancelModalParam() {
-                    this.param = {
-                        parameterId: uuidv4(),
-                        sortId: null,
-                        parameterName: '',
-                        photo: '',
-                        description: '',
-                        uom: '',
-                        min: null,
-                        max: null,
-                        normal: '',
-                        abnormal: '',
-                        option: '',
-                        inputType: '',
-                        showOn: '',
-                    }
+                    this.param.parameterId = uuidv4();
+                    this.param.sortId = $('#tableParameter tbody tr').length + 1,
+                    this.param.parameterName = '';
+                    this.param.photo = '';
+                    this.param.description = '';
+                    this.param.uom = '';
+                    this.param.min = null;
+                    this.param.max = null;
+                    this.param.normal = '';
+                    this.param.abnormal = '';
+                    this.param.option = '';
+                    this.param.inputType = '';
+                    this.param.showOn = '';
                     $('#addParameterModal').modal('hide');
                     $('#previewImg').hide();
-                    $('#imgParam').remove();
+
                     $('.type').val('').trigger("change");
                     $('#showOn').val('').trigger('change');
                     $('#normal').val('').trigger('change');
                     $('#abnormal').val('').trigger('change');
+
+                    $('#imgParam').remove();
                     $('.optNormal').remove();
                     $('.optAbnormal').remove();
+
                     $('.parameter').removeClass('is-invalid');
                     $('.type').removeClass('is-invalid');
                     $('.showOn').removeClass('is-invalid');
@@ -2209,13 +2219,19 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 });
 
                 return {
-                    assetData,
+                    detailTab,
+                    parameterTab,
+                    settingTab,
+
                     myModal,
                     checked,
+                    assetData,
+                    checked, 
                     file,
                     setSch,
                     onDays,
                     assetTagging,
+
                     addTagName,
                     addTagDesc,
                     addLocationName,
@@ -2227,13 +2243,12 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     tempPhoto,
                     params,
                     submited,
-                    detailTab,
-                    parameterTab,
-                    settingTab,
+
                     modalAddTag,
                     addTag,
                     modalAddLocation,
                     addTagLocation,
+
                     addTempParameter,
                     editTempParameter,
                     updateTempParameter,
@@ -2245,12 +2260,12 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     editParameter,
                     updateParameter,
                     deleteParameter,
-                    btnCancelModalParam,
                     importParameter,
                     insertParam,
                     addDescJson,
                     descJsonValue,
                     moreDetailAsset,
+                    btnCancelModalParam,
                 }
             },
         }).mount('#app');
@@ -2283,6 +2298,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             });
         })
 
+        $(document).ready(function(){
+            let lengthTableParam = $('#tableParameter tbody tr').length;
+            v.param.sortId = lengthTableParam + 1;
+        })
         // Get value selected location, tag, operation mode
         $(document).ready(function() {
             $('#operation').val(v.assetData.assetStatusId).trigger("change");
