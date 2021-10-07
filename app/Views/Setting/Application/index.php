@@ -56,37 +56,54 @@
                     </div>
                     <div class="col-6">
                         <h4 class="mb-4">Asset Status</h4>
-                        <table class="table" id="tableStatus">
-                            <thead class="bg-primary">
+                        <table class="table-bordered table" id="tableStatus">
+                            <thead>
                                 <tr>
-                                    <th style="vertical-align: middle;" class="text-center" width="10%">No</th>
                                     <th style="vertical-align: middle;" class="text-center">Status Name</th>
                                     <th width="20%">
                                         <div class="d-flex justify-content-center align-items-center">
-                                            <button class="btn btn-sm btn-success mr-1" id="addStatus" @click="addStatus()"><i class="fa fa-plus"></i> Add</button>
+                                            <!-- <button class="btn btn-sm btn-success mr-1" id="addStatus" @click="addStatus()"><i class="fa fa-plus"></i> Add</button> -->
+                                            #
                                         </div>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $i = 1; foreach ($assetStatus as $key): ?>
+                                <template v-for="(key, idx) in assetStatus">
                                     <tr>
-                                        <td class="text-center" style="vertical-align: middle;"><?= $i++; ?></td>
-                                        <td class="text-center" style="vertical-align: middle;">
-                                            <p class="m-0" id="status<?= $key['assetStatusId'] ?>"><?= $key['assetStatusName']; ?></p>
-                                            <input type="text" class="form-control text-center" @keyup.enter="keyupStatus('<?= $key['assetStatusId'] ?>', $event.target.value)" value="<?= $key['assetStatusName'] ?>" id="inputStatus<?= $key['assetStatusId'] ?>" style="display: none">
-                                        </td>
-                                        <td class="text-center d-flex justify-content-center align-items-center">
-                                            <button type="button" class="btn btn-sm btn-outline-primary mr-1" @click="editStatus('<?= $key['assetStatusId'] ?>')"><i class="fa fa-edit"></i> Edit</button>
-                                            <!-- <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteStatus('<?= $key['assetStatusId'] ?>')"><i class="fa fa-trash"></i></button> -->
-                                        </td>
+                                        <th class="text-center" style="vertical-align: middle;">
+                                            <input type="text" name="key[]" class="form-control input-transparent text-center" @keyup.enter="updateStatus($event.target, idx)" v-model="assetStatus[idx]['assetStatusName']" placeholder="Status Name">
+                                        </th>
+                                        <th class="text-center" style="vertical-align: middle;">
+                                            <i class="fa fa-times text-danger" role="button" @click="assetStatus.splice(idx, 1)"></i>
+                                        </th>
                                     </tr>
-                                <?php endforeach; ?>
+                                </template>
+                                <template v-for="(key, idx) in statusName">
+                                    <tr>
+                                        <th class="text-center" style="vertical-align: middle;">
+                                            <input type="text" name="key[]" class="form-control input-transparent text-center" v-model="statusName[idx]['assetStatusName']" placeholder="Status Name">
+                                        </th>
+                                        <th class="text-center" style="vertical-align: middle;">
+                                            <i class="fa fa-times text-danger" role="button" @click="statusName.splice(idx, 1)"></i>
+                                        </th>
+                                    </tr>
+                                </template>
+                                    <tr>
+                                        <th class="text-center" style="vertical-align: middle;">
+                                            <input type="text" name="statusName" v-model="tempStatus" class="form-control input-transparent text-center" @keyup.enter="addStatusName($event.target)" placeholder="Status Name">
+                                            <div class="invalid-feedback m-0">
+                                                    Status Name is exist.
+                                                </div>
+                                        </th>
+                                        <th class="text-center" style="vertical-align: middle;">
+                                        </th>
+                                    </tr>
                             </tbody>
                         </table>
 
                         <div class="mt-2 d-flex justify-content-end align-items-center">
-                            <button class="btn btn-sm btn-outline-primary" type="button" @click="saveStatus()"><i class="fa fa-save"></i> Save Changes</button>
+                            <button class="btn btn-sm btn-outline-primary" type="button" @click="saveAssetStatus()"><i class="fa fa-save"></i> Save Changes</button>
                         </div>
                     </div>
                 </div>
@@ -103,6 +120,7 @@
     let v = Vue.createApp({
         el: '#app',
         setup(){
+            var userId = uuidv4();
             var appSetting = <?php $lengthApp = count($appSetting);
                                 if ($lengthApp > 0) {
                                     echo 'reactive(' . json_encode($appSetting[0]) . ')';
@@ -115,7 +133,20 @@
                                     })";
                                 }
             ?>;
-            var statusName = ref([]);
+            var assetStatus = <?php $lengthStatus = count($assetStatus);
+                                if ($lengthStatus > 0) {
+                                    echo 'reactive(' . json_encode($assetStatus) . ')';
+                                }else{
+                                    echo "reactive({
+                                        assetStatusId: '',
+                                        userId: '',
+                                        assetStatusName: '',
+                                    })";
+                                }
+            ?>;
+            var tempStatus = ref('');
+            var statusName = reactive([]);
+            var assetStatusUpdate = reactive([]);
 
             function uuidv4() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -123,23 +154,42 @@
                     v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
+            };
+
+            const updateStatus = async (e, i) => {
+                let checkAssetStatus = _.filter(assetStatus, {
+                    assetStatusName: e.value
+                });
+                    var assetStatusIdx = assetStatus[i];
+                    assetStatusUpdate.push(assetStatusIdx);
             }
 
-            function addStatus() {
-                const lengthTableStatus = $('#tableStatus tbody tr').length;
-                $('#tableStatus').append(
-                    `<tr id="row${lengthTableStatus + 1}">
-                        <td class="text-center">`+ (lengthTableStatus + 1) +`</td>
-                        <td class="text-center">
-                            <input name="input" id="input${lengthTableStatus + 1}" type="text" class="form-control text-center">
-                        </td>
-                        <td style="vertical-align: middle;">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <i type="button" class="fa fa-times text-danger" onclick="del(${lengthTableStatus + 1})"></i>
-                            </div>
-                        </td>
-                    </tr>`
-                )
+            const addStatusName = async (e) => {
+                let checkStatus = _.filter(statusName, {
+                    assetStatusName: e.value
+                });
+                let checkAssetStatus = _.filter(assetStatus, {
+                    assetStatusName: e.value
+                });
+
+                if (checkStatus.length < 1 && checkAssetStatus < 1) {
+                    var id = uuidv4();
+                    $('input[name=statusName]').removeClass("is-invalid");
+                    await statusName.push({
+                        assetStatusId: id,
+                        userId: userId,
+                        assetStatusName: e.value,
+                    })
+
+                    e.value = '';
+                    tempStatus.value = '';
+
+                    let tableStatus = document.getElementById("tableStatus");
+                    let trStatus = tableStatus.rows[tableStatus.rows.length - 2];
+                    trStatus.querySelector("input[name='key[]']").focus();
+                }else{
+                    $('input[name=statusName]').addClass("is-invalid");
+                }
             }
 
             function saveSetting() {
@@ -224,163 +274,42 @@
                 }
             }
 
-            function saveStatus() {
-                var arr = [];
-                    $('#tableStatus tbody tr input[name=input]').each(function() {
-                        var rowDataArray = [];
-                        var actualData = $(this).val();
-                        arr.push(actualData);
-                    })
-                v.statusName = arr;
-                var lengthStatusName = this.statusName.length;
-                if (lengthStatusName > 0) {
-                    let formdata = new FormData();
-                    formdata.append('assetStatusId', null);
-                    formdata.append('userId', this.appSetting.userId);
-                    var status = this.statusName;
-                    status.forEach((item, i) => {
-                        formdata.append('statusName[]', item);
-                    })
-
-                    axios({
-                        url: "<?= base_url('Application/saveStatus') ?>",
-                        method: 'POST',
-                        data: formdata,
-                    }).then(res => {
-                        if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success mr-1',
-                            },
-                            buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
-                                icon: 'success'
-                            }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        }else{
-                            const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: res.data.message,
-                                icon: 'error'
-                            })
-                        }
+            function saveAssetStatus() {
+                let lengthStatusUpdate = assetStatusUpdate.length;
+                let lengthStatusName = statusName.length;
+                if (lengthStatusUpdate > 0 || lengthStatusName > 0) {
+                    axios.post("<?= base_url('Application/saveStatus') ?>", {
+                        statusName: statusName,
+                        statusUpdate: assetStatusUpdate
                     })
                 }else{
                     const swalWithBootstrapButtons = swal.mixin({
-                        customClass: {
-                            confirmButton: 'btn btn-danger',
-                        },
-                        buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: 'No changes to save.',
-                            icon: 'warning'
-                        })
-                }
-            }
-
-            function editStatus(id) {
-                var statusId = '#status' + id;
-                var inputStatus = '#inputStatus' + id;
-                $(statusId).hide();
-                $(inputStatus).show();
-            }
-
-            function keyupStatus(id, val) {
-                var statusId = '#status' + id;
-                var inputStatus = '#inputStatus' + id;
-                var textStatus = $(statusId).text();
-                if (val != textStatus) {
-                    axios.post("<?= base_url('Application/updateStatus') ?>", {
-                        assetStatusId: id,
-                        assetStatusName: val
-                    }).then(res => {
-                        $(statusId).text(val);
-                        $(statusId).show();
-                        $(inputStatus).hide();
+                    customClass: {
+                        confirmButton: 'btn btn-danger',
+                    },
+                    buttonsStyling: false
                     })
-                }else{
-                    $(statusId).show();
-                    $(inputStatus).hide();
+                    swalWithBootstrapButtons.fire({
+                        title: 'Failed!',
+                        text: 'No changes to save.',
+                        icon: 'warning'
+                    })
                 }
-                // console.log(id);
-                // console.log(val);
-            }
-
-            function deleteStatus(id) {
-                axios.post("<?= base_url('Application/deleteStatus') ?>", {
-                    assetStatusId: id
-                }).then(res => {
-                    if (res.data.status == 'success') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                        customClass: {
-                            confirmButton: 'btn btn-success mr-1',
-                        },
-                        buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Success!',
-                            text: res.data.message,
-                            icon: 'success'
-                        }).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
-                        })
-                    }else{
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: res.data.message,
-                            icon: 'error'
-                        })
-                    }
-                })
             }
 
             return {
+                userId,
                 appSetting,
+                assetStatus,
+                assetStatusUpdate,
+                tempStatus,
                 statusName,
 
                 uuidv4,
-                addStatus,
                 saveSetting,
-                saveStatus,
-                editStatus,
-                keyupStatus,
-                deleteStatus
+                saveAssetStatus,
+                addStatusName,
+                updateStatus
             }
         },
     }).mount('#app');

@@ -83,48 +83,31 @@ class Application extends BaseController
     public function saveStatus()
     {
         $assetStatusModel = new AssetStatusModel();
-        $post = $this->request->getPost();
-        $lengthStatusName = count($post['statusName']);
+        $json = $this->request->getJSON();
+        $statusName = $json->statusName;
+        $statusUpdate = $json->statusUpdate;
+        $lengthStatusUpdate = count($statusUpdate);
+        if ($lengthStatusUpdate > 0) {
+            for ($i=0; $i < $lengthStatusUpdate; $i++) {
+                $id = $statusUpdate[$i]->assetStatusId;
+                $data = array(
+                    'assetStatusName' => $statusUpdate[$i]->assetStatusName
+                );
+                $assetStatusModel->update($id, $data);
+                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusName));
+            }
+        }
+        $lengthStatusName = count($json->statusName);
         if ($lengthStatusName > 0) {
             for ($i=0; $i < $lengthStatusName; $i++) { 
                 $data = array(
-                    'assetStatusId' => null,
-                    'userId' => $post['userId'],
-                    'assetStatusName' => $post['statusName'][$i],
+                    'assetStatusId'     => $statusName[$i]->assetStatusId,
+                    'userId'            => $statusName[$i]->userId,
+                    'assetStatusName'   => $statusName[$i]->assetStatusName
                 );
                 $assetStatusModel->insert($data);
             }
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $post));
-        }else{
-            echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
-        }
-        die();
-    }
-
-    public function deleteStatus()
-    {
-        $assetStatusModel = new AssetStatusModel();
-        $json = $this->request->getJSON();
-        if ($json != '') {
-            $id = $json->assetStatusId;
-            $assetStatusModel->deleteById($id);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully deleted data.', 'data' => $id));
-        }else{
-            echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
-        }
-        die();
-    }
-
-    public function updateStatus()
-    {
-        $assetStatusModel = new AssetStatusModel();
-        $json = $this->request->getJSON();
-        if ($json != '') {
-            $id = $json->assetStatusId;
-            $data = array(
-                'assetStatusName' => $json->assetStatusName,
-            );
-            $assetStatusModel->update($id, $data);
+            echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusName));
         }
         die();
     }
