@@ -116,6 +116,7 @@ $routes->post('/Transaction/datatable', 'Transaction/Transaction::datatable');
 $routes->post('/Transaction/approveTrx', 'Transaction/Transaction::approveTrx');
 
 $routes->get('/ScheduleTrx/generateSchedule', 'Transaction/ScheduleTrx::generateSchedule');
+$routes->get('/ScheduleTrx/generateManual', 'Transaction/ScheduleTrx::generateManual');
 
 $routes->get('/Finding', 'Finding/Finding::index');
 $routes->get('/Finding/detailList', 'Finding/Finding::detailList');
