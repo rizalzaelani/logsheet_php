@@ -149,6 +149,9 @@ $routes->post('/Application/saveSetting', 'Setting/Application::saveSetting');
 $routes->post('/Application/saveStatus', 'Setting/Application::saveStatus');
 $routes->post('/Application/deleteAssetStatus', 'Setting/Application::deleteAssetStatus');
 
+$routes->add('/Schedule', 'Setting/Schedule::index');
+
+
 
 /*
  * --------------------------------------------------------------------
