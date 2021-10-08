@@ -211,7 +211,7 @@
                                     data: "createdAt",
                                     name: "createdAt",
 									render: function (data) {
-										return moment(data).format('LLLL');
+										return moment(data).format('llll');
 									}
                                 },
                                 {
@@ -494,7 +494,7 @@
 				v.myModal = new coreui.Modal(document.getElementById('modalDetail'));
 				v.myModal.show();
 				let data = res.data.data;
-				let date = moment(data.createdAt).format('LLLL');
+				let date = moment(data.createdAt).format('llll');
 				v.versionAppId = data.versionAppId;
 				v.downloadApk = "<?= base_url('VersionApps/download') ?>/" + data.versionAppId;
 				v.applicationName = data.name;
