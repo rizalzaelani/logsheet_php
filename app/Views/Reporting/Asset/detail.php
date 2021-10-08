@@ -7,74 +7,71 @@
 <?= $this->section('content') ?>
 <div class="row" id="app">
     <div class="col-12">
-        <div class="card card-main pb-4">
-            <div class="d-flex justify-content-between my-1">
-                <h4><?= $title ?></h4>
-                <h5 class="header-icon">
+        <div class="card card-main pb-3">
+            <div class="d-flex justify-content-between align-items-center mt-1 mb-2">
+                <h4 class="mb-0"><?= $title ?></h4>
+                <h5 class="header-icon mb-0">
                     <a href="<?= base_url("ReportingAsset") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
                 </h5>
             </div>
 
             <div class="row mt-2">
-                <div class="col-sm-6">
+                <div class="col-md-6">
                     <table class="table mt-2">
-                        <tr class="mt-1">
+                        <tr>
                             <th style="width: 200px;">Asset</th>
-                            <td>: <?= $assetData["assetName"] ?></td>
+                            <td>{{ assetData.assetName }}</td>
                         </tr>
-                        <tr class="mt-1">
+                        <tr>
                             <th>Asset Number</th>
-                            <td>: <?= $assetData["assetNumber"] ?></td>
+                            <td>{{ assetData.assetNumber }}</td>
                         </tr>
-                        <tr class="mt-1">
+                        <tr>
                             <th>Tag</th>
-                            <td>:
-                                <?php
-                                if ($assetData['tagName'] != '-') {
-                                    $assetTagValue = (array_values(array_unique(explode(",", $assetData['tagName']))));
-                                    $length = count($assetTagValue);
-                                    for ($i = 0; $i < $length; $i++) { ?>
-                                        <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">
-                                            <?= $assetTagValue[$i]; ?>
-                                        </span>
-                                <?php }
-                                } else {
-                                    echo "-";
-                                }
-                                ?>
+                            <td>
+                                <template v-if="assetData.tagName" v-for="(val, key) in _.uniq(assetData.tagName.split(','))">
+                                    <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
+                                </template>
+                                <template v-else>-</template>
                             </td>
                         </tr>
-                        <tr class="mt-1">
+                        <tr>
                             <th>Location</th>
-                            <td>:
-                                <?php
-                                if ($assetData['tagLocationName'] != '-') {
-                                    $assetTagValue = (array_values(array_unique(explode(",", $assetData['tagLocationName']))));
-                                    $length = count($assetTagValue);
-                                    for ($i = 0; $i < $length; $i++) { ?>
-                                        <span class="badge badge-primary p-1 mr-1 mb-1" style="font-size: 13px;">
-                                            <?= $assetTagValue[$i]; ?>
-                                        </span>
-                                <?php }
-                                } else {
-                                    echo "-";
-                                }
-                                ?>
+                            <td>
+                                <template v-if="assetData.tagLocationName" v-for="(val, key) in _.uniq(assetData.tagLocationName.split(','))">
+                                    <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
+                                </template>
+                                <template v-else>-</template>
                             </td>
                         </tr>
-
-                        <tr class="mt-1">
-                            <th>Schedule Type</th>
-                            <td>: <?= $assetData["schType"] ?></td>
-                        </tr>
-                        <tr class="mt-1">
-                            <th>Description</th>
-                            <td>: <?= $assetData["description"] ?></td>
-                        </tr>
-                        <tr class="mt-1">
+                        <template v-if="assetData.descriptionJson">
+                            <!-- <tr>
+                                <th>Description</th>
+                                <td>
+                                    <template v-for="(val, key) in assetData.descriptionJson">
+                                        {{ CapitalizeEachWords(val.key.replace(/([A-Z])/g, " $1")) + ': ' + val.value + ', ' }}
+                                    </template>
+                                </td>
+                            </tr> -->
+                            <template v-for="(val, key) in assetData.descriptionJson">
+                                <tr class="mt-1 descJson">
+                                    <th class="text-capitalize">{{val.key.replace(/([A-Z])/g, " $1")}}</th>
+                                    <td>{{ val.value ? val.value : '-' }}</td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template v-else>
+                            <tr>
+                                <th>Description</th>
+                                <td class="pl-0">
+                                    <?= $assetData['description']; ?>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr>
                             <th>Select Date</th>
                             <td class="d-flex align-items-center">
-                                :<div class="pl-1" id="daterange" style="cursor: pointer; width: 100%">
+                                <div class="pl-1" id="daterange" style="cursor: pointer; width: 100%">
                                     <i class="fa fa-calendar"></i>&nbsp;
                                     <span></span> <i class="fa fa-caret-down"></i>
                                 </div>
@@ -82,15 +79,15 @@
                         </tr>
                     </table>
                 </div>
-                <div class="col-sm-6 d-none d-sm-flex flex-row align-items-center">
-                    <img src="/img/logo-act.png" alt="Image" class="img-thumbnail m-0 border-0">
+                <div class="col-md-6" >
+                    <img src="<?= base_url(); ?>/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
                 </div>
                 <div class="col-12 mb-4">
                     <hr />
                 </div>
                 <div class="col-12">
                     <div class="table-responsive table-fix-width">
-                        <table class="table table-responsive-sm table-hover table-bordered table-outline" id="detailReport">
+                        <table class="table table-responsive-sm table-hover table-bordered table-outline border-bottom" id="detailReport">
                             <thead>
                                 <tr>
                                     <th class="text-center" rowspan="2" style="vertical-align: middle;">No.</th>
@@ -151,9 +148,9 @@
                                             <template v-for="(valGS, keyGS) in scheduleGroupData">
                                                 <template v-for="(valS, keyS) in valGS">
                                                     <template v-if="checkTrxBySch(valS.scheduleTrxId).length > 0">
-                                                         <td :class="'text-center sch_' + valS.scheduleTrxId + ' ' + checkAbnormal((_.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })[0]), valS.approvedAt).class" :set="filtTrxParam = _.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })">
-                                                             {{ filtTrxParam ? filtTrxParam[0].value : '(Empty)' }}
-                                                         </td>
+                                                        <td :class="'text-center sch_' + valS.scheduleTrxId + ' ' + checkAbnormal((_.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })[0]), valS.approvedAt).class" :set="filtTrxParam = _.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })">
+                                                            {{ filtTrxParam ? filtTrxParam[0].value : '(Empty)' }}
+                                                        </td>
                                                     </template>
                                                     <template v-else>
                                                         <template v-if="valS.assetStatusName == 'Running'">
@@ -172,8 +169,8 @@
                         </table>
                     </div>
                 </div>
-                <div class="col-12 mt-1" style="width: 100%;">
-                    <button class="btn btn-success" style="width: 100%;"><i class="fa fa-file-excel"></i> Export To Excel</button>
+                <div class="col-12 mt-3" style="width: 100%;">
+                    <button class="btn btn-success" style="width: 100%;" @click="tableToExcel('detailReport', assetData.assetName + ' - ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'))"><i class="fa fa-file-excel"></i> Export To Excel</button>
                 </div>
             </div>
         </div>
@@ -201,6 +198,12 @@
                 return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
             });
 
+            if (IsJsonString(assetData?.description)) {
+                assetData.descriptionJson = JSON.parse(assetData.description);
+            } else {
+                assetData.descriptionJson = [];
+            }
+
             const cb = (startIn, endIn) => {
                 $('#daterange span').html(startIn.format('D MMM YYYY') + ' - ' + endIn.format('D MMM YYYY'));
                 $('#daterange').on('apply.daterangepicker', function(ev, picker) {
@@ -222,9 +225,12 @@
             }
 
             const checkRecordParam = (shcId, paramId) => {
-                return _.filter(trxData, { 'scheduleTrxId': schId, 'parameterId': paramId });
+                return _.filter(trxData, {
+                    'scheduleTrxId': schId,
+                    'parameterId': paramId
+                });
             }
-            
+
             const checkAbnormal = (val, approvedAt) => {
                 if (!isNullEmptyOrUndefined(approvedAt)) {
                     if (val.condition != 'Normal' & val.condition != '' & val.condition != null & val.condition != undefined) {
@@ -311,6 +317,8 @@
             });
 
             return {
+                start,
+                end,
                 assetData,
                 parameterData,
                 parameterGroupData,
@@ -321,6 +329,8 @@
                 alertSwal,
                 checkAbnormal,
                 moment,
+                tableToExcel,
+                CapitalizeEachWords
             };
         }
     }).mount("#app")

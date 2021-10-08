@@ -51,7 +51,7 @@ class Transaction extends ResourceController
             if(!empty($filtSch)){
                 array_push($updateSchData, array(
                     "scheduleTrxId" => $k,
-                    "syncAt"        => $row[0]["syncAt"],
+                    "syncAt"        => date("Y-m-d H:i:s"),
                     "scannedAt"     => $row[0]["scannedAt"],
                     "scannedEnd"    => $row[0]["scannedEnd"],
                     "scannedBy"     => $row[0]["scannedBy"],
@@ -72,7 +72,7 @@ class Transaction extends ResourceController
                             "scheduleTrxId" => $rowTrx["scheduleTrxId"],
                             "parameterId" => $rowTrx["parameterId"],
                             "value" => $rowTrx["value"],
-                            "condition" => "Normal"//$row["condition"]
+                            "condition" => $rowTrx["condition"] ?? "Normal"
                         ));
                     } else {
                         array_push($updateTrxData, array(
@@ -80,7 +80,7 @@ class Transaction extends ResourceController
                             "scheduleTrxId" => $rowTrx["scheduleTrxId"],
                             "parameterId" => $rowTrx["parameterId"],
                             "value" => $rowTrx["value"],
-                            "condition" => "Normal"//$row["condition"]
+                            "condition" => $rowTrx["condition"] ?? "Normal"
                         ));
                     }
                 }

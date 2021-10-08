@@ -19,15 +19,15 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
                         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" id="detail_tab" @click="detailTab()">
                                 <svg class="c-icon">
-                                    <use xlink:href="/icons/coreui/svg/linear.svg#cil-list-rich"></use>
+                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-list-rich"></use>
                                 </svg> Detail <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read equipment data, edit, and delete the data. And also you can read the log of changes that have occurred to the equipment data.</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="parameter_tab" @click="parameterTab()">
                                 <svg class="c-icon">
-                                    <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
+                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
                                 </svg> Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read the parameter data of an equipment</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" id="setting_tab" @click="settingTab()">
                                 <svg class="c-icon">
-                                    <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
+                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
                                 </svg> Setting <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>In this tab, you can change the settings on an equipment</div>"></i></a></li>
                         <li class="nav-item ml-auto">
                             <a href="<?= base_url('/Asset'); ?>" class="btn btn-sm btn-success" style="display: flex;"><i class="fa fa-arrow-left"></i> Back</a>
@@ -38,76 +38,54 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <!-- tab detail -->
                     <div class="tab-pane active" id="detail" role="tabpanel">
                         <div class="row mt-3">
-                            <div class="col-6">
+                            <div class="col-md-6">
                                 <table class="table mt-2">
-                                    <tr class="mt-1">
-                                        <th width="30%">Asset</th>
-                                        <td width="5%">:</td>
-                                        <td class="pl-0">
-                                            <?= $assetData['assetName']; ?>
+                                    <tr>
+                                        <th style="width: 200px;">Asset</th>
+                                        <td>{{ assetData.assetName }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Asset Number</th>
+                                        <td>{{ assetData.assetNumber }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tag</th>
+                                        <td>
+                                            <template v-if="assetData.tagName" v-for="(val, key) in _.uniq(assetData.tagName.split(','))">
+                                                <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
+                                            </template>
+                                            <template v-else>-</template>
                                         </td>
                                     </tr>
-                                    <tr class="mt-1">
-                                        <th width="30%">Number</th>
-                                        <td width="5%">:</td>
-                                        <td class="pl-0">
-                                            <?= $assetData['assetNumber']; ?>
+                                    <tr>
+                                        <th>Location</th>
+                                        <td>
+                                            <template v-if="assetData.tagLocationName" v-for="(val, key) in _.uniq(assetData.tagLocationName.split(','))">
+                                                <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
+                                            </template>
+                                            <template v-else>-</template>
                                         </td>
                                     </tr>
-                                    <tr class="mt-1">
-                                        <th width="30%">Description</th>
-                                        <td width="5%">:</td>
-                                        <td class="pl-0">
-                                            <?= $assetData['description']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th width="30%">Frequency</th>
-                                        <td width="5%">:</td>
-                                        <td class="pl-0">
-                                            <?= $assetData['schType']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th width="30%">Status</th>
-                                        <td width="5%">:</td>
-                                        <td class="pl-0">
-                                            <?= $assetData['assetStatusName']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th width="30%">Tag</th>
-                                        <td width="5%">:</td>
-                                        <td class="pl-0">
-                                            <?php
-                                            $assetTagValue = (array_values(array_unique(explode(",", $assetData['tagName']))));
-                                            $length = count($assetTagValue);
-                                            for ($i = 0; $i < $length; $i++) { ?>
-                                                <span class="badge badge-dark p-1 mt-1 mr-1" style="font-size: 13px;">
-                                                    <?= $assetTagValue[$i]; ?>
-                                                </span>
-                                            <?php }
-                                            ?>
-                                        </td>
-                                    </tr>
-                                    <tr class="mt-1">
-                                        <th width="30%">Tag Location</th>
-                                        <td width="5%">:</td>
-                                        <td class="pl-0">
-                                            <?php $assetLocationValue = (array_values(array_unique(explode(",", $assetData['tagLocationName']))));
-                                            $length = count($assetLocationValue);
-                                            for ($i = 0; $i < $length; $i++) { ?>
-                                                <span class="badge badge-dark p-1 mt-1 mr-1" style="font-size: 13px;">
-                                                    <?= $assetLocationValue[$i]; ?>
-                                                </span>
-                                            <?php }
-                                            ?>
-                                        </td>
-                                    </tr>
+                                    <template v-if="assetData.descriptionJson">
+                                        <template v-for="(val, key) in assetData.descriptionJson">
+                                            <tr class="mt-1 descJson">
+                                                <th class="text-capitalize">{{val.key.replace(/([A-Z])/g, " $1")}}</th>
+                                                <td>{{ val.value ? val.value : '-' }}</td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                    <template v-else>
+                                        <tr>
+                                            <th>Description</th>
+                                            <td class="pl-0">
+                                                <?= $assetData['description']; ?>
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </table>
                             </div>
-                            <div class="col-6 imgMap" style="border: 1px solid #d8dbe0;">
-                                <img src="/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
+                            <div class="col-md-6 imgMap">
+                                <img src="<?= base_url() ?>/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
                                 <div class="mt-1" id="mapDetail" style="width: 100% !important; height: 170px; display: none"></div>
                             </div>
                         </div>
@@ -187,13 +165,13 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     <!-- tab setting -->
                     <div class="tab-pane" id="setting" role="tabpanel">
                         <div class="row row-eq-height mt-3">
-                            <div class="col-6 h-100">
+                            <div class="col-md-6 h-100">
                                 <form enctype="multipart/form-data" method="post">
                                     <div class="form-group row d-flex align-items-center">
-                                        <div class="col-3">
+                                        <div class="col-sm-3">
                                             <label for="assetName">Asset<span class="required">*</span></label>
                                         </div>
-                                        <div class="col-9">
+                                        <div class="col-sm-9">
                                             <input type="text" class="form-control" id="assetName" name="assetName" v-model="assetData.assetName" placeholder="Asset Name" required>
                                             <div class="invalid-feedback">
                                                 Field cannot be empty.
@@ -201,30 +179,66 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                         </div>
                                     </div>
                                     <div class="form-group row d-flex align-items-center">
-                                        <div class="col-3">
+                                        <div class="col-sm-3">
                                             <label for="assetNumber">Number<span class="required">*</span></label>
                                         </div>
-                                        <div class="col-9">
+                                        <div class="col-sm-9">
                                             <input type="text" class="form-control" id="assetNumber" name="assetNumber" v-model="assetData.assetNumber" placeholder="Asset Number" required>
                                             <div class="invalid-feedback">
                                                 Field cannot be empty.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row d-flex">
-                                        <div class="col-3">
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <label for="moreDetails">More Details</label>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                <input type="checkbox" name="moreDetailAssetInput" class="c-switch-input" @change="moreDetailAsset = $event.target.checked">
+                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" :class="moreDetailAsset == true ? 'd-none' : ''">
+                                        <div class="col-sm-3">
                                             <label for="asssetDesc">Description</label>
                                         </div>
-                                        <div class="col-9">
+                                        <div class="col-sm-9">
                                             <textarea type="text" class="form-control" id="assetDesc" name="asssetDesc" v-model="assetData.description" rows="8" placeholder="Asset Description"></textarea>
                                         </div>
                                     </div>
+                                    <div :class="moreDetailAsset == true ? '' : 'd-none'">
+                                        <table class="table table-bordered table-sm" id="tableDescJson">
+                                            <thead>
+                                                <tr>
+                                                    <th class="px-3">Key</th>
+                                                    <th class="px-3">Value</th>
+                                                    <th class="text-center">#</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <template v-for="(val, key) in assetData.descriptionJson">
+                                                    <tr>
+                                                        <th><input type="text" name="key[]" class="form-control input-transparent" v-model="descJson[key]['key']" placeholder="Key"></th>
+                                                        <th><input type="text" name="value[]" class="form-control input-transparent" v-model="descJson[key]['value']" placeholder="Value"></th>
+                                                        <th class="text-center"><button class="btn btn-link text-danger" @click="descJson.splice(key, 1)"><i class="fa fa-times"></i></button></th>
+                                                    </tr>
+                                                </template>
+                                                <tr>
+                                                    <th><input type="text" name="descJsonKey" class="form-control input-transparent" @keyup="addDescJson($event.target)" placeholder="Key"></th>
+                                                    <th><input type="text" v-model="descJsonValue" class="form-control input-transparent" placeholder="Value"></th>
+                                                    <th class="text-center"></th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </form>
                             </div>
-                            <div class="col-6 h-100">
+                            <div class="col-md-6 h-100">
                                 <div class="valueDefault w-100">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <img src="/img/logo-act.png" alt="Image" class="img-thumbnail">
+                                        <img src="<?= base_url() ?>/img/logo-act.png" alt="Image" class="img-thumbnail">
                                     </div>
                                 </div>
                                 <div>
@@ -236,6 +250,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         </div>
                     </div>
                 </div>
+
                 <!-- modal add parameter-->
                 <div class="modal fade" role="dialog" id="addParameterModal">
                     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
@@ -249,8 +264,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     <div class="form-group">
                                         <form method="post" enctype="multipart/form-data">
                                             <div class="row mb-3">
-                                                <label class="col-3" for="parameter">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="parameter"></i></label>
-                                                <div class="col-9 p-0">
+                                                <label class="col-sm-3" for="parameter">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="parameter"></i></label>
+                                                <div class="col-sm-9 p-0">
                                                     <input type="text" class="form-control parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameterName" :required="true">
                                                     <div class="invalid-feedback">
                                                         Field cannot be empty.
@@ -258,8 +273,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
-                                                <div class="col-9 p-0">
+                                                <label class="col-sm-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
+                                                <div class="col-sm-9 p-0">
                                                     <select class="form-control type" name="type" placeholder="Select Type">
                                                         <option value="" selected disabled>Select Type</option>
                                                         <option value="input">Input</option>
@@ -273,41 +288,41 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 </div>
                                             </div>
                                             <div class="row mb-3 typeInput">
-                                                <label class="col-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
-                                                <input type="number" class="form-control col-9 min" name="min" placeholder="Min Value" v-model="param.min">
+                                                <label class="col-sm-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
+                                                <input type="number" class="form-control col-sm-9 min" name="min" placeholder="Min Value" v-model="param.min">
                                             </div>
                                             <div class="row mb-3 typeInput">
-                                                <label class="col-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
-                                                <input type="number" class="form-control col-9 max" name="max" placeholder="Max Value" v-model="param.max">
+                                                <label class="col-sm-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
+                                                <input type="number" class="form-control col-sm-9 max" name="max" placeholder="Max Value" v-model="param.max">
                                             </div>
                                             <div class="row mb-3 typeInput">
-                                                <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
-                                                <input type="text" class="form-control col-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
+                                                <label class="col-sm-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
+                                                <input type="text" class="form-control col-sm-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
                                             </div>
                                             <div class="row mb-3 typeSelect" style="display: none;">
-                                                <label class="col-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
-                                                <div class="col-9 p-0">
+                                                <label class="col-sm-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
+                                                <div class="col-sm-9 p-0">
                                                     <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple>
 
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row mb-3 typeSelect" style="display: none;">
-                                                <label class="col-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
-                                                <div class="col-9 p-0">
+                                                <label class="col-sm-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
+                                                <div class="col-sm-9 p-0">
                                                     <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row mb-3 typeCheckbox" style="display: none;">
-                                                <label class="col-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
-                                                <div class="col-9 p-0">
+                                                <label class="col-sm-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
+                                                <div class="col-sm-9 p-0">
                                                     <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
-                                                <div class="col-9 p-0">
+                                                <label class="col-sm-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
+                                                <div class="col-sm-9 p-0">
                                                     <select class="form-control showOn" name="showOn" id="showOn" multiple>
                                                         <option value="Running">Running</option>
                                                         <option value="Standby">Standby</option>
@@ -319,8 +334,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
-                                                <textarea class="form-control col-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
+                                                <label class="col-sm-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
+                                                <textarea class="form-control col-sm-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
@@ -329,8 +344,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                                 </div>
                                             </div>
                                             <div style="display: none !important;" class="row mb-3" id="previewImg">
-                                                <div class="col-3"></div>
-                                                <div class="col-9 p-0" id="preview"></div>
+                                                <div class="col-sm-3"></div>
+                                                <div class="col-sm-9 p-0" id="preview"></div>
                                             </div>
                                         </form>
                                     </div>
@@ -491,6 +506,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 </div>
             </div>
         </div>
+
         <!-- change log -->
         <div class="card card-main" id="cardChangeLog">
             <div class="row">
@@ -537,7 +553,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             <h5 class="p-0 m-0">
                                 <b class="d-flex justify-content-start align-item-center">
                                     <svg class="c-icon">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-location-pin"></use>
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-location-pin"></use>
                                     </svg>
                                     <p class="m-0"> Asset Tag Location</p>
                                 </b>
@@ -562,7 +578,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             <h5 class="p-0 m-0">
                                 <b class="d-flex justify-content-start align-item-center">
                                     <svg class="c-icon mr-1">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-tags"></use>
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-tags"></use>
                                     </svg>
                                     <p class="m-0"> Asset Tag</p>
                                 </b>
@@ -595,7 +611,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             <h5 class="p-0 m-0">
                                 <b class="d-flex justify-content-start align-item-center">
                                     <svg class="c-icon mr-1">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-calendar"></use>
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-calendar"></use>
                                     </svg>
                                     <p class="m-0"> Schedule</p>
                                 </b>
@@ -605,10 +621,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         <div>
                             <form method="post" enctype="multipart/form-data">
                                 <div class="form-group row d-flex align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-sm-3">
                                         <label for="setSch">Set As<span class="required">*</span></label>
                                     </div>
-                                    <div class="col-9">
+                                    <div class="col-sm-9">
                                         <select class="form-control" name="setSch" id="setSch">
                                             <option value="Manual" selected>Manual</option>
                                             <option value="Automatic">Automatic</option>
@@ -619,10 +635,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     </div>
                                 </div>
                                 <div class="form-group row d-flex align-items-center schType">
-                                    <div class="col-3">
+                                    <div class="col-sm-3">
                                         <label for="schType">Schedule<span class="required">*</span></label>
                                     </div>
-                                    <div class="col-9">
+                                    <div class="col-sm-9">
                                         <select class="form-control" name="schType" id="schType">
                                             <option value="" selected disabled>Select Frequency</option>
                                             <option value="Daily">Daily</option>
@@ -676,13 +692,13 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                         <div class="col">
                                             <div class="form-check">
                                                 <div class="row">
-                                                    <div class="col-3">
+                                                    <div class="col-sm-3">
                                                         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="days">
                                                         <label class="form-check-label mr-1" for="gridRadios1">
                                                             Days
                                                         </label>
                                                     </div>
-                                                    <div class="col-9 pl-0" id="days" style="display: none;">
+                                                    <div class="col-sm-9 pl-0" id="days" style="display: none;">
                                                         <select name="monthly" class="form-control days" id="monthlyDays" multiple readonly>
                                                             <?php for ($i = 1; $i <= 31; $i++) {  ?>
                                                                 <option value="<?= $i; ?>"><?= $i; ?></option>
@@ -697,13 +713,13 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                             </div>
                                             <div class="form-check">
                                                 <div class="row mt-2">
-                                                    <div class="col-3">
+                                                    <div class="col-sm-3">
                                                         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="on">
                                                         <label class="form-check-label mr-1" for="gridRadios2">
                                                             On
                                                         </label>
                                                     </div>
-                                                    <div class="col-9 pl-0" id="on" style="display: none">
+                                                    <div class="col-sm-9 pl-0" id="on" style="display: none">
                                                         <div class="row">
                                                             <div class="col-6 pr-1">
                                                                 <select name="onMonth" class="form-control on mr-1" id="monthlyOn" multiple readonly>
@@ -748,7 +764,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                             <h5 class="p-0 m-0">
                                 <b class="d-flex justify-content-start align-item-center">
                                     <svg class="c-icon mr-1">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
                                     </svg>
                                     <p class="m-0"> Change Operation Mode</p>
                                 </b>
@@ -756,10 +772,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         </div>
                         <hr>
                         <div class="form-group row">
-                            <div class="col-3">
+                            <div class="col-sm-3">
                                 <label for="operation">Operation<span class="required">*</span></label>
                             </div>
-                            <div class="col-9">
+                            <div class="col-sm-9">
                                 <select name="operation" id="operation">
                                     <?php foreach ($statusData as $key) : ?>
                                         <option value="<?= $key->assetStatusId; ?>" <?= in_array($key->assetStatusId, $assetStatus) ? 'selected' : ''; ?>><?= $key->assetStatusName ?></option>
@@ -815,10 +831,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-3">
+                                <div class="col-sm-3">
                                     <label for="asset">Description<span class="required">*</span></label>
                                 </div>
-                                <div class="col-9">
+                                <div class="col-sm-9">
                                     <textarea class="form-control" id="descTagging" placeholder="Description" v-model="assetTagging.description" name="tagging" rows="8"></textarea>
                                     <div class="invalid-feedback">
                                         Field cannot be empty.
@@ -884,7 +900,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 <h5>
                     <b class="d-flex justify-content-start align-item-center">
                         <svg class="c-icon mr-1">
-                            <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
+                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
                         </svg>
                         <p class="m-0"> Parameter<span class="required">*</span></p>
                     </b>
@@ -1013,6 +1029,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             ref,
             computed
         } = Vue;
+
         const v = Vue.createApp({
             el: '#app',
             setup() {
@@ -1052,6 +1069,17 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 var tempPhoto = ref('');
                 var params = ref([]);
                 var submited = ref(false);
+                var descJsonValue = ref('');
+                var moreDetailAsset = ref(IsJsonString(assetData?.description))
+
+                if (IsJsonString(assetData?.description)) {
+                    assetData.descriptionJson = JSON.parse(assetData.description);
+                    assetData.description = '';
+                } else {
+                    assetData.descriptionJson = [];
+                }
+
+                var descJson = reactive(assetData.descriptionJson);
 
                 function detailTab() {
                     $('#cardChangeLog').show();
@@ -1682,7 +1710,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         formdata.append('assetId', this.assetData.assetId);
                         formdata.append('assetName', this.assetData.assetName);
                         formdata.append('assetNumber', this.assetData.assetNumber);
-                        formdata.append('assetDesc', this.assetData.description);
                         formdata.append('latitude', this.assetData.latitude);
                         formdata.append('longitude', this.assetData.longitude);
                         formdata.append('schType', this.assetData.schType);
@@ -1690,6 +1717,12 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         formdata.append('schWeekDays', this.assetData.schWeekDays);
                         formdata.append('schWeeks', this.assetData.schWeeks);
                         formdata.append('schDays', this.assetData.schDays);
+
+                        if (moreDetailAsset) {
+                            formdata.append('assetDesc',  JSON.stringify(descJson));
+                        } else {
+                            formdata.append('assetDesc', this.assetData.description);
+                        }
 
                         // tag location
                         formdata.append('tagId', this.assetData.tagId);
@@ -2114,47 +2147,70 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     })
                 };
 
+                const addDescJson = async (e) => {
+                    let checkKey = _.filter(descJson, {
+                        key: e.value
+                    });
+                    if (checkKey.length < 1) {
+                        await descJson.push({
+                            key: e.value,
+                            value: descJsonValue.value
+                        });
+
+                        e.value = '';
+                        descJsonValue.value = '';
+
+                        // setTimeout(() => {
+                        let tableDescJson = document.getElementById("tableDescJson");
+                        let trDescJson = tableDescJson.rows[tableDescJson.rows.length - 2];
+                        trDescJson.querySelector("input[name='key[]']").focus();
+                        // }, 10);
+                    }
+                }
+
                 onMounted(() => {
-                    let dataAssetName       = assetData.assetName;
-                    let dataAssetNumber     = assetData.assetNumber;
-                    let dataAssetDesc       = assetData.description;
-                    let dataAssetLat        = assetData.latitude;
-                    let dataAssetLong       = assetData.longitude;
-                    let dataAssetTag        = assetData.tagId;
-                    let dataAssetLocation   = assetData.tagLocationId;
+                    let dataAssetName = assetData.assetName;
+                    let dataAssetNumber = assetData.assetNumber;
+                    let dataAssetDesc = assetData.description;
+                    let dataAssetLat = assetData.latitude;
+                    let dataAssetLong = assetData.longitude;
+                    let dataAssetTag = assetData.tagId;
+                    let dataAssetLocation = assetData.tagLocationId;
                     let dataAssetStatusName = assetData.assetStatusName;
-                    let dataAssetStatusId   = assetData.assetStatusId;
+                    let dataAssetStatusId = assetData.assetStatusId;
 
-                    let dataSchType         = assetData.schType;
-                    let dataSchFrequency    = assetData.schFrequency;
-                    let dataSchDays         = assetData.schDays;
-                    let dataSchWeekDays     = assetData.schWeekDays;
-                    let dataSchWeeks        = assetData.schWeeks;
+                    let dataSchType = assetData.schType;
+                    let dataSchFrequency = assetData.schFrequency;
+                    let dataSchDays = assetData.schDays;
+                    let dataSchWeekDays = assetData.schWeekDays;
+                    let dataSchWeeks = assetData.schWeeks;
 
-                    let dataTaggingId       = assetTagging.assetTaggingId;
-                    let dataTaggingValue    = assetTagging.assetTaggingValue;
-                    let dataTaggingType     = assetTagging.assetTaggingtype;
-                    let dataTaggingDesc     = assetTagging.description;
-                    let dataChecked         = checked;
-                    let dataFile            = file;
-                    let dataSetSch          = setSch;
-                    let dataOnDays          = onDays;
-                    let dataAddTagName      = addTagName;
-                    let dataAddTagDesc      = addTagDesc;
-                    let dataLocationName    = addLocationName;
+                    let dataTaggingId = assetTagging.assetTaggingId;
+                    let dataTaggingValue = assetTagging.assetTaggingValue;
+                    let dataTaggingType = assetTagging.assetTaggingtype;
+                    let dataTaggingDesc = assetTagging.description;
+                    let dataChecked = checked;
+                    let dataFile = file;
+                    let dataSetSch = setSch;
+                    let dataOnDays = onDays;
+                    let dataAddTagName = addTagName;
+                    let dataAddTagDesc = addTagDesc;
+                    let dataLocationName = addLocationName;
                     let dataLocationLatitude = addLocationLatitude;
                     let dataLocationLongitude = addLocationLongitude;
-                    let dataLocationDesc    = addLocationDesc;
-                    let dataTempPhoto       = tempPhoto;
-                    let dataParams          = params.value.length;
-                    // || dataStatusName != v.statusName || dataSetSch != v.setSch || dataOnDays != v.onDays
-                    window.addEventListener('beforeunload', function(e){
-                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName ||  dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype || dataTaggingDesc != v.assetTagging.description) {
+                    let dataLocationDesc = addLocationDesc;
+                    let dataTempPhoto = tempPhoto;
+                    let dataParams = params.value.length;
+
+                    if(moreDetailAsset.value) document.querySelector("input[name=moreDetailAssetInput]").checked = true;
+
+                    window.addEventListener('beforeunload', function(e) {
+                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName || dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype || dataTaggingDesc != v.assetTagging.description) {
                             console.log(dataSchWeekDays)
                             console.log(v.schWeekDays)
                             if (v.submited == true) {
                                 return;
-                            }else{
+                            } else {
                                 e.preventDefault();
                                 e.returnValue = '';
                             }
@@ -2168,6 +2224,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     settingTab,
 
                     myModal,
+                    checked,
                     assetData,
                     checked, 
                     file,
@@ -2181,7 +2238,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     addLocationLatitude,
                     addLocationLongitude,
                     addLocationDesc,
-
+                    descJson,
                     param,
                     tempPhoto,
                     params,
@@ -2205,6 +2262,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     deleteParameter,
                     importParameter,
                     insertParam,
+                    addDescJson,
+                    descJsonValue,
+                    moreDetailAsset,
                     btnCancelModalParam,
                 }
             },

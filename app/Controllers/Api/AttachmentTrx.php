@@ -14,7 +14,6 @@ class AttachmentTrx extends ResourceController
     public function insert(){
         $isValid = $this->validate([
             'scheduleTrxId' => 'required',
-            'notes' => 'required',
         ]);
 
         if (!$isValid) {
@@ -28,8 +27,9 @@ class AttachmentTrx extends ResourceController
 
         $scheduleTrxId = $this->request->getVar('scheduleTrxId');
         $trxId = $this->request->getVar('trxId');
-        $notes = $this->request->getVar('notes');
+        $notes = $this->request->getVar('notes') ?? "";
         $attachment = $this->request->getFile('attachment');
+        $timestamp = $this->request->getFile('timestamp') ?? null;
 
         $trxId = $trxId == "" ? null : $trxId;
 
@@ -84,9 +84,13 @@ class AttachmentTrx extends ResourceController
 				"attachment" => base_url() . "/" . $dirPath . "/" . $newfilename
 			];
 
-            $checkAttachSch = $attachmentTrxModel->where("scheduleTrxId", $scheduleTrxId)->orderBy("createdAt", "desc")->get()->getResultArray();
+            if($timestamp != null){
+                $dataInsert["createdAt"] = $timestamp;
+            }
+            
+            $dateTime1Hour = (new DateTime())->modify("-10 minutes");
+            $checkAttachSch = $attachmentTrxModel->where(["scheduleTrxId" => $scheduleTrxId, "createdAt < '" . $dateTime1Hour->format("Y-m-d H:i:s") . "'" => null ])->orderBy("createdAt", "desc")->get()->getResultArray();
             if(!empty($checkAttachSch)){
-                $dateTime1Hour = new DateTime(); 
                 foreach($checkAttachSch as $rowAttach){
                     $fileTemp = str_replace(base_url() . "/", "", $rowAttach["attachment"]);
                     if(file_exists($fileTemp)){
@@ -94,15 +98,18 @@ class AttachmentTrx extends ResourceController
                     }
                 }
 
-                $attachmentTrxModel->delete(["scheduleTrxId" => $scheduleTrxId]);
+                $attachmentTrxModel->deleteAttachWhereIn(array_column($checkAttachSch, 'attachmentTrxId'));
             }
 
 			$attachmentTrxModel->insert($dataInsert);
+            
             return $this->respond([
                 'status' => 200,
                 'error' => false,
                 'message' => 'File uploaded successfully',
                 'data' => [
+                    "time1Hour" => $dateTime1Hour->format("Y-m-d H:i:s"),
+                    "dataPrev" => $checkAttachSch,
                     "newfilename" => $newfilename,
                     "fileLoc" => base_url() . "/" . $dirPath . "/" . $newfilename
                 ]

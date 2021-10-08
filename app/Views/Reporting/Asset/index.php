@@ -77,8 +77,7 @@
 								<th>Asset</th>
 								<th>Tag</th>
 								<th>Location</th>
-								<th>Description</th>
-								<th>Frequency</th>
+								<th>Schedule</th>
 							</tr>
 						</thead>
 					</table>
@@ -145,10 +144,6 @@
 									name: "tagLocationName",
 								},
 								{
-									data: "description",
-									name: "description"
-								},
-								{
 									data: "schType",
 									name: "schType",
 								},
@@ -189,6 +184,7 @@
 					}
 				})
 			}
+
 			onMounted(() => {
 				GetData()
 				let search = $(".dt-search-input input[data-target='#tableEq']");

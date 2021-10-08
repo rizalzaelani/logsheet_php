@@ -10,8 +10,10 @@ class AttachmentTrxModel extends Model
     protected $table                = 'tblt_attachmentTrx';
     protected $primaryKey           = 'attachmentTrxId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['attachmentTrxId', 'scheduleTrxId', 'trxId', 'attachment', 'notes'];
+    protected $allowedFields        = ['attachmentTrxId', 'scheduleTrxId', 'trxId', 'attachment', 'notes', 'createdAt'];
     protected $createdField         = 'createdAt';
-    protected $useSoftDeletes        = false;
 
+    public function deleteAttachWhereIn(array $where){
+        $this->builder()->whereIn("attachmentTrxId", $where)->delete();
+    }
 }
