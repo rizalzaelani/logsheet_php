@@ -19,9 +19,9 @@ class Asset extends BaseController
 		$tagModel			= new TagModel();
 		$tagLocationModel	= new TagLocationModel();
 
-		$asset			= $assetModel->findColumn('assetName');
-		$tag			= $tagModel->findColumn('tagName');
-		$tagLocation	= $tagLocationModel->findColumn('tagLocationName');
+		$asset			= $assetModel->findColumn('assetName') ?? [];
+		$tag			= $tagModel->findColumn('tagName') ?? [];
+		$tagLocation	= $tagLocationModel->findColumn('tagLocationName') ?? [];
 
 		$data['asset']			= $asset;
 		$data['tag']			= $tag;

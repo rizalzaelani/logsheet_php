@@ -92,6 +92,7 @@ class Login extends ResourceController
             'error' => false,
             'message' => "Authentication Successfully",
             'data' => [
+                "time" => date("Y-m-d H:i:s"), 
                 "token" => $jwt
             ]
         ], 200);

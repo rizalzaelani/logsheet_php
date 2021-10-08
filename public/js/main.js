@@ -89,6 +89,46 @@ const xhrThrowRequest = (res) => {
     });
 }
 
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+//Convert Table to Json
+function tableToJson(idTable) {
+    var myRows = [];
+    var $headers = $("#" + idTable + " thead th");
+    $("#" + idTable + " tbody tr").each(function (index) {
+        $cells = $(this).find("td");
+        myRows[index] = {};
+        $cells.each(function (cellIndex) {
+            myRows[index][firstLower($($headers[cellIndex]).html())] = $(this).html();
+        });
+    });
+
+    return myRows;
+}
+
+var tableToExcel = (function () {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+        , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+    return function (table, name) {
+        if (!table.nodeType) table = document.getElementById(table)
+        var ctx = { worksheet: "Sheet 1" || 'Worksheet', table: table.innerHTML }
+        var link = document.createElement('a');
+        document.body.appendChild(link);
+        link.download = name+".xls";
+        link.href = uri + base64(format(template, ctx));
+        link.click();
+    }
+})();
+
 // loader
 
 let isXhrRequest = new Promise((resolve) => {
@@ -98,25 +138,27 @@ let isXhrRequest = new Promise((resolve) => {
 
 (function() {
     isXhrRequest.then(() => {
-        document.getElementById("loader").classList.add("d-none");
+        let loaderTgt = document.getElementById("loader");
+        if(loaderTgt) loaderTgt.classList.add("d-none");
     });
 })();
 
 function hideShowLoader() {
+    let loaderTgt = document.getElementById("loader");
     // loading
     axios.interceptors.request.use((config) => {
-        document.getElementById("loader").classList.remove("d-none");
+        if(loaderTgt) loaderTgt.classList.remove("d-none");
         return config;
     }, (error) => {
-        document.getElementById("loader").classList.remove("d-none");
+        if(loaderTgt) loaderTgt.classList.remove("d-none");
         return Promise.reject(error);
     });
 
     axios.interceptors.response.use((response) => {
-        document.getElementById("loader").classList.add("d-none");
+        if(loaderTgt) loaderTgt.classList.add("d-none");
         return response;
     }, (error) => {
-        document.getElementById("loader").classList.add("d-none");
+        if(loaderTgt) loaderTgt.classList.add("d-none");
         return Promise.reject(error);
     });
 }

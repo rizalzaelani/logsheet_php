@@ -77,7 +77,6 @@
 								<th>Asset</th>
 								<th>Tag</th>
 								<th>Location</th>
-								<th>Description</th>
 								<th>Frequency</th>
 							</tr>
 						</thead>
@@ -208,10 +207,6 @@
 								{
 									data: "tagLocationName",
 									name: "tagLocationName",
-								},
-								{
-									data: "description",
-									name: "description"
 								},
 								{
 									data: "schType",
