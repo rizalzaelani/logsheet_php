@@ -144,13 +144,13 @@
             <div :class="scheduleTrxData.approvedAt ? 'col-sm-6' : 'col-12'">
                 <div class="card card-main pb-4">
                     <h5 class="mb-3">Notes of Scanned</h5>
-                    <div class="border-primary p-3 rounded">{{ scheduleTrxData.scannedNotes ?? '-' }}</div>
+                    <h6 class="font-italic text-muted">{{ scheduleTrxData.scannedNotes ?? '( empty )' }}</h6>
                 </div>
             </div>
             <div v-if="scheduleTrxData.approvedAt" class="col-sm-6">
                 <div class="card card-main pb-4">
                     <h5 class="mb-3">Notes of Approved</h5>
-                    <div class="border-primary p-3 rounded">{{ scheduleTrxData.approvedNotes ?? '-' }}</div>
+                    <h6 class="font-italic text-muted">{{ scheduleTrxData.approvedNotes ?? '( empty )' }}</h6>
                 </div>
             </div>
         </div>
@@ -158,8 +158,8 @@
     <div class="col-12">
         <div class="card card-main pb-4">
             <h5 class="mb-3">Attachment</h5>
-            <div class="row" v-if="attachmentTrxData.length > 0" v-for="(val, key) in attachmentTrxData">
-                <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="row" v-if="attachmentTrxData.length > 0">
+                <div class="col-sm-6 col-md-4 col-lg-3" v-for="(val, key) in attachmentTrxData">
                     <div class="card">
                         <img class="card-img-top" :src="val.attachment" :alt="'Attachment' + key">
                         <div class="card-body">
@@ -169,7 +169,7 @@
                 </div>
             </div>
             <div v-else>
-                <h6 class="font-italic">( No Attachment )</h6>
+                <h6 class="font-italic text-muted">( No Attachment )</h6>
             </div>
         </div>
     </div>

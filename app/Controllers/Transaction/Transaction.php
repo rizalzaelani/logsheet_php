@@ -49,7 +49,7 @@ class Transaction extends BaseController
 
 		$data["scheduleTrxData"] = $getSchedule;
 		$data["trxData"] = $trxModel->getAll(["scheduleTrxId" => $scheduleTrxId]);
-		$data["attachmentTrxData"] = $attachmentTrxModel->getWhere(["scheduleTrxId" => $scheduleTrxId])->getResultArray();
+		$data["attachmentTrxData"] = $attachmentTrxModel->where(["scheduleTrxId" => $scheduleTrxId])->get()->getResultArray();
 
 		$data['title'] = 'Detail Transaction';
 		$data['subtitle'] = 'Detail Transaction';
