@@ -10,7 +10,28 @@ use Exception;
 
 class ScheduleTrx extends BaseController
 {
-    public function generateSchedule(){
+    public function generateManual()
+    {
+		$data = array(
+			'title' => 'Schedule',
+			'subtitle' => 'Schedule'
+		);
+
+		$data["breadcrumbs"] = [
+			[
+				"title"	=> "Home",
+				"link"	=> "Dashboard"
+			],
+			[
+				"title"	=> "Schedule",
+				"link"	=> "scheduleTrx/generateManual"
+			],
+		];
+		return $this->template->render('Transaction/ScheduleTrx/generateManual', $data);
+    }
+
+    public function generateSchedule()
+    {
         $assetModel = new AssetModel();
         $scheduleTrxModel = new ScheduleTrxModel();
 
@@ -21,19 +42,19 @@ class ScheduleTrx extends BaseController
         $weekDay = $dateTime->format("w");
 
         $getDataAsset = $assetModel->getAll(["deletedAt IS NULL" => null]);
-        $getDataSchMonthly = $scheduleTrxModel->getAll(["schType" => "Monthly","MONTH(scheduleFrom)" => $month, "YEAR(scheduleFrom)" => $year]);
-        $getDataSchWeekly = $scheduleTrxModel->getAll(["schType" => "Weekly","WEEKOFYEAR(scheduleFrom)" => $weekOfYear, "YEAR(scheduleFrom)" => $year]);
-        $getDataSchDaily = $scheduleTrxModel->getAll(["schType" => "Daily","DATE(scheduleFrom)" => $dateTime->format("Y-m-d")]);
+        $getDataSchMonthly = $scheduleTrxModel->getAll(["schType" => "Monthly", "schManual" => "0", "MONTH(scheduleFrom)" => $month, "YEAR(scheduleFrom)" => $year]);
+        $getDataSchWeekly = $scheduleTrxModel->getAll(["schType" => "Weekly", "schManual" => "0", "WEEKOFYEAR(scheduleFrom)" => $weekOfYear, "YEAR(scheduleFrom)" => $year]);
+        $getDataSchDaily = $scheduleTrxModel->getAll(["schType" => "Daily", "schManual" => "0", "DATE(scheduleFrom)" => $dateTime->format("Y-m-d")]);
 
         $dataInsertSch = [];
         $existScheduleM = [];
         $addScheduleM = [];
-        foreach($getDataAsset as $row){
-            if($row["schType"] == "Monthly"){
-                $cekSch = array_filter($getDataSchMonthly, function($val) use ($row) {
+        foreach ($getDataAsset as $row) {
+            if ($row["schType"] == "Monthly") {
+                $cekSch = array_filter($getDataSchMonthly, function ($val) use ($row) {
                     return $val["assetId"] == $row["assetId"];
                 });
-                if(empty($cekSch)){
+                if (empty($cekSch)) {
                     $dateMonth = new DateTime($dateTime->format("Y-m-d"));
                     array_push($dataInsertSch, array(
                         "scheduleTrxId" => null,
@@ -53,11 +74,11 @@ class ScheduleTrx extends BaseController
                 } else {
                     $existScheduleM[] = $row["assetName"];
                 }
-            } else if($row["schType"] == "Weekly"){
-                $cekSch = array_filter($getDataSchWeekly, function($val) use ($row) {
+            } else if ($row["schType"] == "Weekly") {
+                $cekSch = array_filter($getDataSchWeekly, function ($val) use ($row) {
                     return $val["assetId"] == $row["assetId"];
                 });
-                if(empty($cekSch)){
+                if (empty($cekSch)) {
                     $dateWeek = new DateTime($dateTime->format("Y-m-d"));
                     array_push($dataInsertSch, array(
                         "scheduleTrxId" => null,
@@ -68,8 +89,8 @@ class ScheduleTrx extends BaseController
                         "schWeeks"      => $row["schWeeks"],
                         "schWeekDays"   => $row["schWeekDays"],
                         "schDays"       => $row["schDays"],
-                        "scheduleFrom"  => $dateWeek->modify('-'.$weekDay.' days')->format("Y-m-d 00:00:00"),
-                        "scheduleTo"    => $dateWeek->modify('+'.(6-$weekDay).' days')->format("Y-m-d 23:59:59"),
+                        "scheduleFrom"  => $dateWeek->modify('-' . $weekDay . ' days')->format("Y-m-d 00:00:00"),
+                        "scheduleTo"    => $dateWeek->modify('+' . (6 - $weekDay) . ' days')->format("Y-m-d 23:59:59"),
                         "condition"     => "Normal",
                     ));
 
@@ -77,27 +98,34 @@ class ScheduleTrx extends BaseController
                 } else {
                     $existScheduleM[] = $row["assetName"];
                 }
-            } else if($row["schType"] == "Daily"){
-                $cekSch = array_filter($getDataSchDaily, function($val) use ($row) {
+            } else if ($row["schType"] == "Daily") {
+                $cekSch = array_filter($getDataSchDaily, function ($val) use ($row) {
                     return $val["assetId"] == $row["assetId"];
                 });
-                if(empty($cekSch)){
-                    $dateDay = new DateTime($dateTime->format("Y-m-d"));
-                    array_push($dataInsertSch, array(
-                        "scheduleTrxId" => null,
-                        "assetId"       => $row["assetId"],
-                        "assetStatusId" => $row["assetStatusId"],
-                        "schType"       => $row["schType"],
-                        "schFrequency"  => $row["schFrequency"],
-                        "schWeeks"      => $row["schWeeks"],
-                        "schWeekDays"   => $row["schWeekDays"],
-                        "schDays"       => $row["schDays"],
-                        "scheduleFrom"  => $dateDay->format("Y-m-d 00:00:00"),
-                        "scheduleTo"    => $dateDay->format("Y-m-d 23:59:59"),
-                        "condition"     => "Normal",
-                    ));
+                if (empty($cekSch)) {
+                    $freq = ($row['schFrequency'] ?? 1);
+                    $hour = 24 / $freq;
+                    for ($i = 0; $i < $freq; $i++) {
+                        $lt = $hour * $i;
+                        $dateFrom = (new DateTime($dateTime->format("Y-m-d")))->modify("+" . $lt . " Hours");
+                        $dateTo = (new DateTime($dateFrom->format("Y-m-d H:i:s")))->modify("+" . $hour . " Hours");
 
-                    $addScheduleM[] = $row["assetName"];
+                        array_push($dataInsertSch, array(
+                            "scheduleTrxId" => null,
+                            "assetId"       => $row["assetId"],
+                            "assetStatusId" => $row["assetStatusId"],
+                            "schType"       => $row["schType"],
+                            "schFrequency"  => $row["schFrequency"],
+                            "schWeeks"      => $row["schWeeks"],
+                            "schWeekDays"   => $row["schWeekDays"],
+                            "schDays"       => $row["schDays"],
+                            "scheduleFrom"  => $dateFrom->format("Y-m-d H:i:s"),
+                            "scheduleTo"    => $dateTo->format("Y-m-d H:i:s"),
+                            "condition"     => "Normal",
+                        ));
+
+                        $addScheduleM[] = $row["assetName"];
+                    }
                 } else {
                     $existScheduleM[] = $row["assetName"];
                 }
@@ -105,7 +133,7 @@ class ScheduleTrx extends BaseController
         }
 
         try {
-            if(!empty($dataInsertSch)){
+            if (!empty($dataInsertSch)) {
                 $scheduleTrxModel->insertBatch($dataInsertSch);
             }
 
@@ -118,8 +146,7 @@ class ScheduleTrx extends BaseController
                     "Schedule Already Exist"    => $existScheduleM,
                 )
             ));
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             return $this->response->setJSON(array(
                 "status"    => 500,
                 "message"   => $e->getMessage(),
@@ -127,5 +154,3 @@ class ScheduleTrx extends BaseController
         }
     }
 }
-
-?>
