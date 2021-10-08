@@ -147,8 +147,7 @@ $routes->add('/VersionApps/download/(:any)', 'Setting\VersionApps::download/$1')
 $routes->add('/Application', 'Setting/Application::index');
 $routes->post('/Application/saveSetting', 'Setting/Application::saveSetting');
 $routes->post('/Application/saveStatus', 'Setting/Application::saveStatus');
-$routes->post('/Application/deleteStatus', 'Setting/Application::deleteStatus');
-$routes->post('/Application/updateStatus', 'Setting/Application::updateStatus');
+$routes->post('/Application/deleteAssetStatus', 'Setting/Application::deleteAssetStatus');
 
 
 /*

@@ -20,10 +20,13 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
-                        <h4 class="mb-4"><?= $title; ?></h4>
+                        <div class="d-flex justify-content-between align-items-center mb-4">                            
+                            <h4><?= $title; ?></h4>
+                            <button class="btn btn-sm btn-outline-primary" type="button" @click="saveSetting()"><i class="fa fa-save"></i> Save Changes</button>
+                        </div>
                         <div class="form-group" id="formSetting">
                             <form method="post" enctype="multipart/form-data">
-                                <div class="mt-2">
+                                <div>
                                     <label for="appName">Application Name</label>
                                     <input type="text" class="form-control" id="appName" v-model="appSetting.appName">
                                     <div class="invalid-feedback">
@@ -49,14 +52,16 @@
                                     </div>
                                 </div>
                                 <div class="mt-2 d-flex justify-content-end align-items-center">
-                                    <button class="btn btn-sm btn-outline-primary" type="button" @click="saveSetting()"><i class="fa fa-save"></i> Save Changes</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="col-6">
-                        <h4 class="mb-4">Asset Status</h4>
-                        <table class="table-bordered table" id="tableStatus">
+                        <div class="d-flex justify-content-between align-items-center mb-4">                            
+                            <h4>Asset Status</h4>
+                            <button class="btn btn-sm btn-outline-primary" type="button" @click="saveAssetStatus()"><i class="fa fa-save"></i> Save Changes</button>
+                        </div>
+                        <table class="table-bordered table mt-1" id="tableStatus">
                             <thead>
                                 <tr>
                                     <th style="vertical-align: middle;" class="text-center">Status Name</th>
@@ -72,10 +77,13 @@
                                 <template v-for="(key, idx) in assetStatus">
                                     <tr>
                                         <th class="text-center" style="vertical-align: middle;">
-                                            <input type="text" name="key[]" class="form-control input-transparent text-center" @keyup.enter="updateStatus($event.target, idx)" v-model="assetStatus[idx]['assetStatusName']" placeholder="Status Name">
+                                            <input type="text" :name="'assetStatus' + idx" class="form-control input-transparent text-center" @keyup.enter="updateStatus($event.target, idx)" :value="key.assetStatusName" placeholder="Status Name">
+                                            <div class="invalid-feedback m-0">
+                                                Status Name is exist.
+                                            </div>
                                         </th>
                                         <th class="text-center" style="vertical-align: middle;">
-                                            <i class="fa fa-times text-danger" role="button" @click="assetStatus.splice(idx, 1)"></i>
+                                            <i class="fa fa-times text-danger" role="button" @click="deleteStatus(key, idx)"></i>
                                         </th>
                                     </tr>
                                 </template>
@@ -93,8 +101,8 @@
                                         <th class="text-center" style="vertical-align: middle;">
                                             <input type="text" name="statusName" v-model="tempStatus" class="form-control input-transparent text-center" @keyup.enter="addStatusName($event.target)" placeholder="Status Name">
                                             <div class="invalid-feedback m-0">
-                                                    Status Name is exist.
-                                                </div>
+                                                Status Name is exist.
+                                            </div>
                                         </th>
                                         <th class="text-center" style="vertical-align: middle;">
                                         </th>
@@ -103,7 +111,6 @@
                         </table>
 
                         <div class="mt-2 d-flex justify-content-end align-items-center">
-                            <button class="btn btn-sm btn-outline-primary" type="button" @click="saveAssetStatus()"><i class="fa fa-save"></i> Save Changes</button>
                         </div>
                     </div>
                 </div>
@@ -147,6 +154,7 @@
             var tempStatus = ref('');
             var statusName = reactive([]);
             var assetStatusUpdate = reactive([]);
+            var assetStatusDelete = reactive([]);
 
             function uuidv4() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -160,8 +168,56 @@
                 let checkAssetStatus = _.filter(assetStatus, {
                     assetStatusName: e.value
                 });
-                    var assetStatusIdx = assetStatus[i];
-                    assetStatusUpdate.push(assetStatusIdx);
+                if (checkAssetStatus < 1) {
+                    let id = 'assetStatus' + i;
+                    $('input[name='+id+']').removeClass('is-invalid');
+                    var assetStatusIdx = assetStatus[i].assetStatusId;
+                    assetStatusUpdate.push({
+                        assetStatusId: assetStatusIdx,
+                        assetStatusName: e.value
+                    });
+                    $('input[name='+id+']').blur();
+                }else{
+                    let id = 'assetStatus' + i;
+                    $('input[name='+id+']').addClass('is-invalid');
+                }
+            }
+
+            const deleteStatus = async (e, i) => {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger ml-1'
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Delete this data?',
+                    text: "You will delete this data!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    cancelButtonText: "<i class='fa fa-times'></i> Cancel",
+                    confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
+                    reverseButtons: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var assetStatusIdx = assetStatus[i].assetStatusId;
+                        axios.post("<?= base_url("Application/deleteAssetStatus") ?>",{
+                            assetStatusId: assetStatusIdx
+                        }).then(res => {
+                            if (res.data.status == 'exist') {
+                                var date = res.data.data;
+                                swal.fire({
+                                    title: res.data.message + moment(date).format('LL'),
+                                    icon: 'warning'
+                                })
+                            }else if(res.data.status == 'noexist'){
+                                assetStatusDelete.push(assetStatusIdx);
+                                assetStatus.splice(i, 1);
+                            }
+                        })
+                    }
+                })
             }
 
             const addStatusName = async (e) => {
@@ -185,7 +241,7 @@
                     tempStatus.value = '';
 
                     let tableStatus = document.getElementById("tableStatus");
-                    let trStatus = tableStatus.rows[tableStatus.rows.length - 2];
+                    let trStatus = tableStatus.rows[tableStatus.rows.length - 1];
                     trStatus.querySelector("input[name='key[]']").focus();
                 }else{
                     $('input[name=statusName]').addClass("is-invalid");
@@ -275,23 +331,43 @@
             }
 
             function saveAssetStatus() {
-                let lengthStatusUpdate = assetStatusUpdate.length;
-                let lengthStatusName = statusName.length;
-                if (lengthStatusUpdate > 0 || lengthStatusName > 0) {
+                let lengthStatusUpdate  = assetStatusUpdate.length;
+                let lengthStatusDelete  = assetStatusDelete.length;
+                let lengthStatusName    = statusName.length;
+                if (lengthStatusUpdate > 0 || lengthStatusName > 0 || lengthStatusDelete > 0) {
                     axios.post("<?= base_url('Application/saveStatus') ?>", {
                         statusName: statusName,
-                        statusUpdate: assetStatusUpdate
+                        statusUpdate: assetStatusUpdate,
+                        statusDelete: assetStatusDelete,
+                    }).then(res => {
+                        if (res.status == 200) {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: 'You have successfully save data.',
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        }
                     })
                 }else{
-                    const swalWithBootstrapButtons = swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-danger',
-                    },
-                    buttonsStyling: false
-                    })
-                    swalWithBootstrapButtons.fire({
-                        title: 'Failed!',
-                        text: 'No changes to save.',
+                    swal.fire({
+                        title: 'No changes to save!',
                         icon: 'warning'
                     })
                 }
@@ -302,6 +378,7 @@
                 appSetting,
                 assetStatus,
                 assetStatusUpdate,
+                assetStatusDelete,
                 tempStatus,
                 statusName,
 
@@ -309,7 +386,8 @@
                 saveSetting,
                 saveAssetStatus,
                 addStatusName,
-                updateStatus
+                updateStatus,
+                deleteStatus
             }
         },
     }).mount('#app');

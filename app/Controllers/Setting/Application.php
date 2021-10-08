@@ -5,6 +5,7 @@ namespace App\Controllers\Setting;
 use App\Controllers\BaseController;
 use App\Models\ApplicationSettingModel;
 use App\Models\AssetStatusModel;
+use App\Models\AssetModel;
 
 class Application extends BaseController
 {
@@ -12,6 +13,7 @@ class Application extends BaseController
     {
         $appSettingModel = new ApplicationSettingModel();
         $assetStatusModel = new AssetStatusModel();
+        $assetModel = new AssetModel();
         $appSetting = $appSettingModel->findAll();
         $assetStatus = $assetStatusModel->orderBy('createdAt', 'asc')->getWhere('deletedAt', null)->getResultArray();
         $data = array(
@@ -52,14 +54,14 @@ class Application extends BaseController
                     'appLogo' => $name,
                 );
                 $appSettingModel->update($appSettingId, $data);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $data));
             }else{
                 $data = array(
                     'userId' => $post['userId'],
                     'appName' => $post['appName'],
                 );
                 $appSettingModel->update($appSettingId, $data);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $data));
             }
         }else{
             if ($post['appSettingId'] != '') {
@@ -86,7 +88,9 @@ class Application extends BaseController
         $json = $this->request->getJSON();
         $statusName = $json->statusName;
         $statusUpdate = $json->statusUpdate;
+        $statusDelete = $json->statusDelete;
         $lengthStatusUpdate = count($statusUpdate);
+        $lengthStatusDelete = count($statusDelete);
         if ($lengthStatusUpdate > 0) {
             for ($i=0; $i < $lengthStatusUpdate; $i++) {
                 $id = $statusUpdate[$i]->assetStatusId;
@@ -94,7 +98,14 @@ class Application extends BaseController
                     'assetStatusName' => $statusUpdate[$i]->assetStatusName
                 );
                 $assetStatusModel->update($id, $data);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusName));
+                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusUpdate));
+            }
+        }
+        if ($lengthStatusDelete > 0) {
+            for ($i=0; $i < $lengthStatusDelete; $i++) {
+                $id = $statusDelete[$i];
+                $assetStatusModel->deleteById($id);
+                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusDelete));
             }
         }
         $lengthStatusName = count($json->statusName);
@@ -108,6 +119,21 @@ class Application extends BaseController
                 $assetStatusModel->insert($data);
             }
             echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusName));
+        }
+        die();
+    }
+
+    public function deleteAssetStatus()
+    {
+        $assetStatusModel = new AssetStatusModel();
+        $assetModel = new AssetModel();
+        $json = $this->request->getJSON();
+        $id = $json->assetStatusId;
+        $data = $assetModel->selectMin('createdAt')->where('assetStatusId', $id)->get()->getResultArray();
+        if ($data[0]['createdAt'] != null) {
+            echo json_encode(array('status' => 'exist', 'message' => 'This data already use since ', 'data' => $data[0]['createdAt']));
+        }else{
+            echo json_encode(array('status' => 'noexist', 'message' => '', 'data' => $json));
         }
         die();
     }

@@ -54,17 +54,15 @@
 			<div class="title">
 				<h3 class="mb-0 text-uppercase"><?= $title; ?></h3>
 			</div>
-			<div>
-				<button class="btn btn-outline-primary"></button>
-			</div>
 			<div class="d-flex justify-content-center align-items-center">
 				<div class="mr-1" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
 					<i class=" fa fa-calendar"></i>&nbsp;
 					<span></span> <i class="fa fa-caret-down"></i>
 				</div>
 				<div class="filter bg-white d-flex justify-content-center align-items-center" role="button" data-toggle="dropdown" data-display="static" style="padding: 0.3rem 0.75rem !important; box-shadow: 0 !important;border: 1px solid rgb(204, 204, 204) !important;">
-					<i class="fa fa-filter mr-1"></i>
-					<h5 class="mb-0"> Filter</h5>
+					<h5 class="mb-0">
+						<i class="fa fa-filter"></i>
+					</h5>
 				</div>
 				<div class="dropdown-menu dropdown-menu-lg-right" style="width: 500px !important;">
 					<form class="p-3">
