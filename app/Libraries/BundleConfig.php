@@ -22,6 +22,7 @@ class BundleConfig
 			base_url('/vendors/filepond/filepond-plugin-file-validate-type.js'),
 			base_url('/vendors/filepond/filepond.min.js'),
 			base_url('/vendors/filepond/filepond.jquery.js'),
+			base_url('/vendors/croppie/croppie.min.js'),
 			// base_url('/vendors/mapbox/mapbox-gl.js.map'),
 			base_url('/vendors/jquery-ui/jquery-ui.js'),
 			base_url('/js/main.js'),
@@ -44,6 +45,7 @@ class BundleConfig
 			base_url('/vendors/select2/css/select2-coreui.min.css'),
 			base_url('/vendors/select2/css/select2.min.css'),
 			base_url('/vendors/filepond/filepond.css'),
+			base_url('/vendors/croppie/croppie.css'),
 			base_url('/vendors/jquery-ui/jquery-ui.css'),
 		);
 		return $plugin;
