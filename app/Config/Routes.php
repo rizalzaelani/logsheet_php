@@ -151,6 +151,10 @@ $routes->post('/Application/saveStatus', 'Setting/Application::saveStatus');
 $routes->post('/Application/deleteAssetStatus', 'Setting/Application::deleteAssetStatus');
 
 $routes->add('/Schedule', 'Setting/Schedule::index');
+$routes->add('/Schedule/datatable', 'Setting/Schedule::datatable');
+$routes->post('/Schedule/addEvent', 'Setting/Schedule::addEvent');
+$routes->post('/Schedule/schJson', 'Setting/Schedule::schJson');
+$routes->post('/Schedule/checkAssetId', 'Setting/Schedule::checkAssetId');
 
 
 

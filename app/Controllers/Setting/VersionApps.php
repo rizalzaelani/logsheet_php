@@ -29,22 +29,22 @@ class VersionApps extends BaseController
 	public function datatable()
 	{
 		$table = "tblt_versionApp";
-        $column_order = array('versionAppId', 'name', 'version', 'description', 'createdAt');
-        $column_search = array('versionAppId', 'name', 'version', 'description', 'createdAt');
-        $order = array('createdAt' => 'asc');
-        $request = \Config\Services::request();
-        $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
-        $where = [];
-        $list = $DTModel->datatable($where);
-        $output = array(
-            "draw" => $request->getPost('draw'),
-            "recordsTotal" => $DTModel->count_all($where),
-            "recordsFiltered" => $DTModel->count_filtered($where),
-            "data" => $list,
-            "status" => 200,
-            "message" => "success"
-        );
-        echo json_encode($output);
+		$column_order = array('versionAppId', 'name', 'version', 'description', 'createdAt');
+		$column_search = array('versionAppId', 'name', 'version', 'description', 'createdAt');
+		$order = array('createdAt' => 'asc');
+		$request = \Config\Services::request();
+		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
+		$where = [];
+		$list = $DTModel->datatable($where);
+		$output = array(
+			"draw" => $request->getPost('draw'),
+			"recordsTotal" => $DTModel->count_all($where),
+			"recordsFiltered" => $DTModel->count_filtered($where),
+			"data" => $list,
+			"status" => 200,
+			"message" => "success"
+		);
+		echo json_encode($output);
 	}
 
 	public function new()
@@ -66,7 +66,7 @@ class VersionApps extends BaseController
 			);
 			$model->insert($data);
 			echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $data));
-		}else{
+		} else {
 			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post, 'file' => $file));
 		}
 		die();
@@ -80,8 +80,8 @@ class VersionApps extends BaseController
 			$versionAppId = $json->versionAppId;
 			$data = $versionAppsModel->getById($versionAppId);
 			echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
-		}else{
-			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $data));
+		} else {
+			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
 		}
 		die();
 	}
@@ -102,8 +102,8 @@ class VersionApps extends BaseController
 			$versionAppId = $json->versionAppId;
 			$data = $versionAppsModel->getById($versionAppId);
 			echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
-		}else{
-			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $data));
+		} else {
+			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
 		}
 		die();
 	}
@@ -128,7 +128,7 @@ class VersionApps extends BaseController
 				);
 				$versionAppsModel->update($versionAppId, $data);
 				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
-			}else{
+			} else {
 				$dataVersionApps = $versionAppsModel->where('versionAppId', $versionAppId)->get()->getResultArray();
 				unlink('../public/assets/uploads/apk/' . $dataVersionApps[0]['fileApp']);
 				$file = $this->request->getFile('fileApp');
@@ -144,8 +144,8 @@ class VersionApps extends BaseController
 				$versionAppsModel->update($versionAppId, $data);
 				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
 			}
-		}else{
-			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $data));
+		} else {
+			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
 		}
 		die();
 	}
@@ -153,9 +153,9 @@ class VersionApps extends BaseController
 	public function delete()
 	{
 		$versionAppsModel = new VersionAppsModel();
-        $json = $this->request->getJSON();
-        $versionAppId = $json->versionAppId;
-        if ($versionAppId != '') {
+		$json = $this->request->getJSON();
+		$versionAppId = $json->versionAppId;
+		if ($versionAppId != '') {
 			$data = $versionAppsModel->where('versionAppId', $versionAppId)->get()->getResultArray();
 			$lengthData = count($data);
 			if ($lengthData > 0) {
@@ -163,9 +163,9 @@ class VersionApps extends BaseController
 				$versionAppsModel->deleteById($versionAppId);
 				echo json_encode(array('status' => 'success', 'message' => 'You have successfully deleted data.', 'data' => $json));
 			}
-        } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
-        }
+		} else {
+			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
+		}
 		die();
 	}
 }

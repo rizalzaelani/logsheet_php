@@ -74,6 +74,11 @@
                     <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-paper-plane') ?>"></use>
                 </svg> Version Apps</a>
         </li>
+        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Schedule') ?>">
+                <svg class="c-sidebar-nav-icon">
+                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-calendar') ?>"></use>
+                </svg> Schedule</a>
+        </li>
         <li class="c-sidebar-nav-title">LOG ACTIVTY</li>
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/LogActivity') ?>">
                 <svg class="c-sidebar-nav-icon">
