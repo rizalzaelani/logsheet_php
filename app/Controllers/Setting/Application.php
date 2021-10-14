@@ -43,10 +43,13 @@ class Application extends BaseController
     public function saveSetting()
     {
         $appSettingModel = new ApplicationSettingModel();
-        $file = $this->request->getFile('appLogo');
+
         $appSettingId = $this->request->getVar('appSettingId') ?? "";
         $userId = $this->request->getVar('userId') ?? "65910438-b82d-4414-95cc-b3165527e08f";
         $appName = $this->request->getVar('appName');
+        $appLogoLight = $this->request->getVar('appLogoLight');
+        $appLogoDark = $this->request->getVar('appLogoDark');
+        $appLogoIcon = $this->request->getVar('appLogoIcon');
 
         $appSetting = $appSettingModel->where(['appSettingId' => $appSettingId, "userId" => $userId])->get()->getRowArray();
 
@@ -59,45 +62,49 @@ class Application extends BaseController
             $data["userId"] = $userId;
             $data["appName"] = $appName;
 
+            if($appLogoLight != ""){
+                $appLogoLight = str_replace('data:image/png;base64,', '', $appLogoLight);
+                $appLogoLight = str_replace(' ', '+', $appLogoLight);
+                $dtAppLL = base64_decode($appLogoLight);
+
+                $fileName = "AppLogoL_" . uniqid() . '.png';
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLL);
+                $data["appLogoLight"] = base_url() . "/" . $dirPath . $fileName;
+            }
+
+            if($appLogoDark != ""){
+                $appLogoDark = str_replace('data:image/png;base64,', '', $appLogoDark);
+                $appLogoDark = str_replace(' ', '+', $appLogoDark);
+                $dtAppLD = base64_decode($appLogoDark);
+
+                $fileName = "AppLogoD_" . uniqid() . '.png';
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLD);
+                $data["appLogoDark"] = base_url() . "/" . $dirPath . $fileName;
+            }
+
+            if($appLogoIcon != ""){
+                $appLogoIcon = str_replace('data:image/png;base64,', '', $appLogoIcon);
+                $appLogoIcon = str_replace(' ', '+', $appLogoIcon);
+                $dtAppLI = base64_decode($appLogoIcon);
+
+                $fileName = "AppLogoI_" . uniqid() . '.png';
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLI);
+                $data["appLogoIcon"] = base_url() . "/" . $dirPath . $fileName;
+            }
+
             if (!empty($appSetting)) {
-                if ($file != null) {
-                    $name = 'LOGO_' . $file->getRandomName();
-                    $fileTemp = str_replace(base_url() . "/", "", $appSetting['appLogo']);
-                    unlink($fileTemp);
-                    $file->move($dirPath, $name);
-
-                    $data["appLogo"] = base_url() . "/" . $dirPath . "/" . $name;
-                }
-
-                $appSettingModel->update($appSetting["appSettingId"], $data);
-
-                return $this->response->setJSON([
-                    'status' => 200,
-                    'message' => "You have successfully save data.",
-                    'data' => $data
-                ], 200);
+                $appSettingModel->update($appSettingId, $data);
             } else {
-                if ($file == null) {
-                    return $this->response->setJSON([
-                        'status' => 400,
-                        'message' => "Make Sure the Attachment Is Not Empty",
-                        'data' => $data
-                    ], 400);
-                }
-                
-                $name = 'LOGO_' . $file->getRandomName();
-                $file->move($dirPath, $name);
-
                 $data["appSettingId"] = null;
-                $data["appLogo"] = base_url() . "/" . $dirPath . "/" . $name;
 
                 $appSettingModel->insert($data);
-                return $this->response->setJSON([
-                    'status' => 200,
-                    'message' => "You have successfully save data.",
-                    'data' => $data
-                ], 200);
             }
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "You have successfully save data.",
+                'data' => $data
+            ], 200);
         } catch (Exception $e) {
             return $this->response->setJSON([
                 'status' => 500,

@@ -10,7 +10,7 @@ class ApplicationSettingModel extends Model
     protected $table                = 'tblm_applicationSetting';
     protected $primaryKey           = 'appSettingId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['appSettingId', 'userId', 'appName', 'appLogo', 'createdAt', 'updatedAt'];
+    protected $allowedFields        = ['appSettingId', 'userId', 'appName', 'appLogoLight', 'appLogoDark', 'appLogoIcon', 'createdAt', 'updatedAt'];
     protected $createdField         = 'createdAt';
     protected $updatedField         = 'updatedAt';
 

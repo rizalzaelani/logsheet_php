@@ -237,12 +237,6 @@
                 moment,
                 closeFinding
             };
-        },
-        mounted() {
-
-        },
-        methods: {
-
         }
     }).mount("#app")
 </script>
