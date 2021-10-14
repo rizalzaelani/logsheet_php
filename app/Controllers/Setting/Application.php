@@ -3,33 +3,38 @@
 namespace App\Controllers\Setting;
 
 use App\Controllers\BaseController;
+use App\Controllers\Transaction\ScheduleTrx;
 use App\Models\ApplicationSettingModel;
 use App\Models\AssetStatusModel;
 use App\Models\AssetModel;
+use App\Models\ParameterModel;
+use App\Models\ScheduleTrxModel;
+use Exception;
 
 class Application extends BaseController
 {
     public function index()
     {
+        $userIdApp = $_SESSION["userIdApp"] ?? "fcc9766a-9bda-4fd3-a755-a24130d2f58c";
+
         $appSettingModel = new ApplicationSettingModel();
         $assetStatusModel = new AssetStatusModel();
-        $assetModel = new AssetModel();
-        $appSetting = $appSettingModel->findAll();
+        $appSetting = $appSettingModel->where("userId", $userIdApp)->get()->getRowArray();
         $assetStatus = $assetStatusModel->orderBy('createdAt', 'asc')->getWhere('deletedAt', null)->getResultArray();
         $data = array(
             'title' => 'Setting Application',
             'subtitle' => 'Setting Application'
         );
         $data["breadcrumbs"] = [
-			[
-				"title"	=> "Home",
-				"link"	=> "Dashboard"
-			],
-			[
-				"title"	=> "Setting Application",
-				"link"	=> "Application"
-			],
-		];
+            [
+                "title"    => "Home",
+                "link"    => "Dashboard"
+            ],
+            [
+                "title"    => "Setting Application",
+                "link"    => "Application"
+            ],
+        ];
         $data['appSetting'] = $appSetting;
         $data['assetStatus'] = $assetStatus;
         return $this->template->render('Setting/Application/index.php', $data);
@@ -38,89 +43,132 @@ class Application extends BaseController
     public function saveSetting()
     {
         $appSettingModel = new ApplicationSettingModel();
-        $post = $this->request->getPost();
         $file = $this->request->getFile('appLogo');
-        $appSettingId = $post['appSettingId'];
-        $appSetting = $appSettingModel->where('appSettingId', $appSettingId)->get()->getResultArray();
-        if (count($appSetting) > 0) {
-            if ($file != null) {
-                $name = 'LOGO_' . $file->getRandomName();
-                $logoExist = $appSetting[0]['appLogo'];
-                unlink('../public/assets/uploads/img/' . $logoExist);
-                $file->move('../public/assets/uploads/img', $name);
-                $data = array(
-                    'userId' => $post['userId'],
-                    'appName' => $post['appName'],
-                    'appLogo' => $name,
-                );
-                $appSettingModel->update($appSettingId, $data);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $data));
-            }else{
-                $data = array(
-                    'userId' => $post['userId'],
-                    'appName' => $post['appName'],
-                );
-                $appSettingModel->update($appSettingId, $data);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $data));
-            }
-        }else{
-            if ($post['appSettingId'] != '') {
-                $name = 'LOGO_' . $file->getRandomName();
-                $file->move('../public/assets/uploads/img', $name);
-                $data = array(
-                    'appSettingId' => $post['appSettingId'],
-                    'userId' => $post['userId'],
-                    'appName' => $post['appName'],
-                    'appLogo' => $name,
-                );
-                $appSettingModel->insert($data);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $data));
-            }else{
-                echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
-            }
+        $appSettingId = $this->request->getVar('appSettingId') ?? "";
+        $userId = $this->request->getVar('userId') ?? "65910438-b82d-4414-95cc-b3165527e08f";
+        $appName = $this->request->getVar('appName');
+
+        $appSetting = $appSettingModel->where(['appSettingId' => $appSettingId, "userId" => $userId])->get()->getRowArray();
+
+        $dirPath = 'upload/applogo/';
+        if (!is_dir($dirPath)) {
+            mkdir($dirPath, 0777, TRUE);
         }
-        die();
+
+        try {
+            $data["userId"] = $userId;
+            $data["appName"] = $appName;
+
+            if (!empty($appSetting)) {
+                if ($file != null) {
+                    $name = 'LOGO_' . $file->getRandomName();
+                    $fileTemp = str_replace(base_url() . "/", "", $appSetting['appLogo']);
+                    unlink($fileTemp);
+                    $file->move($dirPath, $name);
+
+                    $data["appLogo"] = base_url() . "/" . $dirPath . "/" . $name;
+                }
+
+                $appSettingModel->update($appSetting["appSettingId"], $data);
+
+                return $this->response->setJSON([
+                    'status' => 200,
+                    'message' => "You have successfully save data.",
+                    'data' => $data
+                ], 200);
+            } else {
+                if ($file == null) {
+                    return $this->response->setJSON([
+                        'status' => 400,
+                        'message' => "Make Sure the Attachment Is Not Empty",
+                        'data' => $data
+                    ], 400);
+                }
+                
+                $name = 'LOGO_' . $file->getRandomName();
+                $file->move($dirPath, $name);
+
+                $data["appSettingId"] = null;
+                $data["appLogo"] = base_url() . "/" . $dirPath . "/" . $name;
+
+                $appSettingModel->insert($data);
+                return $this->response->setJSON([
+                    'status' => 200,
+                    'message' => "You have successfully save data.",
+                    'data' => $data
+                ], 200);
+            }
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
     }
 
-    public function saveStatus()
+    public function saveAssetStatus()
     {
+        $assetModel = new AssetModel();
+        $scheduleTrxModel = new ScheduleTrxModel();
+        // $parameterModel = new ParameterModel();
         $assetStatusModel = new AssetStatusModel();
-        $json = $this->request->getJSON();
-        $statusName = $json->statusName;
-        $statusUpdate = $json->statusUpdate;
-        $statusDelete = $json->statusDelete;
-        $lengthStatusUpdate = count($statusUpdate);
-        $lengthStatusDelete = count($statusDelete);
-        if ($lengthStatusUpdate > 0) {
-            for ($i=0; $i < $lengthStatusUpdate; $i++) {
-                $id = $statusUpdate[$i]->assetStatusId;
-                $data = array(
-                    'assetStatusName' => $statusUpdate[$i]->assetStatusName
-                );
-                $assetStatusModel->update($id, $data);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusUpdate));
+        $json = $this->request->getJSON(true);
+
+        $deletedId = [];
+        $dataInsert = [];
+        $dataUpdate = [];
+        $messageDeleted = "";
+        foreach ($json as $val) {
+            if ($val['deleted'] == true) {
+                $cekAsset = $assetModel->getAll(["assetStatusId" => $val["assetStatusId"]]);
+                $cekSchTrx = $scheduleTrxModel->getAll(["assetStatusId" => $val["assetStatusId"]]);
+                // $cekParam = $parameterModel->getAll(["assetStatusId" => $val["assetStatusId"]]);
+                if (empty($cekAsset) & empty($cekSchTrx)) {
+                    array_push($deletedId, $val["assetStatusId"]);
+                } else {
+                    $messageDeleted = "Some Asset Status is Already Used";
+                }
+            } else {
+                if ($val["isNew"] == true) {
+                    array_push($dataInsert, array(
+                        "assetStatusId" => null,
+                        "userId" => $_SESSION["userId"] ?? "65910438-b82d-4414-95cc-b3165527e08f",
+                        "assetStatusName" => $val["assetStatusName"]
+                    ));
+                } else {
+                    array_push($dataUpdate, array(
+                        "assetStatusId" => $val["assetStatusId"],
+                        // "userId" => $_SESSION["userId"] ?? "65910438-b82d-4414-95cc-b3165527e08f",
+                        "assetStatusName" => $val["assetStatusName"]
+                    ));
+                }
             }
         }
-        if ($lengthStatusDelete > 0) {
-            for ($i=0; $i < $lengthStatusDelete; $i++) {
-                $id = $statusDelete[$i];
-                $assetStatusModel->deleteById($id);
-                echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusDelete));
+
+        try {
+            if (!empty($dataInsert)) {
+                $assetStatusModel->insertBatch($dataInsert);
             }
-        }
-        $lengthStatusName = count($json->statusName);
-        if ($lengthStatusName > 0) {
-            for ($i=0; $i < $lengthStatusName; $i++) { 
-                $data = array(
-                    'assetStatusId'     => $statusName[$i]->assetStatusId,
-                    'userId'            => $statusName[$i]->userId,
-                    'assetStatusName'   => $statusName[$i]->assetStatusName
-                );
-                $assetStatusModel->insert($data);
+            if (!empty($dataUpdate)) {
+                $assetStatusModel->updateBatch($dataUpdate, "assetStatusId");
             }
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully save data.', 'data' => $statusName));
+            if (!empty($deletedId)) {
+                $assetStatusModel->whereIn("assetStatusId", $deletedId)->delete();
+            }
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success Update Asset Status Name." . ($messageDeleted != "" ? "But, " . $messageDeleted : ""),
+                'data' => []
+            ], 200);
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
         }
-        die();
     }
 
     public function deleteAssetStatus()
@@ -132,7 +180,7 @@ class Application extends BaseController
         $data = $assetModel->selectMin('createdAt')->where('assetStatusId', $id)->get()->getResultArray();
         if ($data[0]['createdAt'] != null) {
             echo json_encode(array('status' => 'exist', 'message' => 'This data already use since ', 'data' => $data[0]['createdAt']));
-        }else{
+        } else {
             echo json_encode(array('status' => 'noexist', 'message' => '', 'data' => $json));
         }
         die();

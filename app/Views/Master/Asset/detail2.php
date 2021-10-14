@@ -2160,11 +2160,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         e.value = '';
                         descJsonValue.value = '';
 
-                        // setTimeout(() => {
                         let tableDescJson = document.getElementById("tableDescJson");
                         let trDescJson = tableDescJson.rows[tableDescJson.rows.length - 2];
                         trDescJson.querySelector("input[name='key[]']").focus();
-                        // }, 10);
                     }
                 }
 
