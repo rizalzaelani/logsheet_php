@@ -16,6 +16,7 @@ class BundleConfig
 			base_url('/vendors/moment/moment-with-locales.min.js'),
 			base_url('/vendors/datatables/jquery.dataTables.js'),
 			base_url('/vendors/datatables/dataTables.bootstrap4.min.js'),
+			base_url('/vendors/datatable-checkboxes/js/dataTables.checkboxes.min.js'),
 			base_url('/vendors/daterangepicker/daterangepicker.js'),
 			base_url('/vendors/echarts/echarts.min.js'),
 			base_url('/vendors/select2/js/select2.full.js'),
@@ -23,10 +24,12 @@ class BundleConfig
 			base_url('/vendors/filepond/filepond.min.js'),
 			base_url('/vendors/filepond/filepond.jquery.js'),
 			base_url('/vendors/cropperjs/cropper.js'),
+			base_url('/vendors/fullcalendar/core/js/main.js'),
 			// base_url('/vendors/mapbox/mapbox-gl.js.map'),
 			base_url('/vendors/jquery-ui/jquery-ui.js'),
+			// base_url('/vendors/mapbox/mapbox-gl.js.map'),
 			base_url('/js/main.js'),
-			base_url('/js/string-manipulation.js'),
+			// base_url('/js/string-manipulation.js'),
 		);
 		return $plugin;
 	}
@@ -40,13 +43,16 @@ class BundleConfig
 			base_url('/css/materialdesignicons.min.css'),
 			base_url('/icons/coreui/css/all.min.css'),
 			base_url('/vendors/datatables/dataTables.bootstrap4.css'),
+			base_url('/vendors/datatable-checkboxes/css/dataTables.checkboxes.css'),
 			base_url('/vendors/daterangepicker/daterangepicker.min.css'),
 			base_url('/vendors/fontawesome/css/fontawesome.css'),
 			base_url('/vendors/select2/css/select2-coreui.min.css'),
 			base_url('/vendors/select2/css/select2.min.css'),
 			base_url('/vendors/filepond/filepond.css'),
 			base_url('/vendors/cropperjs/cropper.css'),
+			base_url('/vendors/fullcalendar/css/main.css'),
 			base_url('/vendors/jquery-ui/jquery-ui.css'),
+
 		);
 		return $plugin;
 	}
