@@ -1,12 +1,6 @@
 <?= $this->extend('Layout/main'); ?>
 
 <?= $this->section('customStyles'); ?>
-<!-- Custom Style Css -->
-<link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.dataTables.min.css">
-<link href="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css" rel="stylesheet" />
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
-<script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
-<script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
