@@ -55,7 +55,7 @@ class Schedule extends BaseController
         echo json_encode($output);
     }
 
-    public function addEvent()
+    public function updateEvent()
     {
         $assetModel = new AssetModel();
         $scheduleTrxModel = new ScheduleTrxModel();
@@ -109,9 +109,9 @@ class Schedule extends BaseController
         $lengthData = count($data);
         $arr = [];
         foreach ($data as $val) {
-            $dataAsset = $assetModel->select('assetName')->where('assetId', $val['assetId'])->findAll();
+            $dataAsset = $assetModel->select('assetName')->where('assetId', $val['assetId'])->get()->getResult();
             $dt = [
-                'title' => $dataAsset[0]['assetName'],
+                'title' => $dataAsset[0]->assetName,
                 // 'start' => date("Y-m-d", strtotime($val['scheduleFrom'])),
                 // 'end' => date("Y-m-d", strtotime($val['scheduleTo'])),
                 'start' => $val['scheduleFrom'],
@@ -128,7 +128,7 @@ class Schedule extends BaseController
         $scheduleTrxModel = new ScheduleTrxModel();
         $post = $this->request->getJSON();
         $dateStr = $post->date . ' 00:00:00';
-        $data = $scheduleTrxModel->select('assetId')->where('scheduleFrom', $dateStr)->findAll();
+        $data = $scheduleTrxModel->select('assetId')->where(['scheduleFrom' => $dateStr, 'schManual' => '1'])->get()->getResult();
         echo json_encode($data);
         die();
     }

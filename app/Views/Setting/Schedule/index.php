@@ -10,15 +10,21 @@
         <div class="col-12">
             <div class="card card-main" id="cardSchedule">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between mb-1">
-                        <h4><?= $title ?></h4>
+                    <div class="d-flex justify-content-between pb-4">
+                        <h4 class="mb-0"><?= $title ?></h4>
                     </div>
                     <div id="calendar"></div>
                 </div>
             </div>
             <div class="card card-main hide" id="cardTable">
                 <div class="card-body">
-                    <h5>{{ strDate }}</h5>
+                    <div class="d-flex justify-content-between align-items-center pb-4">
+                        <h4 class="mb-0">{{ strDate }}</h4>
+                        <div>
+                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-primary mr-1" @click="submit()"><i class="fa fa-save"></i> Submit</button>
+                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-danger" @click="close()"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
                     <div class="row mt-2 hide">
                         <div class="col-6">
                             <form action="">
@@ -56,25 +62,19 @@
                         </div>
                     </div>
                     <div class="" id="dataAsset">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h4>Asset</h4>
-                            </div>
-                            <div>
-                                <button class="btn btn-sm btn-success mb-2 mr-1" @click="submit()"><i class="fa fa-save"></i> Submit</button>
-                                <button class="btn btn-sm btn-danger mb-2" @click="close()"><i class="fa fa-times"></i> Close</button>
-                            </div>
+                        <div id="tableAsset_filter" class="dataTables_filter mb-3">
+                            <input type="search" name="dt-search" class="material-input w-100" data-target="#tableAsset" aria-controls="tableAsset" placeholder="Search Data Asset">
                         </div>
                         <table class="table table-bordered w-100" id="tableAsset">
                             <thead>
                                 <tr>
-                                    <th id="all" width="5%">
+                                    <th id="all" class="px-0" style="width: 5% !important;">
                                         <input type="checkbox" name="checkbox" id="select-all" value="_all">
                                     </th>
-                                    <th>Asset</th>
-                                    <th>Number</th>
-                                    <th>Tag</th>
-                                    <th>Location</th>
+                                    <th style="width: 20% !important;">Asset</th>
+                                    <th style="width: 20% !important;">Number</th>
+                                    <th style="width: 20% !important;">Tag</th>
+                                    <th style="width: 20% !important;">Location</th>
                                 </tr>
                             </thead>
                         </table>
@@ -97,15 +97,26 @@
     let v = Vue.createApp({
         el: '#app',
         setup() {
+            var dateTitle = ref('');
+            var json = reactive([{
+                    title: 'Test 1',
+                    start: '2021-10-30 00:00:00',
+                    end: '2021-10-30 23:59:59',
+                },
+                {
+                    title: 'Test 1',
+                    start: '2021-11-30 00:00:00',
+                    end: '2021-11-30 23:59:59',
+                }
+            ]);
             var myModal = ref('');
-            var dataEvent = ref([]);
             var strDate = ref('');
             var date = ref('');
             var table = ref('');
             var selectedAsset = ref([]);
             var exist = ref([]);
             var uuid = ref(uuidv4());
-            var tempId = ref([]);
+            var newChecked = ref([]);
 
             function getAsset() {
                 return new Promise(async (resolve, reject) => {
@@ -114,6 +125,38 @@
                             drawCallback: function(settings) {
                                 $(document).ready(function() {
                                     $('#all').removeClass('sorting_asc');
+                                });
+
+                                $('input[name="assetId"]').prop('checked', false);
+                                v.selectedAsset.forEach(item => {
+                                    let idSelected = '#id' + item;
+                                    $(idSelected).prop('checked', true);
+                                });
+
+                                // set #select-all checked
+                                var allChecked = $('input:checkbox:checked').length;
+                                var lengthRow = $('#tableAsset tbody tr').length;
+                                if (allChecked == lengthRow) {
+                                    $('#select-all').prop('checked', true);
+                                } else {
+                                    $('#select-all').prop('checked', false);
+                                }
+
+                                $('input[name="assetId"]').change(function() {
+                                    if (this.checked) {
+                                        v.selectedAsset.push($(this).val())
+                                    } else {
+                                        let lengthSelected = v.selectedAsset.length;
+                                        for (let i = 0; i < lengthSelected; i++) {
+                                            if (v.selectedAsset[i] === $(this).val()) {
+                                                v.selectedAsset.splice(i, 1);
+                                            }
+                                        }
+                                    }
+                                })
+                                v.selectedAsset.forEach(item => {
+                                    let idSelected = '#id' + item;
+                                    $(idSelected).prop('checked', true);
                                 })
                             },
                             processing: true,
@@ -126,7 +169,7 @@
                                 info: "of _MAX_ entries",
                                 infoEmpty: 'of 0 entries',
                             },
-                            dom: '<"d-flex justify-content-between align-items-center"<"form">f><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+                            dom: '<"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
                             ajax: {
                                 url: "<?= base_url('/Schedule/datatable') ?>",
                                 type: "POST",
@@ -179,24 +222,16 @@
                                     targets: 0,
                                     searchable: false,
                                     orderable: false,
+                                    className: 'dt-body-center',
                                     render: function(data) {
-                                        return `<input type="checkbox" name="name[]" class="checkbox" id="id${data}" value="${data}">`;
+                                        return `<input type="checkbox" name="assetId" class="checkbox" id="id${data}" value="${data}">`;
                                     }
                                 },
-                                // {
-                                //     targets: 0,
-                                //     checkboxes: {
-                                //         selectRow: true
-                                //     },
-                                // },
                                 {
                                     targets: "_all",
                                     orderable: false,
                                 },
                             ],
-                            // select: {
-                            //     style: 'multi',
-                            // },
                         });
                     } catch (er) {
                         console.log(er)
@@ -206,41 +241,42 @@
             };
 
             function submit() {
-                var tbl = $('#tableAsset').DataTable();
-                tbl.$('input[type="checkbox"]').each(function() {
-                    if (this.checked) {
-                        v.selectedAsset.push(this.value);
-                    }
-                })
+                // get unique from selectedId
+                const unique = (value, index, self) => {
+                    return self.indexOf(value) === index;
+                }
+                var isUniqueSelected = v.selectedAsset.filter(unique);
+                v.selectedAsset = isUniqueSelected;
+
+                let filt1 = this.selectedAsset.filter((o) => this.exist.indexOf(o) === -1);
+                let filt2 = this.exist.filter((o) => this.selectedAsset.indexOf(o) === -1);
+                let filtered = filt1.concat(filt2);
                 var deselect = _.difference(this.exist, this.selectedAsset);
-                axios.post("<?= base_url('Schedule/addEvent') ?>", {
-                    assetId: v.selectedAsset,
-                    deselect: deselect,
-                    date: v.date
-                }).then(res => {
-                    calendar.refetchEvents()
-                    this.selectedAsset = ref([]);
-                })
-                return;
-                var tbl = $('#tableAsset').DataTable();
-                var selected = tbl.column(0).checkboxes.selected();
-                $.each(selected, function(idx, id) {
-                    v.selectedAsset.push(id);
-                })
-                if (this.selectedAsset.length > 0) {
-                    axios.post("<?= base_url('Schedule/addEvent') ?>", {
+                if (filtered.length > 0) {
+                    axios.post("<?= base_url('Schedule/updateEvent') ?>", {
                         assetId: v.selectedAsset,
+                        deselect: deselect,
                         date: v.date
                     }).then(res => {
                         calendar.refetchEvents();
-                        this.selectedAsset = ref([]);
+                        axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
+                            date: v.date
+                        }).then(res => {
+                            var dataExist = res.data;
+                            var arr = [];
+                            dataExist.forEach(item => {
+                                arr.push(item.assetId);
+                            });
+                            v.exist = arr;
+                        })
                     })
                 } else {
                     swal.fire({
-                        title: 'No data selected.',
+                        title: 'No data changed.',
                         icon: 'error'
                     })
                 }
+                return;
             }
 
             function close() {
@@ -248,22 +284,32 @@
                 $('html, body').animate({
                     scrollTop: $("#cardSchedule").offset().top
                 }, 1000);
+                v.selectedAsset = ref([]);
             }
 
-            // onMounted(() => {
-            //     getAsset();
-            // })
+            onMounted(() => {
+                getAsset();
+                let search = $("input[data-target='#tableAsset']");
+                search.unbind().bind("keypress", function(e) {
+                    if (e.which == 13 || e.keyCode == 13) {
+                        let searchData = search.val();
+                        var tbl = $('#tableAsset').DataTable();
+                        tbl.search(searchData).draw();
+                    }
+                });
+            })
 
             return {
+                json,
                 myModal,
-                dataEvent,
                 strDate,
                 table,
                 selectedAsset,
                 exist,
                 date,
                 uuid,
-                tempId,
+                newChecked,
+                dateTitle,
 
                 getAsset,
                 submit,
@@ -280,26 +326,12 @@
         });
     }
 
-    $(document).ready(function() {
-        var tbl = $('#tableAsset').DataTable();
-        $('#select-all').on('click', function() {
-            $('input[type="checkbox"]').prop('checked', this.checked);
-        })
-        $('#tableAsset tbody').on('change', 'input[type="checkbox"]', function() {
-            var elm = $('#select-all').get(0);
-            if (elm && elm.checked && ('indeterminate' in elm)) {
-                elm.indeterminate = true;
-            }
-        })
-    })
-
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         themeSystem: 'bootstrap',
         headerToolbar: {
-            start: 'prev,today,next',
-            center: 'title',
-            end: 'dayGridMonth,dayGridWeek,listWeek'
+            start: 'prevYear,prev,today,next,nextYear',
+            end: 'title'
         },
         weekNumbers: true,
         dayMaxEventRows: true,
@@ -311,33 +343,68 @@
         eventSources: [{
             url: "<?= base_url('Schedule/schJson') ?>",
             method: 'POST',
+            display: 'block',
         }],
-        eventDidMount: function(info) {
-            if (info.event.extendedProps.status === 'done') {
-
-                // Change background color of row
-                info.el.style.backgroundColor = 'white';
-
-                // Change color of dot marker
-                var dotEl = info.el.getElementsByClassName('fc-event-dot')[0];
-                if (dotEl) {
-                    dotEl.style.backgroundColor = 'white';
+        viewDidMount: function(view, el) {
+            let dateTitle = calendar.currentData.viewTitle;
+            v.dateTitle = moment(dateTitle).format('Y-M');
+            // console.log(v.json);
+            v.json.forEach(i => {
+                let start = moment(i.start).format('Y-M');
+                if (start == v.dateTitle) {
+                    // console.log(i);
                 }
-            }
+            })
         },
         dateClick: function(info) {
+            var tbl = $('#tableAsset').DataTable();
+            tbl.search('').draw();
+            v.selectedAsset = ref([]);
+
+            $(document).ready(function() {
+                $('#select-all').change(function() {
+                    if (this.checked) {
+                        $('input[type="checkbox"]').prop('checked', this.checked);
+                        let elm = $('input[name="assetId"]');
+                        $.each(elm, function(key, val) {
+                            v.selectedAsset.push(val.value);
+                        })
+                    } else {
+                        $('input[type="checkbox"]').prop('checked', this.checked);
+                        let elm = $('input[name="assetId"]');
+                        let lengthSelected = v.selectedAsset.length;
+                        $.each(elm, function(key, val) {
+                            for (let i = 0; i < lengthSelected; i++) {
+                                if (v.selectedAsset[i] === val.value) {
+                                    v.selectedAsset.splice(i, 1);
+                                }
+                            }
+                        })
+                    }
+                })
+                $('#tableAsset tbody').on('change', 'input[type="checkbox"]', function() {
+                    var elm = $('#select-all').get(0);
+                    if (elm && elm.checked && ('indeterminate' in elm)) {
+                        elm.indeterminate = true;
+                    }
+                })
+            })
+
             v.date = info.dateStr;
             axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
                 date: info.dateStr
             }).then(res => {
-                var dataChecked = res.data;
+                var dataExist = res.data;
                 var arr = [];
-                dataChecked.forEach(item => {
+                $('input[name="assetId"]').prop('checked', false);
+                dataExist.forEach(item => {
                     arr.push(item.assetId);
+                    v.selectedAsset.push(item.assetId);
                     var idChecked = '#id' + item.assetId;
                     $(idChecked).prop('checked', true);
                 });
                 v.exist = arr;
+
                 var allChecked = $('input:checkbox:checked').length;
                 var lengthRow = $('#tableAsset tbody tr').length;
                 if (allChecked == lengthRow) {
@@ -346,11 +413,18 @@
                     $('#select-all').prop('checked', false);
                 }
 
-                // $(".form").html(`
-                //     <div>
-                //         <input type="datetime-local" class="form-control" placeholder="">
-                //     </div>
-                // `)
+                $('input[name="assetId"]').change(function() {
+                    if (this.checked) {
+                        v.selectedAsset.push($(this).val())
+                    } else {
+                        let lengthSelected = v.selectedAsset.length;
+                        for (let i = 0; i < lengthSelected; i++) {
+                            if (v.selectedAsset[i] === $(this).val()) {
+                                v.selectedAsset.splice(i, 1);
+                            }
+                        }
+                    }
+                })
             })
             let date = moment(info.date).format('LL');
             v.strDate = date;
@@ -358,15 +432,17 @@
             $('html, body').animate({
                 scrollTop: $("#cardTable").offset().top
             }, 1000);
-            $('#tableAsset').DataTable().clear().destroy();
-            v.getAsset();
-            v.tempId = v.uuid;
         },
         windowResize: function(view) {
             console.log(view);
         }
     });
     calendar.render();
+
+    $('.fc-next-button, .fc-prev-button, .fc-nextYear-button, .fc-prevYear-button, .fc-today-button').on('click', function() {
+        let dateTitle = calendar.currentData.viewTitle;
+        console.log(dateTitle);
+    })
 
     $(document).ready(function() {
         $('#schType').select2({
