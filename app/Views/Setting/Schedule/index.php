@@ -98,17 +98,6 @@
         el: '#app',
         setup() {
             var dateTitle = ref('');
-            var json = reactive([{
-                    title: 'Test 1',
-                    start: '2021-10-30 00:00:00',
-                    end: '2021-10-30 23:59:59',
-                },
-                {
-                    title: 'Test 1',
-                    start: '2021-11-30 00:00:00',
-                    end: '2021-11-30 23:59:59',
-                }
-            ]);
             var myModal = ref('');
             var strDate = ref('');
             var date = ref('');
@@ -300,7 +289,6 @@
             })
 
             return {
-                json,
                 myModal,
                 strDate,
                 table,
@@ -343,18 +331,38 @@
         eventSources: [{
             url: "<?= base_url('Schedule/schJson') ?>",
             method: 'POST',
-            display: 'block',
+            format: 'json',
+            display: 'block'
         }],
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            meridiem: false,
+        },
+        moreLinkClick: 'popover',
+        dayPopoverFormat: {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            weekday: 'short',
+        },
+        dayCellDidMount: function(arg) {
+            var e = arg;
+            console.log(e);
+            var date = moment(e.date).format('Y-M-D');
+            var str = '2021-10-31';
+            // if (date == str) {
+            //     e.el.style.backgroundColor = '#D1E8E4';
+            // }
+        },
         viewDidMount: function(view, el) {
             let dateTitle = calendar.currentData.viewTitle;
             v.dateTitle = moment(dateTitle).format('Y-M');
-            // console.log(v.json);
-            v.json.forEach(i => {
-                let start = moment(i.start).format('Y-M');
-                if (start == v.dateTitle) {
-                    // console.log(i);
-                }
-            })
+            // v.json.forEach(i => {
+            //     let start = moment(i.start).format('Y-M');
+            //     if (start == v.dateTitle) {
+            //     }
+            // })
         },
         dateClick: function(info) {
             var tbl = $('#tableAsset').DataTable();

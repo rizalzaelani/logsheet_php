@@ -116,6 +116,9 @@ class Schedule extends BaseController
                 // 'end' => date("Y-m-d", strtotime($val['scheduleTo'])),
                 'start' => $val['scheduleFrom'],
                 'end' => $val['scheduleTo'],
+                'allDay' => true,
+                'backgroundColor' => 'orange',
+                'borderColor' => 'orange'
             ];
             array_push($arr, $dt);
         }
