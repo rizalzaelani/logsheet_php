@@ -52,7 +52,7 @@ class Asset extends BaseController
 
 		$assetId = $this->request->getVar("assetId") ?? "";
 		$dateFrom = $this->request->getVar("dateFrom") ?? date("Y-m-d", strtotime("-6 days"));
-		$dateTo = $this->request->getVar("dateTo") ?? date("Y-m-d 00:00:00", strtotime("+1 days"));
+		$dateTo = $this->request->getVar("dateTo") ?? date("Y-m-d 00:00:00");
 		
 		$checkAsset = $assetModel->getById($assetId);
 		if(empty($checkAsset)){
@@ -61,7 +61,7 @@ class Asset extends BaseController
 
 		$data['assetData'] = $checkAsset;
 		$data['parameterData'] = $parameterModel->getAll(["deletedAt IS NULL" => null, "assetId" => $assetId]);
-		$data['scheduleData'] = $scheduleTrxModel->getAll(["assetId" => $assetId, "scheduleFrom >=" => $dateFrom, "scheduleFrom <" => $dateTo]);
+		$data['scheduleData'] = $scheduleTrxModel->getAll(["assetId" => $assetId, "scheduleFrom >=" => $dateFrom, "scheduleFrom <" => date("Y-m-d 00:00:00", strtotime($dateTo . " +1 days"))]);
 
 		$scheduleTrxIdArr = [];
 		if(!empty($data['scheduleData'])){
