@@ -10,7 +10,7 @@ class ScheduleTrxModel extends Model
     protected $table                = 'tblt_scheduleTrx';
     protected $primaryKey           = 'scheduleTrxId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['scheduleTrxId','assetId','assetStatusId','schManual','schType','schFrequency','schWeeks','schWeekDays','schDays','scheduleFrom','scheduleTo','syncAt','scannedAt','scannedEnd','scannedBy','scannedWith','scannedNotes','scannedAccuration','approvedAt','approvedBy','approvedNotes','condition'];
+    protected $allowedFields        = ['scheduleTrxId', 'assetId', 'assetStatusId', 'schManual', 'schType', 'schFrequency', 'schWeeks', 'schWeekDays', 'schDays', 'scheduleFrom', 'scheduleTo', 'syncAt', 'scannedAt', 'scannedEnd', 'scannedBy', 'scannedWith', 'scannedNotes', 'scannedAccuration', 'approvedAt', 'approvedBy', 'approvedNotes', 'condition'];
     protected $createdField         = 'createdAt';
 
     public function getById($id)
@@ -18,16 +18,18 @@ class ScheduleTrxModel extends Model
         return $this->builder("vw_scheduleTrx")->where($this->primaryKey, $id)->get()->getRowArray();
     }
 
-    public function getAll(array $where = null){
+    public function getAll(array $where = null)
+    {
         $query = $this->builder("vw_scheduleTrx");
-        if($where != null){
+        if ($where != null) {
             $query = $query->where($where);
         }
 
         return $query->get()->getResultArray();
     }
 
-    public function checkNormalAbnormal($scheduleTrxId){
+    public function checkNormalAbnormal($scheduleTrxId)
+    {
         return $this->db->query("call sp_normalAbnormalTrx('" . $scheduleTrxId . "')")->getResultArray();
     }
 }

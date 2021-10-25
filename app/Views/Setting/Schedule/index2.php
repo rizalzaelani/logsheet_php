@@ -3,6 +3,16 @@
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
 <style>
+    /* .hover-end {
+        padding: 0;
+        margin: 0;
+        font-size: 75%;
+        text-align: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        opacity: .8
+    } */
     .popoverEvent {
         min-width: 300px !important;
     }
@@ -24,37 +34,6 @@
             <div class="d-flex justify-content-center align-items-center hide" id="strDate">
                 <h4 class="p-3 m-2">{{ strDate }}</h4>
             </div>
-            <div class="card card-main hide" id="cardTable">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4>List Asset</h4>
-                        </div>
-                        <div>
-                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-primary mr-1" @click="submit()"><i class="fa fa-save"></i> Submit</button>
-                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-danger" @click="cancelAsset()"><i class="fa fa-times"></i> Cancel</button>
-                        </div>
-                    </div>
-                    <div class="" id="dataAsset">
-                        <div id="tableAsset_filter" class="dataTables_filter mb-3">
-                            <input type="search" name="dt-search" class="material-input w-100" data-target="#tableAsset" aria-controls="tableAsset" placeholder="Search Data Asset">
-                        </div>
-                        <table class="table table-bordered w-100" id="tableAsset">
-                            <thead>
-                                <tr>
-                                    <th id="all">
-                                        <input type="checkbox" name="checkbox" id="select-all" value="_all">
-                                    </th>
-                                    <th>Asset</th>
-                                    <th>Number</th>
-                                    <th>Tag</th>
-                                    <th>Location</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
-            </div>
             <div class="card card-main hide" id="scheduleType">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -71,7 +50,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <label for="schType">
-                                        Schedule Type
+                                        Schedule
                                     </label>
                                 </div>
                             </div>
@@ -87,6 +66,30 @@
                             </div>
                         </div>
                         <div class="col-6">
+                            <div class="row hide" id="daily">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="schFrequency">
+                                                Daily
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="input-group mb-2">
+                                                <input type="text" class="form-control" id="schFrequency" placeholder="Factor of 24" v-model="schFrequency">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">/ Day</div>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Please choose a factor of 24.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row hide" id="weekly">
                                 <div class="col-12">
                                     <div class="row">
@@ -187,6 +190,63 @@
                             </div>
                         </div>
                     </div>
+                    <div class="hide row mt-1" id="lengthSchedule">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="schFrom">Schedule From</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="datetime-local" class="form-control" id="schFrom" v-model="schFrom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="schTo">Schedule To</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="datetime-local" class="form-control" id="schTo" v-model="schTo">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-main hide" id="cardTable">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4>List Asset</h4>
+                        </div>
+                        <div>
+                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-primary mr-1" @click="submit()"><i class="fa fa-save"></i> Submit</button>
+                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-danger" @click="cancelAsset()"><i class="fa fa-times"></i> Cancel</button>
+                        </div>
+                    </div>
+                    <div class="" id="dataAsset">
+                        <div id="tableAsset_filter" class="dataTables_filter mb-3">
+                            <input type="search" name="dt-search" class="material-input w-100" data-target="#tableAsset" aria-controls="tableAsset" placeholder="Search Data Asset">
+                        </div>
+                        <table class="table table-bordered w-100" id="tableAsset">
+                            <thead>
+                                <tr>
+                                    <th id="all">
+                                        <input type="checkbox" name="checkbox" id="select-all" value="_all">
+                                    </th>
+                                    <th>Asset</th>
+                                    <th>Number</th>
+                                    <th>Tag</th>
+                                    <th>Location</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -205,18 +265,24 @@
     let v = Vue.createApp({
         el: '#app',
         setup() {
+            var dateTitle = ref('');
             var myModal = ref('');
             var strDate = ref('');
             var date = ref('');
             var table = ref('');
             var selectedAsset = ref([]);
             var exist = ref([]);
+            var uuid = ref(uuidv4());
+            var newChecked = ref([]);
 
             var schType = ref('');
+            var schFrequency = ref('');
             var schWeekDays = ref('');
             var schDays = ref('');
             var schWeeks = ref('');
             var onDays = ref('');
+            var schFrom = ref('');
+            var schTo = ref('');
 
             var unique = (value, index, self) => {
                 return self.indexOf(value) === index;
@@ -234,40 +300,6 @@
                                 });
 
                                 $('input[name="assetId"]').prop('checked', false);
-                                $('#select-all').prop('checked', false);
-
-                                $(document).ready(function() {
-                                    $('#select-all').change(function() {
-                                        if (this.checked) {
-                                            $('input[type="checkbox"]').prop('checked', this.checked);
-                                            let elm = $('input[name="assetId"]');
-
-                                            $.each(elm, function(key, val) {
-                                                v.selectedAsset.push(val.value);
-                                            })
-
-                                            var isUniqueSelected = v.selectedAsset.filter(v.unique);
-                                            v.selectedAsset = isUniqueSelected;
-                                        } else {
-                                            $('input[type="checkbox"]').prop('checked', this.checked);
-                                            let elm = $('input[name="assetId"]');
-                                            let lengthSelected = v.selectedAsset.length;
-                                            $.each(elm, function(key, val) {
-                                                for (let i = 0; i < lengthSelected; i++) {
-                                                    if (v.selectedAsset[i] === val.value) {
-                                                        v.selectedAsset.splice(i, 1);
-                                                    }
-                                                }
-                                            })
-                                        }
-                                    })
-                                    $('#tableAsset tbody').on('change', 'input[type="checkbox"]', function() {
-                                        var elm = $('#select-all').get(0);
-                                        if (elm && elm.checked && ('indeterminate' in elm)) {
-                                            elm.indeterminate = true;
-                                        }
-                                    })
-                                })
                                 v.selectedAsset.forEach(item => {
                                     let idSelected = '#id' + item;
                                     $(idSelected).prop('checked', true);
@@ -384,128 +416,141 @@
             };
 
             function submitSchType() {
-                if (v.schType != "") {
-                    var deselect = _.difference(v.exist, v.selectedAsset);
-                    var selected = _.difference(v.selectedAsset, v.exist);
-                    axios.post("<?= base_url("Schedule/updateEvent") ?>", {
-                        assetId: selected,
-                        deselect: deselect,
+                var tbl = $('#tableAsset').DataTable();
+                tbl.search('').draw();
+
+                $('#cardTable').removeClass('hide');
+                $('html, body').animate({
+                    scrollTop: $("#cardTable").offset().top
+                }, 1000);
+
+                let factorFrom = 24;
+                let schFreq = [];
+                for (let index = 1; index <= factorFrom; index++) {
+                    if (factorFrom % index == 0) {
+                        schFreq.push(index)
+                    }
+                }
+                let isFactorOf = schFreq.includes(parseInt(this.schFrequency));
+                if (v.schType != '') {
+                    axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
                         date: v.strDate,
                         schType: v.schType,
+                        schFrequency: v.schFrequency,
                         schWeekDays: v.schWeekDays,
+                        schDays: v.schDays,
                         schWeeks: v.schWeeks,
-                        schDays: v.schDays
+                        schFrom: v.schFrom + ':00',
+                        schTo: v.schTo + ':00',
                     }).then(res => {
-                        if (res.data.status == 'failed') {
-                            swal.fire({
-                                title: 'Failed',
-                                icon: 'error',
-                                text: res.data.message
-                            })
-                            v.schWeekDays = ref('');
-                            v.schWeeks = ref('');
-                            v.schDays = ref('');
-                            v.schType = ref('');
-                            v.onDays = ref('');
+                        v.selectedAsset = ref([]);
+                        var dataExist = res.data;
+                        // get unique from selectedId
+                        const unique = (value, index, self) => {
+                            return self.indexOf(value) === index;
+                        }
+                        var isUniqueSelected = dataExist.filter(unique);
+                        var arr = [];
+                        $('input[name="assetId"]').prop('checked', false);
+                        isUniqueSelected.forEach(item => {
+                            arr.push(item);
+                            v.selectedAsset.push(item);
+                            var idChecked = '#id' + item;
+                            $(idChecked).prop('checked', true);
+                        });
+                        v.exist = arr;
 
-                            $('#scheduleType').addClass('hide');
-                            $('#schType').val("").trigger("change");
-                            $('#schWeekDays').val("").trigger("change");
-                            $('#monthlyDays').val("").trigger("change");
-                            $('#monthlyOn').val("").trigger("change");
-                            $('#monthlyOnDays').val("").trigger("change");
-
-                            $('#weekly').addClass('hide');
-                            $('#monthly').addClass('hide');
-                            $('#radioMonthly1').prop('checked', false);
-                            $('#radioMonthly2').prop('checked', false);
+                        var allChecked = $('input:checkbox:checked').length;
+                        var lengthRow = $('#tableAsset tbody tr').length;
+                        if (allChecked == lengthRow) {
+                            $('#select-all').prop('checked', true);
                         } else {
-                            axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
-                                date: v.strDate,
-                            }).then(res => {
-                                calendar.refetchEvents();
-                                var dataExist = res.data;
-                                var arr = [];
-                                dataExist.forEach(item => {
-                                    arr.push(item);
-                                });
-                                v.exist = arr;
-
-                                v.schWeekDays = ref('');
-                                v.schWeeks = ref('');
-                                v.schDays = ref('');
-                                v.schType = ref('');
-                                v.onDays = ref('');
-
-                                $('#scheduleType').addClass('hide');
-                                $('#schType').val("").trigger("change");
-                                $('#schWeekDays').val("").trigger("change");
-                                $('#monthlyDays').val("").trigger("change");
-                                $('#monthlyOn').val("").trigger("change");
-                                $('#monthlyOnDays').val("").trigger("change");
-
-                                $('#weekly').addClass('hide');
-                                $('#monthly').addClass('hide');
-                                $('#radioMonthly1').prop('checked', false);
-                                $('#radioMonthly2').prop('checked', false);
-                            })
-
+                            $('#select-all').prop('checked', false);
                         }
                     })
+                } else {
+                    $('#schFrequency').addClass('is-invalid');
                 }
+                $(document).ready(function() {
+                    $('#select-all').change(function() {
+                        if (this.checked) {
+                            $('input[type="checkbox"]').prop('checked', this.checked);
+                            let elm = $('input[name="assetId"]');
+
+                            $.each(elm, function(key, val) {
+                                v.selectedAsset.push(val.value);
+                            })
+
+                            var isUniqueSelected = v.selectedAsset.filter(v.unique);
+                            v.selectedAsset = isUniqueSelected;
+                        } else {
+                            $('input[type="checkbox"]').prop('checked', this.checked);
+                            let elm = $('input[name="assetId"]');
+                            let lengthSelected = v.selectedAsset.length;
+                            $.each(elm, function(key, val) {
+                                for (let i = 0; i < lengthSelected; i++) {
+                                    if (v.selectedAsset[i] === val.value) {
+                                        v.selectedAsset.splice(i, 1);
+                                    }
+                                }
+                            })
+                        }
+                    })
+                    $('#tableAsset tbody').on('change', 'input[type="checkbox"]', function() {
+                        var elm = $('#select-all').get(0);
+                        if (elm && elm.checked && ('indeterminate' in elm)) {
+                            elm.indeterminate = true;
+                        }
+                    })
+                })
+                return;
             }
 
             function submit() {
-                var deselect = _.difference(v.exist, v.selectedAsset);
-                var selected = _.difference(v.selectedAsset, v.exist);
-                var lengthDeselect = deselect.length;
-                var lengthSelected = selected.length;
-                if (lengthDeselect > 0 && lengthSelected < 1) {
-                    axios.post("<?= base_url("Schedule/updateEvent") ?>", {
-                        assetId: selected,
+                var isUniqueSelected = v.selectedAsset.filter(v.unique);
+                v.selectedAsset = isUniqueSelected;
+
+                let filt1 = this.selectedAsset.filter((o) => this.exist.indexOf(o) === -1);
+                let filt2 = this.exist.filter((o) => this.selectedAsset.indexOf(o) === -1);
+                let filtered = filt1.concat(filt2);
+                var deselect = _.difference(this.exist, this.selectedAsset);
+                if (filtered.length > 0) {
+                    axios.post("<?= base_url('Schedule/updateEvent') ?>", {
+                        assetId: v.selectedAsset,
                         deselect: deselect,
-                        date: v.strDate,
+                        date: v.date,
                         schType: v.schType,
+                        schFrequency: v.schFrequency,
                         schWeekDays: v.schWeekDays,
+                        schDays: v.schDays,
                         schWeeks: v.schWeeks,
-                        schDays: v.schDays
+                        schFrom: v.schFrom,
+                        schTo: v.schTo
                     }).then(res => {
+                        calendar.refetchEvents();
                         axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
                             date: v.strDate,
+                            schType: v.schType,
+                            schFrequency: v.schFrequency,
+                            schWeekDays: v.schWeekDays,
+                            schWeeks: v.schWeeks,
+                            schDays: v.schDays,
+                            schFrom: v.schFrom + ':00',
+                            schTo: v.schTo + ':00',
                         }).then(res => {
-                            calendar.refetchEvents();
                             var dataExist = res.data;
                             var arr = [];
                             dataExist.forEach(item => {
                                 arr.push(item);
                             });
                             v.exist = arr;
-
-                            v.schWeekDays = ref('');
-                            v.schWeeks = ref('');
-                            v.schDays = ref('');
-                            v.schType = ref('');
-                            v.onDays = ref('');
-
-
-                            $('#scheduleType').addClass('hide');
-                            $('#schType').val("").trigger("change");
-                            $('#schWeekDays').val("").trigger("change");
-                            $('#monthlyDays').val("").trigger("change");
-                            $('#monthlyOn').val("").trigger("change");
-                            $('#monthlyOnDays').val("").trigger("change");
-
-                            $('#weekly').addClass('hide');
-                            $('#monthly').addClass('hide');
-                            $('#radioMonthly1').prop('checked', false);
-                            $('#radioMonthly2').prop('checked', false);
                         })
                     })
                 } else {
-                    $('#scheduleType').removeClass('hide');
-                    $('html, body').animate({
-                        scrollTop: $("#cardTable").offset().top
-                    }, 1000);
+                    swal.fire({
+                        title: 'No data changed.',
+                        icon: 'error'
+                    })
                 }
                 return;
             }
@@ -515,27 +560,8 @@
                 $('html, body').animate({
                     scrollTop: $("#scheduleType").offset().top
                 }, 1000);
-
                 v.selectedAsset = ref([]);
                 v.exist = ref([]);
-
-                v.schWeekDays = ref('');
-                v.schWeeks = ref('');
-                v.schDays = ref('');
-                v.schType = ref('')
-                v.onDays = ref('');
-
-                $('#scheduleType').addClass('hide');
-                $('#schType').val("").trigger("change");
-                $('#schWeekDays').val("").trigger("change");
-                $('#monthlyDays').val("").trigger("change");
-                $('#monthlyOn').val("").trigger("change");
-                $('#monthlyOnDays').val("").trigger("change");
-
-                $('#weekly').addClass('hide');
-                $('#monthly').addClass('hide');
-                $('#radioMonthly1').prop('checked', false);
-                $('#radioMonthly2').prop('checked', false);
             }
 
             function cancelSchType() {
@@ -547,24 +573,14 @@
                 }, 1000);
                 v.selectedAsset = ref([]);
                 v.exist = ref([]);
-
+                v.schType = ref('');
+                v.schFrequency = ref('');
                 v.schWeekDays = ref('');
-                v.schWeeks = ref('');
                 v.schDays = ref('');
-                v.schType = ref('')
+                v.schWeeks = ref('');
+                v.schFrom = ref('');
+                v.schTo = ref('');
                 v.onDays = ref('');
-
-                $('#scheduleType').addClass('hide');
-                $('#schType').val("").trigger("change");
-                $('#schWeekDays').val("").trigger("change");
-                $('#monthlyDays').val("").trigger("change");
-                $('#monthlyOn').val("").trigger("change");
-                $('#monthlyOnDays').val("").trigger("change");
-
-                $('#weekly').addClass('hide');
-                $('#monthly').addClass('hide');
-                $('#radioMonthly1').prop('checked', false);
-                $('#radioMonthly2').prop('checked', false);
             }
 
             onMounted(() => {
@@ -580,18 +596,24 @@
             })
 
             return {
+                dateTitle,
                 myModal,
                 strDate,
                 date,
                 table,
                 selectedAsset,
                 exist,
+                uuid,
+                newChecked,
 
                 schType,
+                schFrequency,
                 schWeekDays,
                 schDays,
                 schWeeks,
                 onDays,
+                schFrom,
+                schTo,
 
                 unique,
                 getAsset,
@@ -680,6 +702,10 @@
             year: 'numeric',
             weekday: 'short',
         },
+        viewDidMount: function(view, el) {
+            let dateTitle = calendar.currentData.viewTitle;
+            v.dateTitle = moment(dateTitle).format('Y-M');
+        },
         dateClick: function(info) {
             v.selectedAsset = ref([]);
             v.date = info.dateStr;
@@ -687,48 +713,13 @@
             let date = moment(info.date).format('LL');
             v.strDate = date;
 
-            // post date
-            axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
-                date: v.strDate,
-            }).then(res => {
-                v.selectedAsset = ref([]);
-                var dataExist = res.data;
-                // get unique from selectedId
-                const unique = (value, index, self) => {
-                    return self.indexOf(value) === index;
-                }
-                var isUniqueSelected = dataExist.filter(unique);
-                var arr = [];
-                $('input[name="assetId"]').prop('checked', false);
-                isUniqueSelected.forEach(item => {
-                    arr.push(item);
-                    v.selectedAsset.push(item);
-                    var idChecked = '#id' + item;
-                    $(idChecked).prop('checked', true);
-                });
-                v.exist = arr;
-
-                var allChecked = $('input:checkbox:checked').length;
-                var lengthRow = $('#tableAsset tbody tr').length;
-                if (allChecked == lengthRow) {
-                    $('#select-all').prop('checked', true);
-                } else {
-                    $('#select-all').prop('checked', false);
-                }
-            })
-
-            $('#cardTable').removeClass('hide');
-            $('html, body').animate({
-                scrollTop: $("#cardTable").offset().top
-            }, 1000);
-
+            $('#scheduleType').removeClass('hide');
             $('#strDate').removeClass('hide');
-            // $('#scheduleType').removeClass('hide');
-            // $('#cardTable').addClass('hide');
+            $('#cardTable').addClass('hide');
 
-            // $('html, body').animate({
-            //     scrollTop: $("#scheduleType").offset().top
-            // }, 1000);
+            $('html, body').animate({
+                scrollTop: $("#scheduleType").offset().top
+            }, 1000);
         },
     });
     calendar.render();
@@ -779,6 +770,7 @@
 
             $('#radioMonthly1').prop('checked', false);
             $('#radioMonthly2').prop('checked', false);
+            v.schFrequency = ref('');
             v.schWeekDays = ref('');
             v.schWeeks = ref('');
             v.schDays = ref('');
@@ -792,6 +784,7 @@
 
             $('#lengthSchedule').removeClass('hide');
 
+            v.schFrequency = ref('');
             v.schWeekDays = ref('');
             v.schType = val;
         }
