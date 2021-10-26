@@ -67,7 +67,7 @@ class Schedule extends BaseController
         echo json_encode($output);
     }
 
-    public function updateEvent()
+    public function updateSchedule()
     {
         $assetModel = new AssetModel();
         $scheduleTrxModel = new ScheduleTrxModel();
@@ -92,15 +92,6 @@ class Schedule extends BaseController
         $weekOfYear = $dateTime->format("W");
         $day = $dateTime->format("w");
 
-        // delete exist
-        if ($lengthDataDeselect > 0) {
-            for ($i = 0; $i < $lengthDataDeselect; $i++) {
-                $dt = $scheduleTrxModel->where([
-                    'assetId' => $dataDeselect[$i]
-                ])->delete();
-            }
-        }
-
         $schExist = [];
         for ($i = 0; $i < $lengthDataAssetId; $i++) {
             $sch = $scheduleTrxModel->select('assetId')->where(['schManual' => '1', 'assetId' => $dataAssetId[$i]])->get()->getResult();
@@ -110,6 +101,15 @@ class Schedule extends BaseController
             }
         }
         if (count($schExist) == 0) {
+            // delete exist
+            if ($lengthDataDeselect > 0) {
+                for ($i = 0; $i < $lengthDataDeselect; $i++) {
+                    $dt = $scheduleTrxModel->where([
+                        'assetId' => $dataDeselect[$i],
+                        'schManual' => '1'
+                    ])->delete();
+                }
+            }
             // insert schedule
             if ($schType == 'Daily') {
                 $lengthDeselect = count($dataDeselect);
@@ -208,6 +208,8 @@ class Schedule extends BaseController
                 $dt['schWeekDays'] = '-';
                 $dt['schWeeks'] = '-';
                 $dt['schDays'] = '-';
+                $dt['scheduleFrom'] = $val['scheduleFrom'];
+                $dt['scheduleTo'] = $val['scheduleTo'];
             } else if ($assetSchType == 'Weekly') {
                 $dt['backgroundColor'] = '#2eb85c';
                 $dt['borderColor'] = '#2eb85c';
@@ -216,6 +218,8 @@ class Schedule extends BaseController
                 $dt['schWeekDays'] = $val['schWeekDays'];
                 $dt['schWeeks'] = '-';
                 $dt['schDays'] = '-';
+                $dt['scheduleFrom'] = $val['scheduleFrom'];
+                $dt['scheduleTo'] = $val['scheduleTo'];
             } else {
                 $dt['backgroundColor'] = '#f9b115';
                 $dt['borderColor'] = '#f9b115';
@@ -224,6 +228,8 @@ class Schedule extends BaseController
                 $dt['schWeekDays'] = $val['schWeekDays'] == NULL ? '-' : $val['schWeekDays'];
                 $dt['schWeeks'] = $val['schWeeks'] == NULL ? '-' : $val['schWeeks'];
                 $dt['schDays'] = $val['schDays'] == NULL ? '-' : $val['schDays'];
+                $dt['scheduleFrom'] = $val['scheduleFrom'];
+                $dt['scheduleTo'] = $val['scheduleTo'];
             }
             array_push($arr, $dt);
         }

@@ -2,18 +2,13 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
-<style>
-    .popoverEvent {
-        min-width: 300px !important;
-    }
-</style>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
 <div id="app">
     <div class="row">
         <div class="col-12">
-            <div class="card card-main mb-0" id="cardSchedule">
+            <div class="card card-main mb-2" id="cardSchedule">
                 <div class="card-body">
                     <div class="d-flex justify-content-between pb-4">
                         <h4 class="mb-0"><?= $title ?></h4>
@@ -24,7 +19,7 @@
             <div class="d-flex justify-content-center align-items-center hide" id="strDate">
                 <h4 class="p-3 m-2">{{ strDate }}</h4>
             </div>
-            <div class="card card-main hide" id="cardTable">
+            <div class="card card-main hide mt-2" id="cardTable">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -83,6 +78,9 @@
                                         <option value="Weekly">Weekly</option>
                                         <option value="Monthly">Monthly</option>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Field cannot be empty.
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -105,6 +103,9 @@
                                                 <option value="Fr">Friday</option>
                                                 <option value="Sa">Saturday</option>
                                             </select>
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -288,6 +289,16 @@
 
                                         var isUniqueSelected = v.selectedAsset.filter(v.unique);
                                         v.selectedAsset = isUniqueSelected;
+
+                                        // set #select-all checked
+                                        var allChecked = $('input:checkbox:checked').length;
+                                        var lengthRow = $('#tableAsset tbody tr').length;
+                                        if (allChecked == lengthRow) {
+                                            $('#select-all').prop('checked', true);
+                                        } else {
+                                            $('#select-all').prop('checked', false);
+                                        }
+
                                     } else {
                                         let lengthSelected = v.selectedAsset.length;
                                         for (let i = 0; i < lengthSelected; i++) {
@@ -384,10 +395,63 @@
             };
 
             function submitSchType() {
-                if (v.schType != "") {
+                if (v.schType != "" && v.schType != null) {
+                    $('#schType').removeClass('is-invalid');
+                    if (v.schWeekDays != '') {
+                        $('#schWeekDays').removeClass('is-invalid');
+                    }
+                    if (v.schDays != '') {
+                        $('#monthlyDays').removeClass('is-invalid');
+                    }
+                    if (v.schWeeks != '') {
+                        $('#monthlyOn').removeClass('is-invalid');
+                    }
+                    if (v.schWeekDays != '') {
+                        $('#monthlyOnDays').removeClass('is-invalid');
+                    }
+
+                    if (v.schType == 'Daily') {
+                        if (v.schWeekDays != '') {
+                            $('#schWeekDays').removeClass('is-invalid');
+                            $('#monthlyDays').removeClass('is-invalid');
+                            $('#monthlyOn').removeClass('is-invalid');
+                            $('#monthlyOnDays').removeClass('is-invalid');
+                            return;
+                        }
+                    } else if (v.schType == 'Weekly') {
+                        if (v.schWeekDays == '') {
+                            $('#schWeekDays').addClass('is-invalid');
+                            return;
+                        }
+                    } else if (v.schType == 'Monthly') {
+                        if (v.onDays == '') {
+                            $('#radioMonthly1').addClass('is-invalid');
+                            $('#radioMonthly2').addClass('is-invalid');
+                            return;
+                        } else {
+                            $('#radioMonthly1').removeClass('is-invalid');
+                            $('#radioMonthly2').removeClass('is-invalid');
+                            if (v.onDays == 'days') {
+                                if (v.schDays == '') {
+                                    $('#monthlyDays').addClass('is-invalid');
+                                    return;
+                                }
+                            } else if (v.onDays = 'on') {
+                                if (v.schWeeks == '' || v.schWeekDays == '') {
+                                    if (v.schWeeks == '') {
+                                        $('#monthlyOn').addClass('is-invalid');
+                                    }
+                                    if (v.schWeekDays == '') {
+                                        $('#monthlyOnDays').addClass('is-invalid');
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     var deselect = _.difference(v.exist, v.selectedAsset);
                     var selected = _.difference(v.selectedAsset, v.exist);
-                    axios.post("<?= base_url("Schedule/updateEvent") ?>", {
+                    axios.post("<?= base_url("Schedule/updateSchedule") ?>", {
                         assetId: selected,
                         deselect: deselect,
                         date: v.strDate,
@@ -398,10 +462,10 @@
                     }).then(res => {
                         if (res.data.status == 'failed') {
                             swal.fire({
-                                title: 'Failed',
                                 icon: 'error',
-                                text: res.data.message
+                                title: res.data.message
                             })
+                            calendar.refetchEvents();
                             v.schWeekDays = ref('');
                             v.schWeeks = ref('');
                             v.schDays = ref('');
@@ -452,6 +516,8 @@
 
                         }
                     })
+                } else {
+                    $('#schType').addClass('is-invalid');
                 }
             }
 
@@ -461,7 +527,7 @@
                 var lengthDeselect = deselect.length;
                 var lengthSelected = selected.length;
                 if (lengthDeselect > 0 && lengthSelected < 1) {
-                    axios.post("<?= base_url("Schedule/updateEvent") ?>", {
+                    axios.post("<?= base_url("Schedule/updateSchedule") ?>", {
                         assetId: selected,
                         deselect: deselect,
                         date: v.strDate,
@@ -501,6 +567,11 @@
                             $('#radioMonthly2').prop('checked', false);
                         })
                     })
+                } else if (lengthDeselect < 1 && lengthSelected < 1) {
+                    swal.fire({
+                        title: 'No data changed',
+                        icon: 'error'
+                    })
                 } else {
                     $('#scheduleType').removeClass('hide');
                     $('html, body').animate({
@@ -512,6 +583,7 @@
 
             function cancelAsset() {
                 $('#cardTable').addClass('hide');
+                $('#strDate').addClass('hide');
                 $('html, body').animate({
                     scrollTop: $("#scheduleType").offset().top
                 }, 1000);
@@ -539,14 +611,9 @@
             }
 
             function cancelSchType() {
-                $('#cardTable').addClass('hide');
-                $('#scheduleType').addClass('hide');
-                $('#strDate').addClass('hide');
                 $('html, body').animate({
-                    scrollTop: $("#cardSchedule").offset().top
+                    scrollTop: $("#cardTable").offset().top
                 }, 1000);
-                v.selectedAsset = ref([]);
-                v.exist = ref([]);
 
                 v.schWeekDays = ref('');
                 v.schWeeks = ref('');
@@ -620,8 +687,11 @@
             end: 'title',
         },
         weekNumbers: true,
-        dayMaxEventRows: true,
-        views: 'dayGridMonth',
+        views: {
+            dayGridMonth: {
+                dayMaxEventRows: 5,
+            },
+        },
         eventOrder: 'groupId',
         eventSources: [{
             url: "<?= base_url('Schedule/schJson') ?>",
@@ -642,26 +712,31 @@
             let el = args.el;
             $(args.el).attr('data-html', 'true');
             var popover = new coreui.Popover(el, {
-                // customClass: 'popoverEvent',
                 content: `
-                    <div>
-                        <div class="row">
-                            <div class="col-6">Type</div>
-                            <div class="col-6"> ` + ": " + args.event.extendedProps.schType + `</div>
+                        <div class="mb-2">
+                            <div>Schedule Type :</div>
+                            <div> ` + args.event.extendedProps.schType + `</div>
                         </div>
-                        <div class="row">
-                            <div class="col-6">Schedule Week Days</div>
-                            <div class="col-6"> ` + ": " + args.event.extendedProps.schWeekDays + `</div>
+                        <div class="mb-2">
+                            <div>Week Days :</div>
+                            <div> ` + args.event.extendedProps.schWeekDays + `</div>
                         </div>
-                        <div class="row">
-                            <div class="col-6">Schedule Weeks</div>
-                            <div class="col-6"> ` + ": " + args.event.extendedProps.schWeeks + `</div>
+                        <div class="mb-2">
+                            <div>Weeks :</div>
+                            <div> ` + args.event.extendedProps.schWeeks + `</div>
                         </div>
-                        <div class="row">
-                            <div class="col-6">Schedule Days</div>
-                            <div class="col-6"> ` + ": " + args.event.extendedProps.schDays + `</div>
+                        <div class="mb-2">
+                            <div>Days :</div>
+                            <div> ` + args.event.extendedProps.schDays + `</div>
                         </div>
-                    </div>
+                        <div class="mb-2">
+                            <div>Schedule From :</div>
+                            <div> ` + args.event.extendedProps.scheduleFrom + `</div>
+                        </div>
+                        <div class="mb-2">
+                            <div>Schedule To :</div>
+                            <div> ` + args.event.extendedProps.scheduleTo + `</div>
+                        </div>
                 `,
                 placement: 'top',
                 title: (moment(args.event.start).format("HH:mm:ss") == "00:00:00" ? '24:00:00' : moment(args.event.start).format("HH:mm:ss")) + " " + args.event.title,
@@ -683,16 +758,39 @@
         dateClick: function(info) {
             v.selectedAsset = ref([]);
             v.date = info.dateStr;
+            v.strDate = moment(info.date).format('LL');
 
-            let date = moment(info.date).format('LL');
-            v.strDate = date;
+            $('#cardTable').removeClass('hide');
+            $('html, body').animate({
+                scrollTop: $("#cardTable").offset().top
+            }, 1000);
+
+            $('#strDate').removeClass('hide');
+
+            v.schWeekDays = ref('');
+            v.schWeeks = ref('');
+            v.schDays = ref('');
+            v.schType = ref('');
+            v.onDays = ref('');
+
+            $('#scheduleType').addClass('hide');
+            $('#schType').val("").trigger("change");
+            $('#schWeekDays').val("").trigger("change");
+            $('#monthlyDays').val("").trigger("change");
+            $('#monthlyOn').val("").trigger("change");
+            $('#monthlyOnDays').val("").trigger("change");
+
+            $('#weekly').addClass('hide');
+            $('#monthly').addClass('hide');
+            $('#radioMonthly1').prop('checked', false);
+            $('#radioMonthly2').prop('checked', false);
 
             // post date
             axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
                 date: v.strDate,
             }).then(res => {
-                v.selectedAsset = ref([]);
                 var dataExist = res.data;
+
                 // get unique from selectedId
                 const unique = (value, index, self) => {
                     return self.indexOf(value) === index;
@@ -716,19 +814,6 @@
                     $('#select-all').prop('checked', false);
                 }
             })
-
-            $('#cardTable').removeClass('hide');
-            $('html, body').animate({
-                scrollTop: $("#cardTable").offset().top
-            }, 1000);
-
-            $('#strDate').removeClass('hide');
-            // $('#scheduleType').removeClass('hide');
-            // $('#cardTable').addClass('hide');
-
-            // $('html, body').animate({
-            //     scrollTop: $("#scheduleType").offset().top
-            // }, 1000);
         },
     });
     calendar.render();
@@ -760,10 +845,9 @@
             $('#days').hide();
             $('#on').hide();
 
-            $('#lengthSchedule').addClass('hide');
-
             $('#radioMonthly1').prop('checked', false);
             $('#radioMonthly2').prop('checked', false);
+
             v.schWeekDays = ref('');
             v.schDays = ref('');
             v.schWeeks = ref('');
@@ -775,10 +859,9 @@
             $('#days').hide();
             $('#on').hide();
 
-            $('#lengthSchedule').removeClass('hide');
-
             $('#radioMonthly1').prop('checked', false);
             $('#radioMonthly2').prop('checked', false);
+
             v.schWeekDays = ref('');
             v.schWeeks = ref('');
             v.schDays = ref('');
@@ -789,8 +872,6 @@
             $('#weekly').addClass('hide');
             $('#days').hide();
             $('#on').hide();
-
-            $('#lengthSchedule').removeClass('hide');
 
             v.schWeekDays = ref('');
             v.schType = val;
@@ -866,6 +947,7 @@
         }
     })
 
+    // coreui popover
     document.querySelectorAll('[data-toggle="popover"]').forEach(function(element) {
         new coreui.Popover(element);
     })
