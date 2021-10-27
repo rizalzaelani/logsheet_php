@@ -10,6 +10,8 @@ $assetTagId = (array_values(array_unique(explode(",", $assetData['tagId']))));
 $assetLocationId = (array_values(array_unique(explode(",", $assetData['tagLocationId']))));
 $assetStatus = array($assetData['assetStatusId']);
 $assetTaggingType = array('rfid', 'coordinat', 'uhf');
+$schFreq = array('1', '2', '3', '4', '6', '8', '12', '24');
+$schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => 'Wednesday', 'Th' => 'Thursday', 'Fr' => 'Friday', 'Sa' => 'Saturday');
 ?>
 <div class="row" id="app">
     <div class="col-12">
@@ -549,15 +551,19 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             <div class="row">
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
                                     <svg class="c-icon">
                                         <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-location-pin"></use>
                                     </svg>
-                                    <p class="m-0"> Asset Tag Location</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Asset Tag Location
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
@@ -568,21 +574,28 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                         <option class="optionLocation" value="<?= $val->tagLocationId; ?>" <?= in_array($val->tagLocationId, $assetLocationId) ? 'selected' : ''; ?>><?= $val->tagLocationName; ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Field cannot be empty.
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
                                     <svg class="c-icon mr-1">
                                         <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-tags"></use>
                                     </svg>
-                                    <p class="m-0"> Asset Tag</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Asset Tag
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
@@ -595,6 +608,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                         <option value="<?= $val->tagId; ?>" <?= in_array($val->tagId, $assetTagId) ? 'selected' : ''; ?>><?= $val->tagName; ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Field cannot be empty.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -606,16 +622,20 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
         <div id="cardScheduleOpt" style="display: none;">
             <div class="row">
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
+                    <div class="card card-main h-100" id="cardSchedule">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
                                     <svg class="c-icon mr-1">
                                         <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-calendar"></use>
                                     </svg>
-                                    <p class="m-0"> Schedule</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Schedule
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div>
@@ -640,7 +660,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     </div>
                                     <div class="col-sm-9">
                                         <select class="form-control" name="schType" id="schType">
-                                            <option value="" selected disabled>Select Frequency</option>
+                                            <option value="" selected disabled>Select Schedule Type</option>
                                             <option value="Daily">Daily</option>
                                             <option value="Weekly">Weekly</option>
                                             <option value="Monthly">Monthly</option>
@@ -653,14 +673,15 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 <div class="mt-3" id="daily" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="input-group mb-2">
-                                                <input type="text" class="form-control" id="schFrequency" v-model="assetData.schFrequency" placeholder="1">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">/ Day</div>
-                                                </div>
-                                                <div class="invalid-feedback">
-                                                    Please choose a factor of 24.
-                                                </div>
+                                            <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-center" data-toggle="buttons">
+                                                <?php foreach ($schFreq as $val) : ?>
+                                                    <label class="btn btn-sm btn-outline-primary">
+                                                        <input type="radio" name="schFreq" data-content="<?= $val ?>" id="schFreq<?= $val ?>" autocomplete="off"><?= $val ?>
+                                                    </label>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                Please choose a factor of 24.
                                             </div>
                                         </div>
                                     </div>
@@ -668,21 +689,16 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 <div class="mt-2" id="weekly" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="input-group mb-2">
-                                                <div class="w-100">
-                                                    <select name="schWeekDays" id="schWeekDays" multiple>
-                                                        <option value="Su">Sunday</option>
-                                                        <option value="Mo">Monday</option>
-                                                        <option value="Tu">Tuesday</option>
-                                                        <option value="We">Wednesday</option>
-                                                        <option value="Th">Thursday</option>
-                                                        <option value="Fr">Friday</option>
-                                                        <option value="Sa">Saturday</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        Field cannot be empty.
-                                                    </div>
-                                                </div>
+                                            <div class="btn-group-toggle d-flex justify-content-between align-items-center">
+                                                <?php foreach ($schDay as $key => $val) : ?>
+                                                    <label class="btn btn-sm btn-outline-primary" for="schWeekly<?= $key ?>">
+                                                        <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
+                                                        <?= $val ?>
+                                                    </label>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
                                             </div>
                                         </div>
                                     </div>
@@ -759,28 +775,31 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     </div>
                 </div>
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
+                    <div class="card card-main h-100" id="cardOperation">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
                                     <svg class="c-icon mr-1">
                                         <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
                                     </svg>
-                                    <p class="m-0"> Change Operation Mode</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Change Operation Mode
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
-                            <div class="col-sm-3">
-                                <label for="operation">Operation<span class="required">*</span></label>
-                            </div>
-                            <div class="col-sm-9">
-                                <select name="operation" id="operation">
+                            <div class="col-12">
+                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;">
                                     <?php foreach ($statusData as $key) : ?>
-                                        <option value="<?= $key->assetStatusId; ?>" <?= in_array($key->assetStatusId, $assetStatus) ? 'selected' : ''; ?>><?= $key->assetStatusName ?></option>
+                                        <label class="btn btn-sm btn-outline-primary mr-1 mb-1">
+                                            <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
+                                        </label>
                                     <?php endforeach; ?>
-                                </select>
+                                </div>
                                 <div class="invalid-feedback">
                                     Field cannot be empty.
                                 </div>
@@ -795,97 +814,144 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
         <div id="cardAssetTagging" style="display: none;">
             <div class="row">
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="p-0 m-0">
-                                <b>Asset Tagging</b>
-                            </h5>
+                    <div class="card card-main h-100" id="cardTagging">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon mr-1">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/solid.svg#cis-qr-code"></use>
+                                    </svg>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Asset Tagging
+                                </h5>
+                            </div>
                         </div>
                         <hr>
-                        <form enctype="multipart/form-data" method="post">
-                        <div class="form-group row d-flex align-items-center">
-                                <div class="col-3">
-                                    <label for="asset">Type<span class="required">*</span></label>
+                        <div>
+                            <ul class="nav nav-tabs w-100 d-flex align-items-center" role="tablist">
+                                <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tabRfid" role="tab" aria-controls="tabRfid" id="rfid_tab" @click="rfid()">
+                                        <svg class="c-icon">
+                                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/solid.svg#cis-qr-code"></use>
+                                        </svg> rfid </a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tabCoordinate" role="tab" aria-controls="tabCoordinate" id="coordinate_tab" @click="coordinate()">
+                                        <svg class="c-icon">
+                                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-map"></use>
+                                        </svg> coordinate </a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tabUhf" role="tab" aria-controls="tabUhf" id="uhf_tab" @click="uhf()">
+                                        <svg class="c-icon">
+                                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-waves"></use>
+                                        </svg> uhf </a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tabRfid" role="tabpanel">
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <div class="form-group row d-flex align-items-center">
+                                                <div class="col-3">
+                                                    <label for="asset">Value<span class="required">*</span></label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input type="text" class="form-control" id="valRfid" name="valRfid" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-9">
-                                    <select name="tagging" id="taggingType">
-                                        <option value="" selected disabled>Select Tagging Type</option>
-                                        <?php foreach ($assetTaggingType as $key) : ?>
-                                            <option value="<?= $key; ?>"><?= $key; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Field cannot be empty.
+                                <div class="tab-pane" id="tabCoordinate" role="tabpanel">
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <div class="form-group row d-flex align-items-center">
+                                                <div class="col-3">
+                                                    <label for="asset">Value<span class="required">*</span></label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input type="text" class="form-control" id="valCoordinate" name="valCoordinate" placeholder="Latitude, Longitude" v-model="valCoordinate" required>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-1" id="mapTagging" style="min-width: 100% !important; height: 200px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tabUhf" role="tabpanel">
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <div class="form-group row d-flex align-items-center">
+                                                <div class="col-3">
+                                                    <label for="asset">Value<span class="required">*</span></label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input type="text" class="form-control" id="valUhf" name="valUhf" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row d-flex align-items-center">
-                                <div class="col-3">
-                                    <label for="asset">Value<span class="required">*</span></label>
-                                </div>
-                                <div class="col-9">
-                                    <input type="text" class="form-control" id="tagging" name="tagging" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
-                                    <div class="invalid-feedback">
-                                        Field cannot be empty.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm-3">
-                                    <label for="asset">Description<span class="required">*</span></label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" id="descTagging" placeholder="Description" v-model="assetTagging.description" name="tagging" rows="8"></textarea>
-                                    <div class="invalid-feedback">
-                                        Field cannot be empty.
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
-                        <h5><b>Other Config</b></h5>
+                    <div class="card card-main h-100" id="cardOther">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon mr-1">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-settings-alt"></use>
+                                    </svg>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Other Config
+                                </h5>
+                            </div>
+                        </div>
                         <hr>
                         <table>
                             <tr class="mt-1">
                                 <td width="40%">Show Last Value</td>
                                 <td>:</td>
-                                <td>
-                                    <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                        <input type="checkbox" class="c-switch-input" checked>
-                                        <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                    </label>
+                                <td class="d-flex justify-content-start align-items-start">
+                                    <div class="mr-2">
+                                        <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                            <input type="checkbox" class="c-switch-input" disabled>
+                                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <svg class="c-icon mr-1">
+                                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/duotone.svg#cid-lock-locked"></use>
+                                        </svg>
+                                    </div>
                                 </td>
                             </tr>
                             <tr class="mt-1">
-                                <td>Coordinate</td>
+                                <td width="40%">Bypass tagging rfid</td>
                                 <td>:</td>
-                                <td>
-                                    <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
-                                        <input type="checkbox" class="c-switch-input latlong" id="latlong">
-                                        <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="mt-1" id="assetLat" style="display: none;">
-                                <td>Latitude</td>
-                                <td>:</td>
-                                <td>
-                                    <input type="text" class="form-control" placeholder="Latitude value" v-model="assetData.latitude">
-                                </td>
-                            </tr>
-                            <tr class="mt-1" id="assetLong" style="display: none;">
-                                <td>Longitude</td>
-                                <td>:</td>
-                                <td>
-                                    <input type="text" class="form-control" placeholder="Longitude value" v-model="assetData.longitude">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" id="divMap" style="display: none;">
-                                    <div class="mt-1" id="map" style="min-width: 100% !important; height: 200px;"></div>
+                                <td class="d-flex justify-content-start align-items-start">
+                                    <div class="mr-2">
+                                        <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                            <input type="checkbox" class="c-switch-input" disabled>
+                                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <svg class="c-icon mr-1">
+                                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/duotone.svg#cid-lock-locked"></use>
+                                        </svg>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -1003,7 +1069,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                     ?>
                                 </td>
                                 <td class="text-center"><?= $key['showOn']; ?></td>
-                                <td class="text-center"><?= $key['updatedAt'] != $key['createdAt'] ? '<span class="badge badge-warning text-white">Updated</span>' : '<span class="badge badge-primary text-white">Added</span>'?></td>
+                                <td class="text-center"><?= $key['updatedAt'] != $key['createdAt'] ? '<span class="badge badge-warning text-white">Updated</span>' : '<span class="badge badge-primary text-white">Added</span>' ?></td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-outline-success mr-1" @click="editParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-edit"></i></button>
                                     <button class="btn btn-sm btn-outline-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
@@ -1038,6 +1104,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 var checked = ref('');
                 var file = ref('');
                 var setSch = ref('');
+                var schFreq = ref([]);
+                var selectedSchWeekly = ref([]);
                 var onDays = ref('');
                 var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging[0]) . ")" : "reactive({
                     assetTaggingId: uuidv4(),
@@ -1045,6 +1113,9 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     assetTaggingtype: '',
                     description: '',
                 })" ?>;
+                var valRfid = ref('');
+                var valCoordinate = ref('');
+                var valUhf = ref('');
                 var addTagName = ref('');
                 var addTagDesc = ref('');
                 var addLocationName = ref('');
@@ -1436,7 +1507,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 // console.log(v.params[i].sortId);
                                 if (v.params[i].sortId > v.params[index].sortId) {
                                     v.params[i].sortId = v.params[i].sortId - 1;
-                                }else{
+                                } else {
                                     v.params[i].sortId = v.params[i].sortId;
                                 }
                             }
@@ -1449,16 +1520,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
 
                 function btnSaveSetting() {
                     this.submited = ref(true);
-                    let factorFrom = 24;
-                    let schFreq = [];
-                    for (let index = 1; index <= factorFrom; index++) {
-                        if (factorFrom % index == 0) {
-                            schFreq.push(index)
-                        }
-                    }
-                    let isFactorOf = schFreq.includes(parseInt(this.assetData.schFrequency));
 
-                    if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || this.assetTagging.description == '' || $('#tableParameter tbody tr').length < 1) {
+                    if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
                                 confirmButton: 'btn btn-danger',
@@ -1480,8 +1543,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
                             $('#schType').removeClass('is-invalid');
                         }
-                        if (this.assetData.schWeekDays != '' && $('#schWeekDays').hasClass('is-invalid')) {
-                            $('#schWeekDays').removeClass('is-invalid');
+                        if (this.assetData.schWeekDays != '' && $('#schWeekly').hasClass('is-invalid')) {
+                            $('#schWeekly').removeClass('is-invalid');
                         }
                         if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
                             $('#monthlyDays').removeClass('is-invalid');
@@ -1492,21 +1555,30 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.assetData.schWeeks != '' && $('#monthlyOn').hasClass('is-invalid')) {
                             $('#monthlyOn').removeClass('is-invalid');
                         }
-                        if (isFactorOf != false && $('#schFrequency').hasClass('is-invalid')) {
-                            $('#schFrequency').removeClass('is-invalid');
+                        if (this.assetData.tagId != "" && $('#tag').hasClass('is-invalid')) {
+                            $('#tag').removeClass('is-invalid')
+                        }
+                        if (this.assetData.tagLocationId != "" && $('#location').hasClass('is-invalid')) {
+                            $('#location').removeClass('is-invalid')
                         }
                         if (this.statusName != '' && $('#operation').hasClass('is-invalid')) {
                             $('#operation').removeClass('is-invalid')
                         }
-                        if (this.assetTagging.assetTaggingValue != '' && $('#tagging').hasClass('is-invalid')) {
-                            $('#tagging').removeClass('is-invalid');
+
+                        //tagging
+                        if (this.assetTagging.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'rfid') {
+                            $('#valRfid').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'coordinat') {
+                            $('#valCoordinate').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
+                            $('#valUhf').removeClass('is-invalid');
                         }
                         if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
                             $('#taggingType').removeClass('is-invalid');
                         }
-                        if (this.assetTagging.description != '' && $('#descTagging').hasClass('is-invalid')) {
-                            $('#descTagging').removeClass('is-invalid');
-                        }
+
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
                         }
@@ -1517,15 +1589,19 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.assetData.assetNumber == '') {
                             $('#assetNumber').addClass('is-invalid');
                         }
+                        if (this.assetData.tagId == "") {
+                            $('#tag').addClass('is-invalid')
+                        }
+                        if (this.assetData.tagLocationId == "") {
+                            $('#location').addClass('is-invalid')
+                        }
                         if (this.assetData.schType == '') {
                             $('#schType').addClass('is-invalid');
                         } else if (this.assetData.schType == "Daily") {
-                            if (isFactorOf == false) {
-                                $('#schFrequency').addClass('is-invalid');
-                            }
+                            console.log("ok");
                         } else if (this.assetData.schType == 'Weekly') {
                             if (this.assetData.schWeekDays == '') {
-                                $('#schWeekDays').addClass('is-invalid');
+                                $('#schWeekly').addClass('is-invalid');
                             }
                         } else if (this.assetData.schType == 'Monthly') {
                             if (v.onDays == 'days') {
@@ -1550,27 +1626,25 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.statusName == '') {
                             $('#operation').addClass('is-invalid')
                         }
-                        if (this.assetTagging.assetTaggingValue == '') {
-                            $('#tagging').addClass('is-invalid');
+
+                        // tagging
+                        if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'rfid') {
+                            $('#valRfid').addClass('is-invalid');
                         }
+                        if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'coordinat') {
+                            $('#valCoordinate').addClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'uhf') {
+                            $('#valUhf').addClass('is-invalid');
+                        }
+
                         if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
                             $('#taggingType').addClass('is-invalid');
-                        }
-                        if (this.assetTagging.description == '') {
-                            $('#descTagging').addClass('is-invalid');
                         }
                         if ($('#tableParameter tbody tr').length < 1) {
                             $('#cardParameter').addClass('card-border');
                         }
                     } else {
-                        const factorFrom = 24;
-                        const schFreq = [];
-                        for (let index = 1; index <= factorFrom; index++) {
-                            if (factorFrom % index == 0) {
-                                schFreq.push(index)
-                            }
-                        }
-                        let isFactorOf = schFreq.includes(parseInt(this.assetData.schFrequency));
                         if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
                             $('#assetName').removeClass('is-invalid');
                         }
@@ -1580,14 +1654,26 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.statusName != '' && $('#operation').hasClass('is-invalid')) {
                             $('#operation').removeClass('is-invalid')
                         }
-                        if (this.assetTagging.assetTaggingValue != '' && $('#tagging').hasClass('is-invalid')) {
-                            $('#tagging').removeClass('is-invalid');
+                        if (this.assetData.tagId != "" && $('#tag').hasClass('is-invalid')) {
+                            $('#tag').removeClass('is-invalid')
                         }
+                        if (this.assetData.tagLocationId != "" && $('#location').hasClass('is-invalid')) {
+                            $('#location').removeClass('is-invalid')
+                        }
+
+                        // tagging
+                        if (this.assetTagging.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid')) {
+                            $('#valRfid').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid')) {
+                            $('#valCoordinate').removeClass('is-invalid');
+                        }
+                        if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid')) {
+                            $('#valUhf').removeClass('is-invalid');
+                        }
+
                         if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
                             $('#taggingType').removeClass('is-invalid');
-                        }
-                        if (this.assetTagging.description != '' && $('#descTagging').hasClass('is-invalid')) {
-                            $('#descTagging').removeClass('is-invalid');
                         }
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
@@ -1595,17 +1681,14 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
                             $('#schType').removeClass('is-invalid');
                         }
-                        if (this.assetData.schWeekDays != '' && $('#schWeekDays').hasClass('is-invalid')) {
-                            $('#schWeekDays').removeClass('is-invalid');
+                        if (this.assetData.schWeekDays != '' && $('#schWeekly').hasClass('is-invalid')) {
+                            $('#schWeekly').removeClass('is-invalid');
                         }
                         if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
                             $('#monthlyDays').removeClass('is-invalid');
                         }
                         if (this.assetData.schWeekDays != '' && $('#monthlyOnDays').hasClass('is-invalid')) {
                             $('#monthlyOnDays').removeClass('is-invalid');
-                        }
-                        if (isFactorOf != false && $('#schFrequency').hasClass('is-invalid')) {
-                            $('#schFrequency').removeClass('is-invalid');
                         }
                         if (this.setSch == 'Manual') {
                             this.assetData.schType = '';
@@ -1629,7 +1712,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 })
                                 return;
                             } else if (this.assetData.schType == 'Daily') {
-                                if (isFactorOf == false) {
+                                if (v.assetData.schFrequency == "" && v.assetData.schFrequency == null) {
                                     $('#schFrequency').addClass('is-invalid');
                                     const swalWithBootstrapButtons = swal.mixin({
                                         customClass: {
@@ -1646,7 +1729,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                                 }
                             } else if (this.assetData.schType == 'Weekly') {
                                 if (this.assetData.schWeekDays == '') {
-                                    $('#schWeekDays').addClass('is-invalid');
+                                    $('#schWeekly').addClass('is-invalid');
                                     const swalWithBootstrapButtons = swal.mixin({
                                         customClass: {
                                             confirmButton: 'btn btn-danger',
@@ -1719,7 +1802,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         formdata.append('schDays', this.assetData.schDays);
 
                         if (moreDetailAsset) {
-                            formdata.append('assetDesc',  JSON.stringify(descJson));
+                            formdata.append('assetDesc', JSON.stringify(descJson));
                         } else {
                             formdata.append('assetDesc', this.assetData.description);
                         }
@@ -1732,7 +1815,13 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         formdata.append('assetStatusName', this.assetData.assetStatusName);
                         // tagging
                         formdata.append('assetTaggingId', this.assetTagging.assetTaggingId);
-                        formdata.append('assetTaggingValue', this.assetTagging.assetTaggingValue);
+                        if (v.assetTagging.assetTaggingtype == 'rfid') {
+                            formdata.append('assetTaggingValue', v.assetTagging.assetTaggingValue);
+                        } else if (v.assetTagging.assetTaggingtype == 'coordinat') {
+                            formdata.append('assetTaggingValue', v.assetTagging.assetTaggingValue);
+                        } else {
+                            formdata.append('assetTaggingValue', v.assetTagging.assetTaggingValue);
+                        }
                         formdata.append('assetTaggingType', this.assetTagging.assetTaggingtype);
                         formdata.append('assetTaggingDescription', this.assetTagging.description);
                         // parameter
@@ -1883,8 +1972,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                         if (res.data.data != '') {
                             let dt = res.data.data[0];
                             this.param.parameterId = $parameterId,
-                            this.param.sortId = dt.sortId,
-                            this.param.parameterName = dt.parameterName;
+                                this.param.sortId = dt.sortId,
+                                this.param.parameterName = dt.parameterName;
                             this.param.photo = dt.photo;
                             this.param.description = dt.description;
                             this.param.uom = dt.uom;
@@ -2077,7 +2166,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
+                        this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.description = '';
                     this.param.uom = '';
@@ -2166,6 +2255,27 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     }
                 }
 
+                function coordinate() {
+                    v.assetTagging.assetTaggingValue = ref('')
+                    v.assetTagging.assetTaggingtype = 'coordinat';
+                    v.valRfid = ref('');
+                    v.valUhf = ref('');
+                }
+
+                function rfid() {
+                    v.assetTagging.assetTaggingValue = ref('');
+                    v.assetTagging.assetTaggingtype = 'rfid';
+                    v.valCoordinate = ref('');
+                    v.valUhf = ref('');
+                }
+
+                function uhf() {
+                    v.assetTagging.assetTaggingValue = ref('');
+                    v.assetTagging.assetTaggingtype = 'uhf';
+                    v.valRfid = ref('');
+                    v.valCoordinate = ref('');
+                }
+
                 onMounted(() => {
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
@@ -2186,7 +2296,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     let dataTaggingId = assetTagging.assetTaggingId;
                     let dataTaggingValue = assetTagging.assetTaggingValue;
                     let dataTaggingType = assetTagging.assetTaggingtype;
-                    let dataTaggingDesc = assetTagging.description;
                     let dataChecked = checked;
                     let dataFile = file;
                     let dataSetSch = setSch;
@@ -2200,10 +2309,10 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     let dataTempPhoto = tempPhoto;
                     let dataParams = params.value.length;
 
-                    if(moreDetailAsset.value) document.querySelector("input[name=moreDetailAssetInput]").checked = true;
+                    if (moreDetailAsset.value) document.querySelector("input[name=moreDetailAssetInput]").checked = true;
 
                     window.addEventListener('beforeunload', function(e) {
-                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName || dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype || dataTaggingDesc != v.assetTagging.description) {
+                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName || dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype) {
                             console.log(dataSchWeekDays)
                             console.log(v.schWeekDays)
                             if (v.submited == true) {
@@ -2224,9 +2333,17 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                     myModal,
                     checked,
                     assetData,
-                    checked, 
+                    valRfid,
+                    valCoordinate,
+                    valUhf,
+                    rfid,
+                    coordinate,
+                    uhf,
+                    checked,
                     file,
                     setSch,
+                    schFreq,
+                    selectedSchWeekly,
                     onDays,
                     assetTagging,
 
@@ -2296,13 +2413,14 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             });
         })
 
-        $(document).ready(function(){
+        $(document).ready(function() {
             let lengthTableParam = $('#tableParameter tbody tr').length;
             v.param.sortId = lengthTableParam + 1;
         })
+
         // Get value selected location, tag, operation mode
         $(document).ready(function() {
-            $('#operation').val(v.assetData.assetStatusId).trigger("change");
+            // $('#operation').val(v.assetData.assetStatusId).trigger("change");
             let selectedTag = $('#tag').val();
             v.assetData.tagId = selectedTag;
 
@@ -2311,16 +2429,60 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
 
             let selectedOperation = $('#operation').val();
             let text = $('#operation :selected').text();
-            v.assetData.assetStatusId = selectedOperation;
-            v.assetData.assetStatusName = text;
+            // v.assetData.assetStatusId = selectedOperation;
+            // v.assetData.assetStatusName = text;
+
+            if (v.assetData.assetStatusId != '') {
+                let id = '#' + (v.assetData.assetStatusId);
+                $(id).parent().addClass('active');
+            }
+
+            if (v.assetData.schFrequency != '' && v.assetData.schFrequency != 0) {
+                let id = '#schFreq' + (v.assetData.schFrequency);
+                $(id).parent().addClass('active');
+            }
+
+            if (v.assetData.schType == 'Weekly' && v.assetData.schWeekDays != '' && v.assetData.schWeekDays != null) {
+                let schWeekDays = v.assetData.schWeekDays.split(',');
+                for (let i = 0; i < schWeekDays.length; i++) {
+                    let id = '#schWeekly' + (schWeekDays[i]);
+                    $(id).parent().addClass('active');
+                    $(id).prop('checked', true);
+                }
+            }
         })
 
         $(document).ready(function() {
             if (v.assetTagging.assetTaggingtype != '') {
-                $('#taggingType').val(v.assetTagging.assetTaggingtype).trigger("change");
+                if (v.assetTagging.assetTaggingtype == 'rfid') {
+                    $('#tabRfid').addClass('active');
+                    $('#tabCoordinate').removeClass('active');
+                    $('#tabUhf').removeClass('active');
+
+                    $('#rfid_tab').addClass('active');
+                    $('#coordinate_tab').removeClass('active');
+                    $('#uhf_tab').removeClass('active');
+                } else if (v.assetTagging.assetTaggingtype == 'coordinat') {
+                    $('#tabCoordinate').addClass('active');
+                    $('#tabRfid').removeClass('active');
+                    $('#tabUhf').removeClass('active');
+
+                    $('#coordinate_tab').addClass('active');
+                    $('#rfid_tab').removeClass('active');
+                    $('#uhf_tab').removeClass('active');
+
+                    v.valCoordinate = v.assetTagging.assetTaggingValue;
+                } else {
+                    $('#tabUhf').addClass('active');
+                    $('#tabRfid').removeClass('active');
+                    $('#tabCoordinate').removeClass('active');
+
+                    $('#uhf_tab').addClass('active');
+                    $('#coordinate_tab').removeClass('active');
+                    $('#rfid_tab').removeClass('active');
+                }
             } else {
-                let selected = $('#taggingType').val();
-                v.assetTagging.assetTaggingtype = selected;
+                v.assetTagging.assetTaggingtype = '';
             }
         })
 
@@ -2362,58 +2524,47 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 .addTo(map);
         })
 
+        // map tagging
         $(document).ready(function() {
-            if (v.assetData.latitude == '' && v.assetData.longitude == '') {
-                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                const map = new mapboxgl.Map({
-                    container: 'map', // container ID
+            mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+            
+            if (v.assetTagging.assetTaggingtype == 'coordinat' && v.assetTagging.assetTaggingValue != '') {
+                var latlong = v.assetTagging.assetTaggingValue.split(",");
+                var map = new mapboxgl.Map({
+                    container: 'mapTagging', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                    center: [latlong[1], latlong[0]], // starting position [lng, lat]
+                    zoom: 14, // starting zoom
+                });
+                var marker = new mapboxgl.Marker({
+                        draggable: true,
+                    })
+                    .setLngLat([latlong[1], latlong[0]])
+                    .addTo(map);
+            } else {
+                var map = new mapboxgl.Map({
+                    container: 'mapTagging', // container ID
                     style: 'mapbox://styles/mapbox/streets-v11', // style URL
                     center: [109.005913, -7.727989], // starting position [lng, lat]
                     zoom: 14, // starting zoom
                 });
-                map.addControl(new mapboxgl.FullscreenControl());
-                map.resize();
-                const marker = new mapboxgl.Marker({
+                var marker = new mapboxgl.Marker({
                         draggable: true,
                     })
                     .setLngLat([109.005913, -7.727989])
                     .addTo(map);
-
-                function onDragEnd(params) {
-                    const lnglat = marker.getLngLat();
-                    // coordinates.style.display = 'block';
-                    let lat = lnglat.lat;
-                    let long = lnglat.lng;
-                    v.assetData.latitude = lat;
-                    v.assetData.longitude = long;
-                }
-                marker.on('dragend', onDragEnd);
-            } else {
-                mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-                const map = new mapboxgl.Map({
-                    container: 'map', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                    center: [v.assetData.longitude, v.assetData.latitude], // starting position [lng, lat]
-                    zoom: 14, // starting zoom
-                });
-                map.addControl(new mapboxgl.FullscreenControl());
-                map.resize();
-                const marker = new mapboxgl.Marker({
-                        draggable: true,
-                    })
-                    .setLngLat([v.assetData.longitude, v.assetData.latitude])
-                    .addTo(map);
-
-                function onDragEnd(params) {
-                    const lnglat = marker.getLngLat();
-                    // coordinates.style.display = 'block';
-                    let lat = lnglat.lat;
-                    let long = lnglat.lng;
-                    v.assetData.latitude = lat;
-                    v.assetData.longitude = long;
-                }
-                marker.on('dragend', onDragEnd);
             }
+            map.addControl(new mapboxgl.FullscreenControl());
+            map.resize();
+            function onDragEnd(params) {
+                const lnglat = marker.getLngLat();
+                // coordinates.style.display = 'block';
+                let lat = lnglat.lat;
+                let long = lnglat.lng;
+                v.valCoordinate = lat + "," + long;
+                v.assetTagging.assetTaggingValue = v.valCoordinate;
+            }
+            marker.on('dragend', onDragEnd);
         })
 
         $('.latlong').on('change', function() {
@@ -2421,9 +2572,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 v.checked = true;
                 $('#assetLat').show();
                 $('#assetLong').show();
-
-                $('#divMap').show();
-                $('#map').addClass('w-100');
 
                 //map detail
                 $('#mapDetail').show();
@@ -2442,7 +2590,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
         })
 
         $(document).ready(function() {
-            FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
             let pond = $('#logo').filepond({
                 acceptedFileTypes: ['image/png', 'image/jpeg'],
                 allowImagePreview: true,
@@ -2474,7 +2622,7 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
 
         // import parameter
         $(document).ready(function() {
-            FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
             let pond = $('#fileImportParam').filepond({
                 acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
                 allowMultiple: false,
@@ -2592,11 +2740,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 theme: 'coreui',
                 placeholder: "Select Frequency",
             });
-
-            $('#schWeekDays').select2({
-                theme: 'coreui',
-                placeholder: 'Select Days'
-            })
 
             $('.monthly').select2({
                 theme: 'coreui',
@@ -2797,7 +2940,14 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 $('#monthly').hide();
                 v.assetData.schType = $(this).val();
 
-                $('#schWeekDays').val("").trigger("change");
+                let schWeekDays = v.assetData.schWeekDays.split(",");
+                for (let i = 0; i < schWeekDays.length; i++) {
+                    let id = '#schWeekly' + schWeekDays[i];
+                    $(id).prop('checked', false);
+                    $(id).parent().removeClass('active');
+                }
+                v.assetData.schWeekDays = ref('');
+                v.selectedSchWeekly = ref([]);
 
                 $('#monthlyDays').val("").trigger("change");
 
@@ -2810,22 +2960,20 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 $('#daily').hide();
                 $('#monthly').hide();
                 v.assetData.schType = $(this).val();
-                v.assetData.schFrequency = null;
+                v.assetData.schFrequency = "";
 
-                $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
                 $('#monthlyDays').val("").trigger("change");
                 $('#monthlyOn').val("").trigger("change");
                 $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
 
 
             } else if ($(this).val() == 'Monthly') {
-                $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
                 $('#monthly').show();
                 $('#daily').hide();
                 $('#weekly').hide();
                 $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
                 v.assetData.schType = $(this).val();
-                v.assetData.schFrequency = null;
+                v.assetData.schFrequency = "";
             }
         })
 
@@ -2833,10 +2981,6 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
         $(document).ready(function() {
             if (v.assetData.schType != '') {
                 $('#schType').val(v.assetData.schType).trigger("change");
-            }
-
-            if (v.assetData.schFrequency != null || v.assetData.schFrequency != '') {
-                $('#schFrequency').val(v.assetData.schFrequency);
             }
 
             if (v.assetData.schWeeks != '') {
@@ -2850,16 +2994,41 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
             }
 
             if (v.assetData.schWeekDays != '') {
-                $('#schWeekDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
-            }
-
-            if (v.assetData.schWeekDays != '') {
                 $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
             }
         })
 
-        $('#schWeekDays').on('change', function() {
-            v.assetData.schWeekDays = $(this).val().toString();
+        $('input[type="radio"][name="schFreq"]').on('change', function() {
+            let val = $(this)[0].dataset.content;
+            v.assetData.schFrequency = val;
+        })
+
+        // var selectedSchWeekly = [];
+        $(document).ready(function() {
+            if (v.assetData.schWeekDays != "") {
+                let data = v.assetData.schWeekDays.split(",");
+                for (let i = 0; i < data.length; i++) {
+                    v.selectedSchWeekly.push(data[i]);
+                }
+            }
+        })
+        $('input[type="checkbox"][name="schWeekly"]').on('change', function() {
+            let el = $(this)[0];
+            let checked = ($(el).prop('checked') == true ? true : false);
+            if (checked == true) {
+                let data = el.value;
+                $(el).parent().addClass('active');
+                v.selectedSchWeekly.push(data);
+            } else {
+                let data = el.value;
+                $(el).parent().removeClass('active');
+                for (let i = 0; i < v.selectedSchWeekly.length; i++) {
+                    if (v.selectedSchWeekly[i] === data) {
+                        v.selectedSchWeekly.splice(i, 1);
+                    }
+                }
+            }
+            v.assetData.schWeekDays = v.selectedSchWeekly.toString();
         })
 
         $('#monthlyDays').on('change', function() {
@@ -2894,6 +3063,14 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
                 v.assetData.schDays = '';
                 v.onDays = "on";
             }
+        })
+
+        $('input[type="radio"][name="options"]').on('change', function() {
+            let id = $(this)[0].id;
+            let text = $(this)[0].dataset.content;
+
+            v.assetData.assetStatusId = id;
+            v.assetData.assetStatusName = text;
         })
     </script>
     <?= $this->endSection(); ?>
