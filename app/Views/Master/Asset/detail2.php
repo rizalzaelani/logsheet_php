@@ -2,6 +2,13 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+<style>
+    .invalid {
+        border: 1px solid #e55353;
+        border-radius: 0.25rem;
+        padding: 0.25rem;
+    }
+</style>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -76,11 +83,11 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                             </tr>
                                         </template>
                                     </template>
-                                    <template v-else>
+                                    <template v-if="assetData.description">
                                         <tr>
                                             <th>Description</th>
-                                            <td class="pl-0">
-                                                <?= $assetData['description']; ?>
+                                            <td>
+                                                {{ assetData.description }}
                                             </td>
                                         </tr>
                                     </template>
@@ -673,15 +680,15 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                 <div class="mt-3" id="daily" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-center" data-toggle="buttons">
+                                            <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-center w-100" id="schFreq" data-toggle="buttons">
                                                 <?php foreach ($schFreq as $val) : ?>
-                                                    <label class="btn btn-sm btn-outline-primary">
+                                                    <label class="btn btn-sm btn-outline-primary" style="width: 12% !important;">
                                                         <input type="radio" name="schFreq" data-content="<?= $val ?>" id="schFreq<?= $val ?>" autocomplete="off"><?= $val ?>
                                                     </label>
                                                 <?php endforeach; ?>
                                             </div>
                                             <div class="invalid-feedback">
-                                                Please choose a factor of 24.
+                                                Field cannot be empty.
                                             </div>
                                         </div>
                                     </div>
@@ -689,7 +696,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                 <div class="mt-2" id="weekly" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="btn-group-toggle d-flex justify-content-between align-items-center">
+                                            <div class="btn-group-toggle d-flex justify-content-between align-items-center" id="schWeekly">
                                                 <?php foreach ($schDay as $key => $val) : ?>
                                                     <label class="btn btn-sm btn-outline-primary" for="schWeekly<?= $key ?>">
                                                         <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
@@ -793,7 +800,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         <hr>
                         <div class="form-group row">
                             <div class="col-12">
-                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;">
+                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;" id="operation">
                                     <?php foreach ($statusData as $key) : ?>
                                         <label class="btn btn-sm btn-outline-primary mr-1 mb-1">
                                             <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
@@ -1521,7 +1528,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 function btnSaveSetting() {
                     this.submited = ref(true);
 
-                    if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
+                    if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.assetStatusName == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || (this.assetData.schType == "Daily" && this.assetData.schFrequency == '') || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
                                 confirmButton: 'btn btn-danger',
@@ -1543,8 +1550,13 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
                             $('#schType').removeClass('is-invalid');
                         }
+                        if (this.assetData.schFrequency != '' && $('#schFreq').hasClass('is-invalid')) {
+                            $('#schFreq').removeClass('is-invalid');
+                            $('#schFreq').removeClass('invalid');
+                        }
                         if (this.assetData.schWeekDays != '' && $('#schWeekly').hasClass('is-invalid')) {
                             $('#schWeekly').removeClass('is-invalid');
+                            $('#schWeekly').removeClass('invalid');
                         }
                         if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
                             $('#monthlyDays').removeClass('is-invalid');
@@ -1561,8 +1573,9 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         if (this.assetData.tagLocationId != "" && $('#location').hasClass('is-invalid')) {
                             $('#location').removeClass('is-invalid')
                         }
-                        if (this.statusName != '' && $('#operation').hasClass('is-invalid')) {
-                            $('#operation').removeClass('is-invalid')
+                        if (this.assetData.assetStatusName != '' && $('#operation').hasClass('is-invalid')) {
+                            $('#operation').removeClass('is-invalid');
+                            $('#operation').removeClass('invalid');
                         }
 
                         //tagging
@@ -1598,10 +1611,14 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         if (this.assetData.schType == '') {
                             $('#schType').addClass('is-invalid');
                         } else if (this.assetData.schType == "Daily") {
-                            console.log("ok");
+                            if (this.assetData.schFrequency == '') {
+                                $('#schFreq').addClass('is-invalid');
+                                $('#schFreq').addClass('invalid');
+                            }
                         } else if (this.assetData.schType == 'Weekly') {
                             if (this.assetData.schWeekDays == '') {
                                 $('#schWeekly').addClass('is-invalid');
+                                $('#schWeekly').addClass('invalid');
                             }
                         } else if (this.assetData.schType == 'Monthly') {
                             if (v.onDays == 'days') {
@@ -1623,8 +1640,9 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                 }
                             }
                         }
-                        if (this.statusName == '') {
-                            $('#operation').addClass('is-invalid')
+                        if (this.assetData.assetStatusName == '') {
+                            $('#operation').addClass('is-invalid');
+                            $('#operation').addClass('invalid');
                         }
 
                         // tagging
@@ -1651,8 +1669,9 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         if (this.assetData.assetNumber != '' && $('#assetNumber').hasClass('is-invalid')) {
                             $('#assetNumber').removeClass('is-invalid');
                         }
-                        if (this.statusName != '' && $('#operation').hasClass('is-invalid')) {
+                        if (this.assetData.assetStatusName != '' && $('#operation').hasClass('is-invalid')) {
                             $('#operation').removeClass('is-invalid')
+                            $('#operation').removeClass('invalid')
                         }
                         if (this.assetData.tagId != "" && $('#tag').hasClass('is-invalid')) {
                             $('#tag').removeClass('is-invalid')
@@ -1681,8 +1700,13 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
                             $('#schType').removeClass('is-invalid');
                         }
+                        if (this.assetData.schFrequency != '' && $('#schFreq').hasClass('is-invalid')) {
+                            $('#schFreq').removeClass('is-invalid');
+                            $('#schFreq').removeClass('invalid');
+                        }
                         if (this.assetData.schWeekDays != '' && $('#schWeekly').hasClass('is-invalid')) {
                             $('#schWeekly').removeClass('is-invalid');
+                            $('#schWeekly').removeClass('invalid');
                         }
                         if (this.assetData.schDays != '' && $('#monthlyDays').hasClass('is-invalid')) {
                             $('#monthlyDays').removeClass('is-invalid');
@@ -1713,7 +1737,8 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                 return;
                             } else if (this.assetData.schType == 'Daily') {
                                 if (v.assetData.schFrequency == "" && v.assetData.schFrequency == null) {
-                                    $('#schFrequency').addClass('is-invalid');
+                                    $('#schFreq').addClass('is-invalid');
+                                    $('#schFreq').addClass('invalid');
                                     const swalWithBootstrapButtons = swal.mixin({
                                         customClass: {
                                             confirmButton: 'btn btn-danger',
@@ -1730,6 +1755,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                             } else if (this.assetData.schType == 'Weekly') {
                                 if (this.assetData.schWeekDays == '') {
                                     $('#schWeekly').addClass('is-invalid');
+                                    $('#schWeekly').addClass('invalid');
                                     const swalWithBootstrapButtons = swal.mixin({
                                         customClass: {
                                             confirmButton: 'btn btn-danger',
@@ -1801,10 +1827,10 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         formdata.append('schWeeks', this.assetData.schWeeks);
                         formdata.append('schDays', this.assetData.schDays);
 
-                        if (moreDetailAsset) {
+                        if (this.moreDetailAsset) {
                             formdata.append('assetDesc', JSON.stringify(descJson));
                         } else {
-                            formdata.append('assetDesc', this.assetData.description);
+                            formdata.append('assetDesc', v.assetData.description);
                         }
 
                         // tag location
@@ -2280,6 +2306,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
                     let dataAssetDesc = assetData.description;
+                    let dataAssetDescJson = JSON.stringify(assetData.descriptionJson);
                     let dataAssetLat = assetData.latitude;
                     let dataAssetLong = assetData.longitude;
                     let dataAssetTag = assetData.tagId;
@@ -2308,13 +2335,14 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                     let dataLocationDesc = addLocationDesc;
                     let dataTempPhoto = tempPhoto;
                     let dataParams = params.value.length;
+                    const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
+
 
                     if (moreDetailAsset.value) document.querySelector("input[name=moreDetailAssetInput]").checked = true;
 
                     window.addEventListener('beforeunload', function(e) {
-                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName || dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype) {
-                            console.log(dataSchWeekDays)
-                            console.log(v.schWeekDays)
+                        let checkDescJson = isEqual(dataAssetDescJson, JSON.stringify(assetData.descriptionJson));
+                        if (dataAssetName != v.assetData.assetName || dataAssetNumber != v.assetData.assetNumber || dataAssetDesc != v.assetData.description || checkDescJson == false || dataAssetLat != v.assetData.latitude || dataAssetLong != v.assetData.longitude || dataSchType != v.assetData.schType || dataSchDays != v.assetData.schDays || dataSchWeeks != v.assetData.schWeeks || dataSchWeekDays != v.assetData.schWeekDays || dataAssetTag != v.assetData.tagId || dataAssetLocation != v.assetData.tagLocationId || dataParams != v.params.length || dataAssetStatusId != v.assetData.assetStatusId || dataAssetStatusName != v.assetData.assetStatusName || dataTaggingValue != v.assetTagging.assetTaggingValue || dataTaggingType != v.assetTagging.assetTaggingtype) {
                             if (v.submited == true) {
                                 return;
                             } else {
@@ -2420,17 +2448,11 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 
         // Get value selected location, tag, operation mode
         $(document).ready(function() {
-            // $('#operation').val(v.assetData.assetStatusId).trigger("change");
             let selectedTag = $('#tag').val();
             v.assetData.tagId = selectedTag;
 
             let selectedTagLocation = $('#location').val();
             v.assetData.tagLocationId = selectedTagLocation;
-
-            let selectedOperation = $('#operation').val();
-            let text = $('#operation :selected').text();
-            // v.assetData.assetStatusId = selectedOperation;
-            // v.assetData.assetStatusName = text;
 
             if (v.assetData.assetStatusId != '') {
                 let id = '#' + (v.assetData.assetStatusId);
@@ -2497,13 +2519,6 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
             v.assetData.tagId = data;
         })
 
-        $('#operation').on('change', function() {
-            let data = $(this).val();
-            let text = $('#operation :selected').text();
-            v.assetData.assetStatusId = data;
-            v.assetData.assetStatusName = text;
-        })
-
         $('#taggingType').on('change', function() {
             let data = $(this).val();
             v.assetTagging.assetTaggingtype = data;
@@ -2527,7 +2542,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
         // map tagging
         $(document).ready(function() {
             mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-            
+
             if (v.assetTagging.assetTaggingtype == 'coordinat' && v.assetTagging.assetTaggingValue != '') {
                 var latlong = v.assetTagging.assetTaggingValue.split(",");
                 var map = new mapboxgl.Map({
@@ -2556,6 +2571,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
             }
             map.addControl(new mapboxgl.FullscreenControl());
             map.resize();
+
             function onDragEnd(params) {
                 const lnglat = marker.getLngLat();
                 // coordinates.style.display = 'block';
@@ -2761,24 +2777,6 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 placeholder: "Select All Days",
             });
 
-            // operation
-            $('#operation').select2({
-                theme: 'coreui',
-                tags: true,
-                createTag: function(params) {
-                    var term = $.trim(params.term);
-
-                    if (term === '') {
-                        return null;
-                    }
-                    return {
-                        id: uuidv4(),
-                        text: term,
-                        newTag: true // add additional parameters
-                    }
-                }
-            });
-
             // tagging
             $('#taggingType').select2({
                 theme: 'coreui',
@@ -2959,6 +2957,11 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 $('#weekly').show();
                 $('#daily').hide();
                 $('#monthly').hide();
+
+                let schFreq = v.assetData.schFrequency;
+                let id = '#schFreq' + schFreq;
+                $(id).parent().removeClass('active');
+
                 v.assetData.schType = $(this).val();
                 v.assetData.schFrequency = "";
 
