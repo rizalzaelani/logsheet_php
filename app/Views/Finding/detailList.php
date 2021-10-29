@@ -17,7 +17,7 @@
             </div>
 
             <div class="row mt-2">
-                <div class="col-sm-6">
+                <div class="col-md-7">
                     <table class="table mt-2">
                         <tr>
                             <th style="width: 200px;">Asset</th>
@@ -59,32 +59,36 @@
                                 <td class="pl-0">{{ scheduleTrxData.description }}</td>
                             </tr>
                         </template>
-                        <tr>
-                            <th>Scanned At</th>
-                            <td>{{ moment(scheduleTrxData.scannedAt).format("DD MMM YYYY HH:mm") }}</td>
-                        </tr>
-                        <tr>
-                            <th>Scanned By</th>
-                            <td>{{ scheduleTrxData.scannedBy }}</td>
-                        </tr>
-                        <tr>
-                            <th>Scanned With</th>
-                            <td>{{ scheduleTrxData.scannedWith }}</td>
-                        </tr>
-                        <template v-if="scheduleTrxData.approvedAt">
-                            <tr>
-                                <th>Approved At</th>
-                                <td>{{ moment(scheduleTrxData.approvedAt).format("DD MMM YYYY HH:mm") }}</td>
-                            </tr>
-                            <tr>
-                                <th>Approved By</th>
-                                <td>{{ scheduleTrxData.approvedBy }}</td>
-                            </tr>
-                        </template>
                     </table>
                 </div>
-                <div class="col-sm-6 d-none d-sm-flex flex-row align-items-center">
-                    <img src="/img/logo-act.png" alt="Image" class="img-thumbnail m-0 border-0">
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="p-2 d-flex justify-content-between align-items-center" style="border-radius: .5rem;border: 2px solid #1d6de5;">
+                                <h6 class="text-primary text-uppercase font-weight-bold px-2" style="position: absolute;top: -8px;background: #fff;">Scanning</h6>
+                                <div class="d-flex justify-content-start">
+                                    <img src="<?= base_url("img/icon/qrcode.png") ?>" class="img" style="height: 2.4rem;margin: .3rem" />
+                                    <div class="ml-4">
+                                        <h4 class="mb-0 text-uppercase">{{ scheduleTrxData.scannedBy }}</h4>
+                                        <span class="text-muted font-sm">{{ moment(scheduleTrxData.scannedAt).format("DD MMM YYYY HH:mm") }}</span>
+                                    </div>
+                                </div>
+                                <h6 class="mb-0 mr-2 text-uppercase">{{ scheduleTrxData.scannedWith }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-4" v-if="scheduleTrxData.approvedAt">
+                            <div class="p-2 d-flex justify-content-between align-items-center" style="border-radius: .5rem;border: 2px solid #1d6de5;">
+                                <h6 class="text-primary text-uppercase font-weight-bold px-2" style="position: absolute;top: -8px;background: #fff;">APPROVAL</h6>
+                                <div class="d-flex justify-content-start">
+                                    <img src="<?= base_url("img/icon/checking.png") ?>" class="img" style="height: 2.4rem;margin: .3rem" />
+                                    <div class="ml-4">
+                                        <h4 class="mb-0 text-uppercase">{{ scheduleTrxData.approvedBy }}</h4>
+                                        <span class="text-muted font-sm">{{ moment(scheduleTrxData.approvedAt).format("DD MMM YYYY HH:mm") }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-12 mb-4">
                     <hr />
@@ -97,9 +101,9 @@
                                     <th class="text-center">No.</th>
                                     <th class="text-center">Parameter</th>
                                     <th class="text-center">Description</th>
-                                    <th class="text-center">Min / Abnormal</th>
-                                    <th class="text-center">Max / Normal</th>
-                                    <th class="text-center">UoM / Option</th>
+                                    <th class="text-center">Normal</th>
+                                    <th class="text-center">Abnormal</th>
+                                    <th class="text-center">UoM</th>
                                     <th class="text-center">Value</th>
                                     <?php if ($scheduleTrxData["approvedAt"] != null) { ?>
                                         <th class="text-center">Action</th>
@@ -113,22 +117,19 @@
                                     <td class="text-center">{{ val.description }}</td>
 
                                     <td class="text-center">
-                                        <span v-if="!val.option" :class="!val.min ? 'font-italic' : ''">{{ !val.min ? "(Empty)" : val.min }}</span>
-                                        <span v-else :class="!val.abnormal ? 'font-italic' : ''">{{ !val.abnormal ? "(Empty)" : val.abnormal }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" : val.max }}</span>
+                                        <span v-if="!val.option" :class="!val.min & !val.max ? 'font-italic' : ''">{{ !val.min & !val.max ? "(Any)" : (!val.min ? ('<' + val.max) : (!val.max ? ('>' + val.min) : (val.min + ' - ' + val.max))) }}</span>
                                         <span v-else :class="!val.normal ? 'font-italic' : ''">{{ !val.normal ? "(Empty)" : val.normal }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" : val.uom }}</span>
-                                        <span v-else :class="!val.option ? 'font-italic' : ''">{{ !val.option ? "(Empty)" : val.option }}</span>
+                                        <span v-if="!val.option" :class="!val.min & !val.max ? 'font-italic' : ''">{{ !val.min & !val.max ? "(Any)" : ((val.min ? ('x < ' + val.min) : '') + '; ' + (val.max ? ('x > ' + val.max) : '')) }}</span>
+                                        <span v-else :class="!val.abnormal ? 'font-italic' : ''">{{ !val.abnormal ? "(Empty)" : val.abnormal }}</span>
                                     </td>
-                                    <td class="text-center" :class="checkAbnormal(val)">{{ !val.value ? "(Empty)" : val.value }}</td>
+                                    <td class="text-center" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" : val.uom }}</td>
+                                    <td class="text-center" :class="checkAbnormal(val).class != '' ? 'font-weight-bold text-' + checkAbnormal(val).class : ''">{{ !val.value ? "(Empty)" : val.value }}</td>
 
                                     <?php if ($scheduleTrxData["approvedAt"] != null) { ?>
                                         <td class="text-center">
-                                            <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
+                                            <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
                                         </td>
                                     <?php } ?>
                                 </tr>
@@ -162,76 +163,8 @@
                 recordParameterData,
                 isNullEmptyOrUndefined,
                 xhrThrowRequest,
-                moment
-            }
-        },
-        methods: {
-            checkAbnormal(val, approvedAt) {
-                if (!isNullEmptyOrUndefined(approvedAt)) {
-                    if (val.condition != 'Normal' & val.condition != '' & val.condition != null & val.condition != undefined) {
-                        if (val.findingId == null) {
-                            return {
-                                'class': 'btn-danger',
-                                'name': 'Follow Up'
-                            };
-                        } else {
-                            if (val.condition == 'Closed') {
-                                return {
-                                    'class': 'btn-primary',
-                                    'name': 'Is Closed'
-                                };
-                            } else if (val.condition == 'Open') {
-                                return {
-                                    'class': 'btn-warning',
-                                    'name': 'Is Followed Up'
-                                };
-                            } else {
-                                return {
-                                    'class': 'btn-danger',
-                                    'name': 'Follow Up'
-                                };
-                            }
-                        }
-                    } else {
-                        return {
-                            'class': '',
-                            'name': 'Normal'
-                        };
-                    }
-                } else {
-                    if (val.inputType == "input") {
-                        if ((val.min != null & val.max != null & val.value >= val.min & val.value <= val.max) || (val.min != null & val.max == null & val.value >= val.min) || (val.min == null & val.max != null & val.value <= val.max) || (val.min == null & val.max == null) || isNaN(val.value)) {
-                            return {
-                                'class': '',
-                                'name': 'Normal'
-                            };
-                        } else {
-                            return {
-                                'class': 'btn-danger',
-                                'name': 'Follow Up'
-                            };
-                        }
-                    } else if (val.inputType == "select") {
-                        let itmAbnormal = val.abnormal.toLowerCase().split(",");
-                        let isContain = _.includes(itmAbnormal, val.value.toLowerCase());
-                        if (isNullEmptyOrUndefined(val.abnormal) || isNullEmptyOrUndefined(val.option) || isContain == false) {
-                            return {
-                                'class': '',
-                                'name': 'Normal'
-                            };
-                        } else {
-                            return {
-                                'class': 'btn-danger',
-                                'name': 'Follow Up'
-                            };
-                        }
-                    } else {
-                        return {
-                            'class': '',
-                            'name': 'Normal'
-                        };
-                    }
-                }
+                moment,
+                checkAbnormal
             }
         }
     }).mount("#app")

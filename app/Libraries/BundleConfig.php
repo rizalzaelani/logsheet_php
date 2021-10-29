@@ -32,6 +32,7 @@ class BundleConfig
 			base_url('/js/custom-func.js'),
 			base_url('/js/jquery.maskedinput.js'),
 			base_url('/js/main.js'),
+			base_url('/js/addon.js'),
 			base_url('/js/string-manipulation.js'),
 		);
 		return $plugin;
