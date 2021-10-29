@@ -1596,6 +1596,8 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                             $('#cardParameter').removeClass('card-border');
                         }
 
+                        // add invalid
+
                         if (this.assetData.assetName == '') {
                             $('#assetName').addClass('is-invalid');
                         }
@@ -1659,6 +1661,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
                             $('#taggingType').addClass('is-invalid');
                         }
+                        //end tagging
                         if ($('#tableParameter tbody tr').length < 1) {
                             $('#cardParameter').addClass('card-border');
                         }
@@ -1821,6 +1824,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         formdata.append('assetNumber', this.assetData.assetNumber);
                         formdata.append('latitude', this.assetData.latitude);
                         formdata.append('longitude', this.assetData.longitude);
+                        formdata.append('schManual', this.assetData.schManual);
                         formdata.append('schType', this.assetData.schType);
                         formdata.append('schFrequency', this.assetData.schFrequency);
                         formdata.append('schWeekDays', this.assetData.schWeekDays);
@@ -2754,7 +2758,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 
             $('#schType').select2({
                 theme: 'coreui',
-                placeholder: "Select Frequency",
+                placeholder: "Select Schedule Type",
             });
 
             $('.monthly').select2({
@@ -2912,7 +2916,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
         })
 
         $(document).ready(function() {
-            if (v.assetData.schType != '') {
+            if (v.assetData.schManual == '0') {
                 $('#setSch').val('Automatic').trigger("change");
             } else {
                 $('#setSch').val('Manual').trigger("change");
@@ -2926,8 +2930,10 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 $('#daily').hide();
                 $('#weekly').hide();
                 $('#monthly').hide();
+                v.assetData.schManual = '1';
             } else if ($(this).val() == 'Automatic') {
                 $('.schType').removeClass('hide');
+                v.assetData.schManual = '0';
             }
         })
 
@@ -2938,6 +2944,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 $('#monthly').hide();
                 v.assetData.schType = $(this).val();
 
+                //set weekly
                 let schWeekDays = v.assetData.schWeekDays.split(",");
                 for (let i = 0; i < schWeekDays.length; i++) {
                     let id = '#schWeekly' + schWeekDays[i];
@@ -2958,6 +2965,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 $('#daily').hide();
                 $('#monthly').hide();
 
+                // set daily
                 let schFreq = v.assetData.schFrequency;
                 let id = '#schFreq' + schFreq;
                 $(id).parent().removeClass('active');
@@ -2967,14 +2975,28 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 
                 $('#monthlyDays').val("").trigger("change");
                 $('#monthlyOn').val("").trigger("change");
-                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
+                $('#monthlyOnDays').val("").trigger("change");
 
-
-            } else if ($(this).val() == 'Monthly') {
+            } else {
                 $('#monthly').show();
                 $('#daily').hide();
                 $('#weekly').hide();
-                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
+
+                // set daily
+                let schFreq = v.assetData.schFrequency;
+                let id = '#schFreq' + schFreq;
+                $(id).parent().removeClass('active');
+
+                //set weekly
+                let schWeekDays = v.assetData.schWeekDays.split(",");
+                for (let i = 0; i < schWeekDays.length; i++) {
+                    let id = '#schWeekly' + schWeekDays[i];
+                    $(id).prop('checked', false);
+                    $(id).parent().removeClass('active');
+                }
+                // v.assetData.schWeekDays = ref('');
+                v.selectedSchWeekly = ref([]);
+
                 v.assetData.schType = $(this).val();
                 v.assetData.schFrequency = "";
             }
@@ -2996,7 +3018,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 $('#gridRadios1').click();
             }
 
-            if (v.assetData.schWeekDays != '') {
+            if (v.assetData.schWeekDays != '' && v.assetData.schType == 'Monthly') {
                 $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
             }
         })
@@ -3008,7 +3030,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 
         // var selectedSchWeekly = [];
         $(document).ready(function() {
-            if (v.assetData.schWeekDays != "") {
+            if (v.assetData.schWeekDays != "" && v.assetData.schType == 'Weekly') {
                 let data = v.assetData.schWeekDays.split(",");
                 for (let i = 0; i < data.length; i++) {
                     v.selectedSchWeekly.push(data[i]);

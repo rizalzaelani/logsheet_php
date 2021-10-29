@@ -36,7 +36,7 @@ class Asset extends BaseController
 		$data['asset']			= $asset;
 		$data['tag']			= $tag;
 		$data['tagLocation']	= $tagLocation;
-		
+
 		$data['title'] = 'Asset';
 		$data['subtitle'] = 'Asset';
 		$data["breadcrumbs"] = [
@@ -59,7 +59,7 @@ class Asset extends BaseController
 		$table = 'vw_asset';
 		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
 		$column_search = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
-		$order = array('createdAt' => 'asc');
+		$order = array('createdAt' => 'desc');
 		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 
@@ -129,6 +129,8 @@ class Asset extends BaseController
 		$parameterModel = new ParameterModel();
 
 		$post = $this->request->getPost();
+		var_dump($post);
+		die();
 		$assetId = $post['assetId'];
 		if (isset($post['assetId'])) {
 			// asset
@@ -139,8 +141,9 @@ class Asset extends BaseController
 				'assetName' => $post['assetName'],
 				'assetNumber' => $post['assetNumber'],
 				'description' => $post['assetDesc'],
+				'schManual' => $post['schManual'],
 				'schType' => $post['schType'],
-				'schFrequency' => $post['schFrequency'] == '' ? null : (int)$post['schFrequency'],
+				'schFrequency' => $post['schFrequency'] == '' ? 1 : (int)$post['schFrequency'],
 				'schWeekDays' => $post['schWeekDays'],
 				'schWeeks' => $post['schWeeks'],
 				'schDays' => $post['schDays'],
@@ -217,16 +220,16 @@ class Asset extends BaseController
 
 			// asset tagging
 			$assetTaggingId = $post['assetTaggingId'];
-			if ($post['assetTaggingType'] != '') {
-					$dataAssetTagging = array(
-						'assetTaggingId' => $post['assetTaggingId'],
-						'assetId' => $assetId,
-						'assetTaggingValue' => $post['assetTaggingValue'],
-						'assetTaggingtype' => $post['assetTaggingType'],
-						'description' => $post['assetTaggingDescription']
-					);
-					$assetTaggingModel->insert($dataAssetTagging);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $dataAssetTagging));
+			if ($post['assetTaggingtype'] != '') {
+				$dataAssetTagging = array(
+					'assetTaggingId' => $post['assetTaggingId'],
+					'assetId' => $assetId,
+					'assetTaggingValue' => $post['assetTaggingValue'],
+					'assetTaggingtype' => $post['assetTaggingtype'],
+					'description' => $post['assetTaggingDescription']
+				);
+				$assetTaggingModel->insert($dataAssetTagging);
+				echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $dataAssetTagging));
 			} else {
 				echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
 			}
@@ -373,6 +376,7 @@ class Asset extends BaseController
 				'assetName' => $post['assetName'],
 				'assetNumber' => $post['assetNumber'],
 				'description' => $post['assetDesc'],
+				'schManual' => $post['schManual'],
 				'schType' => $post['schType'],
 				'schFrequency' => $post['schFrequency'] == '' ? null : (int)$post['schFrequency'],
 				'schWeekDays' => $post['schWeekDays'],
@@ -965,7 +969,7 @@ class Asset extends BaseController
 		if ($json->parameterId) {
 			$model->delete($id);
 			echo json_encode(array('status' => 'success', 'data' => $id));
-		}else{
+		} else {
 			echo json_encode(array('status' => 'failed', 'message' => 'Bad request!', 'data' => $json));
 		}
 		die();
