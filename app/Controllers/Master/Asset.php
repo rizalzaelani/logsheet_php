@@ -351,6 +351,8 @@ class Asset extends BaseController
 	public function saveSetting()
 	{
 		$assetModel = new AssetModel();
+		$tagModel = new TagModel();
+		$tagLocationModel = new TagLocationModel();
 		$assetTagLocationModel = new AssetTagLocationModel();
 		$assetTagModel = new AssetTagModel();
 		$assetStatusModel = new AssetStatusModel();
@@ -359,6 +361,9 @@ class Asset extends BaseController
 
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
+		$tag = $post['tag'];
+		// var_dump($tag);
+		// die();
 
 		// $test = $parameterModel->findColumn('normal');
 		// $tblmParam = $this->db->table('tblm_parameter');
@@ -369,6 +374,37 @@ class Asset extends BaseController
 		// var_dump(array_unique($test));
 
 		if (isset($post['assetId'])) {
+			// new tags and tag location
+			$newTag = $post['tag'];
+			if ($newTag != "") {
+				$lengthNewTag = count($post['tag']);
+				for ($i=0; $i < $lengthNewTag; $i++) {
+					$dataNewTag = array(
+						'tagId' => json_decode($newTag[$i])->addTagId,
+						'userId' => '',
+						'tagName' => json_decode($newTag[$i])->addTagName,
+						'description' => json_decode($newTag[$i])->addTagDesc
+					);
+					// var_dump($dataNewTag);
+					$tagModel->insert($dataNewTag);
+				}
+			}
+
+			$newTagLocation = $post['location'];
+			if ($newTagLocation != "") {
+				$lengthNewTagLocation = count($post['location']);
+				for ($i=0; $i < $lengthNewTagLocation; $i++) { 
+					$dataNewTagLocation = array(
+						'tagLocationId' => json_decode($newTagLocation[$i])->addLocationId,
+						'userId' => '',
+						'tagLocationName' => json_decode($newTagLocation[$i])->addLocationName,
+						'latitude' => json_decode($newTagLocation[$i])->addLocationLatitude,
+						'longitude' => json_decode($newTagLocation[$i])->addLocationLongitude,
+						'description' => json_decode($newTagLocation[$i])->addLocationDesc,
+					);
+					$tagLocationModel->insert($dataNewTagLocation);
+				}
+			}
 
 			// asset
 			$dataAsset = array(

@@ -54,19 +54,23 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <tr>
                                         <th>Tag</th>
                                         <td>
-                                            <template v-if="assetData.tagName" v-for="(val, key) in _.uniq(assetData.tagName.split(','))">
-                                                <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
-                                            </template>
-                                            <template v-else>-</template>
+                                            <div style="max-height: 100px !important; overflow-y: auto;">
+                                                <template v-if="assetData.tagName" v-for="(val, key) in _.uniq(assetData.tagName.split(','))">
+                                                    <span class="badge badge-primary p-1 mr-1 mb-1" style="font-size: 13px;">{{ val }}</span>
+                                                </template>
+                                                <template v-else>-</template>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>Location</th>
                                         <td>
-                                            <template v-if="assetData.tagLocationName" v-for="(val, key) in _.uniq(assetData.tagLocationName.split(','))">
-                                                <span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">{{ val }}</span>
-                                            </template>
-                                            <template v-else>-</template>
+                                            <div style="max-height: 100px !important; overflow-y: auto;">
+                                                <template v-if="assetData.tagLocationName" v-for="(val, key) in _.uniq(assetData.tagLocationName.split(','))">
+                                                    <span class="badge badge-primary p-1 mr-1 mb-1" style="font-size: 13px;">{{ val }}</span>
+                                                </template>
+                                                <template v-else>-</template>
+                                            </div>
                                         </td>
                                     </tr>
                                     <template v-if="assetData.descriptionJson">
@@ -446,18 +450,18 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <form action="">
                                         <div class="mb-3">
                                             <label for="addTagName">Tag Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
-                                            <input id="addTagName" type="text" class="form-control" required v-model="addTagName" placeholder="Tag Name">
+                                            <input id="addTagName" type="text" class="form-control" required v-model="addTag.addTagName" placeholder="Tag Name">
                                         </div>
                                         <div class="mb-3">
                                             <label for="addTagDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
-                                            <textarea id="addTagDesc" class="form-control" required v-model="addTagDesc" rows="8" placeholder="Description of tag"></textarea>
+                                            <textarea id="addTagDesc" class="form-control" required v-model="addTag.addTagDesc" rows="8" placeholder="Description of tag"></textarea>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
-                                <button type="button" class="btn btn-success" @click="addTag()"><i class="fa fa-plus"></i> Add Tag</button>
+                                <button type="button" class="btn btn-success" @click="addNewTag()"><i class="fa fa-plus"></i> Add Tag</button>
                             </div>
                         </div>
                     </div>
@@ -479,19 +483,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <form action="">
                                             <div class="mb-3">
                                                 <label for="addLocName">Tag Location Name <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for tag"></i></label>
-                                                <input id="addLocName" type="text" class="form-control" required v-model="addLocationName" placeholder="Tag Location Name">
+                                                <input id="addLocName" type="text" class="form-control" required v-model="addLocation.addLocationName" placeholder="Tag Location Name">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="latitude">Latitude <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Latitude"></i></label>
-                                                <input id="latitude" type="text" class="form-control" required v-model="addLocationLatitude" placeholder="Location Latitude">
+                                                <input id="latitude" type="text" class="form-control" required v-model="addLocation.addLocationLatitude" placeholder="Location Latitude">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="longitude">Longitude <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Longitude"></i></label>
-                                                <input id="longitude" type="text" class="form-control" required v-model="addLocationLongitude" placeholder="Location Longitude">
+                                                <input id="longitude" type="text" class="form-control" required v-model="addLocation.addLocationLongitude" placeholder="Location Longitude">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="addLocDesc">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description for tag"></i></label>
-                                                <textarea id="addLocDesc" class="form-control" required v-model="addLocationDesc" rows="8" placeholder="Description of tag location"></textarea>
+                                                <textarea id="addLocDesc" class="form-control" required v-model="addLocation.addLocationDesc" rows="8" placeholder="Description of tag location"></textarea>
                                             </div>
                                         </form>
                                     </div>
@@ -1142,12 +1146,22 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 var valRfid = ref('');
                 var valCoordinate = ref('');
                 var valUhf = ref('');
-                var addTagName = ref('');
-                var addTagDesc = ref('');
-                var addLocationName = ref('');
-                var addLocationLatitude = ref('');
-                var addLocationLongitude = ref('');
-                var addLocationDesc = ref('');
+                var addTag = reactive({
+                    addTagId: uuidv4(),
+                    addTagName: '',
+                    addTagDesc: ''
+                });
+                var tag = ref([]);
+                var tags = ref([]);
+                var addLocation = reactive({
+                    addLocationId: uuidv4(),
+                    addLocationName: '',
+                    addLocationLatitude: '',
+                    addLocationLongitude: '',
+                    addLocationDesc: '',
+                });
+                var tagLocation = ref([]);
+                var locations = ref([]);
                 var param = reactive({
                     parameterId: uuidv4(),
                     sortId: null,
@@ -1215,7 +1229,33 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.myModal.show();
                 };
 
-                function addTag() {
+                function addNewTag() {
+                    if (this.addTag.addTagName == '') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger'
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: 'Field tag name cannot be empty!.',
+                            icon: 'error',
+                            allowOutsideClick: false
+                        })
+                    } else {
+                        $('#tag').append(`<option class="optTag`+this.addTag.addTagId+`" value="`+this.addTag.addTagId+`" selected>` + this.addTag.addTagName + `</option>`);
+                        this.tag.push($(`.optTag` + this.addTag.addTagId + ``).val());
+                        this.tags.push(this.addTag);
+                        this.assetData.tagId.push(this.addTag.addTagId);
+                        this.addTag = reactive({
+                            addTagId: uuidv4(),
+                            addTagName: '',
+                            addTagDesc: '',
+                        })
+                        this.myModal.hide();
+                    }
+                    return;
                     axios.post('<?= base_url('Asset/addTag'); ?>', {
                         assetId: this.assetData.assetId,
                         tagId: uuidv4(),
@@ -1286,15 +1326,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             const lnglat = marker.getLngLat();
                             let lat = lnglat.lat;
                             let long = lnglat.lng;
-                            v.addLocationLatitude = lat;
-                            v.addLocationLongitude = long;
+                            v.addLocation.addLocationLatitude = lat;
+                            v.addLocation.addLocationLongitude = long;
                         }
                         marker.on('dragend', onDragEnd);
                     })
                 };
 
                 function addTagLocation() {
-                    if (this.addLocationName == '') {
+                    if (this.addLocation.addLocationName == '') {
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
                                 confirmButton: 'btn btn-danger'
@@ -1308,40 +1348,52 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             allowOutsideClick: false
                         })
                     } else {
-                        axios.post("<?= base_url('Asset/addTagLocation'); ?>", {
-                            assetId: this.assetData.assetId,
-                            tagLocationId: uuidv4(),
-                            tagLocationName: this.addLocationName,
-                            latitude: this.addLocationLatitude,
-                            longitude: this.addLocationLongitude,
-                            description: this.addLocationDesc
-                        }).then(res => {
-                            if (res.data.status == 'success') {
-                                this.myModal.hide();
-                                const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-success mr-1',
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: res.data.message,
-                                    icon: 'success'
-                                }).then(okay => {
-                                    if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Reloading page..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
-                                        location.reload();
-                                    }
-                                })
-                            }
+                        $('#location').append(`<option class="optLocation`+this.addLocation.addLocationId+`" value="`+this.addLocation.addLocationId+`" selected>` + this.addLocation.addLocationName + `</option>`);
+                        this.tagLocation.push($(`.optLocation` + this.addLocation.addLocationId + ``).val());
+                        this.locations.push(this.addLocation);
+                        this.assetData.tagLocationId.push(this.addLocation.addLocationId);
+                        this.addLocation = reactive({
+                            addLocationId: uuidv4(),
+                            addLocationName: '',
+                            addLocationLatitude: '',
+                            addLocationLongitude: '',
+                            addLocationDesc: '',
                         })
+                        this.myModal.hide();
+                        // axios.post("<?= base_url('Asset/addTagLocation'); ?>", {
+                        //     assetId: this.assetData.assetId,
+                        //     tagLocationId: uuidv4(),
+                        //     tagLocationName: this.addLocationName,
+                        //     latitude: this.addLocationLatitude,
+                        //     longitude: this.addLocationLongitude,
+                        //     description: this.addLocationDesc
+                        // }).then(res => {
+                        //     if (res.data.status == 'success') {
+                        //         this.myModal.hide();
+                        //         const swalWithBootstrapButtons = swal.mixin({
+                        //             customClass: {
+                        //                 confirmButton: 'btn btn-success mr-1',
+                        //             },
+                        //             buttonsStyling: false
+                        //         })
+                        //         swalWithBootstrapButtons.fire({
+                        //             title: 'Success!',
+                        //             text: res.data.message,
+                        //             icon: 'success'
+                        //         }).then(okay => {
+                        //             if (okay) {
+                        //                 swal.fire({
+                        //                     title: 'Please Wait!',
+                        //                     text: 'Reloading page..',
+                        //                     onOpen: function() {
+                        //                         swal.showLoading()
+                        //                     }
+                        //                 })
+                        //                 location.reload();
+                        //             }
+                        //         })
+                        //     }
+                        // })
                     }
                 };
 
@@ -1898,6 +1950,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         } else {
                             formdata.append('parameter[]', this.params);
                         }
+
+                        // new tags and tag locations
+                        if (this.tags.length > 0) {
+                            let tag = v.tags;
+                            tag.forEach((item, i) => {
+                                formdata.append('tag[]', JSON.stringify(item))
+                            })
+                        }else{
+                            formdata.append('tag', '');
+                        }
+                        if (this.locations.length > 0) {
+                            let loc = v.locations;
+                            loc.forEach((item, i) => {
+                                formdata.append('location[]', JSON.stringify(item))
+                            })
+                        }else{
+                            formdata.append('location', '');
+                        }
                         axios({
                             url: "<?= base_url('Asset/saveSetting'); ?>",
                             data: formdata,
@@ -2363,12 +2433,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     let dataFile = file;
                     let dataSetSch = setSch;
                     let dataOnDays = onDays;
-                    let dataAddTagName = addTagName;
-                    let dataAddTagDesc = addTagDesc;
-                    let dataLocationName = addLocationName;
-                    let dataLocationLatitude = addLocationLatitude;
-                    let dataLocationLongitude = addLocationLongitude;
-                    let dataLocationDesc = addLocationDesc;
+                    // let dataAddTagName = addTagName;
+                    // let dataAddTagDesc = addTagDesc;
+                    // let dataLocationName = addLocationName;
+                    // let dataLocationLatitude = addLocationLatitude;
+                    // let dataLocationLongitude = addLocationLongitude;
+                    // let dataLocationDesc = addLocationDesc;
                     let dataTempPhoto = tempPhoto;
                     let dataParams = params.value.length;
                     const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
@@ -2412,12 +2482,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     onDays,
                     assetTagging,
 
-                    addTagName,
-                    addTagDesc,
-                    addLocationName,
-                    addLocationLatitude,
-                    addLocationLongitude,
-                    addLocationDesc,
+                    addTag,
+                    tag,
+                    tags,
+                    addLocation,
+                    tagLocation,
+                    locations,
                     descJson,
                     param,
                     tempPhoto,
@@ -2425,7 +2495,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     submited,
 
                     modalAddTag,
-                    addTag,
+                    addNewTag,
                     modalAddLocation,
                     addTagLocation,
 
@@ -2549,11 +2619,33 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         $('#location').on('change', function() {
             let data = $(this).val();
             v.assetData.tagLocationId = data;
+            for (let i = 0; i < v.tagLocation.length; i++) {
+                let includes = _.includes(data, v.tagLocation[i]);
+                if (!includes) {
+                    for (let b = 0; b < v.locations.length; b++) {
+                        if (v.tagLocation[i] == v.locations[b].addLocationId) {
+                            v.locations.splice(b, 1);
+                        }
+                    }
+                    v.tagLocation.splice(i, 1);
+                }
+            }
         })
 
         $('#tag').on('change', function() {
             let data = $(this).val();
             v.assetData.tagId = data;
+            for (let i = 0; i < v.tag.length; i++) {
+                let includes = _.includes(data, v.tag[i]);
+                if (!includes) {
+                    for (let b = 0; b < v.tags.length; b++) {
+                        if (v.tag[i] == v.tags[b].addTagId) {
+                            v.tags.splice(b, 1);
+                        }
+                    }
+                    v.tag.splice(i, 1);
+                }
+            }
         })
 
         $('#taggingType').on('change', function() {
