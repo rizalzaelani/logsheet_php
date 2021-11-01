@@ -1177,6 +1177,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#tag').append(`<option class="optTag` + this.addTag.addTagId + `" value="` + this.addTag.addTagId + `" selected>` + this.addTag.addTagName + `</option>`);
                     this.tag.push($(`.optTag` + this.addTag.addTagId + ``).val());
                     this.tags.push(this.addTag);
+                    this.assetData.tagId.push(this.addTag.addTagId);
                     this.addTag = {
                         addTagId: '',
                         addTagName: '',
@@ -1236,15 +1237,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#tagLocation').append(`<option class="optLocation` + this.addLocation.addLocationId + `" value="` + this.addLocation.addLocationId + `" selected>` + this.addLocation.addLocationName + `</option>`);
                     this.tagLocation.push($(`.optLocation` + this.addLocation.addLocationId + ``).val());
                     this.locations.push(this.addLocation);
+                    this.assetData.tagLocationId.push(this.addLocation.addLocationId);
                     this.addLocation = {
-                        addLocationId: '',
+                        addLocationId: uuidv4(),
                         addLocationName: '',
                         addLocationLatitude: '',
                         addLocationLongitude: '',
                         addLocationDesc: '',
                     }
                     this.myModal.hide();
-                    this.addLocation.addLocationId = uuidv4();
                 }
             }
 
@@ -1770,11 +1771,35 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
     $(document).ready(function() {
         $('#tag').on('change', function() {
-            v.assetData.tagId = $(this).val();
-            let el = $('#tag');
+            let data = $(this).val();
+            v.assetData.tagId = data;
+            for (let i = 0; i < v.tag.length; i++) {
+                let includes = _.includes(data, v.tag[i]);
+                if (!includes) {
+                    for (let b = 0; b < v.tags.length; b++) {
+                        if (v.tag[i] == v.tags[b].addTagId) {
+                            v.tags.splice(b, 1);
+                        }
+                    }
+                    v.tag.splice(i, 1);
+                }
+            }
         })
         $('#tagLocation').on('change', function() {
-            v.assetData.tagLocationId = $(this).val();
+            let data = $(this).val();
+            v.assetData.tagLocationId = data;
+            for (let i = 0; i < v.tagLocation.length; i++) {
+                let includes = _.includes(data, v.tagLocation[i]);
+                if (!includes) {
+                    for (let b = 0; b < v.locations.length; b++) {
+                        if (v.tagLocation[i] == v.locations[b].addLocationId) {
+                            v.locations.splice(b, 1);
+                        }
+                    }
+                    v.tagLocation.splice(i, 1);
+                }
+            }
+                
         })
         $('#showOn').on('change', function() {
             v.param.showOn = $(this).val().toString();

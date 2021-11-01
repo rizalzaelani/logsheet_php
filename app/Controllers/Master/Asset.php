@@ -129,8 +129,6 @@ class Asset extends BaseController
 		$parameterModel = new ParameterModel();
 
 		$post = $this->request->getPost();
-		var_dump($post);
-		die();
 		$assetId = $post['assetId'];
 		if (isset($post['assetId'])) {
 			// asset
