@@ -2,13 +2,6 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
-<style>
-    .invalid {
-        border: 1px solid #e55353;
-        border-radius: 0.25rem;
-        padding: 0.25rem;
-    }
-</style>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -19,6 +12,7 @@ $assetStatus = array($assetData['assetStatusId']);
 $assetTaggingType = array('rfid', 'coordinat', 'uhf');
 $schFreq = array('1', '2', '3', '4', '6', '8', '12', '24');
 $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => 'Wednesday', 'Th' => 'Thursday', 'Fr' => 'Friday', 'Sa' => 'Saturday');
+$schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'Last');
 ?>
 <div class="row" id="app">
     <div class="col-12">
@@ -304,10 +298,6 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                                 <label class="col-sm-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
                                                 <input type="number" class="form-control col-sm-9 max" name="max" placeholder="Max Value" v-model="param.max">
                                             </div>
-                                            <div class="row mb-3 typeInput">
-                                                <label class="col-sm-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
-                                                <input type="text" class="form-control col-sm-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
-                                            </div>
                                             <div class="row mb-3 typeSelect" style="display: none;">
                                                 <label class="col-sm-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
                                                 <div class="col-sm-9 p-0">
@@ -322,6 +312,10 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                                     <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple>
                                                     </select>
                                                 </div>
+                                            </div>
+                                            <div class="row mb-3 inputSelect">
+                                                <label class="col-sm-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
+                                                <input type="text" class="form-control col-sm-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
                                             </div>
                                             <div class="row mb-3 typeCheckbox" style="display: none;">
                                                 <label class="col-sm-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
@@ -713,62 +707,79 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                 <div id="monthly" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="form-check">
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="days">
-                                                        <label class="form-check-label mr-1" for="gridRadios1">
-                                                            Days
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-sm-9 pl-0" id="days" style="display: none;">
-                                                        <select name="monthly" class="form-control days" id="monthlyDays" multiple readonly>
-                                                            <?php for ($i = 1; $i <= 31; $i++) {  ?>
-                                                                <option value="<?= $i; ?>"><?= $i; ?></option>
-                                                            <?php } ?>
-                                                            <option value="Last">Last</option>
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            Field cannot be empty.
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <label for="">Set Monthly As<span class="required">*</span></label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <div class="d-flex justify-content-start">
+                                                        <div class="ml-4">
+                                                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="days">
+                                                            <label class="form-check-label mr-1" for="gridRadios1">
+                                                                Days
+                                                            </label>
                                                         </div>
+                                                        <div class="ml-4">
+                                                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="on">
+                                                            <label class="form-check-label mr-1" for="gridRadios2">
+                                                                On
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- <select name="monthly" class="form-control days" id="monthlyDays" multiple readonly>
+                                                        <?php for ($i = 1; $i <= 31; $i++) {  ?>
+                                                            <option value="<?= $i; ?>"><?= $i; ?></option>
+                                                        <?php } ?>
+                                                        <option value="Last">Last</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div> -->
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col" id="days" style="display: none;">
+                                                    <div class="btn-group-toggle text-center" id="monthlyDays">
+                                                        <?php foreach ($schDays as $key => $val) : ?>
+                                                            <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: 12% !important; display: inline-table">
+                                                                <input class="form-check-input" name="schMonthlyDays" id="schMonthlyDays<?= $val ?>" type="checkbox" value="<?= $val ?>">
+                                                                <?= $val ?>
+                                                            </label>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-check">
-                                                <div class="row mt-2">
-                                                    <div class="col-sm-3">
-                                                        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="on">
-                                                        <label class="form-check-label mr-1" for="gridRadios2">
-                                                            On
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-sm-9 pl-0" id="on" style="display: none">
-                                                        <div class="row">
-                                                            <div class="col-6 pr-1">
-                                                                <select name="onMonth" class="form-control on mr-1" id="monthlyOn" multiple readonly>
-                                                                    <option value="First">First</option>
-                                                                    <option value="Second">Second</option>
-                                                                    <option value="Third">Third</option>
-                                                                    <option value="Fourth">Fourth</option>
-                                                                    <option value="Last">Last</option>
-                                                                </select>
-                                                                <div class="invalid-feedback">
-                                                                    Field cannot be empty.
-                                                                </div>
+                                            <div class="row mt-2">
+                                                <div class="col-12" id="on" style="display: none">
+                                                    <div class="row">
+                                                        <div class="col-6 pr-1">
+                                                            <select name="onMonth" class="form-control on mr-1" id="monthlyOn" multiple readonly>
+                                                                <option value="First">First</option>
+                                                                <option value="Second">Second</option>
+                                                                <option value="Third">Third</option>
+                                                                <option value="Fourth">Fourth</option>
+                                                                <option value="Last">Last</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Field cannot be empty.
                                                             </div>
-                                                            <div class="col-6 pl-1">
-                                                                <select name="onDays" class="form-control on mr-1" id="monthlyOnDays" multiple readonly>
-                                                                    <option value="Su">Sunday</option>
-                                                                    <option value="Mo">Monday</option>
-                                                                    <option value="Tu">Tuesday</option>
-                                                                    <option value="We">Wednesday</option>
-                                                                    <option value="Th">Thursday</option>
-                                                                    <option value="Fr">Friday</option>
-                                                                    <option value="Sa">Saturday</option>
-                                                                </select>
-                                                                <div class="invalid-feedback">
-                                                                    Field cannot be empty.
-                                                                </div>
+                                                        </div>
+                                                        <div class="col-6 pl-1">
+                                                            <select name="onDays" class="form-control on mr-1" id="monthlyOnDays" multiple readonly>
+                                                                <option value="Su">Sunday</option>
+                                                                <option value="Mo">Monday</option>
+                                                                <option value="Tu">Tuesday</option>
+                                                                <option value="We">Wednesday</option>
+                                                                <option value="Th">Thursday</option>
+                                                                <option value="Fr">Friday</option>
+                                                                <option value="Sa">Saturday</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Field cannot be empty.
                                                             </div>
                                                         </div>
                                                     </div>
@@ -990,9 +1001,9 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         <tr>
                             <th class="text-center">Parameter</th>
                             <th class="text-center">Description</th>
+                            <th class="text-center">Normal</th>
+                            <th class="text-center">Abnormal</th>
                             <th class="text-center">UoM</th>
-                            <th class="text-center">Min</th>
-                            <th class="text-center">Max</th>
                             <th class="text-center">Show On</th>
                             <th class="text-center"><i>Status</i></th>
                             <th width="10%" class="text-center" style="border-top-right-radius: 5px;">Action</th>
@@ -1002,11 +1013,11 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         <tr v-for="(items, i) in params" :key="i">
                             <td class="text-center">{{ items.parameterName}}</td>
                             <td class="text-center">{{ items.description}}</td>
-                            <td class="text-center" v-if="items.uom != ''">
-                                {{ items.uom }}
+                            <td class="text-center" v-if="items.max != null">
+                                {{ items.max }}
                             </td>
-                            <td class="text-center" v-else-if="items.option != ''">
-                                {{ items.option }}
+                            <td class="text-center" v-else-if="items.normal != ''">
+                                {{ items.normal }}
                             </td>
                             <td class="text-center" v-else>
                                 <i>(Empty)</i>
@@ -1020,11 +1031,11 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                             <td class="text-center" v-else>
                                 <i>(Empty)</i>
                             </td>
-                            <td class="text-center" v-if="items.max != null">
-                                {{ items.max }}
+                            <td class="text-center" v-if="items.uom != ''">
+                                {{ items.uom }}
                             </td>
-                            <td class="text-center" v-else-if="items.normal != ''">
-                                {{ items.normal }}
+                            <td class="text-center" v-else-if="items.option != ''">
+                                {{ items.option }}
                             </td>
                             <td class="text-center" v-else>
                                 <i>(Empty)</i>
@@ -1043,12 +1054,12 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                 <td class="text-center"><?= $key['description']; ?></td>
                                 <td class="text-center">
                                     <?php
-                                    if ($key['uom'] != '') {
-                                        echo $key['uom'];
-                                    } else if ($key['uom'] == '' && $key['option'] == '') {
+                                    if ($key['max'] != '') {
+                                        echo $key['max'];
+                                    } else if ($key['max'] == null && $key['normal'] == '') {
                                         echo '<i>(Empty)</i>';
                                     } else {
-                                        echo $key['option'];
+                                        echo $key['normal'];
                                     }
                                     ?>
                                 </td>
@@ -1066,12 +1077,12 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                                 </td>
                                 <td class="text-center">
                                     <?php
-                                    if ($key['max'] != '') {
-                                        echo $key['max'];
-                                    } else if ($key['max'] == null && $key['normal'] == '') {
+                                    if ($key['uom'] != '') {
+                                        echo $key['uom'];
+                                    } else if ($key['uom'] == '' && $key['option'] == '') {
                                         echo '<i>(Empty)</i>';
                                     } else {
-                                        echo $key['normal'];
+                                        echo $key['option'];
                                     }
                                     ?>
                                 </td>
@@ -1088,8 +1099,15 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
             </div>
         </div>
 
-        <div class="card card-main" id="btnSaveSetting" style="display: none;">
+        <!-- <div class="card card-main" id="btnSaveSetting" style="display: none;">
             <button class="btn btn-outline-primary text-center w-100" id="btnSaveSetting" @click="btnSaveSetting()"><i class="fa fa-save"></i> Save Changes</button>
+        </div> -->
+        <div class="btn-fab" aria-label="fab">
+            <div>
+                <button style="display: none;" type="button" id="btnSaveSetting" @click="btnSaveSetting()" class="btn btn-main btn-success has-tooltip" data-placement="left" title="publish">
+                    <i class="fa fa-save"></i>
+                </button>
+            </div>
         </div>
     </div>
     <?= $this->endSection(); ?>
@@ -1113,6 +1131,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 var setSch = ref('');
                 var schFreq = ref([]);
                 var selectedSchWeekly = ref([]);
+                var selectedSchMonthlyDays = ref([]);
                 var onDays = ref('');
                 var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging[0]) . ")" : "reactive({
                     assetTaggingId: uuidv4(),
@@ -1149,7 +1168,12 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 var submited = ref(false);
                 var descJsonValue = ref('');
                 var moreDetailAsset = ref(IsJsonString(assetData?.description))
-
+                if (assetData.schWeekDays != "" && assetData.schType == "Monthly") {
+                    assetData.schMonthlyWeekDays = assetData.schWeekDays;
+                    if (assetData.schMonthlyWeekDays != "") {
+                        assetData.schWeekDays = ref("");
+                    }
+                }
                 if (IsJsonString(assetData?.description)) {
                     assetData.descriptionJson = JSON.parse(assetData.description);
                     assetData.description = '';
@@ -1827,7 +1851,12 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                         formdata.append('schManual', this.assetData.schManual);
                         formdata.append('schType', this.assetData.schType);
                         formdata.append('schFrequency', this.assetData.schFrequency);
-                        formdata.append('schWeekDays', this.assetData.schWeekDays);
+                        if (v.assetData.schType == "Weekly" && v.assetData.schType != "") {
+                            formdata.append('schWeekDays', this.assetData.schWeekDays);
+                        }
+                        if (v.assetData.schType == "Monthly" && v.assetData.schMonthlyWeekDays != "") {
+                            formdata.append('schWeekDays', this.assetData.schMonthlyWeekDays);
+                        }
                         formdata.append('schWeeks', this.assetData.schWeeks);
                         formdata.append('schDays', this.assetData.schDays);
 
@@ -2307,6 +2336,9 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 }
 
                 onMounted(() => {
+                    if (assetData.schMonthlyWeekDays != "" && assetData.schType == "Monthly") {
+                        $('#monthlyOnDays').val(assetData.schMonthlyWeekDays.split(",")).trigger("change");
+                    }
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
                     let dataAssetDesc = assetData.description;
@@ -2376,6 +2408,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                     setSch,
                     schFreq,
                     selectedSchWeekly,
+                    selectedSchMonthlyDays,
                     onDays,
                     assetTagging,
 
@@ -2882,6 +2915,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
             if ($(this).val() == 'select') {
                 $('.typeSelect').show();
                 $('.typeCheckbox').show();
+                $('.inputSelect').show();
                 $('.typeInput').hide();
                 v.param.min = null;
                 v.param.max = null;
@@ -2890,6 +2924,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 $('.typeCheckbox').show();
                 $('.typeSelect').hide();
                 $('.typeInput').hide();
+                $('.inputSelect').hide();
                 v.param.min = null;
                 v.param.max = null;
                 v.param.uom = '';
@@ -2897,6 +2932,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 v.param.abnormal = '';
             } else if ($(this).val() == 'input') {
                 $('.typeInput').show();
+                $('.inputSelect').show();
                 $('.typeSelect').hide();
                 $('.typeCheckbox').hide();
                 v.param.option = '';
@@ -2906,6 +2942,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 $('.typeInput').hide();
                 $('.typeSelect').hide();
                 $('.typeCheckbox').hide();
+                $('.inputSelect').hide();
                 v.param.min = null;
                 v.param.max = null;
                 v.param.uom = '';
@@ -2954,7 +2991,14 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 v.assetData.schWeekDays = ref('');
                 v.selectedSchWeekly = ref([]);
 
-                $('#monthlyDays').val("").trigger("change");
+                //set monthly days
+                let schMonthlyDays = v.assetData.schDays.split(",");
+                for (let i = 0; i < schMonthlyDays.length; i++) {
+                    let id = '#schMonthlyDays' + schMonthlyDays[i];
+                    $(id).prop('checked', false);
+                    $(id).parent().removeClass('active');
+                }
+                v.assetData.schDays = ref('');
 
                 $('#monthlyOn').val("").trigger("change");
 
@@ -2973,7 +3017,15 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 v.assetData.schType = $(this).val();
                 v.assetData.schFrequency = "";
 
-                $('#monthlyDays').val("").trigger("change");
+                //set monthly days
+                let schMonthlyDays = v.assetData.schDays.split(",");
+                for (let i = 0; i < schMonthlyDays.length; i++) {
+                    let id = '#schMonthlyDays' + schMonthlyDays[i];
+                    $(id).prop('checked', false);
+                    $(id).parent().removeClass('active');
+                }
+                v.assetData.schDays = ref('');
+
                 $('#monthlyOn').val("").trigger("change");
                 $('#monthlyOnDays').val("").trigger("change");
 
@@ -2994,8 +3046,8 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                     $(id).prop('checked', false);
                     $(id).parent().removeClass('active');
                 }
-                // v.assetData.schWeekDays = ref('');
                 v.selectedSchWeekly = ref([]);
+                v.assetData.schWeekDays = ref("");
 
                 v.assetData.schType = $(this).val();
                 v.assetData.schFrequency = "";
@@ -3014,13 +3066,22 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
             }
 
             if (v.assetData.schDays != '') {
-                $('#monthlyDays').val(v.assetData.schDays.split(",")).trigger("change");
+                // $('#monthlyDays').val(v.assetData.schDays.split(",")).trigger("change");
+                let selectedSchMonthlyDays = v.assetData.schDays.split(",");
+                for (let i = 0; i < selectedSchMonthlyDays.length; i++) {
+                    let id = "#schMonthlyDays" + selectedSchMonthlyDays[i];
+                    $(id).prop('checked', true);
+                    $(id).parent().addClass('active');
+                }
                 $('#gridRadios1').click();
             }
 
-            if (v.assetData.schWeekDays != '' && v.assetData.schType == 'Monthly') {
-                $('#monthlyOnDays').val(v.assetData.schWeekDays.split(",")).trigger("change");
-            }
+            // if (v.assetData.schWeekDays != '' && v.assetData.schType == 'Monthly') {
+            //     if (v.assetData.schMonthlyWeekDays != "") {
+            //         $('#monthlyOnDays').val(v.assetData.schMonthlyWeekDays.split(",")).trigger("change");
+            //         // v.assetData.schWeekDays = ref("");
+            //     }
+            // }
         })
 
         $('input[type="radio"][name="schFreq"]').on('change', function() {
@@ -3037,6 +3098,8 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 }
             }
         })
+
+        //sch weekly
         $('input[type="checkbox"][name="schWeekly"]').on('change', function() {
             let el = $(this)[0];
             let checked = ($(el).prop('checked') == true ? true : false);
@@ -3056,8 +3119,24 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
             v.assetData.schWeekDays = v.selectedSchWeekly.toString();
         })
 
-        $('#monthlyDays').on('change', function() {
-            v.assetData.schDays = $(this).val().toString();
+        //sch monthly days
+        $('input[type="checkbox"][name="schMonthlyDays"]').on('change', function() {
+            let checked = $('input[name="schMonthlyDays"]:checked');
+            let schDays = [];
+            for (let i = 0; i < checked.length; i++) {
+                let val = checked[i].value;
+                schDays.push(val);
+            }
+            v.assetData.schDays = schDays.toString();
+            let el = $(this)[0];
+            let elChecked = ($(el).prop('checked') == true ? true : false);
+            if (elChecked) {
+                let data = el.value;
+                $(el).parent().addClass('active');
+            } else {
+                let data = el.value;
+                $(el).parent().removeClass('active');
+            }
         })
 
         $('#monthlyOn').on('change', function() {
@@ -3065,7 +3144,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
         })
 
         $('#monthlyOnDays').on('change', function() {
-            v.assetData.schWeekDays = $(this).val().toString();
+            v.assetData.schMonthlyWeekDays = $(this).val().toString();
         })
 
         //radio monthly
@@ -3080,16 +3159,25 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
                 v.assetData.schWeeks = '';
                 v.onDays = "days";
             } else if ($(this).val() == "on") {
-                $('#monthlyDays').val("").trigger("change");
+                // $('#monthlyDays').val("").trigger("change");
                 $('.days').attr('readonly', true);
                 $('.on').attr('readonly', false);
                 $('#days').hide();
                 $('#on').show();
-                v.assetData.schDays = '';
+
+                //set monthly days
+                let schMonthlyDays = v.assetData.schDays.split(",");
+                for (let i = 0; i < schMonthlyDays.length; i++) {
+                    let id = '#schMonthlyDays' + schMonthlyDays[i];
+                    $(id).prop('checked', false);
+                    $(id).parent().removeClass('active');
+                }
+                v.assetData.schDays = ref('');
                 v.onDays = "on";
             }
         })
 
+        //asset status
         $('input[type="radio"][name="options"]').on('change', function() {
             let id = $(this)[0].id;
             let text = $(this)[0].dataset.content;
