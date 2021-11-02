@@ -117,19 +117,18 @@ class Transaction extends BaseController
 		$condition = "Normal";
 		
 		$getNormalAbnormal = $scheduleTrxModel->checkNormalAbnormal($scheduleTrxId);
+		$updateTrx = [];
 		if(!empty($getNormalAbnormal)){
 			$trxData = $trxModel->getAll(["scheduleTrxId" => $scheduleTrxId]);
-			$updateTrx = [];
 			foreach($trxData as $row){
-				array_filter($getNormalAbnormal, function($val) use ($row){
+				foreach($getNormalAbnormal as $val){
 					if($val["abnormal"]	== 1 && $val["trxId"] == $row["trxId"]){
 						array_push($updateTrx, array(
 							"trxId" => $val["trxId"],
 							"condition" => "Finding" 
 						));
-						return true;
 					}
-				});
+				}
 			}
 		}
 
@@ -160,7 +159,10 @@ class Transaction extends BaseController
 		return $this->response->setJson([
 			'status' => 200,
 			'message' => "Transaction Approved Successfully",
-			'data' => []
+			'data' => [
+				'updateTrx' => $updateTrx,
+				'getNormalAbnormal' => $getNormalAbnormal
+			]
 		], 200);
 	}
 }

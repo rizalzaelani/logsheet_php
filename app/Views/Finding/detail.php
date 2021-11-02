@@ -9,7 +9,7 @@
     <div class="col-sm-7">
         <div class="card card-main">
             <div class="card-body">
-                <div class="d-flex justify-content-between mt-1 mb-2">
+                <div class="d-flex justify-content-between align-items-center mt-1 mb-2">
                     <h4><?= $title ?></h4>
                     <h5 class="header-icon">
                         <a href="<?= base_url("Transaction") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
@@ -17,16 +17,19 @@
                 </div>
                 <table class="table mt-2">
                     <tr class="mt-1">
-                        <th>Asset</th>
-                        <td>: <?= $findingData['assetName'] ?></td>
+                        <th style="width: 150px;">Asset</th>
+                        <td style="width: 10px;">:</td>
+                        <td>{{ findingData.assetName }}</td>
                     </tr>
                     <tr class="mt-1">
                         <th>Asset Number</th>
-                        <td>: <?= $findingData['assetNumber'] ?></td>
+                        <td>:</td>
+                        <td>{{ findingData.assetNumber }}</td>
                     </tr>
                     <tr class="mt-1">
                         <th>Tag</th>
-                        <td>:
+                        <td>:</td>
+                        <td>
                             <?php
                             if ($findingData['tagName'] != '-') {
                                 $assetTagValue = (array_values(array_unique(explode(",", $findingData['tagName']))));
@@ -44,7 +47,8 @@
                     </tr>
                     <tr class="mt-1">
                         <th>Location</th>
-                        <td>:
+                        <td>:</td>
+                        <td>
                             <?php
                             if ($findingData['tagLocationName'] != '-') {
                                 $assetTagValue = (array_values(array_unique(explode(",", $findingData['tagLocationName']))));
@@ -62,33 +66,52 @@
                     </tr>
                     <tr>
                         <th>Parameter</th>
-                        <td>: <?= $findingData['parameterName'] ?></td>
+                        <td>:</td>
+                        <td>{{ findingData.parameterName }}</td>
                     </tr>
                     <tr>
                         <th>Description</th>
-                        <td>: <?= $findingData['description'] ?></td>
+                        <td>:</td>
+                        <td>{{ findingData.description }}</td>
                     </tr>
                     <tr>
-                        <th>Min / Abnormal</th>
-                        <td>: <?= ($findingData['option'] ?? '') == '' ? $findingData['min'] : $findingData['abnormal'] ?></td>
+                        <th>Normal</th>
+                        <td>:</td>
+                        <td>
+                            <span v-if="!findingData.option" :class="!findingData.min & !findingData.max ? 'font-italic' : ''">{{ !findingData.min & !findingData.max ? "(Any)" : (!findingData.min ? ('<' + findingData.max) : (!findingData.max ? ('>' + findingData.min) : (findingData.min + ' - ' + findingData.max))) }}</span>
+                            <span v-else :class="!findingData.normal ? 'font-italic' : ''">{{ !findingData.normal ? "(Empty)" : findingData.normal }}</span>
+                        </td>
                     </tr>
                     <tr>
-                        <th>Max / Normal</th>
-                        <td>: <?= ($findingData['option'] ?? '') == '' ? $findingData['max'] : $findingData['normal'] ?></td>
+                        <th>Abnormal</th>
+                        <td>:</td>
+                        <td>
+                            <span v-if="!findingData.option" :class="!findingData.min & !findingData.max ? 'font-italic' : ''">{{ !findingData.min & !findingData.max ? "(Any)" : ((findingData.min ? ('x < ' + findingData.min) : '') + '; ' + (findingData.max ? ('x > ' + findingData.max) : '')) }}</span>
+                            <span v-else :class="!findingData.abnormal ? 'font-italic' : ''">{{ !findingData.abnormal ? "(Empty)" : findingData.abnormal }}</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>Unit Of Measure</th>
-                        <td>: <?= $findingData['uom'] ?></td>
+                        <td>:</td>
+                        <td>{{ findingData.uom }}</td>
                     </tr>
                     <tr>
                         <th>Value</th>
-                        <td>: <?= $findingData['value'] ?></td>
+                        <td>:</td>
+                        <td>{{ findingData.value }}</td>
                     </tr>
                 </table>
+
+                <?php if ($findingData['condition'] == "Open") { ?>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="btn btn-outline-primary" @click="closeFinding();" id="closeFinding" type="button" style="margin-left: 10px;"><i class="fa fa-check"></i> Close Finding</button>
+                    </div>
+                <?php } ?>
             </div>
         </div>
-
-        <?php if($findingData['condition'] == "Open"){ ?>
+    </div>
+    <div class="col-sm-5">
+        <?php if ($findingData['condition'] == "Open") { ?>
             <div class="card card-main">
                 <div class="card-body">
                     <div class="d-flex justify-content-between mt-1 mb-2">
@@ -99,24 +122,22 @@
                             <label>Notes</label>
                             <textarea class="form-control" name="notes" rows="3" placeholder="Notes..." v-model="timelineNotes"></textarea>
                         </div>
-                        <div class="form-group d-flex justify-content-between">
-                            <button class="btn btn-primary" type="button" @click="updateFindingLog();"><i class="fa fa-sync"></i> Update</button>
-                            <button class="btn btn-outline-primary" @click="closeFinding();" id="closeFinding" type="button" style="margin-left: 10px;"><i class="fa fa-check"></i> Close Finding</button>
+                        <div class="form-group d-flex justify-content-end">
+                            <button class="btn btn-primary" type="button" @click="updateFindingLog();"><i class="fab fa-telegram-plane"></i> Update</button>
                         </div>
                     </div>
                 </div>
             </div>
         <?php } ?>
-    </div>
-    <div class="col-sm-5">
+
         <div class="card card-main">
             <div class="card-body">
                 <div class="d-flex justify-content-between mt-1 mb-4">
                     <h4>Timeline</h4>
                 </div>
                 <div class="history-tl-container">
-                    <ul class="tl" id="listTimeline" v-for="(val, key) in timelineData">
-                        <li class="tl-item" :class="key == 0 ? 'dot-danger' : (key == (timelineData.length - 1) & '<?= $findingData['condition'] ?>' == 'Closed' ? 'dot-primary' : 'dot-success')">
+                    <ul class="tl" id="listTimeline" v-for="(val, key) in _.chain(timelineData).sortBy('createdAt').reverse().value()">
+                        <li class="tl-item" :class="key == (timelineData.length - 1) ? 'dot-danger' : (key == 0 & '<?= $findingData['condition'] ?>' == 'Closed' ? 'dot-primary' : 'dot-success')">
                             <div class="item-detail">{{ moment(val.createdAt).format("DD MMM YYYY HH:mm:ss") }}</div>
                             <div class="item-title font-weight-bold mb-2">{{ val.createdBy }}</div>
                             <div class="item-notes">{{ val.notes }}</div>
@@ -164,16 +185,18 @@
                 }).then((res) => {
                     xhrThrowRequest(res)
                         .then(() => {
-                            // Swal.fire({
-                            //     title: res.data.message,
-                            //     icon: "success",
-                            //     timer: 3000,
-                            //     toast: true,
-                            // });
+                            Swal.fire({
+                                title: res.data.message,
+                                icon: "success",
+                                timer: 3000,
+                                toast: true,
+                                position: 'top-end',
+                                showCancelButton: false,
+                                showConfirmButton: false,
+                            });
 
                             timelineData.push(res.data.data);
-
-                            // getFindingLog();
+                            timelineNotes.value = '';
                         })
                         .catch((rej) => {
                             if (rej.throw) {
@@ -216,7 +239,7 @@
                                         if (rej.throw) {
                                             throw new Error(rej.message);
                                         }
-                                        
+
                                         document.getElementById("closeFinding").innerHTML = '<i class="fa fa-check"></i> Close Finding';
                                         document.getElementById("closeFinding").removeAttribute("disabled");
                                     });
@@ -235,7 +258,8 @@
                 timelineNotes,
                 updateFindingLog,
                 moment,
-                closeFinding
+                closeFinding,
+                _
             };
         }
     }).mount("#app")

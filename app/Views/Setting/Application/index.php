@@ -421,7 +421,7 @@
             }
 
             Vue.onMounted(() => {
-                FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+                FilePond.registerPlugin(FilePondPluginImagePreview);
                 appLogoLightFP = FilePond.create(document.querySelector('#appLogoLight'), filepondOpt);
                 appLogoDarkFP = FilePond.create(document.querySelector('#appLogoDark'), filepondOpt);
                 appLogoIconFP = FilePond.create(document.querySelector('#appLogoIcon'), filepondOpt);
