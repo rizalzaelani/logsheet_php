@@ -14,7 +14,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         <div class="card card-main card-border-top">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5><?= $title; ?></h5>
+                    <h5>
+                        <?= $title; ?>
+                    </h5>
                     <a class="btn btn-sm btn-success" href="<?= base_url('Asset'); ?>"><i class="fa fa-arrow-left"></i> Back</a>
                 </div>
                 <div class="form-group mt-3">
@@ -24,7 +26,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <form enctype="multipart/form-data" method="post">
                                     <div class="form-group row d-flex align-items-start">
                                         <div class="col-3">
-                                            <label for="assetName">Asset<span class="required">*</span></label>
+                                            <label for="assetName">Asset <span class="required">*</span></label>
                                         </div>
                                         <div class="col-9">
                                             <input type="text" class="form-control" id="assetName" name="assetName" v-model="assetData.assetName" placeholder="Asset Name" required>
@@ -35,7 +37,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     </div>
                                     <div class="form-group row d-flex align-items-start">
                                         <div class="col-3">
-                                            <label for="assetNumber">Number<span class="required">*</span></label>
+                                            <label for="assetNumber">Number <span class="required">*</span></label>
                                         </div>
                                         <div class="col-9">
                                             <input type="text" class="form-control" id="assetNumber" name="assetNumber" v-model="assetData.assetNumber" placeholder="Asset Number" required>
@@ -131,7 +133,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             </div>
 
             <!-- modal add parameter-->
-            <div class="modal fade" role="dialog" id="addParameterModal">
+            <div class="modal fade" role="dialog" id="addParameterModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -144,7 +146,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <div class="row mb-3">
                                         <label class="col-3" for="parameterName">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Parameter name for asset that you have.</div>"></i></label>
                                         <div class="col-9 p-0">
-                                            <input type="text" class="form-control parameterName" name="parameterName" placeholder="Parameter Name" v-model="param.parameterName">
+                                            <input type="text" class="form-control parameterName" name="parameterName" id="parameterName" placeholder="Parameter Name" v-model="param.parameterName">
                                             <div class="invalid-feedback">
                                                 Field cannot be empty.
                                             </div>
@@ -231,6 +233,41 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </div>
             </div>
 
+            <!-- modal import parameter-->
+            <div class="modal fade" role="dialog" id="importParameterModal">
+                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="titleModalAdd">Upload File</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
+                                            </div>
+                                            <div>
+                                                <b><i>Ketentuan Upload File</i></b>
+                                                <ol>
+                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <form action="post" enctype="multipart/form-data">
+                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             <!-- modal add tag -->
             <div class="modal fade" id="modalAddTag" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true" style="z-index: 3000;">
                 <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered" role="document">
@@ -313,15 +350,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             <div class="row">
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
                                     <svg class="c-icon">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-location-pin"></use>
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-location-pin"></use>
                                     </svg>
-                                    <p class="m-0"> Asset Tag Location</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Asset Tag Location <span class="required">*</span>
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
@@ -341,15 +382,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </div>
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
-                                    <svg class="c-icon mr-1">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-tags"></use>
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-tags"></use>
                                     </svg>
-                                    <p class="m-0"> Asset Tag</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="ml-1 mb-0">
+                                    Asset Tag <span class="required">*</span>
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
@@ -377,22 +422,26 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             <div class="row">
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
-                                    <svg class="c-icon mr-1">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-calendar"></use>
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-calendar"></use>
                                     </svg>
-                                    <p class="m-0"> Schedule</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="ml-1 mb-0">
+                                    Schedule <span class="required">*</span>
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div>
                             <form method="post" enctype="multipart/form-data">
                                 <div class="form-group row d-flex align-items-center">
                                     <div class="col-3">
-                                        <label for="setSch">Set As<span class="required">*</span></label>
+                                        <label for="setSch">Set As <span class="required">*</span></label>
                                     </div>
                                     <div class="col-9">
                                         <select class="form-control" name="setSch" id="setSch">
@@ -407,7 +456,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 </div>
                                 <div class="form-group row d-flex align-items-center schType hide">
                                     <div class="col-3">
-                                        <label for="schType">Schedule<span class="required">*</span></label>
+                                        <label for="schType">Schedule <span class="required">*</span></label>
                                     </div>
                                     <div class="col-9">
                                         <select class="form-control" name="schType" id="schType">
@@ -459,7 +508,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col-3">
-                                                    <label for="">Set Montly As<span class="required">*</span></label>
+                                                    <label for="">Set Montly As <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
                                                     <div class="d-flex justify-content-start">
@@ -534,15 +583,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </div>
                 <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="p-0 m-0">
-                                <b class="d-flex justify-content-start align-item-center">
-                                    <svg class="c-icon mr-1">
-                                        <use xlink:href="/icons/coreui/svg/linear.svg#cil-cog"></use>
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
                                     </svg>
-                                    <p class="m-0"> Change Operation Mode</p>
-                                </b>
-                            </h5>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="ml-1 mb-0">
+                                    Change Operation Mode <span class="required">*</span>
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div class="form-group row">
@@ -568,11 +621,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         <div id="cardAssetTagging">
             <div class="row">
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="p-0 m-0">
-                                <b>Asset Tagging</b>
-                            </h5>
+                    <div class="card card-main h-100" id="cardTagging">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon mr-1">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/solid.svg#cis-qr-code"></use>
+                                    </svg>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Asset Tagging
+                                </h5>
+                            </div>
                         </div>
                         <hr>
                         <div>
@@ -596,7 +658,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col-12">
                                             <div class="form-group row d-flex align-items-center">
                                                 <div class="col-3">
-                                                    <label for="asset">Value<span class="required">*</span></label>
+                                                    <label for="asset">Value <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
                                                     <input type="text" class="form-control" id="valRfid" name="valRfid" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
@@ -648,8 +710,21 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     </div>
                 </div>
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
-                        <h5><b>Other Config</b></h5>
+                    <div class="card card-main h-100" id="cardOther">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon mr-1">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-settings-alt"></use>
+                                    </svg>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Other Config
+                                </h5>
+                            </div>
+                        </div>
                         <hr>
                         <table>
                             <tr class="mt-1">
@@ -670,7 +745,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 </td>
                             </tr>
                             <tr class="mt-1">
-                                <td width="40%">Bypass tagging rfid</td>
+                                <td width="40%">Bypass Tagging RFID</td>
                                 <td>:</td>
                                 <td class="d-flex justify-content-start align-items-start">
                                     <div class="mr-2">
@@ -700,10 +775,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <svg class="c-icon mr-1">
                             <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
                         </svg>
-                        <p class="m-0"> Parameter<span class="required">*</span></p>
+                        <p class="m-0"> Parameter <span class="required">*</span></p>
                     </b>
                 </h5>
                 <div>
+                    <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
                     <button class="btn btn-sm btn-outline-primary" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
                 </div>
             </div>
@@ -776,7 +852,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
     </div>
     <div class="btn-fab" aria-label="fab">
         <div>
-            <button @click="save()" type="button" class="btn btn-main btn-success has-tooltip" data-placement="left" title="publish"><i class="fa fa-save"></i></button>
+            <button @click="save()" type="button" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="top" title="Publish Asset"><i class="fa fa-save"></i></button>
         </div>
     </div>
 </div>
@@ -888,6 +964,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 console.log(photo);
             }
 
+            function importParameter() {
+                this.myModal = new coreui.Modal(document.getElementById('importParameterModal'), {
+                    backdrop: 'static',
+                    keyboard: false
+                })
+                this.myModal.show();
+            }
+
             function addParameter() {
                 $('#btnAddParam').show();
                 $('#titleModalAdd').show();
@@ -962,6 +1046,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#showOn').val('').trigger('change');
                     $('#normal').val('').trigger("change");
                     $('#abnormal').val('').trigger('change');
+                    $('#parameterName').focus();
                 }
             }
 
@@ -985,28 +1070,28 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 this.param.max = data.max;
                 this.param.normal = data.normal;
                 this.param.abnormal = data.abnormal;
-                // this.param.option = data.option;
+                this.param.option = data.option;
                 this.param.inputType = data.inputType;
                 this.param.showOn = data.showOn;
                 this.param.i = index;
 
                 index = this.param.i;
-                    this.params[index] = reactive({
-                        parameterId: this.param.parameterId,
-                        sortId: this.param.sortId,
-                        parameterName: this.param.parameterName,
-                        photo: this.param.photo,
-                        paramDesc: this.param.paramDesc,
-                        uom: this.param.uom,
-                        min: this.param.min,
-                        max: this.param.max,
-                        normal: this.param.normal,
-                        abnormal: this.param.abnormal,
-                        option: this.param.option,
-                        inputType: this.param.inputType,
-                        showOn: this.param.showOn,
-                        i: index,
-                    })
+                this.params[index] = reactive({
+                    parameterId: this.param.parameterId,
+                    sortId: this.param.sortId,
+                    parameterName: this.param.parameterName,
+                    photo: this.param.photo,
+                    paramDesc: this.param.paramDesc,
+                    uom: this.param.uom,
+                    min: this.param.min,
+                    max: this.param.max,
+                    normal: this.param.normal,
+                    abnormal: this.param.abnormal,
+                    option: this.param.option,
+                    inputType: this.param.inputType,
+                    showOn: this.param.showOn,
+                    i: index,
+                })
                 if (this.param.photo != "") {
                     $('#previewImg').show();
                     $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
@@ -1086,8 +1171,33 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         showOn: this.param.showOn,
                         i: index,
                     })
-
                     this.myModal.hide();
+                    this.param.parameterId = uuidv4();
+                    this.param.sortId = null;
+                    this.param.parameterName = '';
+                    this.param.photo = '';
+                    this.param.paramDesc = '';
+                    this.param.uom = '';
+                    this.param.min = null;
+                    this.param.max = null;
+                    this.param.normal = '';
+                    this.param.abnormal = '';
+                    this.param.option = '';
+                    this.param.inputType = '';
+                    this.param.showOn = '';
+                    this.param.i = null;
+
+                    $('#previewImg').hide();
+                    $('#imgParam').remove();
+                    $('.type').val('').trigger("change");
+                    $('#showOn').val('').trigger('change');
+                    $('#normal').val('').trigger('change');
+                    $('#abnormal').val('').trigger('change');
+                    $('.optNormal').remove();
+                    $('.optAbnormal').remove();
+                    $('.parameter').removeClass('is-invalid');
+                    $('.type').removeClass('is-invalid');
+                    $('.showOn').removeClass('is-invalid');
                 }
             }
 
@@ -1115,50 +1225,21 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             }
 
-            function deleteParameter() {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-1'
-                    },
-                    buttonsStyling: false
-                })
-                swalWithBootstrapButtons.fire({
-                    title: 'Are yu sure?',
-                    text: "You will delete this data!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    cancelButtonText: "<i class='fa fa-times'></i> Cancel",
-                    confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
-                    reverseButtons: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        swalWithBootstrapButtons.fire({
-                            title: 'Success!',
-                            text: 'You have successfully deleted this data.',
-                            icon: 'success',
-                            allowOutsideClick: false
-                        })
-                    }
-                })
-            }
-
             function btnCancelModalParam() {
-                this.param = reactive({
-                    parameterId: uuidv4(),
-                    sortId: null,
-                    parameterName: '',
-                    photo: '',
-                    paramDesc: '',
-                    uom: '',
-                    min: null,
-                    max: null,
-                    normal: '',
-                    abnormal: '',
-                    option: '',
-                    inputType: '',
-                    showOn: '',
-                })
+                this.param.parameterId = uuidv4();
+                this.param.sortId = null;
+                this.param.parameterName = '';
+                this.param.photo = '';
+                this.param.paramDesc = '';
+                this.param.uom = '';
+                this.param.min = null;
+                this.param.max = null;
+                this.param.normal = '';
+                this.param.abnormal = '';
+                this.param.option = '';
+                this.param.inputType = '';
+                this.param.showOn = '';
+                this.param.i = null;
                 $('#addParameterModal').modal('hide');
                 $('#previewImg').hide();
                 $('#imgParam').remove();
@@ -1283,6 +1364,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         title: 'Failed!',
                         text: "Invalid value!",
                         icon: 'error'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $('html, body').animate({
+                                scrollTop: $(".is-invalid").offset().top
+                            }, 1000);
+                        }
                     })
 
                     if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
@@ -1709,6 +1796,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             };
 
             onMounted(() => {
+                $('#assetName').focus();
                 let dataAssetName = assetData.assetName;
                 let dataAssetNumber = assetData.assetNumber;
                 let dataAssetDesc = assetData.description;
@@ -1765,12 +1853,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 addDescJson,
 
                 photo,
+                importParameter,
                 addParameter,
                 addTempParameter,
                 editTempParameter,
                 updateTempParameter,
                 removeTempParameter,
-                deleteParameter,
                 btnCancelModalParam,
                 modalAddTag,
                 addAssetTag,
@@ -2163,6 +2251,48 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             styleButtonProcessItemPosition: 'right bottom',
         });
     })
+
+    // import parameter
+    $(document).ready(function() {
+            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
+            let pond = $('#fileImportParam').filepond({
+                acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
+                allowMultiple: false,
+                instantUpload: true,
+                credits: false,
+                // server: {
+                //     process: {
+                //         url: "<?= base_url('Asset/uploadFile'); ?>",
+                //         method: 'post',
+                //         onload: (res) => {
+                //             var rsp = JSON.parse(res);
+                //             if (rsp.status == "success") {
+                //                 importList = rsp.data;
+                //                 if (importList.length > 0) {
+                //                     loadListImport(importList);
+                //                     $('#importParameterModal').modal('hide');
+                //                     this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
+                //                     this.myModal.show();
+                //                     $('#fileImportParam').filepond('removeFiles');
+                //                 }
+                //             } else if (rsp.status == "failed") {
+                //                 const swalWithBootstrapButtons = swal.mixin({
+                //                     customClass: {
+                //                         confirmButton: 'btn btn-danger'
+                //                     },
+                //                     buttonsStyling: false
+                //                 })
+                //                 swalWithBootstrapButtons.fire(
+                //                     rsp.message,
+                //                     '',
+                //                     'error'
+                //                 )
+                //             }
+                //         }
+                //     }
+                // }
+            });
+        })
 
     //radio monthly
     $('input[type="radio"][name="gridRadios"]').on('change', function() {

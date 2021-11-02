@@ -176,7 +176,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <form enctype="multipart/form-data" method="post">
                                     <div class="form-group row d-flex align-items-center">
                                         <div class="col-sm-3">
-                                            <label for="assetName">Asset<span class="required">*</span></label>
+                                            <label for="assetName">Asset <span class="required">*</span></label>
                                         </div>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="assetName" name="assetName" v-model="assetData.assetName" placeholder="Asset Name" required>
@@ -187,7 +187,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     </div>
                                     <div class="form-group row d-flex align-items-center">
                                         <div class="col-sm-3">
-                                            <label for="assetNumber">Number<span class="required">*</span></label>
+                                            <label for="assetNumber">Number <span class="required">*</span></label>
                                         </div>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="assetNumber" name="assetNumber" v-model="assetData.assetNumber" placeholder="Asset Number" required>
@@ -416,12 +416,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <table class="table w-100" id="tableImport">
                                         <thead>
                                             <tr>
+                                                <th id="all">
+                                                    <input type="checkbox" name="checkbox" id="select-all" value="_all">
+                                                </th>
                                                 <th>Parameter</th>
                                                 <th>Description</th>
+                                                <th>Normal</th>
+                                                <th>Abnormal</th>
+                                                <!-- <th>input type</th> -->
                                                 <th>UoM</th>
-                                                <th>min</th>
-                                                <th>max</th>
-                                                <th>input type</th>
                                                 <th>show On</th>
                                             </tr>
                                         </thead>
@@ -567,7 +570,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             </div>
                             <div>
                                 <h5 class="mb-0">
-                                    Asset Tag Location
+                                    Asset Tag Location <span class="required">*</span>
                                 </h5>
                             </div>
                         </div>
@@ -599,7 +602,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             </div>
                             <div>
                                 <h5 class="mb-0">
-                                    Asset Tag
+                                    Asset Tag <span class="required">*</span>
                                 </h5>
                             </div>
                         </div>
@@ -648,7 +651,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <form method="post" enctype="multipart/form-data">
                                 <div class="form-group row d-flex align-items-center">
                                     <div class="col-sm-3">
-                                        <label for="setSch">Set As<span class="required">*</span></label>
+                                        <label for="setSch">Set As <span class="required">*</span></label>
                                     </div>
                                     <div class="col-sm-9">
                                         <select class="form-control" name="setSch" id="setSch">
@@ -662,7 +665,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 </div>
                                 <div class="form-group row d-flex align-items-center schType">
                                     <div class="col-sm-3">
-                                        <label for="schType">Schedule<span class="required">*</span></label>
+                                        <label for="schType">Schedule <span class="required">*</span></label>
                                     </div>
                                     <div class="col-sm-9">
                                         <select class="form-control" name="schType" id="schType">
@@ -714,7 +717,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col-3">
-                                                    <label for="">Set Monthly As<span class="required">*</span></label>
+                                                    <label for="">Set Monthly As <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
                                                     <div class="d-flex justify-content-start">
@@ -731,16 +734,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                             </label>
                                                         </div>
                                                     </div>
-
-                                                    <!-- <select name="monthly" class="form-control days" id="monthlyDays" multiple readonly>
-                                                        <?php for ($i = 1; $i <= 31; $i++) {  ?>
-                                                            <option value="<?= $i; ?>"><?= $i; ?></option>
-                                                        <?php } ?>
-                                                        <option value="Last">Last</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        Field cannot be empty.
-                                                    </div> -->
                                                 </div>
                                             </div>
                                             <div class="row mt-2">
@@ -874,7 +867,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col-12">
                                             <div class="form-group row d-flex align-items-center">
                                                 <div class="col-3">
-                                                    <label for="asset">Value<span class="required">*</span></label>
+                                                    <label for="asset">Value <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
                                                     <input type="text" class="form-control" id="valRfid" name="valRfid" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
@@ -961,7 +954,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 </td>
                             </tr>
                             <tr class="mt-1">
-                                <td width="40%">Bypass tagging rfid</td>
+                                <td width="40%">Bypass Tagging RFID</td>
                                 <td>:</td>
                                 <td class="d-flex justify-content-start align-items-start">
                                     <div class="mr-2">
@@ -986,14 +979,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         <!-- parameter -->
         <div class="card card-main" id="cardParameter" style="display: none;">
             <div class="mt-2 d-flex justify-content-between align-items-center">
-                <h5>
-                    <b class="d-flex justify-content-start align-item-center">
-                        <svg class="c-icon mr-1">
-                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
-                        </svg>
-                        <p class="m-0"> Parameter<span class="required">*</span></p>
-                    </b>
-                </h5>
+                <div class="d-flex justify-content-start align-items-center">
+                    <div>
+                        <h5>
+                            <svg class="c-icon mr-1">
+                                <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
+                            </svg>
+                        </h5>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">
+                            Parameter <span class="required">*</span>
+                        </h5>
+                    </div>
+                </div>
                 <div>
                     <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
                     <button class="btn btn-sm btn-outline-primary" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
@@ -1151,7 +1150,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         </div> -->
         <div class="btn-fab" aria-label="fab">
             <div>
-                <button style="display: none;" type="button" id="btnSaveSetting" @click="btnSaveSetting()" class="btn btn-main btn-success has-tooltip" data-placement="left" title="publish">
+                <button style="display: none;" type="button" id="btnSaveSetting" @click="btnSaveSetting()" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="top" title="Save Changes">
                     <i class="fa fa-save"></i>
                 </button>
             </div>
@@ -1223,6 +1222,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 });
                 var tempPhoto = ref('');
                 var params = ref([]);
+                var importList = reactive({});
+                var listNewParam = ref([]);
                 var submited = ref(false);
                 var descJsonValue = ref('');
                 var moreDetailAsset = ref(IsJsonString(assetData?.description))
@@ -1538,13 +1539,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     if (v.param.inputType != '') {
                         $('.type').val(v.param.inputType).trigger("change");
                     }
-                    if (v.param.normal != '' || v.param.abnormal != '') {
-                        $('#normal').val(v.param.normal.split(",")).trigger('change');
-                        $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
-                    }
-                    if (this.param.showOn != '') {
-                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
-                    }
+                    // if (v.param.normal != '' || v.param.abnormal != '') {
+                    //     $('#normal').val(v.param.normal.split(",")).trigger('change');
+                    //     $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
+                    // }
+                    // if (this.param.showOn != '') {
+                    //     $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                    // }
                 };
 
                 function updateTempParameter() {
@@ -1649,6 +1650,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.submited = ref(true);
 
                     if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.assetStatusName == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || (this.assetData.schType == "Daily" && this.assetData.schFrequency == '') || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
+                    this.submited = ref(false);
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
                                 confirmButton: 'btn btn-danger',
@@ -1659,6 +1661,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             title: 'Failed!',
                             text: "Invalid value!",
                             icon: 'error'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('html, body').animate({
+                                scrollTop: $(".is-invalid").offset().top
+                            }, 1000);
+                            }
                         })
 
                         if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
@@ -2188,7 +2196,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 }
 
                 function updateExistParameter() {
-                    
+
                 }
 
                 function editParameter($parameterId) {
@@ -2399,7 +2407,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
+                        this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.description = '';
                     this.param.uom = '';
@@ -2438,8 +2446,17 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 };
 
                 function insertParam() {
+                    let lengthParam = v.listNewParam.length;
+                    for (let i = 0; i < v.listNewParam.length; i++) {
+                        this.listNewParam[i].sortId = $('#tableParameter tbody tr').length;
+                        this.listNewParam[i].parameterId = uuidv4();
+                        this.listNewParam[i].photo = "";
+                        this.params.push(v.listNewParam[i])
+                    }
+                    this.myModal.hide();
+                    return
                     axios.post("<?= base_url('Asset/insertParameter'); ?>", {
-                        dataParam: importList,
+                        dataParam: v.listNewParam,
                         assetId: this.assetData.assetId
                     }).then(res => {
                         console.log(res);
@@ -2594,6 +2611,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     param,
                     tempPhoto,
                     params,
+                    importList,
+                    listNewParam,
                     submited,
 
                     modalAddTag,
@@ -2883,9 +2902,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         onload: (res) => {
                             var rsp = JSON.parse(res);
                             if (rsp.status == "success") {
-                                importList = rsp.data;
-                                if (importList.length > 0) {
-                                    loadListImport(importList);
+                                v.importList = rsp.data;
+                                if (v.importList.length > 0) {
+                                    loadListImport((v.importList));
                                     $('#importParameterModal').modal('hide');
                                     this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
                                     this.myModal.show();
@@ -2911,30 +2930,83 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         })
 
         var loadListImport = (importList) => {
+            $('#tableImport').DataTable().destroy();
             var table = $('#tableImport').DataTable({
-                "processing": false,
-                "serverSide": false,
-                "scrollX": false,
-                "paging": false,
-                "dom": `<"d-flex justify-content-between align-items-center"<i><f>>t`,
-                "data": importList,
-                "columns": [{
+                drawCallback: function(settings){
+                        $('#all').removeClass('sorting_asc');
+                        let arr = [];
+                        $('#select-all').change(function() {
+                            if (this.checked) {
+                                $('input[name="parameterId"]').prop('checked', this.checked);
+                                let elm = table.rows().data();
+                                $.each(elm, function(key, val) {
+                                    arr.push(val);
+                                })
+                                v.listNewParam = arr;
+                            }else{
+                                $('input[name="parameterId"]').prop('checked', this.checked);
+                                v.listNewParam = ref([]);
+                            }
+                        })
+
+                        $('#tableImport tbody').on('change', 'input[name="parameterId"]', function() {
+                            let elm = $('#select-all').get(0);
+                            if (elm && elm.checked && ('indeterminate' in elm)) {
+                                elm.indeterminate = true;
+                            }
+                        })
+
+                        $('#tableImport tbody').on('change', 'tr', function() {
+                            let table = $('#tableImport').DataTable();
+                            let data = table.row(this).data();
+                            // console.log(table.row(this).data())
+                            let id = '#id' + data.no;
+                            let checkParam = ($(id).prop('checked')) == true ? true : false;
+                            if (checkParam) {
+                                let lengthParam = v.importList.length;
+                                for (let i = 0; i < lengthParam; i++) {
+                                    if (data.no == v.importList[i].no) {
+                                        v.listNewParam.push(v.importList[i])
+                                    }
+                                    // console.log(v.importList[i].no)
+                                }
+                                // v.listNewParam.push(data);
+                            }else{
+                                let lengthListNewParam = v.listNewParam.length;
+                                for (let i = 0; i < lengthListNewParam; i++) {
+                                    if (data.no == (v.listNewParam[i]).no) {
+                                        v.listNewParam.splice(i, 1)
+                                    }
+                                }
+                            }
+                        })
+                },
+                processing: true,
+                serverSide: false,
+                scrollX: false,
+                paging: false,
+                dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
+                data: importList,
+                columns: [{
+                        "data": "no"
+                    },
+                    {
                         "data": "parameterName"
                     },
                     {
                         "data": "description"
                     },
                     {
-                        "data": "uom"
+                        "data": "maxNormal"
                     },
                     {
-                        "data": "min"
+                        "data": "minAbnormal"
                     },
+                    // {
+                    //     "data": "inputType"
+                    // },
                     {
-                        "data": "max"
-                    },
-                    {
-                        "data": "inputType"
+                        "data": "uomOption"
                     },
                     {
                         "data": "showOn"
@@ -2945,9 +3017,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     'searchable': false,
                     'orderable': false,
                     'className': 'dt-body-center',
+                    render: function(data){
+                        return `<input type="checkbox" name="parameterId" class="checkbox" id="id${data}" value="${data}">`;
+                    }
                 }],
-                "order": [1, 'asc'],
+                "order": [0, 'asc'],
             });
+            // table.draw();
         }
 
         // select2 setting asset

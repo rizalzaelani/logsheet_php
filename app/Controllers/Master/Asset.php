@@ -773,8 +773,8 @@ class Asset extends BaseController
 	{
 		$file = $this->request->getFile('importParam');
 		if ($file) {
-			$newName = "doc" . time();
-			$file->move('../uploads', $newName);
+			$newName = "doc" . time() . '.xlsx';
+			$file->move('../uploads/', $newName);
 			$reader = ReaderEntityFactory::createXLSXReader();
 			$reader->open('../uploads/' . $newName);
 			$dataImport = [];
@@ -784,13 +784,24 @@ class Asset extends BaseController
 					if ($numrow > 1) {
 						if ($row->getCellAtIndex(1) != '' && $row->getCellAtIndex(2) != '') {
 							$dataImport[] = array(
+								'no' => $row->getCellAtIndex(0)->getValue(),
 								'parameterName' => $row->getCellAtIndex(1)->getValue(),
 								'description' => $row->getCellAtIndex(2)->getValue(),
-								'uom' => (($row->getCellAtIndex(8)->getValue()) ? $row->getCellAtIndex(8)->getValue() : $row->getCellAtIndex(3)->getValue()),
-								'min' => (($row->getCellAtIndex(7)->getValue()) ? $row->getCellAtIndex(7)->getValue() : $row->getCellAtIndex(4)->getValue()),
-								'max' => (($row->getCellAtIndex(6)->getValue()) ? $row->getCellAtIndex(6)->getValue() : $row->getCellAtIndex(5)->getValue()),
+
+								'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
+								'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
+								'uomOption' => (($row->getCellAtIndex(7)->getValue()) ? $row->getCellAtIndex(7)->getValue() : $row->getCellAtIndex(8)->getValue()),
+								
+								'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
+								'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
+								'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
+								'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
+								'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
+								'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
+
 								'inputType' => $row->getCellAtIndex(9)->getValue(),
 								'showOn' => $row->getCellAtIndex(10)->getValue(),
+
 							);
 						} else {
 							return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Does Not Match'));
@@ -799,8 +810,8 @@ class Asset extends BaseController
 					$numrow++;
 				}
 			}
-			unlink('../uploads/' . $newName);
 			if ($dataImport) {
+				// unlink('../uploads/' . $newName);
 				return $this->response->setJSON(array('status' => 'success', 'message' => '', 'data' => $dataImport));
 			} else {
 				return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Not Found!'));
