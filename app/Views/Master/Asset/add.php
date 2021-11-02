@@ -224,7 +224,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" id="cancel" @click="btnCancelModalParam()"><i class=" fa fa-times"></i> Cancel</button>
                             <button type="submit" class="btn btn-success" @click="addTempParameter()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
-                            <button type="button" class="btn btn-success" @click="updateParameter()" style="display: none;" id="btnUpdateParameter"><i class="fa fa-check"></i> Save Changes</button>
+                            <!-- <button type="button" class="btn btn-success" @click="updateParameter()" style="display: none;" id="btnUpdateParameter"><i class="fa fa-check"></i> Save Changes</button> -->
                             <button type="button" class="btn btn-success" @click="updateTempParameter()" style="display: none;" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
                         </div>
                     </div>
@@ -967,26 +967,46 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             function editTempParameter(index) {
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                this.myModal.show();
                 $('#btnAddParam').hide();
                 $('#titleModalAdd').hide();
                 $('#btnUpdateParameter').hide();
                 $('#btnUpdateParam').show();
                 $('#titleModalEdit').show();
                 let data = this.params[index];
-                this.param.parameterId = this.params[index].parameterId;
+                // console.log(data.parameterId);
+                this.param.parameterId = data.parameterId;
                 this.param.sortId = null;
-                this.param.parameterName = this.params[index].parameterName;
-                this.param.photo = this.params[index].photo;
-                this.param.paramDesc = this.params[index].paramDesc;
-                this.param.uom = this.params[index].uom;
-                this.param.min = this.params[index].min;
-                this.param.max = this.params[index].max;
-                this.param.normal = this.params[index].normal;
-                this.param.abnormal = this.params[index].abnormal;
-                this.param.option = this.params[index].option;
-                this.param.inputType = this.params[index].inputType;
-                this.param.showOn = this.params[index].showOn;
+                this.param.parameterName = data.parameterName;
+                this.param.photo = data.photo;
+                this.param.paramDesc = data.paramDesc;
+                this.param.uom = data.uom;
+                this.param.min = data.min;
+                this.param.max = data.max;
+                this.param.normal = data.normal;
+                this.param.abnormal = data.abnormal;
+                // this.param.option = data.option;
+                this.param.inputType = data.inputType;
+                this.param.showOn = data.showOn;
                 this.param.i = index;
+
+                index = this.param.i;
+                    this.params[index] = reactive({
+                        parameterId: this.param.parameterId,
+                        sortId: this.param.sortId,
+                        parameterName: this.param.parameterName,
+                        photo: this.param.photo,
+                        paramDesc: this.param.paramDesc,
+                        uom: this.param.uom,
+                        min: this.param.min,
+                        max: this.param.max,
+                        normal: this.param.normal,
+                        abnormal: this.param.abnormal,
+                        option: this.param.option,
+                        inputType: this.param.inputType,
+                        showOn: this.param.showOn,
+                        i: index,
+                    })
                 if (this.param.photo != "") {
                     $('#previewImg').show();
                     $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
@@ -1003,8 +1023,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 if (this.param.showOn != '') {
                     $('#showOn').val(this.param.showOn.split(",")).trigger('change');
                 }
-                this.myModal.show();
-
             }
 
             function updateTempParameter() {
@@ -1068,6 +1086,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         showOn: this.param.showOn,
                         i: index,
                     })
+
+                    this.myModal.hide();
                 }
             }
 
@@ -1252,6 +1272,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             function save() {
                 this.submited = true;
                 if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || this.setSch == "" || this.assetData.schType == "" || (v.assetData.schType == 'Daily' && v.assetData.schFrequency == "") || (v.assetData.schType == 'Weekly' && v.assetData.schWeekDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == 'days' && v.assetData.schDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == "on" && v.assetData.schWeeks == "") || this.assetData.assetStatusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
+                    this.submited = false;
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
                             confirmButton: 'btn btn-danger',
@@ -1799,7 +1820,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     v.tagLocation.splice(i, 1);
                 }
             }
-                
+
         })
         $('#showOn').on('change', function() {
             v.param.showOn = $(this).val().toString();
@@ -1964,7 +1985,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             $('.typeInput').hide();
             v.param.min = null;
             v.param.max = null;
-            v.param.uom = '';
         } else if ($(this).val() == 'checkbox') {
             $('.typeCheckbox').show();
             $('.typeSelect').hide();
