@@ -1516,20 +1516,37 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#titleModalEdit').show();
                     this.myModal.show();
                     let data = this.params[index];
-                    this.param.parameterId = this.params[index].parameterId;
-                    this.param.sortId = this.params[index].sortId;
-                    this.param.parameterName = this.params[index].parameterName;
-                    this.param.photo = this.params[index].photo;
-                    this.param.description = this.params[index].description;
-                    this.param.uom = this.params[index].uom;
-                    this.param.min = this.params[index].min;
-                    this.param.max = this.params[index].max;
-                    this.param.normal = this.params[index].normal;
-                    this.param.abnormal = this.params[index].abnormal;
-                    this.param.option = this.params[index].option;
-                    this.param.inputType = this.params[index].inputType;
-                    this.param.showOn = this.params[index].showOn;
+                    this.param.parameterId = data.parameterId;
+                    this.param.sortId = data.sortId;
+                    this.param.parameterName = data.parameterName;
+                    this.param.photo = data.photo;
+                    this.param.description = data.description;
+                    this.param.uom = data.uom;
+                    this.param.min = data.min;
+                    this.param.max = data.max;
+                    this.param.normal = data.normal;
+                    this.param.abnormal = data.abnormal;
+                    this.param.option = data.option;
+                    this.param.inputType = data.inputType;
+                    this.param.showOn = data.showOn;
                     this.param.i = index;
+
+                    this.params[index] = reactive({
+                        parameterId: this.param.parameterId,
+                        sortId: this.param.sortId,
+                        parameterName: this.param.parameterName,
+                        photo: this.param.photo,
+                        description: this.param.description,
+                        uom: this.param.uom,
+                        min: this.param.min,
+                        max: this.param.max,
+                        normal: this.param.normal,
+                        abnormal: this.param.abnormal,
+                        option: this.param.option,
+                        inputType: this.param.inputType,
+                        showOn: this.param.showOn,
+                        i: index,
+                    })
                     if (this.param.photo != "") {
                         $('#previewImg').show();
                         $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
@@ -1539,13 +1556,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     if (v.param.inputType != '') {
                         $('.type').val(v.param.inputType).trigger("change");
                     }
-                    // if (v.param.normal != '' || v.param.abnormal != '') {
-                    //     $('#normal').val(v.param.normal.split(",")).trigger('change');
-                    //     $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
-                    // }
-                    // if (this.param.showOn != '') {
-                    //     $('#showOn').val(this.param.showOn.split(",")).trigger('change');
-                    // }
+                    if (this.param.showOn != '') {
+                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                    }
+                    let normal = v.param.normal.split(",");
+                    let abnormal = v.param.abnormal.split(",");
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
+                    if (normal.length) {
+                        // $('#normal').val(normal).trigger("change");
+                        for (let i = 0; i < normal.length; i++) {
+                            $('#normal').append(`<option class="normal`+normal[i]+`" value="` + normal[i] + `" selected>` + normal[i] + `</option>`);
+                        }
+                    }
+                    if (abnormal.length) {
+                        // $('#abnormal').val(abnormal).trigger('change');
+                        for (let i = 0; i < abnormal.length; i++) {
+                            $('#abnormal').append(`<option class="abnormal`+abnormal[i]+`" value="` + abnormal[i] + `" selected>` + abnormal[i] + `</option>`);
+                        }
+                    }
                 };
 
                 function updateTempParameter() {
@@ -1756,13 +1785,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     $('#monthlyDays').addClass('is-invalid');
                                 }
                             } else if (v.onDays == 'on') {
-                                if (v.assetData.schWeeks == '' || v.assetData.schWeekDays == '') {
+                                if (v.assetData.schWeeks == '' || v.assetData.schMonthlyWeekDays == '') {
                                     if (v.assetData.schWeeks == '') {
                                         $('#monthlyOn').addClass('is-invalid');
                                     } else {
                                         $('#monthlyOn').removeClass('is-invalid');
                                     }
-                                    if (v.assetData.schWeekDays == '') {
+                                    if (v.assetData.schMonthlyWeekDays == '') {
                                         $('#monthlyOnDays').addClass('is-invalid');
                                     } else {
                                         $('#monthlyOnDays').removeClass('is-invalid');
@@ -1918,7 +1947,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         return;
                                     }
                                 } else if (v.onDays == 'on') {
-                                    if (v.assetData.schWeeks == '' || v.assetData.schWeekDays == '') {
+                                    if (v.assetData.schWeeks == '' || v.assetData.schMonthlyWeekDays == '') {
                                         const swalWithBootstrapButtons = swal.mixin({
                                             customClass: {
                                                 confirmButton: 'btn btn-danger',
@@ -1935,7 +1964,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         } else {
                                             $('#monthlyOn').removeClass('is-invalid');
                                         }
-                                        if (v.assetData.schWeekDays == '') {
+                                        if (v.assetData.schMonthlyWeekDays == '') {
                                             $('#monthlyOnDays').addClass('is-invalid');
                                         } else {
                                             $('#monthlyOnDays').removeClass('is-invalid');
@@ -1955,7 +1984,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         formdata.append('schManual', this.assetData.schManual);
                         formdata.append('schType', this.assetData.schType);
                         formdata.append('schFrequency', this.assetData.schFrequency);
-                        if (v.assetData.schType == "Weekly" && v.assetData.schType != "") {
+                        if (v.assetData.schType == "Weekly" && v.assetData.schWeekDays != "") {
                             formdata.append('schWeekDays', this.assetData.schWeekDays);
                         }
                         if (v.assetData.schType == "Monthly" && v.assetData.schMonthlyWeekDays != "") {
@@ -2137,6 +2166,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#titleModalEdit').hide();
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     this.myModal.show();
+
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
                 };
 
                 function editExistParameter(index) {
@@ -2205,6 +2237,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#btnUpdateParam').hide();
                     $('#btnUpdateParameter').show();
                     $('#titleModalEdit').show();
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     this.myModal.show();
                     axios.post("<?= base_url('Asset/editParameter'); ?>", {
@@ -2447,13 +2481,21 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                 function insertParam() {
                     let lengthParam = v.listNewParam.length;
-                    for (let i = 0; i < v.listNewParam.length; i++) {
-                        this.listNewParam[i].sortId = $('#tableParameter tbody tr').length;
-                        this.listNewParam[i].parameterId = uuidv4();
-                        this.listNewParam[i].photo = "";
-                        this.params.push(v.listNewParam[i])
+                    if (lengthParam) {
+                        for (let i = 0; i < v.listNewParam.length; i++) {
+                            this.listNewParam[i].sortId = $('#tableParameter tbody tr').length;
+                            this.listNewParam[i].parameterId = uuidv4();
+                            this.listNewParam[i].photo = "";
+                            this.params.push(v.listNewParam[i])
+                        }
+                        $('#listImport').modal('hide');
+                        $('#tableImport').DataTable().destroy();
+                    }else{
+                        swal.fire({
+                            icon: 'error',
+                            title: "There's no data added!"
+                        })
                     }
-                    this.myModal.hide();
                     return
                     axios.post("<?= base_url('Asset/insertParameter'); ?>", {
                         dataParam: v.listNewParam,
@@ -2904,6 +2946,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             if (rsp.status == "success") {
                                 v.importList = rsp.data;
                                 if (v.importList.length > 0) {
+                                    $('#tableImport').DataTable().destroy();
                                     loadListImport((v.importList));
                                     $('#importParameterModal').modal('hide');
                                     this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
@@ -2930,10 +2973,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         })
 
         var loadListImport = (importList) => {
-            $('#tableImport').DataTable().destroy();
             var table = $('#tableImport').DataTable({
                 drawCallback: function(settings){
                         $('#all').removeClass('sorting_asc');
+                        if ($('#select-all').prop('checked', true)) {
+                            $('input[name="parameterId"]').prop('checked', true);
+                            v.listNewParam = v.importList;
+                        }
                         let arr = [];
                         $('#select-all').change(function() {
                             if (this.checked) {
@@ -2959,7 +3005,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('#tableImport tbody').on('change', 'tr', function() {
                             let table = $('#tableImport').DataTable();
                             let data = table.row(this).data();
-                            // console.log(table.row(this).data())
                             let id = '#id' + data.no;
                             let checkParam = ($(id).prop('checked')) == true ? true : false;
                             if (checkParam) {
@@ -2968,9 +3013,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     if (data.no == v.importList[i].no) {
                                         v.listNewParam.push(v.importList[i])
                                     }
-                                    // console.log(v.importList[i].no)
                                 }
-                                // v.listNewParam.push(data);
                             }else{
                                 let lengthListNewParam = v.listNewParam.length;
                                 for (let i = 0; i < lengthListNewParam; i++) {
@@ -2979,7 +3022,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     }
                                 }
                             }
-                        })
+                        })          
                 },
                 processing: true,
                 serverSide: false,

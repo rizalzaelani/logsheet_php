@@ -413,12 +413,15 @@ class Asset extends BaseController
 				'schManual' => $post['schManual'],
 				'schType' => $post['schType'],
 				'schFrequency' => $post['schFrequency'] == '' ? null : (int)$post['schFrequency'],
-				'schWeekDays' => $post['schWeekDays'],
+				// 'schWeekDays' => $post['schWeekDays'],
 				'schWeeks' => $post['schWeeks'],
 				'schDays' => $post['schDays'],
 				'latitude' => $post['latitude'],
 				'longitude' => $post['longitude'],
 			);
+			if ($post['schType'] == 'Weekly' || $post['schType'] == 'Monthly') {
+				$dataAsset['schWeekDays'] = $post['schWeekDays'];
+			}
 			$assetModel->update($assetId, $dataAsset);
 			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
 
@@ -811,7 +814,7 @@ class Asset extends BaseController
 				}
 			}
 			if ($dataImport) {
-				// unlink('../uploads/' . $newName);
+				unlink('../uploads/' . $newName);
 				return $this->response->setJSON(array('status' => 'success', 'message' => '', 'data' => $dataImport));
 			} else {
 				return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Not Found!'));
