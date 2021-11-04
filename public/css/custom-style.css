@@ -707,3 +707,49 @@ ul.tl li .timestamp {
 }
 
 /* End Loading */
+
+/* FAB button */
+
+.btn-fab {
+  position: fixed;
+  width: 50px;
+  height: auto;
+  right: 20px;
+  bottom: 20px;
+}
+
+.btn-fab div {
+  position: relative;
+  height: auto;
+}
+
+.btn-fab .btn {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50%;
+  display: block;
+  margin-bottom: 4px;
+  width: 40px;
+  height: 40px;
+  margin: 4px auto;
+}
+
+.btn-fab .btn-main {
+  width: 50px;
+  height: 50px;
+  right: 50%;
+  margin-right: -25px;
+  z-index: 9;
+}
+
+/* end FAB button */
+
+/* validation */
+
+.invalid {
+  border: 1px solid #e55353;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+/* End validation */

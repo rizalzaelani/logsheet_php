@@ -31,7 +31,7 @@
 							<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
 							<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+							<a class="dropdown-item" href="javascript:;" @click="draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>
 					</h5>
 				</div>
@@ -156,13 +156,20 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-	const { onMounted, ref, reactive } = Vue;
+	const {
+		onMounted,
+		ref,
+		reactive
+	} = Vue;
 	let v = Vue.createApp({
 		el: '#app',
-		setup(){
+		setup() {
 			var myModal = ref(null);
 			var table = ref(null);
 
+			function draw(){
+				return $('#tableEq').DataTable().draw();
+			}
 			function GetData() {
 				return new Promise(async (resolve, reject) => {
 					try {
@@ -191,8 +198,7 @@
 									resolve();
 								}
 							},
-							columns: [
-								{
+							columns: [{
 									data: "assetNumber",
 									name: "assetNumber",
 								},
@@ -228,7 +234,7 @@
 											$.each(dt, function(key, value) {
 												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
 											})
-											return list_dt;
+											return '<div style="max-height: 50px !important; overflow-y: auto;">' + list_dt + '</div>';
 										} else {
 											return data;
 										}
@@ -249,10 +255,12 @@
 					}
 				})
 			};
+
 			function handleAdd() {
 				this.myModal = new coreui.Modal(document.getElementById('exampleModalScrollable'), {});
 				this.myModal.show();
 			};
+
 			function add() {
 				if (this.company != null && this.area != null && this.unit != null && this.equipment != null) {
 					axios.post("<?= base_url('Asset/add'); ?>", {
@@ -317,7 +325,7 @@
 						v.table.search(searchData).draw();
 					}
 				});
-	
+
 				$(document).on('click', '#tableEq tbody tr', function() {
 					window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
 				});
@@ -325,6 +333,7 @@
 			return {
 				myModal,
 				table,
+				draw,
 				GetData,
 				handleAdd,
 				add
