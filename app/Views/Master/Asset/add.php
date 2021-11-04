@@ -214,7 +214,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     </div>
                                     <div class="row mb-3">
                                         <label class="col-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
-                                        <textarea class="form-control col-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.paramDesc"></textarea>
+                                        <textarea class="form-control col-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
                                     </div>
                                     <div class="row mb-3">
                                         <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
@@ -235,38 +235,74 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             <!-- modal import parameter-->
             <div class="modal fade" role="dialog" id="importParameterModal">
-                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="titleModalAdd">Upload File</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                            </div>
-                            <div class="modal-body">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="mb-3">
-                                                <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
-                                            </div>
-                                            <div>
-                                                <b><i>Ketentuan Upload File</i></b>
-                                                <ol>
-                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
-                                                </ol>
-                                            </div>
+                <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="titleModalAdd">Upload File</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
+                                        </div>
+                                        <div>
+                                            <b><i>Ketentuan Upload File</i></b>
+                                            <ol>
+                                                <li>File harus ber ekstensi .xls, .xlsx</li>
+                                            </ol>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <form action="post" enctype="multipart/form-data">
-                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
-                                        </form>
-                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <form action="post" enctype="multipart/form-data">
+                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- modal table import parameter-->
+            <div class="modal fade" role="dialog" id="listImport">
+                <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="titleModalAdd">List Parameter</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <table class="table w-100" id="tableImport">
+                                    <thead>
+                                        <tr>
+                                            <th id="all">
+                                                <input type="checkbox" name="checkbox" id="select-all" value="_all">
+                                            </th>
+                                            <th>Parameter</th>
+                                            <th>Description</th>
+                                            <th>Normal</th>
+                                            <th>Abnormal</th>
+                                            <!-- <th>input type</th> -->
+                                            <th>UoM</th>
+                                            <th>show On</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
+                            <button type="button" class="btn btn-success" @click="insertParam()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- modal add tag -->
             <div class="modal fade" id="modalAddTag" tabindex="-1" role="dialog" aria-labelledby="modalTagTitle" aria-hidden="true" style="z-index: 3000;">
@@ -439,7 +475,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <hr>
                         <div>
                             <form method="post" enctype="multipart/form-data">
-                                <div class="form-group row d-flex align-items-center">
+                                <div class="form-group row">
                                     <div class="col-3">
                                         <label for="setSch">Set As <span class="required">*</span></label>
                                     </div>
@@ -454,7 +490,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group row d-flex align-items-center schType hide">
+                                <div class="form-group row schType hide">
                                     <div class="col-3">
                                         <label for="schType">Schedule <span class="required">*</span></label>
                                     </div>
@@ -473,7 +509,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <div class="mt-3" id="daily" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-center w-100" id="schFreq" data-toggle="buttons">
+                                            <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-q w-100" id="schFreq" data-toggle="buttons">
                                                 <?php foreach ($schFreq as $val) : ?>
                                                     <label class="btn btn-sm btn-outline-primary" style="width: 12% !important;">
                                                         <input type="radio" name="schFreq" data-content="<?= $val ?>" id="schFreq<?= $val ?>" autocomplete="off"><?= $val ?>
@@ -489,16 +525,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <div class="mt-2" id="weekly" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="btn-group-toggle d-flex justify-content-between align-items-center" id="schWeekly">
-                                                <?php foreach ($schDay as $key => $val) : ?>
-                                                    <label class="btn btn-sm btn-outline-primary" for="schWeekly<?= $key ?>">
-                                                        <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
-                                                        <?= $val ?>
-                                                    </label>
-                                                <?php endforeach; ?>
-                                            </div>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="btn-group-toggle" id="schWeekly">
+                                                        <?php foreach ($schDay as $key => $val) : ?>
+                                                            <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schWeekly<?= $key ?>" style="width: 10% !important; display: inline-table">
+                                                                <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
+                                                                <?= $val ?>
+                                                            </label>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -529,7 +569,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col" id="days" style="display: none;">
-                                                    <div class="btn-group-toggle text-center" id="monthlyDays">
+                                                    <div class="btn-group-toggle" id="monthlyDays">
                                                         <?php foreach ($schDays as $key => $val) : ?>
                                                             <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: 12% !important; display: inline-table">
                                                                 <input class="form-check-input" name="schMonthlyDays" id="schMonthlyDays<?= $val ?>" type="checkbox" value="<?= $val ?>">
@@ -801,7 +841,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     <tbody>
                         <tr v-for="(items, i) in params" :key="i">
                             <td class="text-center">{{ items.parameterName}}</td>
-                            <td class="text-center">{{ items.paramDesc}}</td>
+                            <td class="text-center">{{ items.description}}</td>
                             <td class="text-center" v-if="items.max != null">
                                 {{ items.max }}
                             </td>
@@ -924,7 +964,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 sortId: null,
                 parameterName: '',
                 photo: '',
-                paramDesc: '',
+                description: '',
                 uom: '',
                 min: null,
                 max: null,
@@ -935,6 +975,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 showOn: '',
             });
             var params = ref([]);
+            var importList = reactive({});
+            var listNewParam = ref([]);
             var moreDetailAsset = ref(false);
             var descJson = reactive(assetData.descriptionJson);
             var descJsonValue = ref('');
@@ -972,6 +1014,56 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 this.myModal.show();
             }
 
+            function insertParam() {
+                let lengthParam = v.listNewParam.length;
+                if (lengthParam) {
+                    for (let i = 0; i < v.listNewParam.length; i++) {
+                        this.listNewParam[i].sortId = $('#tableParameter tbody tr').length + 1;
+                        this.listNewParam[i].parameterId = uuidv4();
+                        this.listNewParam[i].photo = "";
+                        this.params.push(v.listNewParam[i])
+                    }
+                    $('#listImport').modal('hide');
+                    $('#tableImport').DataTable().destroy();
+                } else {
+                    swal.fire({
+                        icon: 'error',
+                        title: "There's no data added!"
+                    })
+                }
+                return
+                axios.post("<?= base_url('Asset/insertParameter'); ?>", {
+                    dataParam: v.listNewParam,
+                    assetId: this.assetData.assetId
+                }).then(res => {
+                    console.log(res);
+                    if (res.data.status == 'success') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-success',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire(
+                            'Success!',
+                            'You have successfully add parameter.',
+                            'success'
+                        ).then(okay => {
+                            if (okay) {
+                                swal.fire({
+                                    title: 'Please Wait!',
+                                    text: 'Reloading page..',
+                                    onOpen: function() {
+                                        swal.showLoading()
+                                    }
+                                })
+                                location.reload();
+                            }
+                        })
+                    }
+                })
+            };
+
             function addParameter() {
                 $('#btnAddParam').show();
                 $('#titleModalAdd').show();
@@ -980,6 +1072,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 $('#titleModalEdit').hide();
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
+                $('#normal').find('option').remove();
+                $('#abnormal').find('option').remove();
             }
 
             function addTempParameter() {
@@ -1032,7 +1126,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         sortId: null,
                         parameterName: '',
                         photo: '',
-                        paramDesc: '',
+                        description: '',
                         uom: '',
                         min: null,
                         max: null,
@@ -1064,7 +1158,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 this.param.sortId = null;
                 this.param.parameterName = data.parameterName;
                 this.param.photo = data.photo;
-                this.param.paramDesc = data.paramDesc;
+                this.param.description = data.description;
                 this.param.uom = data.uom;
                 this.param.min = data.min;
                 this.param.max = data.max;
@@ -1081,7 +1175,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     sortId: this.param.sortId,
                     parameterName: this.param.parameterName,
                     photo: this.param.photo,
-                    paramDesc: this.param.paramDesc,
+                    description: this.param.description,
                     uom: this.param.uom,
                     min: this.param.min,
                     max: this.param.max,
@@ -1101,12 +1195,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 if (v.param.inputType != '') {
                     $('.type').val(v.param.inputType).trigger("change");
                 }
-                if (v.param.normal != '' || v.param.abnormal != '') {
-                    $('#normal').val(v.param.normal.split(",")).trigger('change');
-                    $('#abnormal').val(v.param.abnormal.split(",")).trigger('change');
-                }
                 if (this.param.showOn != '') {
                     $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                }
+                let normal = v.param.normal.split(",");
+                let abnormal = v.param.abnormal.split(",");
+                $('#normal').find('option').remove();
+                $('#abnormal').find('option').remove();
+                if (normal.length) {
+                    // $('#normal').val(normal).trigger("change");
+                    for (let i = 0; i < normal.length; i++) {
+                        $('#normal').append(`<option class="normal` + normal[i] + `" value="` + normal[i] + `" selected>` + normal[i] + `</option>`);
+                    }
+                }
+                if (abnormal.length) {
+                    // $('#abnormal').val(abnormal).trigger('change');
+                    for (let i = 0; i < abnormal.length; i++) {
+                        $('#abnormal').append(`<option class="abnormal` + abnormal[i] + `" value="` + abnormal[i] + `" selected>` + abnormal[i] + `</option>`);
+                    }
                 }
             }
 
@@ -1160,7 +1266,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         sortId: this.param.sortId,
                         parameterName: this.param.parameterName,
                         photo: this.param.photo,
-                        paramDesc: this.param.paramDesc,
+                        description: this.param.description,
                         uom: this.param.uom,
                         min: this.param.min,
                         max: this.param.max,
@@ -1176,7 +1282,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.param.sortId = null;
                     this.param.parameterName = '';
                     this.param.photo = '';
-                    this.param.paramDesc = '';
+                    this.param.description = '';
                     this.param.uom = '';
                     this.param.min = null;
                     this.param.max = null;
@@ -1230,7 +1336,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 this.param.sortId = null;
                 this.param.parameterName = '';
                 this.param.photo = '';
-                this.param.paramDesc = '';
+                this.param.description = '';
                 this.param.uom = '';
                 this.param.min = null;
                 this.param.max = null;
@@ -1847,6 +1953,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 myModal,
                 param,
                 params,
+                importList,
+                insertParam,
+                listNewParam,
                 moreDetailAsset,
                 descJson,
                 descJsonValue,
@@ -2252,47 +2361,144 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         });
     })
 
+    var loadListImport = (importList) => {
+        var table = $('#tableImport').DataTable({
+            drawCallback: function(settings) {
+                $('#all').removeClass('sorting_asc');
+                if ($('#select-all').prop('checked', true)) {
+                    $('input[name="parameterId"]').prop('checked', true);
+                    v.listNewParam = v.importList;
+                }
+                let arr = [];
+                $('#select-all').change(function() {
+                    if (this.checked) {
+                        $('input[name="parameterId"]').prop('checked', this.checked);
+                        let elm = table.rows().data();
+                        $.each(elm, function(key, val) {
+                            arr.push(val);
+                        })
+                        v.listNewParam = arr;
+                    } else {
+                        $('input[name="parameterId"]').prop('checked', this.checked);
+                        v.listNewParam = ref([]);
+                    }
+                })
+
+                $('#tableImport tbody').on('change', 'input[name="parameterId"]', function() {
+                    let elm = $('#select-all').get(0);
+                    if (elm && elm.checked && ('indeterminate' in elm)) {
+                        elm.indeterminate = true;
+                    }
+                })
+
+                $('#tableImport tbody').on('change', 'tr', function() {
+                    let table = $('#tableImport').DataTable();
+                    let data = table.row(this).data();
+                    let id = '#id' + data.no;
+                    let checkParam = ($(id).prop('checked')) == true ? true : false;
+                    if (checkParam) {
+                        let lengthParam = v.importList.length;
+                        for (let i = 0; i < lengthParam; i++) {
+                            if (data.no == v.importList[i].no) {
+                                v.listNewParam.push(v.importList[i])
+                            }
+                        }
+                    } else {
+                        let lengthListNewParam = v.listNewParam.length;
+                        for (let i = 0; i < lengthListNewParam; i++) {
+                            if (data.no == (v.listNewParam[i]).no) {
+                                v.listNewParam.splice(i, 1)
+                            }
+                        }
+                    }
+                })
+            },
+            processing: true,
+            serverSide: false,
+            scrollX: false,
+            paging: false,
+            dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
+            data: importList,
+            columns: [{
+                    "data": "no"
+                },
+                {
+                    "data": "parameterName"
+                },
+                {
+                    "data": "description"
+                },
+                {
+                    "data": "maxNormal"
+                },
+                {
+                    "data": "minAbnormal"
+                },
+                // {
+                //     "data": "inputType"
+                // },
+                {
+                    "data": "uomOption"
+                },
+                {
+                    "data": "showOn"
+                }
+            ],
+            "columnDefs": [{
+                'targets': 0,
+                'searchable': false,
+                'orderable': false,
+                'className': 'dt-body-center',
+                render: function(data) {
+                    return `<input type="checkbox" name="parameterId" class="checkbox" id="id${data}" value="${data}">`;
+                }
+            }],
+            "order": [0, 'asc'],
+        });
+        // table.draw();
+    }
+
     // import parameter
     $(document).ready(function() {
-            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
-            let pond = $('#fileImportParam').filepond({
-                acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
-                allowMultiple: false,
-                instantUpload: true,
-                credits: false,
-                // server: {
-                //     process: {
-                //         url: "<?= base_url('Asset/uploadFile'); ?>",
-                //         method: 'post',
-                //         onload: (res) => {
-                //             var rsp = JSON.parse(res);
-                //             if (rsp.status == "success") {
-                //                 importList = rsp.data;
-                //                 if (importList.length > 0) {
-                //                     loadListImport(importList);
-                //                     $('#importParameterModal').modal('hide');
-                //                     this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
-                //                     this.myModal.show();
-                //                     $('#fileImportParam').filepond('removeFiles');
-                //                 }
-                //             } else if (rsp.status == "failed") {
-                //                 const swalWithBootstrapButtons = swal.mixin({
-                //                     customClass: {
-                //                         confirmButton: 'btn btn-danger'
-                //                     },
-                //                     buttonsStyling: false
-                //                 })
-                //                 swalWithBootstrapButtons.fire(
-                //                     rsp.message,
-                //                     '',
-                //                     'error'
-                //                 )
-                //             }
-                //         }
-                //     }
-                // }
-            });
-        })
+        FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
+        let pond = $('#fileImportParam').filepond({
+            acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
+            allowMultiple: false,
+            instantUpload: true,
+            credits: false,
+            server: {
+                process: {
+                    url: "<?= base_url('Asset/uploadFile'); ?>",
+                    method: 'post',
+                    onload: (res) => {
+                        var rsp = JSON.parse(res);
+                        if (rsp.status == "success") {
+                            v.importList = rsp.data;
+                            if (v.importList.length > 0) {
+                                loadListImport(v.importList);
+                                $('#importParameterModal').modal('hide');
+                                this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
+                                this.myModal.show();
+                                $('#fileImportParam').filepond('removeFiles');
+                            }
+                        } else if (rsp.status == "failed") {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger'
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire(
+                                rsp.message,
+                                '',
+                                'error'
+                            )
+                        }
+                    }
+                }
+            }
+        });
+    })
 
     //radio monthly
     $('input[type="radio"][name="gridRadios"]').on('change', function() {

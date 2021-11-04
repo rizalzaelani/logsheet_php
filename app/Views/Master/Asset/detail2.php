@@ -698,16 +698,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <div class="mt-2" id="weekly" style="display: none;">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="btn-group-toggle d-flex justify-content-between align-items-center" id="schWeekly">
-                                                <?php foreach ($schDay as $key => $val) : ?>
-                                                    <label class="btn btn-sm btn-outline-primary" for="schWeekly<?= $key ?>">
-                                                        <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
-                                                        <?= $val ?>
-                                                    </label>
-                                                <?php endforeach; ?>
-                                            </div>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="btn-group-toggle" id="schWeekly">
+                                                        <?php foreach ($schDay as $key => $val) : ?>
+                                                            <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schWeekly<?= $key ?>">
+                                                                <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
+                                                                <?= $val ?>
+                                                            </label>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                    <div class="invalid-feedback">
+                                                        Field cannot be empty.
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -738,7 +742,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col" id="days" style="display: none;">
-                                                    <div class="btn-group-toggle text-center" id="monthlyDays">
+                                                    <div class="btn-group-toggle" id="monthlyDays">
                                                         <?php foreach ($schDays as $key => $val) : ?>
                                                             <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: 12% !important; display: inline-table">
                                                                 <input class="form-check-input" name="schMonthlyDays" id="schMonthlyDays<?= $val ?>" type="checkbox" value="<?= $val ?>">
@@ -1051,7 +1055,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
-                        <!-- <tr v-for="(items, i) in parameter" :key="i">
+                        <tr v-for="(items, i) in parameter" :key="i">
                             <td class="text-center">{{ items.parameterName}}</td>
                             <td class="text-center">{{ items.description}}</td>
                             <td class="text-center" v-if="items.max != null">
@@ -1090,11 +1094,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             </td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i)"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
-                        </tr> -->
-                        <?php $i = 1;
-                        foreach ($parameter as $key) : ?>
+                        </tr>
+                        <!-- <?php $i = 1;
+                                foreach ($parameter as $key) : ?>
                             <tr>
                                 <td class="text-center"><?= $key['parameterName']; ?></td>
                                 <td class="text-center"><?= $key['description']; ?></td>
@@ -1139,7 +1143,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <button class="btn btn-sm btn-outline-danger" @click="deleteParameter('<?= $key['parameterId']; ?>')"><i class="fa fa-trash"></i></button>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php endforeach; ?> -->
                     </tbody>
                 </table>
             </div>
@@ -1171,7 +1175,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             el: '#app',
             setup() {
                 var assetData = reactive(<?= json_encode($assetData); ?>);
-                var parameter = reactive(<?= json_encode($parameter); ?>)
+                var parameter = reactive(<?= json_encode($parameter); ?>);
+                var deletedParameter = ref([]);
+                var editedParameter = ref([]);
                 var myModal = ref('');
                 var checked = ref('');
                 var file = ref('');
@@ -1514,6 +1520,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#btnUpdateParameter').hide();
                     $('#btnUpdateParam').show();
                     $('#titleModalEdit').show();
+                    $('#btnUpdateExistParameter').hide();
                     this.myModal.show();
                     let data = this.params[index];
                     this.param.parameterId = data.parameterId;
@@ -1566,13 +1573,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     if (normal.length) {
                         // $('#normal').val(normal).trigger("change");
                         for (let i = 0; i < normal.length; i++) {
-                            $('#normal').append(`<option class="normal`+normal[i]+`" value="` + normal[i] + `" selected>` + normal[i] + `</option>`);
+                            $('#normal').append(`<option class="normal` + normal[i] + `" value="` + normal[i] + `" selected>` + normal[i] + `</option>`);
                         }
                     }
                     if (abnormal.length) {
                         // $('#abnormal').val(abnormal).trigger('change');
                         for (let i = 0; i < abnormal.length; i++) {
-                            $('#abnormal').append(`<option class="abnormal`+abnormal[i]+`" value="` + abnormal[i] + `" selected>` + abnormal[i] + `</option>`);
+                            $('#abnormal').append(`<option class="abnormal` + abnormal[i] + `" value="` + abnormal[i] + `" selected>` + abnormal[i] + `</option>`);
                         }
                     }
                 };
@@ -1679,7 +1686,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.submited = ref(true);
 
                     if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.assetStatusName == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || (this.assetData.schType == "Daily" && this.assetData.schFrequency == '') || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
-                    this.submited = ref(false);
+                        this.submited = ref(false);
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
                                 confirmButton: 'btn btn-danger',
@@ -1693,8 +1700,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 $('html, body').animate({
-                                scrollTop: $(".is-invalid").offset().top
-                            }, 1000);
+                                    scrollTop: $(".is-invalid").offset().top
+                                }, 1000);
                             }
                         })
 
@@ -1990,6 +1997,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (v.assetData.schType == "Monthly" && v.assetData.schMonthlyWeekDays != "") {
                             formdata.append('schWeekDays', this.assetData.schMonthlyWeekDays);
                         }
+                        if (v.assetData.schType == "Daily") {
+                            formdata.append('schWeekDays', this.assetData.schWeekDays);
+                        }
                         formdata.append('schWeeks', this.assetData.schWeeks);
                         formdata.append('schDays', this.assetData.schDays);
 
@@ -2016,8 +2026,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
                         formdata.append('assetTaggingType', this.assetTagging.assetTaggingtype);
                         formdata.append('assetTaggingDescription', this.assetTagging.description);
-                        // parameter
 
+                        // parameter
                         if (this.params.length > 0) {
                             let param = this.params;
                             param.forEach((item, k) => {
@@ -2030,6 +2040,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             }
                         } else {
                             formdata.append('parameter[]', this.params);
+                        }
+
+                        //deleted parameter
+                        if (this.deletedParameter.length) {
+                            let deleted = v.deletedParameter.join(",");
+                            formdata.append('deletedParameter', deleted);
+                        } else {
+                            formdata.append('deletedParameter', "");
+                        }
+
+                        //edited parameter
+                        if (this.editedParameter.length) {
+                            let editedParam = this.editedParameter;
+                            editedParam.forEach((item, k) => {
+                                formdata.append('editedParameter[]', JSON.stringify(item))
+                            })
+                        } else {
+                            formdata.append('editedParameter[]', "");
                         }
 
                         // new tags and tag locations
@@ -2164,6 +2192,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#btnUpdateParameter').hide();
                     $('#btnUpdateParam').hide();
                     $('#titleModalEdit').hide();
+                    $('#btnUpdateExistParameter').hide();
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     this.myModal.show();
 
@@ -2177,7 +2206,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#titleModalAdd').hide();
                     $('#btnUpdateParameter').hide();
                     $('#btnUpdateParam').hide();
-                    $('#btnUpdateExistParameter').hide();
+                    $('#btnUpdateExistParameter').show();
                     $('#titleModalEdit').show();
                     this.myModal.show();
                     // let data = this.params[index];
@@ -2228,8 +2257,119 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 }
 
                 function updateExistParameter() {
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
+                            icon: 'error'
+                        })
 
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    } else {
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        index = this.param.i;
+                        this.parameter[index] = {
+                            parameterId: this.param.parameterId,
+                            sortId: this.param.sortId,
+                            parameterName: this.param.parameterName,
+                            photo: this.param.photo,
+                            description: this.param.description,
+                            uom: this.param.uom,
+                            min: this.param.min,
+                            max: this.param.max,
+                            normal: this.param.normal,
+                            abnormal: this.param.abnormal,
+                            option: this.param.option,
+                            inputType: this.param.inputType,
+                            showOn: this.param.showOn,
+                            i: index,
+                        }
+                        let lengthEdited = this.editedParameter.length;
+                        // console.log(lengthEdited);
+                        setTimeout(() => {
+                            if (lengthEdited) {
+                                for (let i = 0; i < lengthEdited; i++) {
+                                    // console.log(this.editedParameter[i].parameterId);
+                                    let dataParam = this.editedParameter[i].parameterId
+                                    if (dataParam == this.parameter[index].parameterId) {
+                                        return this.editedParameter.splice(i, 1);
+                                    }
+                                }
+                            }
+                        }, 5000);
+                        this.editedParameter.push(this.parameter[index]);
+                        this.myModal.hide();
+                    }
                 }
+
+                function removeExistParameter(index) {
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-danger ml-1'
+                        },
+                        buttonsStyling: false
+                    })
+                    swalWithBootstrapButtons.fire({
+                        title: 'Delete this data?',
+                        text: "You will delete this data!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: "<i class='fa fa-times'></i> Cancel",
+                        confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
+                        reverseButtons: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var lengthParams = this.parameter.length;
+                            // for (let i = 0; i < lengthParams; i++) {
+                            //     // console.log(v.params[i].sortId);
+                            //     if (v.parameter[i].sortId > v.parameter[index].sortId) {
+                            //         v.parameter[i].sortId = v.parameter[i].sortId - 1;
+                            //     } else {
+                            //         v.parameter[i].sortId = v.parameter[i].sortId;
+                            //     }
+                            // }
+                            let data = this.parameter[index];
+                            v.deletedParameter.push(data.parameterId);
+                            this.parameter.splice(index, 1);
+                            // this.param.sortId = this.param.sortId - 1;
+                        }
+                    })
+
+                };
 
                 function editParameter($parameterId) {
                     $('#btnAddParam').hide();
@@ -2483,14 +2623,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     let lengthParam = v.listNewParam.length;
                     if (lengthParam) {
                         for (let i = 0; i < v.listNewParam.length; i++) {
-                            this.listNewParam[i].sortId = $('#tableParameter tbody tr').length;
+                            this.listNewParam[i].sortId = $('#tableParameter tbody tr').length + 1;
                             this.listNewParam[i].parameterId = uuidv4();
                             this.listNewParam[i].photo = "";
                             this.params.push(v.listNewParam[i])
                         }
                         $('#listImport').modal('hide');
                         $('#tableImport').DataTable().destroy();
-                    }else{
+                    } else {
                         swal.fire({
                             icon: 'error',
                             title: "There's no data added!"
@@ -2612,6 +2752,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             if (v.submited == true) {
                                 return;
                             } else {
+                                console.log(dataSchWeekDays);
+                                console.log(v.assetData.schWeekDays);
                                 e.preventDefault();
                                 e.returnValue = '';
                             }
@@ -2625,38 +2767,44 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     settingTab,
 
                     myModal,
+                    file,
+                    submited,
+
                     checked,
                     assetData,
+                    descJson,
                     parameter,
+                    deletedParameter,
+                    editedParameter,
+                    //tagging
+                    assetTagging,
                     valRfid,
                     valCoordinate,
                     valUhf,
                     rfid,
                     coordinate,
                     uhf,
-                    checked,
-                    file,
+                    //end tagging
                     setSch,
                     schFreq,
                     selectedSchWeekly,
                     selectedSchMonthlyDays,
                     onDays,
-                    assetTagging,
 
+                    //tag & location
                     addTag,
                     tag,
                     tags,
                     addLocation,
                     tagLocation,
                     locations,
-                    descJson,
+                    //end tag & location
                     param,
                     tempPhoto,
                     params,
                     importList,
                     listNewParam,
-                    submited,
-
+                    // new tag & location
                     modalAddTag,
                     addNewTag,
                     modalAddLocation,
@@ -2671,6 +2819,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     photo,
                     addParameter,
                     editExistParameter,
+                    updateExistParameter,
+                    removeExistParameter,
                     editParameter,
                     updateParameter,
                     deleteParameter,
@@ -2974,55 +3124,55 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
         var loadListImport = (importList) => {
             var table = $('#tableImport').DataTable({
-                drawCallback: function(settings){
-                        $('#all').removeClass('sorting_asc');
-                        if ($('#select-all').prop('checked', true)) {
-                            $('input[name="parameterId"]').prop('checked', true);
-                            v.listNewParam = v.importList;
+                drawCallback: function(settings) {
+                    $('#all').removeClass('sorting_asc');
+                    if ($('#select-all').prop('checked', true)) {
+                        $('input[name="parameterId"]').prop('checked', true);
+                        v.listNewParam = v.importList;
+                    }
+                    let arr = [];
+                    $('#select-all').change(function() {
+                        if (this.checked) {
+                            $('input[name="parameterId"]').prop('checked', this.checked);
+                            let elm = table.rows().data();
+                            $.each(elm, function(key, val) {
+                                arr.push(val);
+                            })
+                            v.listNewParam = arr;
+                        } else {
+                            $('input[name="parameterId"]').prop('checked', this.checked);
+                            v.listNewParam = ref([]);
                         }
-                        let arr = [];
-                        $('#select-all').change(function() {
-                            if (this.checked) {
-                                $('input[name="parameterId"]').prop('checked', this.checked);
-                                let elm = table.rows().data();
-                                $.each(elm, function(key, val) {
-                                    arr.push(val);
-                                })
-                                v.listNewParam = arr;
-                            }else{
-                                $('input[name="parameterId"]').prop('checked', this.checked);
-                                v.listNewParam = ref([]);
-                            }
-                        })
+                    })
 
-                        $('#tableImport tbody').on('change', 'input[name="parameterId"]', function() {
-                            let elm = $('#select-all').get(0);
-                            if (elm && elm.checked && ('indeterminate' in elm)) {
-                                elm.indeterminate = true;
-                            }
-                        })
+                    $('#tableImport tbody').on('change', 'input[name="parameterId"]', function() {
+                        let elm = $('#select-all').get(0);
+                        if (elm && elm.checked && ('indeterminate' in elm)) {
+                            elm.indeterminate = true;
+                        }
+                    })
 
-                        $('#tableImport tbody').on('change', 'tr', function() {
-                            let table = $('#tableImport').DataTable();
-                            let data = table.row(this).data();
-                            let id = '#id' + data.no;
-                            let checkParam = ($(id).prop('checked')) == true ? true : false;
-                            if (checkParam) {
-                                let lengthParam = v.importList.length;
-                                for (let i = 0; i < lengthParam; i++) {
-                                    if (data.no == v.importList[i].no) {
-                                        v.listNewParam.push(v.importList[i])
-                                    }
-                                }
-                            }else{
-                                let lengthListNewParam = v.listNewParam.length;
-                                for (let i = 0; i < lengthListNewParam; i++) {
-                                    if (data.no == (v.listNewParam[i]).no) {
-                                        v.listNewParam.splice(i, 1)
-                                    }
+                    $('#tableImport tbody').on('change', 'tr', function() {
+                        let table = $('#tableImport').DataTable();
+                        let data = table.row(this).data();
+                        let id = '#id' + data.no;
+                        let checkParam = ($(id).prop('checked')) == true ? true : false;
+                        if (checkParam) {
+                            let lengthParam = v.importList.length;
+                            for (let i = 0; i < lengthParam; i++) {
+                                if (data.no == v.importList[i].no) {
+                                    v.listNewParam.push(v.importList[i])
                                 }
                             }
-                        })          
+                        } else {
+                            let lengthListNewParam = v.listNewParam.length;
+                            for (let i = 0; i < lengthListNewParam; i++) {
+                                if (data.no == (v.listNewParam[i]).no) {
+                                    v.listNewParam.splice(i, 1)
+                                }
+                            }
+                        }
+                    })
                 },
                 processing: true,
                 serverSide: false,
@@ -3060,7 +3210,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     'searchable': false,
                     'orderable': false,
                     'className': 'dt-body-center',
-                    render: function(data){
+                    render: function(data) {
                         return `<input type="checkbox" name="parameterId" class="checkbox" id="id${data}" value="${data}">`;
                     }
                 }],

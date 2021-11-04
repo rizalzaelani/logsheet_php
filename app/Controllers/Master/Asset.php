@@ -360,23 +360,13 @@ class Asset extends BaseController
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
 		$tag = $post['tag'];
-		// var_dump($tag);
-		// die();
-
-		// $test = $parameterModel->findColumn('normal');
-		// $tblmParam = $this->db->table('tblm_parameter');
-		// $tblmParam->select('normal');
-		// $tblmParam->groupBy('normal');
-		// $queryParam = $tblmParam->get()->getResult();
-		// var_dump($queryParam);
-		// var_dump(array_unique($test));
 
 		if (isset($post['assetId'])) {
 			// new tags and tag location
 			$newTag = $post['tag'];
 			if ($newTag != "") {
 				$lengthNewTag = count($post['tag']);
-				for ($i=0; $i < $lengthNewTag; $i++) {
+				for ($i = 0; $i < $lengthNewTag; $i++) {
 					$dataNewTag = array(
 						'tagId' => json_decode($newTag[$i])->addTagId,
 						'userId' => '',
@@ -391,7 +381,7 @@ class Asset extends BaseController
 			$newTagLocation = $post['location'];
 			if ($newTagLocation != "") {
 				$lengthNewTagLocation = count($post['location']);
-				for ($i=0; $i < $lengthNewTagLocation; $i++) { 
+				for ($i = 0; $i < $lengthNewTagLocation; $i++) {
 					$dataNewTagLocation = array(
 						'tagLocationId' => json_decode($newTagLocation[$i])->addLocationId,
 						'userId' => '',
@@ -413,15 +403,12 @@ class Asset extends BaseController
 				'schManual' => $post['schManual'],
 				'schType' => $post['schType'],
 				'schFrequency' => $post['schFrequency'] == '' ? null : (int)$post['schFrequency'],
-				// 'schWeekDays' => $post['schWeekDays'],
+				'schWeekDays' => $post['schWeekDays'],
 				'schWeeks' => $post['schWeeks'],
 				'schDays' => $post['schDays'],
 				'latitude' => $post['latitude'],
 				'longitude' => $post['longitude'],
 			);
-			if ($post['schType'] == 'Weekly' || $post['schType'] == 'Monthly') {
-				$dataAsset['schWeekDays'] = $post['schWeekDays'];
-			}
 			$assetModel->update($assetId, $dataAsset);
 			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
 
@@ -517,7 +504,38 @@ class Asset extends BaseController
 				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $post));
 			}
 
-			// asset parameter
+			//delete parameter
+			if ($post['deletedParameter'] != "") {
+				$deletedParameter = explode(",", $post['deletedParameter']);
+				foreach ($deletedParameter as $val) {
+					$parameterModel->where(['assetId' => $assetId, 'parameterId' => $val])->delete();
+				}
+			}
+
+			//edited parameter
+			if ($post['editedParameter'][0] != "") {
+				$lengthEditedParameter = count($post['editedParameter']);
+				for ($i = 0; $i < $lengthEditedParameter; $i++) {
+					$dataEdited = json_decode($post['editedParameter'][$i]);
+					$data = array(
+						'parameterId'		=> $dataEdited->parameterId,
+						'sortId'			=> $dataEdited->sortId,
+						'parameterName'		=> $dataEdited->parameterName,
+						'description'		=> $dataEdited->description,
+						'uom'				=> $dataEdited->uom,
+						'min'				=> $dataEdited->min,
+						'max'				=> $dataEdited->max,
+						'normal'			=> $dataEdited->normal,
+						'abnormal'			=> $dataEdited->abnormal,
+						'option'			=> $dataEdited->option,
+						'inputType'			=> $dataEdited->inputType,
+						'showOn'			=> $dataEdited->showOn,
+					);
+					$parameterModel->update($dataEdited->parameterId, $data);
+				}
+			}
+
+			// insert parameter
 			$lengthParam = count($post['parameter']);
 			if ($post['parameter'][0] != '') {
 				for ($i = 0; $i < $lengthParam; $i++) {
@@ -794,7 +812,7 @@ class Asset extends BaseController
 								'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
 								'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
 								'uomOption' => (($row->getCellAtIndex(7)->getValue()) ? $row->getCellAtIndex(7)->getValue() : $row->getCellAtIndex(8)->getValue()),
-								
+
 								'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
 								'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
 								'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
