@@ -24,7 +24,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <div class="row mt-3">
                             <div class="col-6 h-100">
                                 <form enctype="multipart/form-data" method="post">
-                                    <div class="form-group row d-flex align-items-start">
+                                    <div class="form-group row">
                                         <div class="col-3">
                                             <label for="assetName">Asset <span class="required">*</span></label>
                                         </div>
@@ -35,7 +35,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row d-flex align-items-start">
+                                    <div class="form-group row">
                                         <div class="col-3">
                                             <label for="assetNumber">Number <span class="required">*</span></label>
                                         </div>
@@ -137,8 +137,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="titleModalAdd">Add Parameter</h5>
-                            <h5 class="modal-title" id="titleModalEdit" style="display: none;">Edit Parameter</h5>
+                            <h5 :class="checkModalAdd == true ? 'modal-title' : 'd-none'" id="titleModalAdd">Add Parameter</h5>
+                            <h5 :class="checkModalAdd == true ?  'd-none' : 'modal-title'" id="titleModalEdit">Edit Parameter</h5>
                         </div>
                         <div class="modal-body">
                             <div class="container">
@@ -167,36 +167,58 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mb-3 typeInput">
+                                    <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
                                         <label class="col-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
-                                        <input type="number" class="form-control col-9 min" name="min" placeholder="Min Value" v-model="param.min">
+                                        <div class="col-9 p-0">
+                                            <input type="number" class="form-control min" name="min" placeholder="Min Value" v-model="param.min">
+                                            <div class="invalid-feedback">
+                                                    Field cannot be empty.
+                                                </div>
+                                        </div>
                                     </div>
-                                    <div class="row mb-3 typeInput">
+                                    <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
                                         <label class="col-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
-                                        <input type="number" class="form-control col-9 max" name="max" placeholder="Max Value" v-model="param.max">
+                                        <div class="col-9 p-0">
+                                            <input type="number" class="form-control max" name="max" placeholder="Max Value" v-model="param.max">
+                                            <div class="invalid-feedback">
+                                                    Field cannot be empty.
+                                                </div>
+                                        </div>
                                     </div>
-                                    <div class="row mb-3 typeSelect" style="display: none;">
+                                    <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
                                         <label class="col-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
                                         <div class="col-9 p-0">
-                                            <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple>
-                                            </select>
+                                            <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple></select>
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row mb-3 typeSelect" style="display: none;">
+                                    <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
                                         <label class="col-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
                                         <div class="col-9 p-0">
-                                            <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple>
-                                            </select>
+                                            <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple></select>
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row mb-3 inputSelect">
+                                    <div :class="((param.inputType == 'input') || (param.inputType == 'select') ? 'row mb-3' : 'd-none')">
                                         <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
-                                        <input type="text" class="form-control col-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
+                                        <div class="col-9 p-0">
+                                            <input type="text" class="form-control uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
+                                            <div class="invalid-feedback">
+                                                    Field cannot be empty.
+                                                </div>
+                                        </div>
                                     </div>
-                                    <div class="row mb-3 typeCheckbox" style="display: none;">
+                                    <div :class="((param.inputType == 'select') || (param.inputType == 'checkbox') ? 'row mb-3' : 'd-none')">
                                         <label class="col-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
                                         <div class="col-9 p-0">
                                             <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -225,9 +247,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" id="cancel" @click="btnCancelModalParam()"><i class=" fa fa-times"></i> Cancel</button>
-                            <button type="submit" class="btn btn-success" @click="addTempParameter()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
+                            <button type="submit" :class="checkModalAdd == true ? 'btn btn-success' : 'd-none'" @click="addTempParameter()" id="btnAddParam"><i class="fa fa-plus"></i> Add Parameter</button>
                             <!-- <button type="button" class="btn btn-success" @click="updateParameter()" style="display: none;" id="btnUpdateParameter"><i class="fa fa-check"></i> Save Changes</button> -->
-                            <button type="button" class="btn btn-success" @click="updateTempParameter()" style="display: none;" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
+                            <button type="button" :class="checkModalAdd == true ? 'd-none' : 'btn btn-success'" @click="updateTempParameter()" id="btnUpdateParam"><i class="fa fa-check"></i> Save Changes</button>
                         </div>
                     </div>
                 </div>
@@ -490,7 +512,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group row schType hide">
+                                <div :class="setSch == 'Automatic' ? 'form-group row schType' : 'd-none'">
                                     <div class="col-3">
                                         <label for="schType">Schedule <span class="required">*</span></label>
                                     </div>
@@ -506,7 +528,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-3" id="daily" style="display: none;">
+                                <div :class="((assetData.schType == 'Daily') && (setSch == 'Automatic') ? 'mt-3' : 'd-none')" id="daily">
                                     <div class="row">
                                         <div class="col">
                                             <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-q w-100" id="schFreq" data-toggle="buttons">
@@ -522,7 +544,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-2" id="weekly" style="display: none;">
+                                <div :class="((assetData.schType == 'Weekly') && (setSch == 'Automatic') ? 'mt-2' : 'd-none')" id="weekly">
                                     <div class="row">
                                         <div class="col">
                                             <div class="row">
@@ -543,7 +565,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </div>
                                     </div>
                                 </div>
-                                <div class="" id="monthly" style="display: none;">
+                                <div :class="((assetData.schType == 'Monthly') && (setSch == 'Automatic') ? '' : 'd-none')" id="monthly">
                                     <div class="row">
                                         <div class="col">
                                             <div class="row">
@@ -568,7 +590,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 </div>
                                             </div>
                                             <div class="row mt-2">
-                                                <div class="col" id="days" style="display: none;">
+                                                <div :class="onDays == 'days' ? 'col' : 'd-none'" id="days">
                                                     <div class="btn-group-toggle" id="monthlyDays">
                                                         <?php foreach ($schDays as $key => $val) : ?>
                                                             <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: 12% !important; display: inline-table">
@@ -583,7 +605,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 </div>
                                             </div>
                                             <div class="row mt-2">
-                                                <div class="col-12" id="on" style="display: none;">
+                                                <div :class="onDays == 'on' ? 'col-12' : 'd-none'" id="on">
                                                     <div class="row">
                                                         <div class="col-6 pr-1">
                                                             <select name="onMonth" class="form-control on mr-1" id="monthlyOn" multiple>
@@ -820,7 +842,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </h5>
                 <div>
                     <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
-                    <button class="btn btn-sm btn-outline-primary" @click="addParameter()"><i class="fa fa-plus"></i> Add Parameter</button>
+                    <button class="btn btn-sm btn-outline-primary" @click="addParameter(); checkModalAdd = true"><i class="fa fa-plus"></i> Add Parameter</button>
                 </div>
             </div>
             <div class="table-responsive mt-2">
@@ -872,7 +894,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td class="text-center">{{ items.showOn}}</td>
                             <td class="text-center"><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i)"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i); checkModalAdd = false"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
@@ -909,6 +931,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
     let v = Vue.createApp({
         el: '#app',
         setup() {
+            var checkModalAdd = ref(false);
             var assetData = reactive({
                 assetId: uuidv4(),
                 assetName: '',
@@ -1016,12 +1039,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             function insertParam() {
                 let lengthParam = v.listNewParam.length;
-                if (lengthParam) {
-                    for (let i = 0; i < v.listNewParam.length; i++) {
-                        this.listNewParam[i].sortId = $('#tableParameter tbody tr').length + 1;
-                        this.listNewParam[i].parameterId = uuidv4();
-                        this.listNewParam[i].photo = "";
-                        this.params.push(v.listNewParam[i])
+                var uniqParam = _.uniqBy(v.listNewParam, 'no');
+                if (uniqParam.length) {
+                    for (let i = 0; i < uniqParam.length; i++) {
+                        uniqParam[i].sortId = $('#tableParameter tbody tr').length + (i + 1);
+                        uniqParam[i].parameterId = uuidv4();
+                        uniqParam[i].photo = "";
+                        this.params.push(uniqParam[i]);
                     }
                     $('#listImport').modal('hide');
                     $('#tableImport').DataTable().destroy();
@@ -1065,11 +1089,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             };
 
             function addParameter() {
-                $('#btnAddParam').show();
-                $('#titleModalAdd').show();
-                $('#btnUpdateParameter').hide();
-                $('#btnUpdateParam').hide();
-                $('#titleModalEdit').hide();
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
                 $('#normal').find('option').remove();
@@ -1077,7 +1096,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function addTempParameter() {
-                if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
+                let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
+                let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
+                let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
+                let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
+                if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
                             confirmButton: 'btn btn-danger',
@@ -1091,33 +1116,171 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     })
 
                     if (this.param.parameterName != '') {
-                        $('.parameterName').removeClass('is-invalid');
+                        $('.parameter').removeClass('is-invalid');
                     }
                     if (this.param.inputType != '') {
                         $('.type').removeClass('is-invalid');
                     }
+
+                    //remove invalid class
+                    // input type
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min != "" || this.param.min != null) {
+                            $('.min').removeClass('is-invalid');
+                        }
+                        if (this.param.max != "" || this.param.max != null) {
+                            $('.max').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "" || this.param.uom != null) {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal != "") {
+                            $('#normal').removeClass('is-invalid');
+                        }
+                        if (this.param.abnormal != "") {
+                            $('#abnormal').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "") {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    }
+
                     if (this.param.showOn != '') {
                         $('.showOn').removeClass('is-invalid');
                     }
 
+                    //end remove invalid class
+
+                    //add invalid class
                     if (this.param.parameterName == '') {
-                        $('.parameterName').addClass('is-invalid');
+                        $('.parameter').addClass('is-invalid');
                     }
                     if (this.param.inputType == '') {
                         $('.type').addClass('is-invalid');
                     }
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min == "" || this.param.min == null) {
+                            $('.min').addClass('is-invalid');
+                        }
+                        if (this.param.max == "" || this.param.max == null) {
+                            $('.max').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "" || this.param.uom == null) {
+                            $('.uom').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal == "") {
+                            $('#normal').addClass('is-invalid');
+                        }
+                        if (this.param.abnormal == "") {
+                            $('#abnormal').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "") {
+                            $('.uom').addClass('is-invalid');
+                        }
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    }
+
                     if (this.param.showOn == '') {
                         $('.showOn').addClass('is-invalid');
                     }
                 } else {
                     if (this.param.parameterName != '') {
-                        $('.parameterName').removeClass('is-invalid');
+                        $('.parameter').removeClass('is-invalid');
                     }
                     if (this.param.inputType != '') {
                         $('.type').removeClass('is-invalid');
                     }
+
+                    //remove invalid class
+                    // input type
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min != "" || this.param.min != null) {
+                            $('.min').removeClass('is-invalid');
+                        }
+                        if (this.param.max != "" || this.param.max != null) {
+                            $('.max').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "" || this.param.uom != null) {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal != "") {
+                            $('#normal').removeClass('is-invalid');
+                        }
+                        if (this.param.abnormal != "") {
+                            $('#abnormal').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "") {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    }
+
                     if (this.param.showOn != '') {
                         $('.showOn').removeClass('is-invalid');
+                    }
+
+                    //end remove invalid class
+
+                    //add invalid class
+                    if (this.param.parameterName == '') {
+                        $('.parameter').addClass('is-invalid');
+                    }
+                    if (this.param.inputType == '') {
+                        $('.type').addClass('is-invalid');
+                    }
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min == "" || this.param.min == null) {
+                            $('.min').addClass('is-invalid');
+                        }
+                        if (this.param.max == "" || this.param.max == null) {
+                            $('.max').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "" || this.param.uom == null) {
+                            $('.uom').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal == "") {
+                            $('#normal').addClass('is-invalid');
+                        }
+                        if (this.param.abnormal == "") {
+                            $('#abnormal').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "") {
+                            $('.uom').addClass('is-invalid');
+                        }
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    }
+
+                    if (this.param.showOn == '') {
+                        $('.showOn').addClass('is-invalid');
                     }
 
                     this.params.push(this.param);
@@ -1147,13 +1310,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             function editTempParameter(index) {
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
-                $('#btnAddParam').hide();
-                $('#titleModalAdd').hide();
-                $('#btnUpdateParameter').hide();
-                $('#btnUpdateParam').show();
-                $('#titleModalEdit').show();
                 let data = this.params[index];
-                // console.log(data.parameterId);
                 this.param.parameterId = data.parameterId;
                 this.param.sortId = null;
                 this.param.parameterName = data.parameterName;
@@ -1217,7 +1374,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function updateTempParameter() {
-                if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
+                let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
+                let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
+                let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
+                let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
+                if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
                             confirmButton: 'btn btn-danger',
@@ -1236,16 +1399,80 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     if (this.param.inputType != '') {
                         $('.type').removeClass('is-invalid');
                     }
+
+                    //remove invalid class
+                    // input type
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min != "" || this.param.min != null) {
+                            $('.min').removeClass('is-invalid');
+                        }
+                        if (this.param.max != "" || this.param.max != null) {
+                            $('.max').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "" || this.param.uom != null) {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal != "") {
+                            $('#normal').removeClass('is-invalid');
+                        }
+                        if (this.param.abnormal != "") {
+                            $('#abnormal').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "") {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    }
+
                     if (this.param.showOn != '') {
                         $('.showOn').removeClass('is-invalid');
                     }
 
+                    //end remove invalid class
+
+                    //add invalid class
                     if (this.param.parameterName == '') {
                         $('.parameter').addClass('is-invalid');
                     }
                     if (this.param.inputType == '') {
                         $('.type').addClass('is-invalid');
                     }
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min == "" || this.param.min == null) {
+                            $('.min').addClass('is-invalid');
+                        }
+                        if (this.param.max == "" || this.param.max == null) {
+                            $('.max').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "" || this.param.uom == null) {
+                            $('.uom').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal == "") {
+                            $('#normal').addClass('is-invalid');
+                        }
+                        if (this.param.abnormal == "") {
+                            $('#abnormal').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "") {
+                            $('.uom').addClass('is-invalid');
+                        }
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    }
+
                     if (this.param.showOn == '') {
                         $('.showOn').addClass('is-invalid');
                     }
@@ -1256,8 +1483,82 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     if (this.param.inputType != '') {
                         $('.type').removeClass('is-invalid');
                     }
+
+                    //remove invalid class
+                    // input type
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min != "" || this.param.min != null) {
+                            $('.min').removeClass('is-invalid');
+                        }
+                        if (this.param.max != "" || this.param.max != null) {
+                            $('.max').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "" || this.param.uom != null) {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal != "") {
+                            $('#normal').removeClass('is-invalid');
+                        }
+                        if (this.param.abnormal != "") {
+                            $('#abnormal').removeClass('is-invalid');
+                        }
+                        if (this.param.uom != "") {
+                            $('.uom').removeClass('is-invalid');
+                        }
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option != "") {
+                            $('#option').removeClass('is-invalid');
+                        }
+                    }
+
                     if (this.param.showOn != '') {
                         $('.showOn').removeClass('is-invalid');
+                    }
+
+                    //end remove invalid class
+
+                    //add invalid class
+                    if (this.param.parameterName == '') {
+                        $('.parameter').addClass('is-invalid');
+                    }
+                    if (this.param.inputType == '') {
+                        $('.type').addClass('is-invalid');
+                    }
+                    if (this.param.inputType == 'input') {
+                        if (this.param.min == "" || this.param.min == null) {
+                            $('.min').addClass('is-invalid');
+                        }
+                        if (this.param.max == "" || this.param.max == null) {
+                            $('.max').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "" || this.param.uom == null) {
+                            $('.uom').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'select') {
+                        if (this.param.normal == "") {
+                            $('#normal').addClass('is-invalid');
+                        }
+                        if (this.param.abnormal == "") {
+                            $('#abnormal').addClass('is-invalid');
+                        }
+                        if (this.param.uom == "") {
+                            $('.uom').addClass('is-invalid');
+                        }
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    } else if (this.param.inputType == 'checkbox') {
+                        if (this.param.option == "") {
+                            $('#option').addClass('is-invalid');
+                        }
+                    }
+
+                    if (this.param.showOn == '') {
+                        $('.showOn').addClass('is-invalid');
                     }
 
                     index = this.param.i;
@@ -1458,7 +1759,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             function save() {
                 this.submited = true;
-                if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || this.setSch == "" || this.assetData.schType == "" || (v.assetData.schType == 'Daily' && v.assetData.schFrequency == "") || (v.assetData.schType == 'Weekly' && v.assetData.schWeekDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == 'days' && v.assetData.schDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == "on" && v.assetData.schWeeks == "") || this.assetData.assetStatusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
+                let checkSchType = ((this.assetData.schType == "") && (this.setSch == 'Automatic')) ? true : false;
+                if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || this.setSch == "" || checkSchType == true || (v.assetData.schType == 'Daily' && v.assetData.schFrequency == "") || (v.assetData.schType == 'Weekly' && v.assetData.schWeekDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == 'days' && v.assetData.schDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == "on" && v.assetData.schWeeks == "") || this.assetData.assetStatusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
                     this.submited = false;
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
@@ -1931,6 +2233,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             });
             return {
+                checkModalAdd,
                 assetData,
                 setSch,
                 selectedSchWeekly,
@@ -2026,32 +2329,16 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
     $('#setSch').on('change', function() {
         if ($(this).val() == 'Manual') {
-            $('.schType').addClass('hide');
-            $('#daily').hide();
-            $('#weekly').hide();
-            $('#monthly').hide();
             v.setSch = $(this).val();
-        } else if ($(this).val() == 'Automatic') {
-            $('.schType').removeClass('hide');
-            v.setSch = $(this).val();
-        }
-    })
-
-    $('#setSch').on('change', function() {
-        v.setSch = $(this).val();
-        if ($(this).val() == 'Manual') {
             v.assetData.schManual = '1';
-        } else {
+        } else if ($(this).val() == 'Automatic') {
+            v.setSch = $(this).val();
             v.assetData.schManual = '0';
         }
     })
 
     $('#schType').on('change', function() {
         if ($(this).val() == 'Daily') {
-            $('#daily').show();
-            $('#weekly').hide();
-            $('#monthly').hide();
-
             v.assetData.schType = $(this).val();
 
             // set weekly
@@ -2078,9 +2365,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             $('#monthlyOnDays').val("").trigger("change");
 
         } else if ($(this).val() == 'Weekly') {
-            $('#weekly').show();
-            $('#daily').hide();
-            $('#monthly').hide();
 
             //set daily
             let schFreq = v.assetData.schFrequency;
@@ -2105,12 +2389,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         } else {
             $('#gridRadios1').prop('checked', true);
             v.onDays = 'days';
-
-            $('#days').show();
-            $('#monthly').show();
-            $('#daily').hide();
-            $('#weekly').hide();
-
             //set daily
             let schFreq = v.assetData.schFrequency;
             let id = '#schFreq' + schFreq;
@@ -2143,7 +2421,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         v.assetData.schType = data;
     })
 
-    $('#operation').on('change', function() {})
     $('#taggingType').on('change', function() {
         let data = $('#taggingType option:selected').val();
         v.assetTaggingtype = data;
@@ -2176,35 +2453,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
     $('.type').on('change', function() {
         if ($(this).val() == 'select') {
-            $('.typeSelect').show();
-            $('.typeCheckbox').show();
-            $('.inputSelect').show();
-            $('.typeInput').hide();
             v.param.min = null;
             v.param.max = null;
         } else if ($(this).val() == 'checkbox') {
-            $('.typeCheckbox').show();
-            $('.typeSelect').hide();
-            $('.typeInput').hide();
-            $('.inputSelect').hide();
             v.param.min = null;
             v.param.max = null;
             v.param.uom = '';
             v.param.normal = '';
             v.param.abnormal = '';
         } else if ($(this).val() == 'input') {
-            $('.typeInput').show();
-            $('.inputSelect').show();
-            $('.typeSelect').hide();
-            $('.typeCheckbox').hide();
             v.param.option = '';
             v.param.normal = '';
             v.param.abnormal = '';
         } else {
-            $('.typeInput').hide();
-            $('.typeSelect').hide();
-            $('.typeCheckbox').hide();
-            $('.inputSelect').hide();
             v.param.min = null;
             v.param.max = null;
             v.param.uom = '';
@@ -2319,31 +2580,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         dropdownParent: $('#addParameterModal'),
     });
 
-    $('.latlong').on('change', function() {
-        if ($(this).is(':checked')) {
-            v.checked = true;
-            $('#assetLat').show();
-            $('#assetLong').show();
-
-            $('#divMap').show();
-            $('#map').addClass('w-100');
-
-            //map detail
-            $('#mapDetail').show();
-            $('#mapDetail').addClass('w-100');
-            $('.imgMap').removeClass('d-flex align-items-center');
-        } else if (!($(this).is(':checked'))) {
-            v.checked = false;
-            $('#divMap').hide();
-            $('#assetLat').hide();
-            $('#assetLong').hide();
-
-            //map detail
-            $('.imgMap').addClass('d-flex align-items-center');
-            $('#mapDetail').hide();
-        }
-    })
-
     // filepond
     $(document).ready(function() {
         FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
@@ -2434,9 +2670,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 {
                     "data": "minAbnormal"
                 },
-                // {
-                //     "data": "inputType"
-                // },
                 {
                     "data": "uomOption"
                 },
@@ -2455,7 +2688,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }],
             "order": [0, 'asc'],
         });
-        // table.draw();
     }
 
     // import parameter
@@ -2505,15 +2737,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         if ($(this).val() == "days") {
             $('#monthlyOn').val("").trigger("change");
             $('#monthlyOnDays').val("").trigger("change");
-            $('#on').hide();
-            $('#days').show();
             v.assetData.schWeeks = '';
             v.onDays = "days";
-
         } else if ($(this).val() == "on") {
-            $('#days').hide();
-            $('#on').show();
-
             //set monthlyDays
             let selectedSchMonthlyDays = v.assetData.schDays.split(",");
             for (let i = 0; i < selectedSchMonthlyDays.length; i++) {
@@ -2576,13 +2802,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
     $('input[type="radio"][name="options"]').on('change', function() {
         let id = $(this)[0].id;
         let text = $(this)[0].dataset.content;
-
         v.assetData.assetStatusId = id;
         v.assetData.assetStatusName = text;
     })
 
     // mapbox
-
     // map tagging
     $(document).ready(function() {
         mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';

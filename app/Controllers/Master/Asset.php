@@ -49,8 +49,6 @@ class Asset extends BaseController
 				"link"	=> "Asset"
 			],
 		];
-		// print("<pre />");
-		// print_r($data);
 		return $this->template->render('Master/Asset/index', $data);
 	}
 
@@ -84,9 +82,6 @@ class Asset extends BaseController
 	public function add()
 	{
 		$modelAsset = new AssetModel();
-		$modelTag = new TagModel();
-		$modelLocation = new TagLocationModel();
-		$modelStatus = new AssetStatusModel();
 
 		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
 		$tagData = $this->db->table('tblm_tag')->get()->getResult();
@@ -246,7 +241,7 @@ class Asset extends BaseController
 							'sortId' => $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
 							'photo' => $name,
-							'description' => json_decode($post['parameter'][$i])->paramDesc,
+							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
 							'max' => (json_decode($post['parameter'][$i])->max) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->max,
@@ -264,7 +259,7 @@ class Asset extends BaseController
 							'sortId' => $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
 							'photo' => '',
-							'description' => json_decode($post['parameter'][$i])->paramDesc,
+							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
 							'max' => (json_decode($post['parameter'][$i])->max) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->max,
@@ -589,25 +584,6 @@ class Asset extends BaseController
 		die();
 	}
 
-	public function update()
-	{
-		$model = new AssetModel();
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		if (!empty($json->assetName) && !empty($json->assetNumber) && !empty($json->description)) {
-			$data = array(
-				'assetName' => $json->assetName,
-				'assetNumber' => $json->assetNumber,
-				'description' => $json->description
-			);
-			$model->update($assetId, $data);
-			echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
-		} else {
-			echo json_encode(array('status' => 'error', 'message' => 'All field cannot be empty!'));
-		}
-		die();
-	}
-
 	public function delete()
 	{
 		$model = new AssetModel();
@@ -840,205 +816,6 @@ class Asset extends BaseController
 		} else {
 			return $this->response->setJSON((array('status' => 'failed', 'message' => 'Bad Request!')));
 		}
-	}
-
-	public function insertParameter()
-	{
-		$parameterModel = new ParameterModel();
-		$json = $this->request->getJSON();
-		$dataParameter = $json->dataParam;
-		$assetId = $json->assetId;
-		$length = count($dataParameter);
-		for ($i = 0; $i < $length; $i++) {
-			$data = [
-				'parameterId' => null,
-				'assetId' => $assetId,
-				'sortId' => null,
-				'parameterName' => $dataParameter[$i]->parameterName,
-				'description' => $dataParameter[$i]->description,
-				(($dataParameter[$i]->inputType == "input") ? 'uom' : 'option') => $dataParameter[$i]->uom,
-				(is_string($dataParameter[$i]->min) ? 'abnormal' : 'min') => $dataParameter[$i]->min,
-				(is_string($dataParameter[$i]->max) ? 'normal' : 'max') => $dataParameter[$i]->max,
-				'inputType' => $dataParameter[$i]->inputType,
-				'showOn' => $dataParameter[$i]->showOn,
-			];
-			$parameterModel->insert($data);
-		}
-		echo json_encode(array('status' => 'success', 'message' => '', 'data' => $data));
-		die();
-	}
-
-	public function addParameter()
-	{
-		$parameterModel = new ParameterModel();
-		$request = \Config\Services::request();
-		$post = $this->request->getPost();
-		$file = $request->getFile('photo');
-		if ($file != null) {
-			$name = 'IMG_' . time() . '.png';
-			$file->move('../uploads/img', $name);
-			if ($post['assetId'] != '' && $post['parameterName'] != '') {
-				$data = array(
-					'parameterId' => $post['parameterId'],
-					'assetId' => $post['assetId'],
-					'sortId' => $post['sortId'],
-					'parameterName' => $post['parameterName'],
-					'photo' => $name,
-					'description' => $post['description'],
-					'uom' => $post['uom'],
-					'min' => $post['min'],
-					'max' => $post['max'],
-					'normal' => $post['normal'],
-					'abnormal' => $post['abnormal'],
-					'option' => $post['option'],
-					'inputType' => $post['inputType'],
-					'showOn' => $post['showOn'],
-				);
-				$parameterModel->insert($data);
-				echo json_encode(array('status' => 'success', 'message' => 'Success add parameter', 'data' => $data, 'file' => $file));
-			} else {
-				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
-			}
-		} else {
-			if ($post['assetId'] != '' && $post['parameterName'] != '') {
-				$data = array(
-					'parameterId' => $post['parameterId'],
-					'assetId' => $post['assetId'],
-					'sortId' => $post['sortId'],
-					'parameterName' => $post['parameterName'],
-					'photo' => '',
-					'description' => $post['description'],
-					'uom' => $post['uom'],
-					'min' => $post['min'],
-					'max' => $post['max'],
-					'normal' => $post['normal'],
-					'abnormal' => $post['abnormal'],
-					'option' => $post['option'],
-					'inputType' => $post['inputType'],
-					'showOn' => $post['showOn'],
-				);
-				$parameterModel->insert($data);
-				echo json_encode(array('status' => 'success', 'message' => 'Success update parameter', 'data' => $data, 'file' => $file));
-			} else {
-				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
-			}
-		}
-		die();
-	}
-
-	public function editParameter()
-	{
-		$model = new ParameterModel();
-		$json = $this->request->getJSON();
-		$parameter = $model->where('parameterId', $json->parameterId)->findAll();
-		$data['parameter'] = $parameter;
-		echo json_encode(array('status' => 'success', 'data' => $parameter));
-		die();
-	}
-
-	public function updateParameter()
-	{
-		$parameterModel = new ParameterModel();
-		$builder = $this->db->table('tblm_parameter');
-		$request = \Config\Services::request();
-		$post = $this->request->getPost();
-		$parameterId = $post['parameterId'];
-		$builder->select('photo')->where('parameterId', $parameterId);
-		$photo = $builder->get()->getResult();
-		$file = $request->getFile('photo');
-		$isNull = ($file == NULL) ? 'true' : 'false';
-		if ($isNull == 'false') {
-			if ($photo[0]->photo != '') {
-				unlink('../public/assets/uploads/img/' . $photo[0]->photo);
-			}
-			$name = "IMG_" . $file->getRandomName();
-			$file->move('../public/assets/uploads/img', $name);
-			if ($post['assetId'] != '' && $post['parameterName'] != '') {
-				$data = array(
-					'assetId' => $post['assetId'],
-					'sortId' => $post['sortId'] == "null" || "" || 0 ? null : $post['sortId'],
-					'parameterName' => $post['parameterName'],
-					'photo' => $name,
-					'description' => $post['description'],
-					'uom' => $post['uom'],
-					'min' => $post['min'] == "null" || "" || 0 ? null : $post['min'],
-					'max' => $post['max'] == "null" || "" || 0 ? null : $post['max'],
-					'normal' => $post['normal'],
-					'abnormal' => $post['abnormal'],
-					'option' => $post['option'],
-					'inputType' => $post['inputType'],
-					'showOn' => $post['showOn'],
-				);
-				$parameterModel->update($parameterId, $data);
-				echo json_encode(array('status' => 'success', 'message' => 'Success update parameter', 'data' => $data, 'file' => $file));
-				die();
-			} else {
-				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
-			}
-		} else if ($isNull == 'true') {
-			if ($post['assetId'] != '' && $post['parameterName'] != '') {
-				$data = array(
-					'assetId' => $post['assetId'],
-					'sortId' => $post['sortId'] == "null" || "" || 0 ? null : $post['sortId'],
-					'parameterName' => $post['parameterName'],
-					'photo' => $post['photo'],
-					'description' => $post['description'],
-					'uom' => $post['uom'],
-					'min' => $post['min'] == "null" || "" || 0 ? null : $post['min'],
-					'max' => $post['max'] == "null" || "" || 0 ? null : $post['max'],
-					'normal' => $post['normal'],
-					'abnormal' => $post['abnormal'],
-					'option' => $post['option'],
-					'inputType' => $post['inputType'],
-					'showOn' => $post['showOn'],
-				);
-				$parameterModel->update($parameterId, $data);
-				echo json_encode(array('status' => 'success', 'message' => 'Success update parameter test', 'data' => $data));
-				die();
-			} else {
-				echo json_encode(array('status' => 'failed', 'message' => 'Field parameter name cannot be empty!'));
-			}
-		}
-		die();
-	}
-
-	public function updateParameter2()
-	{
-		$model = new ParameterModel();
-		$json = $this->request->getJSON();
-		$id = $json->parameterId;
-		$data = array(
-			'assetId' => $json->assetId,
-			'sortId' => $json->sortId,
-			'parameterName' => $json->parameterName,
-			'photo' => $json->photo,
-			'description' => $json->description,
-			'uom' => $json->uom,
-			'min' => $json->min,
-			'max' => $json->max,
-			'normal' => $json->normal,
-			'abnormal' => $json->abnormal,
-			'option' => $json->option,
-			'inputType' => $json->inputType,
-			'showOn' => $json->showOn,
-		);
-		$model->update($id, $data);
-		echo json_encode(array('status' => 'success', 'data' => $data));
-		die();
-	}
-
-	public function deleteParameter()
-	{
-		$model = new ParameterModel();
-		$json = $this->request->getJSON();
-		$id = $json->parameterId;
-		if ($json->parameterId) {
-			$model->delete($id);
-			echo json_encode(array('status' => 'success', 'data' => $id));
-		} else {
-			echo json_encode(array('status' => 'failed', 'message' => 'Bad request!', 'data' => $json));
-		}
-		die();
 	}
 
 	public function sortingParameter()
