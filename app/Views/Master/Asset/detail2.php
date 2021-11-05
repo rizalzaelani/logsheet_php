@@ -664,7 +664,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <hr>
                         <div>
                             <form method="post" enctype="multipart/form-data">
-                                <div class="form-group row d-flex align-items-center">
+                                <div class="form-group row">
                                     <div class="col-sm-3">
                                         <label for="setSch">Set As <span class="required">*</span></label>
                                     </div>
@@ -675,6 +675,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </select>
                                         <div class="invalid-feedback">
                                             Field cannot be empty.
+                                        </div>
+                                        <div :class="setSch == 'Manual' ? 'mt-1' : 'd-none'" style="font-size: 80%; width: 100%; color: #e55353">
+                                            Please set schedule on schedule page
                                         </div>
                                     </div>
                                 </div>
@@ -810,45 +813,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     </div>
                 </div>
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardOperation">
-                        <div class="d-flex justify-content-start align-items-center">
-                            <div>
-                                <h5>
-                                    <svg class="c-icon mr-1">
-                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
-                                    </svg>
-                                </h5>
-                            </div>
-                            <div>
-                                <h5 class="mb-0">
-                                    Change Operation Mode
-                                </h5>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="form-group row">
-                            <div class="col-12">
-                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;" id="operation">
-                                    <?php foreach ($statusData as $key) : ?>
-                                        <label class="btn btn-sm btn-outline-primary mr-1 mb-1">
-                                            <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
-                                        </label>
-                                    <?php endforeach; ?>
-                                </div>
-                                <div class="invalid-feedback">
-                                    Field cannot be empty.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Asset Tagging and Config -->
-        <div :class="checkTabSetting == true ? '' : 'd-none'" id="cardAssetTagging">
-            <div class="row">
-                <div class="col-6 pb-4">
                     <div class="card card-main h-100" id="cardTagging">
                         <div class="d-flex justify-content-start align-items-center">
                             <div>
@@ -932,6 +896,45 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Asset Tagging and Config -->
+        <div :class="checkTabSetting == true ? '' : 'd-none'" id="cardAssetTagging">
+            <div class="row">
+                <div class="col-6 pb-4">
+                <div class="card card-main h-100" id="cardOperation">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon mr-1">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
+                                    </svg>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">
+                                    Change Operation Mode
+                                </h5>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;" id="operation">
+                                    <?php foreach ($statusData as $key) : ?>
+                                        <label class="btn btn-outline-primary mr-1 mb-1">
+                                            <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Field cannot be empty.
                                 </div>
                             </div>
                         </div>
@@ -1100,12 +1103,29 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td class="text-center" v-else>
                                 <i>(Empty)</i>
                             </td>
-                            <td class="text-center">{{ items.showOn}}</td>
-                            <td class="text-center" v-if="items.createdAt != items.updatedAt">
+                            <td class="text-center">{{ items.showOn }}</td>
+                            <!-- <td class="text-center" v-if="items.createdAt != items.updatedAt">
                                 <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
                             </td>
                             <td class="text-center" v-else>
                                 <i class="text-success"><span class="badge badge-info text-white">Added</span></i>
+                            </td> -->
+                            <!-- <td class="text-center">
+                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
+                            </td> -->
+                            <td class="text-center" v-if="editedParameter.length > 0">
+                                <div v-for="(row, index) in editedParameter">
+                                    <!-- <i class="text-success"><span class="badge badge-info text-white">{{ row.parameterId }}</span></i> -->
+                                    <div v-if="(items.parameterId == row.parameterId)">
+                                        <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
+                                    </div>
+                                    <div v-else>
+                                        <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center" v-else>
+                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
                             </td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
@@ -1120,9 +1140,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         <!-- <div class="card card-main" id="btnSaveSetting" style="display: none;">
             <button class="btn btn-outline-primary text-center w-100" id="btnSaveSetting" @click="btnSaveSetting()"><i class="fa fa-save"></i> Save Changes</button>
         </div> -->
-        <div :class="checkTabSetting == true ? 'btn-fab' : 'd-none'" aria-label="fab">
+        <div :class="((checkTabSetting == true) || (checkTabParameter == true && parameter.length > 0) ? 'btn-fab' : 'd-none')" aria-label="fab">
             <div>
-                <button type="button" id="btnSaveSetting" @click="btnSaveSetting()" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="top" title="Save Changes">
+                <button type="button" id="btnSaveSetting" @click="checkTabSetting == true ? btnSaveSetting() : btnSaveSorting()" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="top" title="Save Changes">
                     <i class="fa fa-save"></i>
                 </button>
             </div>
@@ -1147,8 +1167,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 var checkTabSetting = ref(false);
                 var assetData = reactive(<?= json_encode($assetData); ?>);
                 var parameter = reactive(<?= json_encode($parameter); ?>);
+                var compareParameter = reactive(<?= json_encode($parameter); ?>);
                 var deletedParameter = ref([]);
                 var editedParameter = ref([]);
+                var sortingParameter = ref([]);
                 var myModal = ref('');
                 var checked = ref('');
                 //check modal param
@@ -1895,9 +1917,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             text: "Invalid value!",
                             icon: 'error'
                         }).then((result) => {
+                            let findIsInvalid = $('body').find('.is-invalid');
                             if (result.isConfirmed) {
                                 $('html, body').animate({
-                                    scrollTop: $(".is-invalid").offset().top
+                                    scrollTop: $(findIsInvalid[0]).offset().top
                                 }, 1000);
                             }
                         })
@@ -1908,7 +1931,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.assetData.assetNumber != '' && $('#assetNumber').hasClass('is-invalid')) {
                             $('#assetNumber').removeClass('is-invalid');
                         }
-                        if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
+                        if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid') && this.assetData.schManual == '1') {
                             $('#schType').removeClass('is-invalid');
                         }
                         if (this.assetData.schFrequency != '' && $('#schFreq').hasClass('is-invalid')) {
@@ -1955,6 +1978,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
+                            $('#cardParameter').removeClass('is-invalid');
                         }
 
                         // add invalid
@@ -1971,7 +1995,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.assetData.tagLocationId == "") {
                             $('#location').addClass('is-invalid')
                         }
-                        if (this.assetData.schType == '') {
+                        if (this.assetData.schType == '' && this.assetData.schManual == '0') {
                             $('#schType').addClass('is-invalid');
                         } else if (this.assetData.schType == "Daily") {
                             if (this.assetData.schFrequency == '') {
@@ -2025,6 +2049,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         //end tagging
                         if ($('#tableParameter tbody tr').length < 1) {
                             $('#cardParameter').addClass('card-border');
+                            $('#cardParameter').addClass('is-invalid');
                         }
                     } else {
                         if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
@@ -2060,8 +2085,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
+                            $('#cardParameter').removeClass('is-invalid');
+
                         }
-                        if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid')) {
+                        if (this.assetData.schType != '' && $('#schType').hasClass('is-invalid') && this.assetData.schManual == '1') {
                             $('#schType').removeClass('is-invalid');
                         }
                         if (this.assetData.schFrequency != '' && $('#schFreq').hasClass('is-invalid')) {
@@ -2187,6 +2214,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         formdata.append('longitude', this.assetData.longitude);
                         formdata.append('schManual', this.assetData.schManual);
                         formdata.append('schType', this.assetData.schType);
+                        if (v.assetData.schType == 'Daily') {
+                            formdata.append('schFrequency', this.assetData.schFrequency);
+                        }else{
+                            formdata.append('schFrequency', "");
+                        }
                         formdata.append('schFrequency', this.assetData.schFrequency);
                         if (v.assetData.schType == "Weekly" && v.assetData.schWeekDays != "") {
                             formdata.append('schWeekDays', this.assetData.schWeekDays);
@@ -2198,6 +2230,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             formdata.append('schWeekDays', this.assetData.schWeekDays);
                         }
                         if (v.assetData.schType == "Daily") {
+                            formdata.append('schWeekDays', this.assetData.schWeekDays);
+                        }
+                        if (v.assetData.schManual == '1' || v.assetData.schManual == 1) {
                             formdata.append('schWeekDays', this.assetData.schWeekDays);
                         }
                         formdata.append('schWeeks', this.assetData.schWeeks);
@@ -2392,6 +2427,35 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                     $('#normal').find('option').remove();
                     $('#abnormal').find('option').remove();
+                    this.param.parameterId = uuidv4();
+                    this.param.sortId = $('#tableParameter tbody tr').length + 1,
+                    this.param.parameterName = '';
+                    this.param.photo = '';
+                    this.param.description = '';
+                    this.param.uom = '';
+                    this.param.min = null;
+                    this.param.max = null;
+                    this.param.normal = '';
+                    this.param.abnormal = '';
+                    this.param.option = '';
+                    this.param.inputType = '';
+                    this.param.showOn = '';
+                    this.param.i = null;
+                    $('#addParameterModal').modal('hide');
+                    $('#previewImg').hide();
+
+                    $('.type').val('').trigger("change");
+                    $('#showOn').val('').trigger('change');
+                    $('#normal').val('').trigger('change');
+                    $('#abnormal').val('').trigger('change');
+
+                    $('#imgParam').remove();
+                    $('.optNormal').remove();
+                    $('.optAbnormal').remove();
+
+                    $('.parameter').removeClass('is-invalid');
+                    $('.type').removeClass('is-invalid');
+                    $('.showOn').removeClass('is-invalid');
                 };
 
                 function editExistParameter(index) {
@@ -2406,6 +2470,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.param.description = this.parameter[index].description;
                     if (this.parameter[index].uom != "") {
                         this.param.uom = this.parameter[index].uom;
+                    }else{
+                        this.param.uom = "";
                     }
                     this.param.min = this.parameter[index].min;
                     this.param.max = this.parameter[index].max;
@@ -2652,18 +2718,29 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
                         let lengthEdited = this.editedParameter.length;
                         // console.log(lengthEdited);
-                        setTimeout(() => {
-                            if (lengthEdited) {
-                                for (let i = 0; i < lengthEdited; i++) {
-                                    // console.log(this.editedParameter[i].parameterId);
-                                    let dataParam = this.editedParameter[i].parameterId
-                                    if (dataParam == this.parameter[index].parameterId) {
-                                        return this.editedParameter.splice(i, 1);
-                                    }
-                                }
-                            }
-                        }, 5000);
+                        // setTimeout(() => {
+                        //     if (lengthEdited) {
+                        //         for (let i = 0; i < lengthEdited; i++) {
+                        //             // console.log(this.editedParameter[i].parameterId);
+                        //             let idEditedParam = this.editedParameter[i].parameterId
+                        //             if (idEditedParam == this.parameter[index].parameterId) {
+                        //                 return this.editedParameter.splice(i, 1);
+                        //             }
+                        //         }
+                        //     }
+                        // }, 5000);
                         this.editedParameter.push(this.parameter[index]);
+                        if (lengthEdited) {
+                            const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
+                            const {assetId, createdAt, deletedAt, updatedAt, ...newParam} = this.compareParameter[index];
+                            for (let a = 0; a < lengthEdited; a++) {
+                                const {i, ...newEdited} = this.editedParameter[a];
+                                console.log(newParam);
+                                console.log(newEdited);
+                                // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
+                                // console.log(checkIsEqual);
+                            }
+                        }
                         this.myModal.hide();
                     }
                 }
@@ -2914,7 +2991,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                        this.param.parameterName = '';
+                    this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.description = '';
                     this.param.uom = '';
@@ -2941,7 +3018,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('.parameter').removeClass('is-invalid');
                     $('.type').removeClass('is-invalid');
                     $('.showOn').removeClass('is-invalid');
-
                 };
 
                 function importParameter() {
@@ -3002,6 +3078,26 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
                     })
                 };
+
+                function btnSaveSorting(){
+                    if (v.sortingParameter.length) {
+                        axios.post("<?= base_url('Asset/sortingParameter'); ?>", {
+                            assetId: v.assetData.assetId,
+                            data: v.sortingParameter
+                        }).then(res => {
+                            if (res.status == 200) {
+                                swal.fire({
+                                    icon: 'success',
+                                    title: res.data.message
+                                }).then((ok) => {
+                                    if (ok.isConfirmed) {
+                                        location.reload();
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }
 
                 const addDescJson = async (e) => {
                     let checkKey = _.filter(descJson, {
@@ -3108,8 +3204,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     assetData,
                     descJson,
                     parameter,
+                    compareParameter,
                     deletedParameter,
                     editedParameter,
+                    sortingParameter,
                     checkModalAdd,
                     checkModalExist,
                     //tagging
@@ -3166,6 +3264,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     descJsonValue,
                     moreDetailAsset,
                     btnCancelModalParam,
+                    btnSaveSorting,
                 }
             },
         }).mount('#app');
@@ -3190,10 +3289,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             getParameter.push(rowDataArray);
                         }
                     })
-                    axios.post("<?= base_url('Asset/sortingParameter'); ?>", {
-                        assetId: v.assetData.assetId,
-                        data: getParameter
-                    })
+                    v.sortingParameter = getParameter;
                 }
             });
         })

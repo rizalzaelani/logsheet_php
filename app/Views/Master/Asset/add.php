@@ -479,7 +479,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         <div id="cardScheduleOpt">
             <div class="row">
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
+                    <div class="card card-main h-100" id="cardSchedule">
                         <div class="d-flex justify-content-start align-items-center">
                             <div>
                                 <h5>
@@ -509,6 +509,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </select>
                                         <div class="invalid-feedback">
                                             Field cannot be empty.
+                                        </div>
+                                        <div :class="setSch == 'Manual' ? 'mt-1' : 'd-none'" style="font-size: 80%; width: 100%; color: #e55353">
+                                            Please set schedule on schedule page
                                         </div>
                                     </div>
                                 </div>
@@ -644,46 +647,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     </div>
                 </div>
                 <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardLocationTag">
-                        <div class="d-flex justify-content-start align-items-center">
-                            <div>
-                                <h5>
-                                    <svg class="c-icon">
-                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
-                                    </svg>
-                                </h5>
-                            </div>
-                            <div>
-                                <h5 class="ml-1 mb-0">
-                                    Change Operation Mode <span class="required">*</span>
-                                </h5>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="form-group row">
-                            <div class="col-12">
-                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;" id="operation">
-                                    <?php foreach ($statusData as $key) : ?>
-                                        <label class="btn btn-sm btn-outline-primary mr-1 mb-1">
-                                            <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
-                                        </label>
-                                    <?php endforeach; ?>
-                                </div>
-                                <div class="invalid-feedback">
-                                    Field cannot be empty.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Asset Tagging and Config -->
-        <div id="cardAssetTagging">
-            <div class="row">
-                <div class="col-6 pb-4">
-                    <div class="card card-main h-100" id="cardTagging">
+                <div class="card card-main h-100" id="cardTagging">
                         <div class="d-flex justify-content-start align-items-center">
                             <div>
                                 <h5>
@@ -766,6 +730,45 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Asset Tagging and Config -->
+        <div id="cardAssetTagging">
+            <div class="row">
+                <div class="col-6 pb-4">
+                    <div class="card card-main h-100" id="cardOperation">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div>
+                                <h5>
+                                    <svg class="c-icon">
+                                        <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
+                                    </svg>
+                                </h5>
+                            </div>
+                            <div>
+                                <h5 class="ml-1 mb-0">
+                                    Change Operation Mode <span class="required">*</span>
+                                </h5>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;" id="operation">
+                                    <?php foreach ($statusData as $key) : ?>
+                                        <label class="btn btn-outline-primary mr-1 mb-1">
+                                            <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Field cannot be empty.
                                 </div>
                             </div>
                         </div>
