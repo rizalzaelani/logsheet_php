@@ -27,6 +27,7 @@ class BundleConfig
 			base_url('/vendors/fullcalendar/core/js/main.js'),
 			base_url('/vendors/mapbox/mapbox.js'),
 			base_url('/vendors/mapbox/mapbox-gl.js'),
+			base_url('/vendors/lightpick/lightpick.js'),
 			base_url('/js/coreui.bundle.min.js'),
 			base_url('/js/coreui-utils.js'),
 			base_url('/js/custom-func.js'),
@@ -55,6 +56,7 @@ class BundleConfig
 			base_url('/vendors/fullcalendar/css/main.css'),
 			base_url('/vendors/jquery-ui/jquery-ui.css'),
 			base_url('/vendors/mapbox/mapbox-gl.css'),
+			base_url('/vendors/lightpick/lightpick.css'),
 
 		);
 		return $plugin;

@@ -88,98 +88,105 @@
 
     <div class="col-12">
         <div class="card card-main py-4">
-            <div id="trxSummaryChart" style="height: 500px;"></div>
-        </div>
-    </div>
-
-    <div class="col-12">
-        <div class="card card-main pb-3">
-            <div class="d-flex justify-content-between align-items-center mt-1 mb-3">
-                <h4 class="mb-0"><?= $title ?></h4>
-                <button class="btn btn-sm btn-outline-primary" @click="tableToExcel('detailReport', assetData.assetName + ' - ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'))"><i class="fa fa-file-excel"></i> Export To Excel</button>
-            </div>
-
-            <div class="table-responsive table-fix-width my-2">
-                <table class="table table-responsive-sm table-hover table-bordered table-outline border-bottom" id="detailReport">
-                    <thead>
-                        <tr>
-                            <th class="text-center" rowspan="2" style="vertical-align: middle;">No.</th>
-                            <th class="text-center" rowspan="2" style="vertical-align: middle;">Parameter</th>
-                            <th class="text-center" rowspan="2" style="vertical-align: middle;">Description</th>
-                            <th class="text-center" rowspan="2" style="vertical-align: middle;">Min / Abnormal</th>
-                            <th class="text-center" rowspan="2" style="vertical-align: middle;">Max / Normal</th>
-                            <th class="text-center" rowspan="2" style="vertical-align: middle;">UoM / Option</th>
-                            <template v-for="(val, key) in scheduleGroupData">
-                                <template v-if="checkTrxBySch(val[0].scheduleTrxId).length > 0">
-                                    <th style="width: 115px;" class="text-center" :colspan="val.length"><a :href="'<?= base_url("Transaction/detail") ?>?scheduleTrxId=' + val[0].scheduleTrxId" target="_blank">{{ val[0].schType == "Monthly" ? moment(val[0].scheduleFrom).format('MMMM YYYY') : (val[0].schType == "Weekly" ? "Week " + moment(val[0].scheduleFrom).week() + " " + moment(val[0].scheduleFrom).format('YYYY') : moment(val[0].scheduleFrom).format('DD-MM-YYYY') ) }}</a></th>
-                                </template>
-                                <template v-else>
-                                    <th style="width: 115px;" class="text-center" :colspan="val.length"><a href="javascript:void(0)" @click="alertSwal('error','This Equipment is ' + (val[0].approvedAt != null ? 'Not Approved' : (val[0].assetStatusName == 'Repair' ? val[0].assetStatusName : val[0].assetStatusName + ' but Not Scanned')))">{{ val[0].schType == "Monthly" ? moment(val[0].scheduleFrom).format('MMMM YYYY') : (val[0].schType == "Weekly" ? "Week " + moment(val[0].scheduleFrom).week() + " " + moment(val[0].scheduleFrom).format('YYYY') : moment(val[0].scheduleFrom).format('DD-MM-YYYY') ) }}</a></th>
-                                </template>
-                            </template>
-                        </tr>
-                        <tr>
-                            <template v-for="(valGS, keyGS) in scheduleGroupData">
-                                <template v-for="(val, key) in valGS">
-                                    <template v-if="checkTrxBySch(val.scheduleTrxId).length > 0">
-                                        <th style="width: 115px;" class="text-center"><a :href="'<?= base_url("Transaction/detail") ?>?scheduleTrxId=' + val.scheduleTrxId" target="_blank">{{ ( val.schType == "Daily" ? moment(val.scheduleFrom).format("HH:mm") : keyGS) }}</a></th>
-                                    </template>
-                                    <template v-else>
-                                        <th style="width: 115px;" class="text-center"><a href="javascript:void(0)" @click="alertSwal('error','This Equipment is ' + (val.approvedAt != null ? 'Not Approved' : (val.assetStatusName == 'Repair' ? val.assetStatusName : val.assetStatusName + ' but Not Scanned')))">{{ ( val.schType == "Daily" ? moment(val.scheduleFrom).format("HH:mm") : keyGS) }}</a></th>
-                                    </template>
-                                </template>
-                            </template>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
-                            <template v-for="(val, key) in valGP">
-                                <template v-if="key == 0 & keyGP != val.parameterName">
-                                    <tr>
-                                        <td :rowspan="valGP.length + 1" class="text-center">{{ iGP+1 }}</td>
-                                        <th :colspan="7 + scheduleData.length">{{ keyGP.replace(/#$/, "") }}</th>
-                                    </tr>
-                                </template>
+            <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#reportingTab" role="tab" aria-controls="detail"><h5 class="mb-0">Reporting</h5></a>
+                </li>
+                <li class="nav-item" @click="resizeChart()">
+                    <a class="nav-link" data-toggle="tab" href="#trxSummaryTab" role="tab" aria-controls="parameter"><h5 class="mb-0">Summary</h5></a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane mt-4 active" id="reportingTab" role="tabpanel">
+                    <div class="table-responsive table-fix-width my-2">
+                        <table class="table table-responsive-sm table-hover table-bordered table-outline border-bottom" id="detailReport">
+                            <thead>
                                 <tr>
-                                    <template v-if="key == 0 & keyGP == val.parameterName">
-                                        <td class="text-center">{{ iGP + 1 }}</td>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">No.</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Parameter</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Description</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Min / Abnormal</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Max / Normal</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">UoM / Option</th>
+                                    <template v-for="(val, key) in scheduleGroupData">
+                                        <template v-if="checkTrxBySch(val[0].scheduleTrxId).length > 0">
+                                            <th style="width: 115px;" class="text-center" :colspan="val.length"><a :href="'<?= base_url("Transaction/detail") ?>?scheduleTrxId=' + val[0].scheduleTrxId" target="_blank">{{ val[0].schType == "Monthly" ? moment(val[0].scheduleFrom).format('MMMM YYYY') : (val[0].schType == "Weekly" ? "Week " + moment(val[0].scheduleFrom).week() + " " + moment(val[0].scheduleFrom).format('YYYY') : moment(val[0].scheduleFrom).format('DD-MM-YYYY') ) }}</a></th>
+                                        </template>
+                                        <template v-else>
+                                            <th style="width: 115px;" class="text-center" :colspan="val.length"><a href="javascript:void(0)" @click="alertSwal('error','This Equipment is ' + (val[0].approvedAt != null ? 'Not Approved' : (val[0].assetStatusName == 'Repair' ? val[0].assetStatusName : val[0].assetStatusName + ' but Not Scanned')))">{{ val[0].schType == "Monthly" ? moment(val[0].scheduleFrom).format('MMMM YYYY') : (val[0].schType == "Weekly" ? "Week " + moment(val[0].scheduleFrom).week() + " " + moment(val[0].scheduleFrom).format('YYYY') : moment(val[0].scheduleFrom).format('DD-MM-YYYY') ) }}</a></th>
+                                        </template>
                                     </template>
-                                    <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
-                                    <td class="text-center">{{ val.description }}</td>
-
-                                    <template v-if="!val.option">
-                                        <td class="text-center">{{ !val.min ? "(Empty)" : val.min }}</td>
-                                        <td class="text-center" v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" : val.max }}</td>
-                                        <td class="text-center" v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" : val.uom }}</td>
-                                    </template>
-                                    <template v-else>
-                                        <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)" : val.abnormal }}</td>
-                                        <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" : val.normal }}</td>
-                                        <td :class="!val.option ? 'font-italic text-center' : ''">{{ !val.option ? "(Empty)" : val.option }}</td>
-                                    </template>
-
+                                </tr>
+                                <tr>
                                     <template v-for="(valGS, keyGS) in scheduleGroupData">
-                                        <template v-for="(valS, keyS) in valGS">
-                                            <template v-if="checkTrxBySch(valS.scheduleTrxId).length > 0">
-                                                <td :class="'text-center sch_' + valS.scheduleTrxId + ' ' + checkAbnormal((_.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })[0]), valS.approvedAt).class" :set="filtTrxParam = _.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })">
-                                                    {{ filtTrxParam ? filtTrxParam[0].value : '(Empty)' }}
-                                                </td>
+                                        <template v-for="(val, key) in valGS">
+                                            <template v-if="checkTrxBySch(val.scheduleTrxId).length > 0">
+                                                <th style="width: 115px;" class="text-center"><a :href="'<?= base_url("Transaction/detail") ?>?scheduleTrxId=' + val.scheduleTrxId" target="_blank">{{ ( val.schType == "Daily" ? moment(val.scheduleFrom).format("HH:mm") : keyGS) }}</a></th>
                                             </template>
                                             <template v-else>
-                                                <template v-if="valS.assetStatusName == 'Running'">
-                                                    <td title="Not Scanned" class="text-center" style="background-color: #c2cfd6;color: #f86c6b;"><i>(RUN)</i></td>
-                                                </template>
-                                                <template v-else>
-                                                    <td class="text-center" style="background-color: #c2cfd6;"><i>{{ (valS.assetStatusName == "Standby" ? "SB" : (valS.assetStatusName == "Repair" ? "RP" : "RUN")) }}</i></td>
-                                                </template>
+                                                <th style="width: 115px;" class="text-center"><a href="javascript:void(0)" @click="alertSwal('error','This Equipment is ' + (val.approvedAt != null ? 'Not Approved' : (val.assetStatusName == 'Repair' ? val.assetStatusName : val.assetStatusName + ' but Not Scanned')))">{{ ( val.schType == "Daily" ? moment(val.scheduleFrom).format("HH:mm") : keyGS) }}</a></th>
                                             </template>
                                         </template>
                                     </template>
                                 </tr>
-                            </template>
-                        </template>
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                                <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
+                                    <template v-for="(val, key) in valGP">
+                                        <template v-if="key == 0 & keyGP != val.parameterName">
+                                            <tr>
+                                                <td :rowspan="valGP.length + 1" class="text-center">{{ iGP+1 }}</td>
+                                                <th :colspan="7 + scheduleData.length">{{ keyGP.replace(/#$/, "") }}</th>
+                                            </tr>
+                                        </template>
+                                        <tr>
+                                            <template v-if="key == 0 & keyGP == val.parameterName">
+                                                <td class="text-center">{{ iGP + 1 }}</td>
+                                            </template>
+                                            <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
+                                            <td class="text-center">{{ val.description }}</td>
+
+                                            <template v-if="!val.option">
+                                                <td class="text-center">{{ !val.min ? "(Empty)" : val.min }}</td>
+                                                <td class="text-center" v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" : val.max }}</td>
+                                                <td class="text-center" v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" : val.uom }}</td>
+                                            </template>
+                                            <template v-else>
+                                                <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)" : val.abnormal }}</td>
+                                                <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" : val.normal }}</td>
+                                                <td :class="!val.option ? 'font-italic text-center' : ''">{{ !val.option ? "(Empty)" : val.option }}</td>
+                                            </template>
+
+                                            <template v-for="(valGS, keyGS) in scheduleGroupData">
+                                                <template v-for="(valS, keyS) in valGS">
+                                                    <template v-if="checkTrxBySch(valS.scheduleTrxId).length > 0">
+                                                        <td :class="'text-center sch_' + valS.scheduleTrxId + ' ' + checkAbnormal((_.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })[0]), valS.approvedAt).class" :set="filtTrxParam = _.filter(checkTrxBySch(valS.scheduleTrxId), { 'parameterId': val.parameterId })">
+                                                            {{ filtTrxParam ? filtTrxParam[0].value : '(Empty)' }}
+                                                        </td>
+                                                    </template>
+                                                    <template v-else>
+                                                        <template v-if="valS.assetStatusName == 'Running'">
+                                                            <td title="Not Scanned" class="text-center" style="background-color: #c2cfd6;color: #f86c6b;"><i>(RUN)</i></td>
+                                                        </template>
+                                                        <template v-else>
+                                                            <td class="text-center" style="background-color: #c2cfd6;"><i>{{ (valS.assetStatusName == "Standby" ? "SB" : (valS.assetStatusName == "Repair" ? "RP" : "RUN")) }}</i></td>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center mt-3">
+                        <button class="btn btn-outline-primary" @click="tableToExcel('detailReport', assetData.assetName + ' - ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'))"><i class="fa fa-file-excel"></i> Export To Excel</button>
+                    </div>
+                </div>
+                <div class="tab-pane mt-4" id="trxSummaryTab" role="tabpanel">
+                    <div id="trxSummaryChart" style="height: 500px;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -431,13 +438,12 @@
                         }
                     },
                     dataZoom: [{
-                            type: 'slider',
-                            moveHandleSize: 0,
-                            show: true,
-                            startValue: 0,
-                            endValue: 50
-                        }
-                    ],
+                        type: 'slider',
+                        moveHandleSize: 0,
+                        show: true,
+                        startValue: 0,
+                        endValue: 50
+                    }],
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
@@ -551,6 +557,12 @@
                 }
             }
 
+            const resizeChart = () => {
+                if (trxSummaryChart) {
+                    trxSummaryChart.resize();
+                }
+            }
+
             Vue.onMounted(() => {
                 $('#daterange').daterangepicker({
                     startDate: start,
@@ -569,9 +581,7 @@
                 generateTrxSummaryChart();
 
                 window.addEventListener('resize', function(event) {
-                    if (trxSummaryChart) {
-                        trxSummaryChart.resize();
-                    }
+                    resizeChart();
                 }, true);
             });
 
@@ -589,7 +599,8 @@
                 checkAbnormal,
                 moment,
                 tableToExcel,
-                CapitalizeEachWords
+                CapitalizeEachWords,
+                resizeChart,
             };
         }
     }).mount("#app")

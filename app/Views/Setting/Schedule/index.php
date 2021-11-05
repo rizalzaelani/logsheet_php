@@ -1,7 +1,24 @@
 <?= $this->extend('Layout/main'); ?>
 
 <?= $this->section('customStyles'); ?>
+
 <!-- Custom Style Css -->
+<style>
+    /* .modal-fullscreen {
+        padding: 0 !important;
+    } */
+    .modal-fs {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .modal-fs .modal-content {
+        min-height: 100vh;
+    }
+</style>
+
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -10,184 +27,144 @@
         <div class="col-12">
             <div class="card card-main mb-2" id="cardSchedule">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between pb-4">
-                        <h4 class="mb-0"><?= $title ?></h4>
+                    <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#calendarTab" role="tab" aria-controls="calendarTab" aria-selected="true">
+                                <h5 class="mb-0">Calendar</h5>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#rawDataTab" role="tab" aria-controls="rawDataTab" aria-selected="false">
+                                <h5 class="mb-0">Raw Data</h5>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane mt-4 active" id="calendarTab" role="tabpanel">
+                            <div id="calendar"></div>
+                        </div>
+                        <div class="tab-pane mt-4" id="rawDataTab" role="tabpanel">
+                            <div class="dt-search-input" style="top: 4.6rem;">
+                                <div class="input-container">
+                                    <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
+                                    <input name="dt-search" class="material-input" type="text" data-target="#tableRawData" placeholder="Search Data Transaction">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <button type="button" class="btn btn-primary" @click="showModalAM()"><i class="fa fa-plus"></i>Add</button>
+                                <button type="button" class="btn btn-outline-primary dt-search" data-target="#tableRawData"><i class="fa fa-search"></i></button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover w-100" id="tableRawData">
+                                    <thead class="bg-primary">
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th>Number</th>
+                                            <th>Tag</th>
+                                            <th>Location</th>
+                                            <th>Schedule</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div id="calendar"></div>
                 </div>
             </div>
-            <div class="d-flex justify-content-center align-items-center hide" id="strDate">
-                <h4 class="p-3 m-2">{{ strDate }}</h4>
-            </div>
-            <div class="card card-main hide mt-2" id="cardTable">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4>List Asset</h4>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAddSchManual" tabindex="-1" role="dialog" aria-labelledby="modalAddSchManualLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fs" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAddSchManualLabel">Asset Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" :class="formAM == 1 ? 'd-none' : ''" id="formAM1">
+                        <div class="col-md-8">
+                            <div class="dt-search-input" style="top: -0.7rem;width: calc(100% - 1rem)">
+                                <div class="input-container">
+                                    <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
+                                    <input name="dt-search" class="material-input" type="text" data-target="#tableAssetManual" placeholder="Search Data Transaction">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">{{ assetIdAM.length + ' Asset Selected' }}</h5>
+                                <!-- <button type="button" class="btn btn-outline-primary"><i class="fa fa-arrow-right"></i> Next</button> -->
+                                <button type="button" class="btn btn-outline-primary dt-search" data-target="#tableAssetManual"><i class="fa fa-search"></i></button>
+                            </div>
+                            <div class="table table-responsive mb-0">
+                                <table class="table table-striped w-100" id="tableAssetManual">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20px;">#</th>
+                                            <th>Asset</th>
+                                            <th>Number</th>
+                                            <th>Tag</th>
+                                            <th>Location</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div>
-                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-primary mr-1" @click="submit()"><i class="fa fa-save"></i> Submit</button>
-                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-danger" @click="cancelAsset()"><i class="fa fa-times"></i> Cancel</button>
+                        <div class="col-md-4">
+                            <h5 class="mb-3 text-center" id="labelScheduleAMDR">{{ moment().format("DD MMM YYYY") + ' to ' + moment().format("DD MMM YYYY") }}</h5>
+                            <div class="form-group text-center">
+                                <input type="text" id="scheduleAMDR" class="form-control d-none" />
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary" @click="nextFormAM()"><i class="fa fa-arrow-right"></i> Next</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="" id="dataAsset">
-                        <div id="tableAsset_filter" class="dataTables_filter mb-3">
-                            <input type="search" name="dt-search" class="material-input w-100" data-target="#tableAsset" aria-controls="tableAsset" placeholder="Search Data Asset">
+                    <div class="row" :class="formAM != 1 ? 'd-none' : ''" id="formAM2">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between mb-3">
+                                <button type="button" class="btn btn-primary" @click="formAM = 0"><i class="fa fa-arrow-left"></i> Prev</button>
+                                <button type="button" class="btn btn-primary" @click="saveAddAM()"><i class="fab fa-telegram-plane"></i> Save</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered w-100">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" style="vertical-align: middle">Asset</th>
+                                            <template v-for="(val, key) in dateRangeSchAM()">
+                                                <th class="text-center" :colspan="val.length">{{ key }}</th>
+                                            </template>
+                                        </tr>
+                                        <tr>
+                                            <template v-for="(val, key) in dateRangeSchAM()">
+                                                <template v-for="(v, k) in val">
+                                                    <th class="text-center">{{ v.day }}</th>
+                                                </template>
+                                            </template>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(va, ka) in getDataCKAM()">
+                                            <td>{{ va.assetName }}</td>
+                                            <template v-for="(val, key) in dateRangeSchAM()">
+                                                <template v-for="(v, k) in val">
+                                                    <td class="text-center" :class="_.filter(adviceDateAM, (vf) => vf.assetId == va.assetId && vf.date == v.date).length > 0 ? 'bg-success' : ''" @click="addAdviceDate(va.assetId, v.date)"></td>
+                                                </template>
+                                            </template>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <table class="table table-bordered w-100" id="tableAsset">
-                            <thead>
-                                <tr>
-                                    <th id="all">
-                                        <input type="checkbox" name="checkbox" id="select-all" value="_all">
-                                    </th>
-                                    <th>Asset</th>
-                                    <th>Number</th>
-                                    <th>Tag</th>
-                                    <th>Location</th>
-                                </tr>
-                            </thead>
-                        </table>
                     </div>
                 </div>
-            </div>
-            <div class="card card-main hide" id="scheduleType">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4>Set Schedule Type</h4>
-                        </div>
-                        <div class="hide" id="btnSchType">
-                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-primary mr-1" @click="submitSchType()"><i class="fa fa-save"></i> Submit</button>
-                            <button style="border-radius: 0px;" class="btn btn-sm btn-outline-danger" @click="cancelSchType()"><i class="fa fa-times"></i> Cancel</button>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col-12">
-                                    <label for="schType">
-                                        Schedule Type
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <select name="" id="schType" class="form-control">
-                                        <option value="" selected disabled>Select Schedule Type</option>
-                                        <option value="Daily">Daily</option>
-                                        <option value="Weekly">Weekly</option>
-                                        <option value="Monthly">Monthly</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Field cannot be empty.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="row hide" id="weekly">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label for="schWeekDays">Weekly</label>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <select name="schWeekDays" id="schWeekDays" class="form-control" multiple>
-                                                <option value="Su">Sunday</option>
-                                                <option value="Mo">Monday</option>
-                                                <option value="Tu">Tuesday</option>
-                                                <option value="We">Wednesday</option>
-                                                <option value="Th">Thursday</option>
-                                                <option value="Fr">Friday</option>
-                                                <option value="Sa">Saturday</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row hide mb-2" id="monthly">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label for="">Monthly</label>
-                                        </div>
-                                    </div>
-                                    <div class="py-2">
-                                        <div class="form-check">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="d-flex justify-content-start align-items-center">
-                                                        <div class="mr-4">
-                                                            <input class="form-check-input" type="radio" name="radioMonthly" id="radioMonthly1" value="days">
-                                                            <label class="form-check-label mr-1" for="radioMonthly1">
-                                                                Days
-                                                            </label>
-                                                        </div>
-                                                        <div>
-                                                            <input class="form-check-input" type="radio" name="radioMonthly" id="radioMonthly2" value="on">
-                                                            <label class="form-check-label mr-1" for="radioMonthly2">
-                                                                On
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-2" id="days" style="display: none;">
-                                <div class="col-12">
-                                    <select name="monthly" class="form-control days" id="monthlyDays" multiple>
-                                        <?php for ($i = 1; $i <= 31; $i++) {  ?>
-                                            <option value="<?= $i; ?>"><?= $i; ?></option>
-                                        <?php } ?>
-                                        <option value="Last">Last</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Field cannot be empty.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-2" id="on" style="display: none">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-6 pr-1">
-                                            <select name="onMonth" class="form-control on mr-1" id="monthlyOn" multiple>
-                                                <option value="First">First</option>
-                                                <option value="Second">Second</option>
-                                                <option value="Third">Third</option>
-                                                <option value="Fourth">Fourth</option>
-                                                <option value="Last">Last</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
-                                        </div>
-                                        <div class="col-6 pl-1">
-                                            <select name="onDays" class="form-control on mr-1" id="monthlyOnDays" multiple>
-                                                <option value="Su">Sunday</option>
-                                                <option value="Mo">Monday</option>
-                                                <option value="Tu">Tuesday</option>
-                                                <option value="We">Wednesday</option>
-                                                <option value="Th">Thursday</option>
-                                                <option value="Fr">Friday</option>
-                                                <option value="Sa">Saturday</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-footer d-none">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="saveAddAM()"><i class="fa fa-check"></i> Submit</button>
                 </div>
             </div>
         </div>
@@ -206,750 +183,448 @@
     let v = Vue.createApp({
         el: '#app',
         setup() {
-            var myModal = ref('');
-            var strDate = ref('');
-            var date = ref('');
-            var table = ref('');
-            var selectedAsset = ref([]);
-            var exist = ref([]);
+            const assetManualData = <?= json_encode($assetManualData) ?>;
+            var scheduleData = reactive([]);
+            var calendar;
+            var table;
+            var tableAM;
+            var assetIdAM = reactive([]);
+            var adviceDateAM = reactive([]);
+            var pickerAddAM;
+            var formAM = ref(0);
+            var startSAM = ref(null);
+            var endSAM = ref(null);
 
-            var schType = ref('');
-            var schWeekDays = ref('');
-            var schDays = ref('');
-            var schWeeks = ref('');
-            var onDays = ref('');
-
-            var unique = (value, index, self) => {
-                return self.indexOf(value) === index;
+            const rawDataDT = () => {
+                table = $("#tableRawData").DataTable({
+                    drawCallback: function(settings) {
+                        $(document).ready(function() {
+                            $('[data-toggle="tooltip"]').tooltip();
+                        })
+                    },
+                    data: scheduleData,
+                    processing: true,
+                    // serverSide: false,
+                    // scrollY: "calc(100vh - 272px)",
+                    // responsive: true,
+                    language: {
+                        processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+                        lengthMenu: "Showing _MENU_ ",
+                        info: "of _MAX_ entries",
+                        infoEmpty: 'of 0 entries',
+                    },
+                    dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+                    columns: [{
+                            data: "assetNumber",
+                            name: "assetNumber",
+                        },
+                        {
+                            data: "assetName",
+                            name: "assetName",
+                        },
+                        {
+                            data: "tagName",
+                            name: "tagName",
+                        },
+                        {
+                            data: "tagLocationName",
+                            name: "tagLocationName",
+                        },
+                        {
+                            data: "scheduleFrom",
+                            name: "scheduleFrom",
+                        },
+                    ],
+                    order: [0, 'asc'],
+                    columnDefs: [{
+                            targets: "_all",
+                            className: "dt-head-center",
+                        },
+                        {
+                            targets: [2, 3],
+                            render: function(data) {
+                                if (data != '-') {
+                                    // unique = Array.from(new Set(data));
+                                    var dt = Array.from(new Set(data.split(',')));
+                                    var list_dt = '';
+                                    $.each(dt, function(key, value) {
+                                        list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
+                                    })
+                                    return list_dt;
+                                } else {
+                                    return data;
+                                }
+                            }
+                        },
+                        {
+                            targets: -1,
+                            render: function(data, type, row) {
+                                return moment(row.scheduleFrom).format("DD MMM YYYY") + " - " + moment(row.scheduleTo).format("DD MMM YYYY")
+                            }
+                        }
+                    ],
+                    'createdRow': function(row, data) {
+                        // row.setAttribute("data-id", data.scheduleTrxId);
+                        // row.classList.add("cursor-pointer");
+                        // row.setAttribute("data-toggle", "tooltip");
+                        // row.setAttribute("data-html", "true");
+                        // row.setAttribute("title", "<div>Click to go to asset detail</div>");
+                    },
+                });
             }
 
-            function getAsset() {
-                return new Promise(async (resolve, reject) => {
-                    try {
-                        table = await $('#tableAsset').DataTable({
-                            drawCallback: function(settings) {
-                                $(document).ready(function() {
-                                    $('#all').removeClass('sorting_asc');
-                                    $('#tableAsset tbody tr td:nth-child(1)').addClass('px-0');
-                                    $('#tableAsset thead tr th:nth-child(1)').addClass('px-0');
-                                });
-
-                                $('input[name="assetId"]').prop('checked', false);
-                                $('#select-all').prop('checked', false);
-
-                                $(document).ready(function() {
-                                    $('#select-all').change(function() {
-                                        if (this.checked) {
-                                            $('input[type="checkbox"]').prop('checked', this.checked);
-                                            let elm = $('input[name="assetId"]');
-
-                                            $.each(elm, function(key, val) {
-                                                v.selectedAsset.push(val.value);
-                                            })
-
-                                            var isUniqueSelected = v.selectedAsset.filter(v.unique);
-                                            v.selectedAsset = isUniqueSelected;
-                                        } else {
-                                            $('input[type="checkbox"]').prop('checked', this.checked);
-                                            let elm = $('input[name="assetId"]');
-                                            let lengthSelected = v.selectedAsset.length;
-                                            $.each(elm, function(key, val) {
-                                                for (let i = 0; i < lengthSelected; i++) {
-                                                    if (v.selectedAsset[i] === val.value) {
-                                                        v.selectedAsset.splice(i, 1);
-                                                    }
-                                                }
-                                            })
-                                        }
+            const assetManualDT = () => {
+                tableAM = $("#tableAssetManual").DataTable({
+                    drawCallback: function(settings) {
+                        $(document).ready(function() {
+                            $('[data-toggle="tooltip"]').tooltip();
+                        })
+                    },
+                    data: assetManualData,
+                    processing: true,
+                    // serverSide: false,
+                    // scrollY: "calc(100vh - 310px)",
+                    responsive: true,
+                    language: {
+                        processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+                        lengthMenu: "Showing _MENU_ ",
+                        info: "of _MAX_ entries",
+                        infoEmpty: 'of 0 entries',
+                    },
+                    dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+                    columns: [{
+                            data: "assetId",
+                            name: "assetId"
+                        },
+                        {
+                            data: "assetNumber",
+                            name: "assetNumber",
+                        },
+                        {
+                            data: "assetName",
+                            name: "assetName",
+                        },
+                        {
+                            data: "tagName",
+                            name: "tagName",
+                        },
+                        {
+                            data: "tagLocationName",
+                            name: "tagLocationName",
+                        },
+                    ],
+                    order: [1, 'asc'],
+                    columnDefs: [{
+                            targets: "_all",
+                            className: "dt-head-center"
+                        },
+                        {
+                            targets: 0,
+                            orderable: false,
+                            render: function(data) {
+                                return `<input type="checkbox" name="ckAssetManual[]" value="${data}" onchange="v.changeCKAM(event)" ${assetIdAM.includes(data) ? 'checked' : ''} />`;
+                            },
+                        },
+                        {
+                            targets: [3, 4],
+                            render: function(data) {
+                                if (data != '-') {
+                                    // unique = Array.from(new Set(data));
+                                    var dt = Array.from(new Set(data.split(',')));
+                                    var list_dt = '';
+                                    $.each(dt, function(key, value) {
+                                        list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
                                     })
-                                    $('#tableAsset tbody').on('change', 'input[type="checkbox"]', function() {
-                                        var elm = $('#select-all').get(0);
-                                        if (elm && elm.checked && ('indeterminate' in elm)) {
-                                            elm.indeterminate = true;
-                                        }
-                                    })
-                                })
-                                v.selectedAsset.forEach(item => {
-                                    let idSelected = '#id' + item;
-                                    $(idSelected).prop('checked', true);
-                                });
-
-                                // set #select-all checked
-                                var allChecked = $('input:checkbox:checked').length;
-                                var lengthRow = $('#tableAsset tbody tr').length;
-                                if (allChecked == lengthRow) {
-                                    $('#select-all').prop('checked', true);
+                                    return list_dt;
                                 } else {
-                                    $('#select-all').prop('checked', false);
-                                }
-
-                                $('input[name="assetId"]').change(function() {
-                                    if (this.checked) {
-                                        v.selectedAsset.push($(this).val())
-
-                                        var isUniqueSelected = v.selectedAsset.filter(v.unique);
-                                        v.selectedAsset = isUniqueSelected;
-
-                                        // set #select-all checked
-                                        var allChecked = $('input:checkbox:checked').length;
-                                        var lengthRow = $('#tableAsset tbody tr').length;
-                                        if (allChecked == lengthRow) {
-                                            $('#select-all').prop('checked', true);
-                                        } else {
-                                            $('#select-all').prop('checked', false);
-                                        }
-
-                                    } else {
-                                        let lengthSelected = v.selectedAsset.length;
-                                        for (let i = 0; i < lengthSelected; i++) {
-                                            if (v.selectedAsset[i] === $(this).val()) {
-                                                v.selectedAsset.splice(i, 1);
-                                            }
-                                        }
-                                    }
-                                })
-                                v.selectedAsset.forEach(item => {
-                                    let idSelected = '#id' + item;
-                                    $(idSelected).prop('checked', true);
-                                })
-                            },
-                            processing: true,
-                            serverSide: true,
-                            responsive: true,
-                            destroy: true,
-                            language: {
-                                processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
-                                lengthMenu: "Showing _MENU_ ",
-                                info: "of _MAX_ entries",
-                                infoEmpty: 'of 0 entries',
-                            },
-                            dom: '<"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
-                            ajax: {
-                                url: "<?= base_url('/Schedule/datatable') ?>",
-                                type: "POST",
-                                data: {},
-                                complete: () => {
-                                    resolve();
-                                }
-                            },
-                            columns: [{
-                                    data: "assetId",
-                                    name: "assetId",
-                                },
-                                {
-                                    data: "assetName",
-                                    name: "assetName",
-                                },
-                                {
-                                    data: "assetNumber",
-                                    name: "assetNumber",
-                                },
-                                {
-                                    data: "tagName",
-                                    name: "tagName",
-                                },
-                                {
-                                    data: "tagLocationName",
-                                    name: "tagLocationName",
-                                },
-                            ],
-                            columnDefs: [{
-                                    targets: "_all",
-                                    className: "dt-head-center",
-                                },
-                                {
-                                    targets: [3, 4],
-                                    render: function(data) {
-                                        if (data != '-') {
-                                            var dt = Array.from(new Set(data.split(',')));
-                                            var list_dt = '';
-                                            $.each(dt, function(key, value) {
-                                                list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
-                                            })
-                                            return list_dt;
-                                        } else {
-                                            return data;
-                                        }
-                                    }
-                                },
-                                {
-                                    targets: 0,
-                                    searchable: false,
-                                    orderable: false,
-                                    className: 'dt-body-center',
-                                    render: function(data) {
-                                        return `<input type="checkbox" name="assetId" class="checkbox" id="id${data}" value="${data}">`;
-                                    }
-                                },
-                                {
-                                    targets: "_all",
-                                    orderable: false,
-                                },
-                            ],
-                        });
-                    } catch (er) {
-                        console.log(er)
-                        reject(er);
-                    }
-                })
-            };
-
-            function submitSchType() {
-                if (v.schType != "" && v.schType != null) {
-                    $('#schType').removeClass('is-invalid');
-                    if (v.schWeekDays != '') {
-                        $('#schWeekDays').removeClass('is-invalid');
-                    }
-                    if (v.schDays != '') {
-                        $('#monthlyDays').removeClass('is-invalid');
-                    }
-                    if (v.schWeeks != '') {
-                        $('#monthlyOn').removeClass('is-invalid');
-                    }
-                    if (v.schWeekDays != '') {
-                        $('#monthlyOnDays').removeClass('is-invalid');
-                    }
-
-                    if (v.schType == 'Daily') {
-                        if (v.schWeekDays != '') {
-                            $('#schWeekDays').removeClass('is-invalid');
-                            $('#monthlyDays').removeClass('is-invalid');
-                            $('#monthlyOn').removeClass('is-invalid');
-                            $('#monthlyOnDays').removeClass('is-invalid');
-                            return;
-                        }
-                    } else if (v.schType == 'Weekly') {
-                        if (v.schWeekDays == '') {
-                            $('#schWeekDays').addClass('is-invalid');
-                            return;
-                        }
-                    } else if (v.schType == 'Monthly') {
-                        if (v.onDays == '') {
-                            $('#radioMonthly1').addClass('is-invalid');
-                            $('#radioMonthly2').addClass('is-invalid');
-                            return;
-                        } else {
-                            $('#radioMonthly1').removeClass('is-invalid');
-                            $('#radioMonthly2').removeClass('is-invalid');
-                            if (v.onDays == 'days') {
-                                if (v.schDays == '') {
-                                    $('#monthlyDays').addClass('is-invalid');
-                                    return;
-                                }
-                            } else if (v.onDays = 'on') {
-                                if (v.schWeeks == '' || v.schWeekDays == '') {
-                                    if (v.schWeeks == '') {
-                                        $('#monthlyOn').addClass('is-invalid');
-                                    }
-                                    if (v.schWeekDays == '') {
-                                        $('#monthlyOnDays').addClass('is-invalid');
-                                    }
-                                    return;
+                                    return data;
                                 }
                             }
                         }
+                    ],
+                });
+            };
+
+            const refreshEvent = () => {
+                let listEvent = calendar.getEvents();
+                listEvent.forEach(event => {
+                    event.remove()
+                });
+
+                scheduleData.forEach((v, k) => {
+                    calendar.addEvent({
+                        title: v.assetName,
+                        start: moment(v.scheduleFrom).valueOf(),
+                        end: moment(v.scheduleTo).valueOf(),
+                        allDay: false
+                    });
+                });
+            }
+
+            const showModalAM = () => {
+                $('#tableAssetManual').dataTable().fnClearTable();
+                $('#tableAssetManual').dataTable().fnAddData(assetManualData);
+                $("#modalAddSchManual").modal("show");
+            }
+
+            const changeCKAM = (ev) => {
+                let valAM = ev.target.value;
+                if (ev.target.checked) {
+                    assetIdAM.push(valAM);
+                } else {
+                    let inVOf = assetIdAM.findIndex((v) => v == valAM);
+                    if (inVOf != undefined) {
+                        assetIdAM.splice(inVOf, 1);
                     }
-                    var deselect = _.difference(v.exist, v.selectedAsset);
-                    var selected = _.difference(v.selectedAsset, v.exist);
-                    axios.post("<?= base_url("Schedule/updateSchedule") ?>", {
-                        assetId: selected,
-                        deselect: deselect,
-                        date: v.strDate,
-                        schType: v.schType,
-                        schWeekDays: v.schWeekDays,
-                        schWeeks: v.schWeeks,
-                        schDays: v.schDays
-                    }).then(res => {
-                        if (res.data.status == 'failed') {
-                            swal.fire({
-                                icon: 'error',
-                                title: res.data.message
-                            })
-                            calendar.refetchEvents();
-                            v.schWeekDays = ref('');
-                            v.schWeeks = ref('');
-                            v.schDays = ref('');
-                            v.schType = ref('');
-                            v.onDays = ref('');
+                }
+                let assetIdAMTemp = _.uniqBy(assetIdAM);
+                assetIdAM.splice(0, assetIdAM.length);
+                assetIdAM.push(...assetIdAMTemp);
+            }
 
-                            $('#scheduleType').addClass('hide');
-                            $('#schType').val("").trigger("change");
-                            $('#schWeekDays').val("").trigger("change");
-                            $('#monthlyDays').val("").trigger("change");
-                            $('#monthlyOn').val("").trigger("change");
-                            $('#monthlyOnDays').val("").trigger("change");
+            const getDataCKAM = () => {
+                return _.map(assetIdAM, (v) => {
+                    let a = _.filter(assetManualData, (vf) => vf.assetId == v);
+                    if (a.length > 0) {
+                        return a[0];
+                    }
+                })
+            }
 
-                            $('#weekly').addClass('hide');
-                            $('#monthly').addClass('hide');
-                            $('#radioMonthly1').prop('checked', false);
-                            $('#radioMonthly2').prop('checked', false);
-                        } else {
-                            axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
-                                date: v.strDate,
-                            }).then(res => {
-                                calendar.refetchEvents();
-                                var dataExist = res.data;
-                                var arr = [];
-                                dataExist.forEach(item => {
-                                    arr.push(item);
-                                });
-                                v.exist = arr;
+            const dateRangeSchAM = () => {
+                let startDR = moment(startSAM.value, "YYYY-MM-DD");
+                let endDR = moment(endSAM.value, "YYYY-MM-DD");
 
-                                v.schWeekDays = ref('');
-                                v.schWeeks = ref('');
-                                v.schDays = ref('');
-                                v.schType = ref('');
-                                v.onDays = ref('');
+                let duration = moment.duration(endDR.diff(startDR));
+                let diffDay = Math.round(duration.asDays());
 
-                                $('#scheduleType').addClass('hide');
-                                $('#schType').val("").trigger("change");
-                                $('#schWeekDays').val("").trigger("change");
-                                $('#monthlyDays').val("").trigger("change");
-                                $('#monthlyOn').val("").trigger("change");
-                                $('#monthlyOnDays').val("").trigger("change");
-
-                                $('#weekly').addClass('hide');
-                                $('#monthly').addClass('hide');
-                                $('#radioMonthly1').prop('checked', false);
-                                $('#radioMonthly2').prop('checked', false);
-                            })
-
-                        }
+                let dataDate = [];
+                for (let i = 0; i <= diffDay; i++) {
+                    let dateTemp = moment(startSAM.value, "YYYY-MM-DD").add("days", i);
+                    dataDate.push({
+                        "MY": dateTemp.format("MMM YYYY"),
+                        "date": dateTemp.format("YYYY-MM-DD"),
+                        "day": dateTemp.format("DD")
                     })
+                }
+
+                return _.groupBy(dataDate, "MY");
+            }
+
+            const nextFormAM = () => {
+                if (assetIdAM.length > 0 && pickerAddAM.getStartDate() && pickerAddAM.getEndDate()) {
+                    formAM.value = 1;
                 } else {
-                    $('#schType').addClass('is-invalid');
+                    Swal.fire({
+                        title: "Data Is Not Valid",
+                        text: "Please Select Asset and Date First",
+                        icon: "warning"
+                    })
                 }
             }
 
-            function submit() {
-                var deselect = _.difference(v.exist, v.selectedAsset);
-                var selected = _.difference(v.selectedAsset, v.exist);
-                var lengthDeselect = deselect.length;
-                var lengthSelected = selected.length;
-                if (lengthDeselect > 0 && lengthSelected < 1) {
-                    axios.post("<?= base_url("Schedule/updateSchedule") ?>", {
-                        assetId: selected,
-                        deselect: deselect,
-                        date: v.strDate,
-                        schType: v.schType,
-                        schWeekDays: v.schWeekDays,
-                        schWeeks: v.schWeeks,
-                        schDays: v.schDays
-                    }).then(res => {
-                        axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
-                            date: v.strDate,
-                        }).then(res => {
-                            calendar.refetchEvents();
-                            var dataExist = res.data;
-                            var arr = [];
-                            dataExist.forEach(item => {
-                                arr.push(item);
+            const saveAddAM = () => {
+                let dataAssetAM = [];
+                assetIdAM.forEach((assetId) => {
+                    let getAsset = _.filter(assetManualData, (v) => v.assetId == assetId);
+                    if (getAsset.length > 0) {
+                        let ck = _.filter(adviceDateAM, (v) => v.assetId == assetId);
+                        if (ck.length > 0) {
+                            dataAssetAM.push({
+                                "assetId": assetId,
+                                "assetStatusId": getAsset[0].assetStatusId,
+                                "adviceDate": ck[0].date
                             });
-                            v.exist = arr;
+                        } else {
+                            dataAssetAM.push({
+                                "assetId": assetId,
+                                "assetStatusId": getAsset[0].assetStatusId,
+                                "adviceDate": ""
+                            });
+                        }
+                    }
+                });
 
-                            v.schWeekDays = ref('');
-                            v.schWeeks = ref('');
-                            v.schDays = ref('');
-                            v.schType = ref('');
-                            v.onDays = ref('');
+                if (dataAssetAM.length > 0 && pickerAddAM.getStartDate() && pickerAddAM.getEndDate()) {
+                    let response = axios.post("<?= base_url() ?>/Schedule/addScheduleAM", {
+                        "dataAssetAM": JSON.stringify(dataAssetAM),
+                        "start": pickerAddAM.getStartDate().format("YYYY-MM-DD"),
+                        "end": pickerAddAM.getEndDate().format("YYYY-MM-DD")
+                    }).then((res) => {
+                        xhrThrowRequest(res)
+                            .then(() => {
+                                Swal.fire({
+                                    title: res.data.message,
+                                    icon: "success",
+                                    timer: 3000
+                                }).then(() => {
+                                    scheduleData.push(...res.data.data);
 
+                                    formAM.value = 0;
+                                    adviceDateAM.splice(0, adviceDateAM.length);
+                                    assetIdAM.splice(0, assetIdAM.length);
 
-                            $('#scheduleType').addClass('hide');
-                            $('#schType').val("").trigger("change");
-                            $('#schWeekDays').val("").trigger("change");
-                            $('#monthlyDays').val("").trigger("change");
-                            $('#monthlyOn').val("").trigger("change");
-                            $('#monthlyOnDays').val("").trigger("change");
+                                    $("#modalAddSchManual").modal("hide");
+                                    $('#tableAssetManual').dataTable().fnClearTable();
+                                    $('#tableAssetManual').dataTable().fnAddData(assetManualData);
 
-                            $('#weekly').addClass('hide');
-                            $('#monthly').addClass('hide');
-                            $('#radioMonthly1').prop('checked', false);
-                            $('#radioMonthly2').prop('checked', false);
-                        })
-                    })
-                } else if (lengthDeselect < 1 && lengthSelected < 1) {
-                    swal.fire({
-                        title: 'No data changed',
-                        icon: 'error'
-                    })
+                                    calendar.removeAllEvents();
+                                    scheduleData.forEach((v, k) => {
+                                        calendar.addEvent({
+                                            title: v.assetName,
+                                            start: moment(v.scheduleFrom).valueOf(),
+                                            end: moment(v.scheduleTo).valueOf(),
+                                            allDay: false
+                                        })
+                                    });
+
+                                    setTimeout(() => {
+                                        if ($.fn.DataTable.isDataTable('#tableRawData'))
+                                            table.clear().rows.add(scheduleData).draw();
+                                        else
+                                            rawDataDT();
+                                    }, 10);
+                                });
+                            })
+                            .catch((rej) => {
+                                if (rej.throw) {
+                                    throw new Error(rej.message);
+                                }
+                                $('#slideApprove').removeClass('unlocked');
+                                $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
+                            });
+                    });
                 } else {
-                    $('#scheduleType').removeClass('hide');
-                    $('html, body').animate({
-                        scrollTop: $("#cardTable").offset().top
-                    }, 1000);
+                    Swal.fire({
+                        title: "Data Is Not Valid",
+                        text: "Please Select Asset and Date First",
+                        icon: "warning"
+                    })
                 }
-                return;
             }
 
-            function cancelAsset() {
-                $('#cardTable').addClass('hide');
-                $('#strDate').addClass('hide');
-                $('html, body').animate({
-                    scrollTop: $("#scheduleType").offset().top
-                }, 1000);
-
-                v.selectedAsset = ref([]);
-                v.exist = ref([]);
-
-                v.schWeekDays = ref('');
-                v.schWeeks = ref('');
-                v.schDays = ref('');
-                v.schType = ref('')
-                v.onDays = ref('');
-
-                $('#scheduleType').addClass('hide');
-                $('#schType').val("").trigger("change");
-                $('#schWeekDays').val("").trigger("change");
-                $('#monthlyDays').val("").trigger("change");
-                $('#monthlyOn').val("").trigger("change");
-                $('#monthlyOnDays').val("").trigger("change");
-
-                $('#weekly').addClass('hide');
-                $('#monthly').addClass('hide');
-                $('#radioMonthly1').prop('checked', false);
-                $('#radioMonthly2').prop('checked', false);
-            }
-
-            function cancelSchType() {
-                $('html, body').animate({
-                    scrollTop: $("#cardTable").offset().top
-                }, 1000);
-
-                v.schWeekDays = ref('');
-                v.schWeeks = ref('');
-                v.schDays = ref('');
-                v.schType = ref('')
-                v.onDays = ref('');
-
-                $('#scheduleType').addClass('hide');
-                $('#schType').val("").trigger("change");
-                $('#schWeekDays').val("").trigger("change");
-                $('#monthlyDays').val("").trigger("change");
-                $('#monthlyOn').val("").trigger("change");
-                $('#monthlyOnDays').val("").trigger("change");
-
-                $('#weekly').addClass('hide');
-                $('#monthly').addClass('hide');
-                $('#radioMonthly1').prop('checked', false);
-                $('#radioMonthly2').prop('checked', false);
-            }
+            const addAdviceDate = (assetId, date) => {
+                if (assetId && date) {
+                    let cekAD = _.filter(adviceDateAM, (val) => val.assetId == assetId);
+                    if (cekAD.length < 1) {
+                        adviceDateAM.push({
+                            'assetId': assetId,
+                            'date': date
+                        });
+                    } else {
+                        let itemIndex = adviceDateAM.findIndex(i => i.assetId == assetId);
+                        if (itemIndex != undefined) {
+                            if (cekAD[0].date == date) {
+                                adviceDateAM.splice(itemIndex, 1);
+                            } else {
+                                adviceDateAM[itemIndex].date = date;
+                            }
+                        }
+                    }
+                }
+            };
 
             onMounted(() => {
-                getAsset();
-                let search = $("input[data-target='#tableAsset']");
-                search.unbind().bind("keypress", function(e) {
-                    if (e.which == 13 || e.keyCode == 13) {
-                        let searchData = search.val();
-                        var tbl = $('#tableAsset').DataTable();
-                        tbl.search(searchData).draw();
+                document.addEventListener('DOMContentLoaded', function() {
+                    var calendarEl = document.getElementById('calendar');
+                    calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        dateClick: function(a) {
+                            // console.log(a);
+                        },
+                        events: function(info, successCallback, failureCallback) {
+                            let dateFC = moment(info.endStr).add('month', -1);
+                            let checkMY = _.filter(scheduleData, (v) => {
+                                return moment(v.scheduleFrom).format("MM-YYYY") == dateFC.format("MM-YYYY")
+                            });
+
+                            if (checkMY.length < 1) {
+                                axios.get(
+                                    "<?= base_url() ?>/Schedule/getDataByMonth?month=" + dateFC.format("M") + "&year=" + dateFC.format("YYYY")
+                                ).then((res) => {
+                                    xhrThrowRequest(res)
+                                        .then(() => {
+                                            scheduleData.push(...res.data.data);
+
+                                            successCallback(
+                                                scheduleData.map((v, k) => {
+                                                    return {
+                                                        title: v.assetName,
+                                                        start: moment(v.scheduleFrom).valueOf(),
+                                                        end: moment(v.scheduleTo).valueOf(),
+                                                        allDay: false
+                                                    }
+                                                })
+                                            );
+
+                                            setTimeout(() => {
+                                                if ($.fn.DataTable.isDataTable('#tableRawData'))
+                                                    table.clear().rows.add(scheduleData).draw();
+                                                else
+                                                    rawDataDT();
+                                            }, 10);
+                                        })
+                                        .catch((rej) => {
+                                            if (rej.throw) {
+                                                failureCallback(rej.message);
+                                                throw new Error(rej.message);
+                                            }
+                                        });
+                                });
+                            }
+                        }
+                    });
+                    calendar.render();
+                });
+                assetManualDT();
+
+                let searchRawData = $(".dt-search-input input[data-target='#tableRawData']");
+                searchRawData.unbind().bind("keyup", function(e) {
+                    let searchData = searchRawData.val();
+                    table.search(searchData).draw();
+                });
+
+                let searchAM = $(".dt-search-input input[data-target='#tableAssetManual']");
+                searchAM.unbind().bind("keyup", function(e) {
+                    let searchData = searchAM.val();
+                    tableAM.search(searchData).draw();
+                });
+
+                pickerAddAM = new Lightpick({
+                    field: document.getElementById('scheduleAMDR'),
+                    singleDate: false,
+                    inline: true,
+                    format: 'DD MMM YYYY',
+                    minDate: moment(),
+                    onSelect: function(start, end) {
+                        let str = '';
+                        str += start ? start.format('DD MMM YYYY') + ' - ' : '';
+                        str += end ? end.format('DD MMM YYYY') : '...';
+                        document.getElementById('labelScheduleAMDR').innerHTML = str;
+
+                        if (start) startSAM.value = start.format('YYYY-MM-DD');
+                        if (end) endSAM.value = end.format('YYYY-MM-DD');
                     }
                 });
             })
 
             return {
-                myModal,
-                strDate,
-                date,
-                table,
-                selectedAsset,
-                exist,
-
-                schType,
-                schWeekDays,
-                schDays,
-                schWeeks,
-                onDays,
-
-                unique,
-                getAsset,
-                submitSchType,
-                submit,
-                cancelAsset,
-                cancelSchType,
+                moment,
+                assetManualData,
+                scheduleData,
+                rawDataDT,
+                formAM,
+                showModalAM,
+                adviceDateAM,
+                changeCKAM,
+                assetIdAM,
+                getDataCKAM,
+                dateRangeSchAM,
+                nextFormAM,
+                saveAddAM,
+                addAdviceDate
             }
         }
     }).mount('#app');
-
-    function uuidv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0,
-                v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        themeSystem: 'bootstrap',
-        headerToolbar: {
-            start: 'prevYear,prev,today,next,nextYear',
-            center: '',
-            end: 'title',
-        },
-        weekNumbers: true,
-        views: {
-            dayGridMonth: {
-                dayMaxEventRows: 5,
-            },
-        },
-        eventOrder: 'groupId',
-        eventSources: [{
-            url: "<?= base_url('Schedule/schJson') ?>",
-            method: 'POST',
-            format: 'json',
-            display: 'block'
-        }],
-        eventTimeFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-        },
-        eventDidMount: function() {
-            $('.fc .fc-popover').css('z-index', '100');
-        },
-        eventMouseEnter: function(args) {
-            let el = args.el;
-            $(args.el).attr('data-html', 'true');
-            var popover = new coreui.Popover(el, {
-                content: `
-                        <div class="mb-2">
-                            <div>Schedule Type :</div>
-                            <div> ` + args.event.extendedProps.schType + `</div>
-                        </div>
-                        <div class="mb-2">
-                            <div>Week Days :</div>
-                            <div> ` + args.event.extendedProps.schWeekDays + `</div>
-                        </div>
-                        <div class="mb-2">
-                            <div>Weeks :</div>
-                            <div> ` + args.event.extendedProps.schWeeks + `</div>
-                        </div>
-                        <div class="mb-2">
-                            <div>Days :</div>
-                            <div> ` + args.event.extendedProps.schDays + `</div>
-                        </div>
-                        <div class="mb-2">
-                            <div>Schedule From :</div>
-                            <div> ` + args.event.extendedProps.scheduleFrom + `</div>
-                        </div>
-                        <div class="mb-2">
-                            <div>Schedule To :</div>
-                            <div> ` + args.event.extendedProps.scheduleTo + `</div>
-                        </div>
-                `,
-                placement: 'top',
-                title: (moment(args.event.start).format("HH:mm:ss") == "00:00:00" ? '24:00:00' : moment(args.event.start).format("HH:mm:ss")) + " " + args.event.title,
-                trigger: 'hover',
-            })
-        },
-        eventMouseLeave: function(args) {
-            let el = args.el;
-            var popover = new coreui.Popover(el);
-            popover.hide()
-        },
-        moreLinkClick: 'popover',
-        dayPopoverFormat: {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            weekday: 'short',
-        },
-        dateClick: function(info) {
-            v.selectedAsset = ref([]);
-            v.date = info.dateStr;
-            v.strDate = moment(info.date).format('LL');
-
-            $('#cardTable').removeClass('hide');
-            $('html, body').animate({
-                scrollTop: $("#cardTable").offset().top
-            }, 1000);
-
-            $('#strDate').removeClass('hide');
-
-            v.schWeekDays = ref('');
-            v.schWeeks = ref('');
-            v.schDays = ref('');
-            v.schType = ref('');
-            v.onDays = ref('');
-
-            $('#scheduleType').addClass('hide');
-            $('#schType').val("").trigger("change");
-            $('#schWeekDays').val("").trigger("change");
-            $('#monthlyDays').val("").trigger("change");
-            $('#monthlyOn').val("").trigger("change");
-            $('#monthlyOnDays').val("").trigger("change");
-
-            $('#weekly').addClass('hide');
-            $('#monthly').addClass('hide');
-            $('#radioMonthly1').prop('checked', false);
-            $('#radioMonthly2').prop('checked', false);
-
-            // post date
-            axios.post("<?= base_url('Schedule/checkAssetId') ?>", {
-                date: v.strDate,
-            }).then(res => {
-                var dataExist = res.data;
-
-                // get unique from selectedId
-                const unique = (value, index, self) => {
-                    return self.indexOf(value) === index;
-                }
-                var isUniqueSelected = dataExist.filter(unique);
-                var arr = [];
-                $('input[name="assetId"]').prop('checked', false);
-                isUniqueSelected.forEach(item => {
-                    arr.push(item);
-                    v.selectedAsset.push(item);
-                    var idChecked = '#id' + item;
-                    $(idChecked).prop('checked', true);
-                });
-                v.exist = arr;
-
-                var allChecked = $('input:checkbox:checked').length;
-                var lengthRow = $('#tableAsset tbody tr').length;
-                if (allChecked == lengthRow) {
-                    $('#select-all').prop('checked', true);
-                } else {
-                    $('#select-all').prop('checked', false);
-                }
-            })
-        },
-    });
-    calendar.render();
-
-    $('.fc-header-toolbar div:nth-child(2)').append(`
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center mr-1">
-                <span class="mr-1" style="height: 10px; width: 10px; background-color: #003399; border-radius: 50%; display: inline-block;"></span>
-                <b> Daily</b>
-            </div>
-            <div class="d-flex align-items-center mr-1">
-                <span class="mr-1" style="height: 10px; width: 10px; background-color: #2eb85c; border-radius: 50%; display: inline-block;"></span>
-                <b> Weekly</b>
-            </div>
-            <div class="d-flex align-items-center mr-1">
-                <span class="mr-1" style="height: 10px; width: 10px; background-color: #f9b115; border-radius: 50%; display: inline-block;"></span>
-                <b> Monthly</b>
-            </div>
-        </div>
-    `);
-
-    // schTYpe change function
-    $('#schType').on('change', function() {
-        let val = $(this).val();
-        if (val == 'Daily') {
-            $('#daily').removeClass('hide');
-            $('#weekly').addClass('hide');
-            $('#monthly').addClass('hide');
-            $('#days').hide();
-            $('#on').hide();
-
-            $('#radioMonthly1').prop('checked', false);
-            $('#radioMonthly2').prop('checked', false);
-
-            v.schWeekDays = ref('');
-            v.schDays = ref('');
-            v.schWeeks = ref('');
-            v.schType = val;
-        } else if (val == 'Weekly') {
-            $('#weekly').removeClass('hide');
-            $('#daily').addClass('hide');
-            $('#monthly').addClass('hide');
-            $('#days').hide();
-            $('#on').hide();
-
-            $('#radioMonthly1').prop('checked', false);
-            $('#radioMonthly2').prop('checked', false);
-
-            v.schWeekDays = ref('');
-            v.schWeeks = ref('');
-            v.schDays = ref('');
-            v.schType = val;
-        } else {
-            $('#monthly').removeClass('hide');
-            $('#daily').addClass('hide');
-            $('#weekly').addClass('hide');
-            $('#days').hide();
-            $('#on').hide();
-
-            v.schWeekDays = ref('');
-            v.schType = val;
-        }
-
-        $('#btnSchType').removeClass('hide');
-    })
-
-    $('#schWeekDays').on('change', function() {
-        let schWeekDays = $(this).val();
-        v.schWeekDays = schWeekDays.toString();
-    })
-
-    $('#monthlyDays').on('change', function() {
-        let schDays = $(this).val();
-        v.schDays = schDays.toString();
-    })
-
-    $('#monthlyOn').on('change', function() {
-        let schWeeks = $(this).val();
-        v.schWeeks = schWeeks.toString();
-    })
-
-    $('#monthlyOnDays').on('change', function() {
-        let schWeekDays = $(this).val();
-        v.schWeekDays = schWeekDays.toString();
-    })
-
-    $(document).ready(function() {
-        // select2 theme coreui
-        $('#schType').select2({
-            theme: 'coreui',
-            placeholder: 'Schedule'
-        })
-
-        $('#schWeekDays').select2({
-            theme: 'coreui',
-            placeholder: 'Select Days'
-        })
-
-        $('#monthlyDays').select2({
-            theme: 'coreui',
-            placeholder: 'Select All Days'
-        })
-
-        $('#monthlyOn').select2({
-            theme: 'coreui',
-            placeholder: 'Select Item'
-        })
-
-        $('#monthlyOnDays').select2({
-            theme: 'coreui',
-            placeholder: 'Select Days'
-        })
-    })
-
-    //radio monthly
-    $('input[type="radio"][name="radioMonthly"]').on('change', function() {
-        if ($(this).val() == "days") {
-            $('#monthlyOn').val("").trigger("change");
-            $('#monthlyOnDays').val("").trigger("change");
-            $('#days').show();
-            $('#on').hide();
-            v.schWeekDays = ref('');
-            v.schWeeks = ref('');
-            v.onDays = "days";
-        } else if ($(this).val() == "on") {
-            $('#monthlyDays').val("").trigger("change");
-            $('#days').hide();
-            $('#on').show();
-            v.schDays = ref('');
-            v.onDays = "on";
-        }
-    })
-
-    // coreui popover
-    document.querySelectorAll('[data-toggle="popover"]').forEach(function(element) {
-        new coreui.Popover(element);
-    })
 </script>
 <?= $this->endSection(); ?>
