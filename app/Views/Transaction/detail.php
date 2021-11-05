@@ -274,7 +274,7 @@
                                         icon: "success",
                                         timer: 3000
                                     }).then(() => {
-                                        // window.location.reload();
+                                        window.location.reload();
                                     });
                                 })
                                 .catch((rej) => {

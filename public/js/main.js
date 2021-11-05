@@ -31,24 +31,33 @@ const xhrThrowRequest = (res) => {
                         message: ""
                     });
                 } else {
-                    if (!isNullEmptyOrUndefined(resData.data) & typeof (resData.data) == "object") {
-                        let outAlert = `<ul class="list-group">`;
-                        for (let r in resData.data) {
-                            outAlert += `<li class="list-group-item list-group-item-warning">${resData.data[r]}</li>`;
-                        }
-                        outAlert += `</ul>`;
-
+                    if(resData.exception){
                         Swal.fire({
                             title: resData.message,
                             icon: resData.alertType ?? 'error',
-                            html: outAlert
+                            html: resData.exception
                         })
                     } else {
-                        Swal.fire({
-                            title: CapitalizeEachWords(resData.alertType),
-                            text: resData.message,
-                            icon: resData.alertType ?? 'error',
-                        })
+                        if (!isNullEmptyOrUndefined(resData.data) & typeof (resData.data) == "object") {
+
+                            let outAlert = `<ul class="list-group">`;
+                            for (let r in resData.data) {
+                                outAlert += `<li class="list-group-item list-group-item-warning">${resData.data[r]}</li>`;
+                            }
+                            outAlert += `</ul>`;
+
+                            Swal.fire({
+                                title: resData.message,
+                                icon: resData.alertType ?? 'error',
+                                html: outAlert
+                            })
+                        } else {
+                            Swal.fire({
+                                title: CapitalizeEachWords(resData.alertType),
+                                text: resData.message,
+                                icon: resData.alertType ?? 'error',
+                            })
+                        }
                     }
 
                     reject({

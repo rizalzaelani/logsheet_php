@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\AssetModel;
 use App\Models\ScheduleTrxModel;
 use DateTime;
+use Exception;
 
 class Schedule extends BaseController
 {
@@ -26,237 +27,101 @@ class Schedule extends BaseController
             ],
         ];
 
-        $dateTime = new DateTime("2021-10-17");
-        $year = $dateTime->format("Y");
-        $month = $dateTime->format("n");
-        $weekOfYear = $dateTime->format("W");
-        $week = $dateTime->format("w");
-        // var_dump($year);
-        // var_dump($month);
-        // var_dump($weekOfYear);
-        // var_dump($week);
-        // die();
+        $assetModel = new AssetModel();
+
+        $data["assetManualData"] = $assetModel->getAll(["schManual" => "1", "deletedAt IS NULL" => null]);
+
         return $this->template->render('Setting/Schedule/index.php', $data);
     }
 
-    public function datatable()
+    public function getDataByMonth()
     {
-        $table = 'vw_asset';
-        $column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
-        $column_search = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
-        $order = array('createdAt' => 'asc');
-        $request = \Config\Services::request();
-        $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
+        $month = $this->request->getVar('month') ?? date("m");
+        $year = $this->request->getVar('year') ?? date("Y");
 
-        $filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
-        $filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
         $where = [
-            'deletedAt' => null,
-            'schManual' => '1',
-            // "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
+            "MONTH(scheduleFrom)" => $month,
+            "YEAR(scheduleFrom)" => $year,
+            "schManual" => '1'
         ];
-        $list = $DTModel->datatable($where);
-        $output = array(
-            "draw" => $request->getPost('draw'),
-            "recordsTotal" => $DTModel->count_all($where),
-            "recordsFiltered" => $DTModel->count_filtered($where),
-            "data" => $list,
+
+        $schModel = new ScheduleTrxModel();
+        $dataSch = $schModel->getAll($where);
+
+        return $this->response->setJSON([
             'status' => 200,
-            'message' => 'success'
-        );
-        echo json_encode($output);
+            'message' => "success get data",
+            'data' => $dataSch
+        ], 200);
     }
 
-    public function updateSchedule()
+    public function addScheduleAM()
     {
-        $assetModel = new AssetModel();
-        $scheduleTrxModel = new ScheduleTrxModel();
+        $dataAssetAM = json_decode(($this->request->getVar("dataAssetAM") ?? "[]"), true);
+        $start = $this->request->getVar("start");
+        $end = $this->request->getVar("end");
 
-        $post = $this->request->getJSON();
-
-        $dataAssetId = array_values(array_unique($post->assetId));
-        $dataDeselect = $post->deselect;
-
-        $schWeekDays = $post->schWeekDays;
-        $schDays = $post->schDays;
-        $schWeeks = $post->schWeeks;
-
-        $date = $post->date;
-        $schType = $post->schType;
-        $lengthDataAssetId = count($dataAssetId);
-        $lengthDataDeselect = count($dataDeselect);
-
-        $dateTime = new DateTime($date);
-        $year = $dateTime->format("Y");
-        $month = $dateTime->format("n");
-        $weekOfYear = $dateTime->format("W");
-        $day = $dateTime->format("w");
-
-        $schExist = [];
-        for ($i = 0; $i < $lengthDataAssetId; $i++) {
-            $sch = $scheduleTrxModel->select('assetId')->where(['schManual' => '1', 'assetId' => $dataAssetId[$i]])->get()->getResult();
-            $lengthSch = count($sch);
-            if ($lengthSch > 0) {
-                array_push($schExist, $sch[0]);
-            }
+        if (!validateDate($start, "Y-m-d") && !validateDate($end, "Y-m-d")) {
+            return $this->response->setJSON([
+                'status' => 400,
+                'message' => "Start and End is Not Valid Date",
+                'alertType' => "warning",
+                'data' => []
+            ], 400);
         }
-        if (count($schExist) == 0) {
-            // delete exist
-            if ($lengthDataDeselect > 0) {
-                for ($i = 0; $i < $lengthDataDeselect; $i++) {
-                    $dt = $scheduleTrxModel->where([
-                        'assetId' => $dataDeselect[$i],
-                        'schManual' => '1'
-                    ])->delete();
-                }
-            }
-            // insert schedule
-            if ($schType == 'Daily') {
-                $lengthDeselect = count($dataDeselect);
 
-                // insert schedule
-                if ($lengthDataAssetId > 0) {
-                    for ($i = 0; $i < $lengthDataAssetId; $i++) {
-                        $selected = $assetModel->select('assetStatusId')->where('assetId', $dataAssetId[$i])->get()->getResult();
-                        $clone = clone $dateTime;
+        $schModel = new ScheduleTrxModel();
 
-                        $dt = array(
-                            'scheduleTrxId' => null,
-                            'assetId'       => $dataAssetId[$i],
-                            'assetStatusId' => $selected[0]->assetStatusId,
-                            'schManual'     => '1',
-                            'scheduleFrom'  => $dateTime->format("Y-m-d"),
-                            'scheduleTo'  => $clone->modify("+1 days")->format("Y-m-d"),
-                        );
-                        $scheduleTrxModel->insert($dt);
-                    }
-                }
-            } else if ($schType == 'Weekly') {
-                if ($schWeekDays != '') {
-                    //insert schedule
-                    if ($lengthDataAssetId > 0) {
-                        for ($i = 0; $i < $lengthDataAssetId; $i++) {
-                            $clone = clone $dateTime;
-                            $clone2 = clone $dateTime;
-                            $selected = $assetModel->select('assetStatusId')->where('assetId', $dataAssetId[$i])->get()->getResult();
-                            $dt = array(
-                                'scheduleTrxId' => null,
-                                'assetId'       => $dataAssetId[$i],
-                                'assetStatusId' => $selected[0]->assetStatusId,
-                                'schManual'     => '1',
-                                'schType' => $schType,
-                                'schWeekDays' => $schWeekDays,
-                                'scheduleFrom'  => $clone->modify("-" . $day . "days")->format("Y-m-d"),
-                                'scheduleTo'  => $clone2->modify("+" . (7 - $day) . "days")->format("Y-m-d"),
-                            );
-                            $scheduleTrxModel->insert($dt);
-                            // var_dump($dt);
-                        }
-                    }
-                }
-            } else {
+        $getLastAssetId = $schModel->getAll(["assetId IN ('" . implode("','", array_column($dataAssetAM, "assetId")) . "')" => null, "scheduleTo >=" => $start], "scheduleTo", "desc");
+        if (!empty($getLastAssetId)) {
+            $assetName = implode(", ", array_unique(array_column($getLastAssetId, "assetName")));
 
-                // insert schedule
-                if ($lengthDataAssetId > 0) {
-                    for ($i = 0; $i < $lengthDataAssetId; $i++) {
-                        $clone = clone $dateTime;
-                        $selected = $assetModel->select('assetStatusId')->where('assetId', $dataAssetId[$i])->get()->getResult();
-                        $dt = array(
-                            'scheduleTrxId' => null,
-                            'assetId' => $dataAssetId[$i],
-                            'assetStatusId' => $selected[0]->assetStatusId,
-                            'schManual' => '1',
-                            'schType' => $schType,
-                            'schWeekDays' => $schWeekDays == "" ? NULL : $schWeekDays,
-                            'schWeeks' => $schWeeks == "" ? NULL : $schWeeks,
-                            'schDays' => $schDays == "" ? NULL : $schDays,
-                            'scheduleFrom' => $dateTime->format("Y-m-01"),
-                            'scheduleTo' => $clone->modify("+1 month")->format("Y-m-01"),
-                        );
-                        $scheduleTrxModel->insert($dt);
-                        // var_dump($dt);
-                    }
-                }
-            }
-        } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'The Asset is already on the schedule!'));
+            return $this->response->setJSON([
+                'status' => 400,
+                'message' => "Please Change Start of Date",
+                "exception" => "Several Asset (" . $assetName . ") Cannot Start from <b>" . date("d F Y", strtotime($start)) . "</b>, You can Start From <b>" . date("d F Y", strtotime($getLastAssetId[0]["scheduleTo"] . " +1 days")) . "</b>",
+                "alertType" => "warning",
+                'data' => []
+            ], 400);
         }
-        die();
-    }
 
-    public function schJson()
-    {
-        $assetModel = new AssetModel();
-        $scheduleTrxModel = new ScheduleTrxModel();
-        $data = $scheduleTrxModel->where('schManual', '1')->findAll();
-        $arr = [];
-        foreach ($data as $val) {
-            $dataAsset = $assetModel->select('assetName, assetId')->where('assetId', $val['assetId'])->get()->getResult();
-            $assetSchType = $val['schType'];
-            $dt = [
-                'id' => $dataAsset[0]->assetId,
-                'title' => $dataAsset[0]->assetName,
-                'start' => $val['scheduleFrom'],
-                'end' => $val['scheduleTo'],
-                'allDay' => false,
-            ];
-            if ($assetSchType == 'Daily') {
-                $dt['backgroundColor'] = '#003399';
-                $dt['borderColor'] = '#003399';
-                $dt['groupId'] = '1';
-                $dt['schType'] = 'Daily';
-                $dt['schWeekDays'] = '-';
-                $dt['schWeeks'] = '-';
-                $dt['schDays'] = '-';
-                $dt['scheduleFrom'] = $val['scheduleFrom'];
-                $dt['scheduleTo'] = $val['scheduleTo'];
-            } else if ($assetSchType == 'Weekly') {
-                $dt['backgroundColor'] = '#2eb85c';
-                $dt['borderColor'] = '#2eb85c';
-                $dt['groupId'] = '2';
-                $dt['schType'] = 'Weekly';
-                $dt['schWeekDays'] = $val['schWeekDays'];
-                $dt['schWeeks'] = '-';
-                $dt['schDays'] = '-';
-                $dt['scheduleFrom'] = $val['scheduleFrom'];
-                $dt['scheduleTo'] = $val['scheduleTo'];
-            } else {
-                $dt['backgroundColor'] = '#f9b115';
-                $dt['borderColor'] = '#f9b115';
-                $dt['groupId'] = '3';
-                $dt['schType'] = 'Monthly';
-                $dt['schWeekDays'] = $val['schWeekDays'] == NULL ? '-' : $val['schWeekDays'];
-                $dt['schWeeks'] = $val['schWeeks'] == NULL ? '-' : $val['schWeeks'];
-                $dt['schDays'] = $val['schDays'] == NULL ? '-' : $val['schDays'];
-                $dt['scheduleFrom'] = $val['scheduleFrom'];
-                $dt['scheduleTo'] = $val['scheduleTo'];
+        $dataInsertSchAM = [];
+        foreach ($dataAssetAM as $row) {
+            $dtSAMTemp = array(
+                "scheduleTrxId" => null,
+                "assetId"       => $row["assetId"],
+                "assetStatusId" => $row["assetStatusId"],
+                "schManual"     => '1',
+                "schType"       => 'None',
+                "schFrequency"  => 1,
+                "scheduleFrom"  => date("Y-m-d 00:00:00", strtotime($start)),
+                "scheduleTo"    => date("Y-m-d 23:59:59", strtotime($end)),
+                "condition"     => "Normal",
+            );
+
+            if ($row["adviceDate"]) {
+                $dtSAMTemp["adviceDate"] = date("Y-m-d 00:00:00", strtotime($row["adviceDate"]));
             }
-            array_push($arr, $dt);
+
+            array_push($dataInsertSchAM, $dtSAMTemp);
         }
-        echo json_encode($arr);
-        die();
-    }
 
-    public function checkAssetId()
-    {
-        $scheduleTrxModel = new ScheduleTrxModel();
-        $post = $this->request->getJSON();
-        $getDate = $post->date;
 
-        $dateTime = new DateTime($getDate);
-        $year = $dateTime->format("Y");
-        $month = $dateTime->format("n");
-        $weekOfYear = $dateTime->format("W");
-        $day = $dateTime->format("w");
+        try {
+            $schModel->insertBatch($dataInsertSchAM);
 
-        $whereSch = "((schType = 'Daily' AND DATE(scheduleFrom) = '" . $dateTime->format("Y-m-d") . "') OR (schType = 'Weekly' AND WEEK(scheduleFrom) = " . ($day == 0 ? ($weekOfYear + 1) : $weekOfYear) . " AND YEAR(scheduleFrom) = " . $year . ") OR (schType = 'Monthly' AND MONTH(scheduleFrom) = " . $month . " AND YEAR(scheduleFrom) = " . $year . "))";
+            $getDataInsert = $schModel->getAll(["assetId IN ('" . implode("','", array_column($dataAssetAM, "assetId")) . "')" => null, "DATE_FORMAT(scheduleFrom, '%Y-%m-%d')" => $start, "DATE_FORMAT(scheduleTo, '%Y-%m-%d')" => $end], "scheduleFrom", "asc");
 
-        $getDataSch = $scheduleTrxModel->getAll(["schManual" => "1", $whereSch => null]);
-        $schExist = [];
-        foreach ($getDataSch as $row) {
-            array_push($schExist, $row['assetId']);
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success Insert Schedule",
+                'data' => $getDataInsert
+            ], 200);
+        } catch (Exception $e) {
+            return $this->response->setJSON(array(
+                "status"    => 500,
+                "message"   => $e->getMessage(),
+            ));
         }
-        echo json_encode($schExist);
-        die();
     }
 }
