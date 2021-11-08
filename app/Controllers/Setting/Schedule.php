@@ -5,6 +5,7 @@ namespace App\Controllers\Setting;
 use App\Controllers\BaseController;
 use App\Models\AssetModel;
 use App\Models\ScheduleTrxModel;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use DateTime;
 use Exception;
 
@@ -122,6 +123,55 @@ class Schedule extends BaseController
                 "status"    => 500,
                 "message"   => $e->getMessage(),
             ));
+        }
+    }
+
+    public function importSchedule()
+    {
+		$file = $this->request->getFile('importSch');
+		if ($file) {
+			$newName = "IS_" . time() . '.xlsx';
+			$file->move('upload/', $newName);
+			$reader = ReaderEntityFactory::createXLSXReader();
+			$reader->open('upload/' . $newName);
+
+			$dataImport = [];
+            $i = 0;
+			foreach ($reader->getSheetIterator() as $sheet) {
+                if($i == 0){
+                    $dataImport["start"] = null;
+                    $dataImport["end"] = null;
+                    $dataImport["data"] = [];
+                    $numrow = 1;
+                    foreach ($sheet->getRowIterator() as $row) {
+                        if($numrow == 1) $dataImport["start"] = $row->getCellAtIndex(1)->getValue()->format("Y-m-d");
+                        if($numrow == 2) $dataImport["end"] = $row->getCellAtIndex(1)->getValue()->format("Y-m-d");
+
+                        if ($numrow > 3) {
+                            if ($row->getCellAtIndex(1)->getValue() != '' & $row->getCellAtIndex(1)->getValue() != null) {
+                                $dataImport["data"][] = array(
+                                    'assetNumber' => $row->getCellAtIndex(0)->getValue(),
+                                    'adviceScan' => $row->getCellAtIndex(1)->getValue()->format("Y-m-d")
+                                );
+                            }
+                        }
+                        $numrow++;
+                    }
+                }
+                $i++;
+			}
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success Import Data",
+                'data' => $dataImport
+            ], 200);
+        } else {
+            return $this->response->setJSON([
+                'status' => 400,
+                'message' => "No such File Uploaded",
+                'data' => []
+            ], 400);
         }
     }
 }

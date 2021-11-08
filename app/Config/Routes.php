@@ -153,6 +153,7 @@ $routes->post('/Application/deleteAssetStatus', 'Setting/Application::deleteAsse
 $routes->add('/Schedule', 'Setting/Schedule::index');
 $routes->add('/Schedule/getDataByMonth', 'Setting/Schedule::getDataByMonth');
 $routes->post('/Schedule/addScheduleAM', 'Setting/Schedule::addScheduleAM');
+$routes->post('/Schedule/importSchedule', 'Setting/Schedule::importSchedule');
 
 $routes->add('/Schedule/datatable', 'Setting/Schedule::datatable');
 $routes->post('/Schedule/updateSchedule', 'Setting/Schedule::updateSchedule');
