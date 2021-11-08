@@ -51,7 +51,10 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mb-3">
-                                <button type="button" class="btn btn-primary" @click="showModalAM()"><i class="fa fa-plus"></i>Add</button>
+                                <div class="">
+                                    <button type="button" class="btn btn-primary mr-2" @click="showModalAM()"><i class="fa fa-plus"></i> Add</button>
+                                    <button type="button" class="btn btn-success mr-2" @click="showModalIS()"><i class="fa fa-upload"></i> Import</button>
+                                </div>
                                 <button type="button" class="btn btn-outline-primary dt-search" data-target="#tableRawData"><i class="fa fa-search"></i></button>
                             </div>
                             <div class="table-responsive">
@@ -76,7 +79,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="modalAddSchManual" tabindex="-1" role="dialog" aria-labelledby="modalAddSchManualLabel" aria-hidden="true">
+    <div class="modal fade" id="modalAddSchManual" tabindex="-1" role="dialog" aria-labelledby="modalAddSchManualLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-fs" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -169,6 +172,27 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalImport" tabindex="-1" role="dialog" aria-labelledby="modalImportLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalImportLabel">Import Schedule</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" class="filepond" name="importSch" id="importSch">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success"><i class="far fa-file-excel"></i> Template</button>
+                    <!-- <button type="button" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> Submit</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <?= $this->endSection(); ?>
 
@@ -194,6 +218,8 @@
             var formAM = ref(0);
             var startSAM = ref(null);
             var endSAM = ref(null);
+
+            let importSchFP;
 
             const rawDataDT = () => {
                 table = $("#tableRawData").DataTable({
@@ -367,6 +393,10 @@
                 $("#modalAddSchManual").modal("show");
             }
 
+            const showModalIS = () => {
+                $("#modalImport").modal("show");
+            }
+
             const changeCKAM = (ev) => {
                 let valAM = ev.target.value;
                 if (ev.target.checked) {
@@ -524,6 +554,16 @@
                 }
             };
 
+            const filepondOpt = {
+                acceptedFileTypes: '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
+                allowMultiple: false,
+                credits: false,
+                styleLoadIndicatorPosition: 'center bottom',
+                styleProgressIndicatorPosition: 'right bottom',
+                styleButtonRemoveItemPosition: 'left bottom',
+                styleButtonProcessItemPosition: 'right bottom',
+            };
+
             onMounted(() => {
                 document.addEventListener('DOMContentLoaded', function() {
                     var calendarEl = document.getElementById('calendar');
@@ -606,7 +646,53 @@
                         if (end) endSAM.value = end.format('YYYY-MM-DD');
                     }
                 });
-            })
+
+                FilePond.registerPlugin(FilePondPluginFileValidateType);
+                importSchFP = FilePond.create(document.querySelector('#importSch'), filepondOpt);
+
+                importSchFP.on('addfile', (error, file) => {
+                    let formData = new FormData();
+                    formData.append("importSch", file.file);
+                    axios.post("<?= site_url("Schedule/importSchedule") ?>", formData)
+                        .then((res) => {
+                            xhrThrowRequest(res)
+                                .then(() => {
+                                    $("#modalImport").modal("hide");
+                                    importSchFP.removeFiles();
+
+                                    startSAM.value = res.data.data.start;
+                                    endSAM.value = res.data.data.end;
+
+                                    pickerAddAM.setDateRange(moment(startSAM.value, "YYYY-MM-DD"), moment(endSAM.value, "YYYY-MM-DD"))
+
+                                    assetIdAM.splice(0, assetIdAM.length);
+                                    adviceDateAM.splice(0, adviceDateAM.length);
+                                    res.data.data.data.forEach((v, k) => {
+                                        let checkAssetM = _.filter(assetManualData, (vf) => vf.assetNumber == v.assetNumber);
+                                        if (checkAssetM.length > 0) {
+                                            assetIdAM.push(checkAssetM[0].assetId);
+                                            adviceDateAM.push({
+                                                'assetId': checkAssetM[0].assetId,
+                                                'date': v.adviceScan
+                                            });
+                                        }
+                                    });
+
+                                    setTimeout(() => {
+                                        nextFormAM();
+                                        showModalAM();
+                                    }, 10)
+                                })
+                                .catch((rej) => {
+                                    if (rej.throw) {
+                                        throw new Error(rej.message);
+                                    }
+                                    $('#slideApprove').removeClass('unlocked');
+                                    $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
+                                });
+                        });
+                });
+            });
 
             return {
                 moment,
@@ -615,6 +701,7 @@
                 rawDataDT,
                 formAM,
                 showModalAM,
+                showModalIS,
                 adviceDateAM,
                 changeCKAM,
                 assetIdAM,
