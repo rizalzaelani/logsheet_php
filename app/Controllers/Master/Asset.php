@@ -213,19 +213,15 @@ class Asset extends BaseController
 			}
 
 			// asset tagging
-			$assetTaggingId = $post['assetTaggingId'];
-			if ($post['assetTaggingtype'] != '') {
-				$dataAssetTagging = array(
-					'assetTaggingId' => $post['assetTaggingId'],
-					'assetId' => $assetId,
-					'assetTaggingValue' => $post['assetTaggingValue'],
-					'assetTaggingtype' => $post['assetTaggingtype'],
-					'description' => $post['assetTaggingDescription']
-				);
-				$assetTaggingModel->insert($dataAssetTagging);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $dataAssetTagging));
-			} else {
-				echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
+			$lengthTagging = count($post['assetTagging']);
+			if ($lengthTagging) {
+				$getTagging = $post['assetTagging'];
+				for ($i = 0; $i < $lengthTagging; $i++) {
+					$dataTagging = json_decode($getTagging[$i]);
+					if ($dataTagging->assetTaggingValue != '') {
+						$assetTaggingModel->insert($dataTagging);
+					}
+				}
 			}
 
 			// asset parameter
@@ -306,7 +302,7 @@ class Asset extends BaseController
 		}
 		$abnormal = array_filter(array_unique(explode(",", implode(",", $abnormalArray))));
 
-		$tagging = $assetTaggingModel->where('assetId', $assetId)->findAll();
+		$tagging = $assetTaggingModel->where('assetId', $assetId)->orderBy('assetTaggingtype', 'asc')->findAll();
 		$tagData = $this->db->table('tblm_tag')->get()->getResult();
 		$statusData = $this->db->table('tblm_assetStatus')->where('deletedAt IS NULL')->get()->getResult();
 		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
@@ -472,32 +468,26 @@ class Asset extends BaseController
 			}
 
 			// asset tagging
-			$assetTagging = $assetTaggingModel->where('assetId', $assetId)->get()->getResult();
-			$lengthTagging = count($assetTagging);
-			$assetTaggingId = $post['assetTaggingId'];
-			if ($post['assetTaggingValue'] != '') {
-				if ($lengthTagging > 0) {
-					$dataAssetTagging = array(
-						'assetTaggingValue' => $post['assetTaggingValue'],
-						'assetTaggingtype' => $post['assetTaggingType'],
-						'description' => $post['assetTaggingDescription'],
-					);
-					$assetTaggingModel->update($assetTaggingId, $dataAssetTagging);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAssetTagging));
+			$lengthTagging = count($post['assetTagging']);
+			if ($lengthTagging) {
+				$getTagging = $post['assetTagging'];
+				$existTagging = $assetTaggingModel->where('assetId', $assetId)->orderBy('assetTaggingtype', 'asc')->get()->getResult();
+				if (count($existTagging)) {
+					$assetTaggingModel->deleteById($assetId);
+					for ($i = 0; $i < $lengthTagging; $i++) {
+						$dataTagging = json_decode($getTagging[$i]);
+						if ($dataTagging->assetTaggingValue != '') {
+							$assetTaggingModel->insert($dataTagging);
+						}
+					}
 				} else {
-					$dataAssetTagging = array(
-						'assetId' => $assetId,
-						'assetTaggingId' => $assetTaggingId,
-						'assetTaggingValue' => $post['assetTaggingValue'],
-						'assetTaggingtype' => $post['assetTaggingType'],
-						'description' => $post['assetTaggingDescription']
-					);
-					$assetTaggingModel->insert($dataAssetTagging);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAssetTagging));
+					for ($i = 0; $i < $lengthTagging; $i++) {
+						$dataTagging = json_decode($getTagging[$i]);
+						if ($dataTagging->assetTaggingValue != '') {
+							$assetTaggingModel->insert($dataTagging);
+						}
+					}
 				}
-			} else {
-				$assetTaggingModel->deleteById($assetId);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $post));
 			}
 
 			//delete parameter
