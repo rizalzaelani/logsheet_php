@@ -13,6 +13,7 @@ use App\Models\AssetTagModel;
 use App\Models\ParameterModel;
 use CodeIgniter\API\ResponseTrait;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Exception;
 
 class Asset extends BaseController
 {
@@ -397,7 +398,7 @@ class Asset extends BaseController
 				'description' => $post['assetDesc'],
 				'schManual' => $post['schManual'],
 				'schType' => $post['schType'],
-				'schFrequency' => $post['schFrequency'] == '' ? null : (int)$post['schFrequency'],
+				'schFrequency' => $post['schFrequency'] == '' ? 1 : (int)$post['schFrequency'],
 				'schWeekDays' => $post['schWeekDays'],
 				'schWeeks' => $post['schWeeks'],
 				'schDays' => $post['schDays'],
@@ -823,15 +824,27 @@ class Asset extends BaseController
 		$parameterModel = new ParameterModel();
 		$json = $this->request->getJSON();
 		$data = $json->data;
-		$length = count(($data));
-		// var_dump($data);
-		foreach ($data as $key => $value) {
-			$dataSort = array(
-				'sortId' => $value[0]
-			);
-			$parameterModel->update($value[1], $dataSort);
+		if (empty($data)) {
+			return $this->respond->setJson([
+				'status' => 404,
+				'message' => "Data is empty!",
+				'data' => ''
+			], 404);
 		}
-		echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
-		die();
+		try {
+			foreach ($data as $key => $value) {
+				$dataSort = array(
+					'sortId' => $value[0]
+				);
+				$parameterModel->update($value[1], $dataSort);
+			}
+			return $this->response->setJson([
+				'status' => 200,
+				'message' => "Successfully Updated Data",
+				'data' => []
+			], 200);
+		} catch (Exception $e) {
+			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+		}
 	}
 }
