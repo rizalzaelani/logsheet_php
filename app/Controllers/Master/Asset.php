@@ -86,7 +86,7 @@ class Asset extends BaseController
 
 		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
 		$tagData = $this->db->table('tblm_tag')->get()->getResult();
-		$statusData = $this->db->table('tblm_assetStatus')->get()->getResult();
+		$statusData = $this->db->table('tblm_assetStatus')->where('deletedAt IS NULL')->get()->getResult();
 		$data = array(
 			'title' => "Add Asset",
 			'subtitle' => "Add Asset",
@@ -308,7 +308,7 @@ class Asset extends BaseController
 
 		$tagging = $assetTaggingModel->where('assetId', $assetId)->findAll();
 		$tagData = $this->db->table('tblm_tag')->get()->getResult();
-		$statusData = $this->db->table('tblm_assetStatus')->get()->getResult();
+		$statusData = $this->db->table('tblm_assetStatus')->where('deletedAt IS NULL')->get()->getResult();
 		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
 
 		$data = array(

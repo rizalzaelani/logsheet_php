@@ -642,7 +642,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             </div>
         </div>
 
-        <!-- Schedule and Operation -->
+        <!-- Schedule and Tagging -->
         <div :class="checkTabSetting == true ? '' : 'd-none'" id="cardScheduleOpt">
             <div class="row">
                 <div class="col-6 pb-4">
@@ -700,7 +700,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <div :class="((assetData.schType == 'Daily') && (setSch == 'Automatic') ? 'mt-3' :'d-none')" id="daily">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-center w-100" id="schFreq" data-toggle="buttons">
+                                            <div class="btn-group-toggle w-100 d-flex justify-content-between align-items-center" id="schFreq" data-toggle="buttons">
                                                 <?php foreach ($schFreq as $val) : ?>
                                                     <label class="btn btn-sm btn-outline-primary" style="width: 12% !important;">
                                                         <input type="radio" name="schFreq" data-content="<?= $val ?>" id="schFreq<?= $val ?>" autocomplete="off"><?= $val ?>
@@ -720,7 +720,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 <div class="col">
                                                     <div class="btn-group-toggle" id="schWeekly">
                                                         <?php foreach ($schDay as $key => $val) : ?>
-                                                            <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schWeekly<?= $key ?>">
+                                                            <label class="btn btn-sm btn-outline-primary mx-1 mb-1" style="width: calc(25% - 0.5rem)" for="schWeekly<?= $key ?>">
                                                                 <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
                                                                 <?= $val ?>
                                                             </label>
@@ -762,7 +762,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 <div :class="onDays == 'days' ? 'col' : 'd-none'" id="days">
                                                     <div class="btn-group-toggle" id="monthlyDays">
                                                         <?php foreach ($schDays as $key => $val) : ?>
-                                                            <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: 12% !important; display: inline-table">
+                                                            <label class="btn btn-sm btn-outline-primary mx-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: calc(14.28% - 0.5rem) !important; display: inline-table">
                                                                 <input class="form-check-input" name="schMonthlyDays" id="schMonthlyDays<?= $val ?>" type="checkbox" value="<?= $val ?>">
                                                                 <?= $val ?>
                                                             </label>
@@ -830,22 +830,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         </div>
                         <hr>
                         <div>
-                            <ul class="nav nav-tabs w-100 d-flex align-items-center" role="tablist">
-                                <li class="nav-item"><a :class="['nav-link', (assetTagging.assetTaggingtype == 'rfid' ? 'active' : '')]" data-toggle="tab" href="#tabRfid" role="tab" aria-controls="tabRfid" id="rfid_tab" @click="rfid()">
+                            <ul class="nav nav-tabs w-100 d-flex justify-content-center align-items-center" role="tablist">
+                                <li class="nav-item"><a :class="['nav-link', (assetTagging[0].assetTaggingtype == 'rfid' ? 'active' : '')]" data-toggle="tab" href="#tabRfid" role="tab" aria-controls="tabRfid" id="rfid_tab" @click="rfid()">
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/solid.svg#cis-qr-code"></use>
                                         </svg> rfid </a></li>
-                                <li class="nav-item"><a :class="['nav-link', (assetTagging.assetTaggingtype == 'coordinat' ? 'active' : '')]" data-toggle="tab" href="#tabCoordinate" role="tab" aria-controls="tabCoordinate" id="coordinate_tab" @click="coordinate()">
+                                <li class="nav-item"><a :class="['nav-link', (assetTagging[0].assetTaggingtype == 'coordinat' ? 'active' : '')]" data-toggle="tab" href="#tabCoordinate" role="tab" aria-controls="tabCoordinate" id="coordinate_tab" @click="coordinate()">
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-map"></use>
                                         </svg> coordinate </a></li>
-                                <li class="nav-item"><a :class="['nav-link', (assetTagging.assetTaggingtype == 'uhf' ? 'active' : '')]" data-toggle="tab" href="#tabUhf" role="tab" aria-controls="tabUhf" id="uhf_tab" @click="uhf()">
+                                <li class="nav-item"><a :class="['nav-link', (assetTagging[0].assetTaggingtype == 'uhf' ? 'active' : 'disabled')]" data-toggle="tab" href="#tabUhf" role="tab" aria-controls="tabUhf" id="uhf_tab" @click="uhf()">
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-waves"></use>
-                                        </svg> uhf </a></li>
+                                        </svg> uhf <svg class="c-icon">
+                                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/duotone.svg#cid-lock-locked"></use>
+                                        </svg> </a></li>
                             </ul>
                             <div class="tab-content">
-                                <div :class="['tab-pane', (assetTagging.assetTaggingtype == 'rfid' ? 'active' : '')]" id="tabRfid" role="tabpanel">
+                                <div :class="['tab-pane', (assetTagging[0].assetTaggingtype == 'rfid' ? 'active' : '')]" id="tabRfid" role="tabpanel">
                                     <div class="row mt-2">
                                         <div class="col-12">
                                             <div class="form-group row d-flex align-items-center">
@@ -853,7 +855,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                     <label for="asset">Value <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="text" class="form-control" id="valRfid" name="valRfid" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
+                                                    <input type="text" class="form-control" id="valRfid" name="valRfid" placeholder="Tagging Value" v-model="rfidValue" required>
                                                     <div class="invalid-feedback">
                                                         Field cannot be empty.
                                                     </div>
@@ -862,15 +864,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </div>
                                     </div>
                                 </div>
-                                <div :class="['tab-pane', (assetTagging.assetTaggingtype == 'coordinat' ? 'active' : '')]" id="tabCoordinate" role="tabpanel">
+                                <div :class="['tab-pane', (assetTagging[0].assetTaggingtype == 'coordinat' ? 'active' : '')]" id="tabCoordinate" role="tabpanel">
                                     <div class="row mt-2">
                                         <div class="col-12">
                                             <div class="form-group row d-flex align-items-center">
                                                 <div class="col-3">
-                                                    <label for="asset">Value<span class="required">*</span></label>
+                                                    <label for="asset">Value <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="text" class="form-control" id="valCoordinate" name="valCoordinate" placeholder="Latitude, Longitude" v-model="valCoordinate" required>
+                                                    <input type="text" class="form-control" id="valCoordinate" name="valCoordinate" placeholder="Latitude, Longitude" v-model="coordinatValue" required>
                                                     <div class="invalid-feedback">
                                                         Field cannot be empty.
                                                     </div>
@@ -880,7 +882,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         </div>
                                     </div>
                                 </div>
-                                <div :class="['tab-pane', (assetTagging.assetTaggingtype == 'uhf' ? 'active' : '')]" id="tabUhf" role="tabpanel">
+                                <div :class="['tab-pane', (assetTagging[0].assetTaggingtype == 'uhf' ? 'active' : '')]" id="tabUhf" role="tabpanel">
                                     <div class="row mt-2">
                                         <div class="col-12">
                                             <div class="form-group row d-flex align-items-center">
@@ -904,11 +906,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             </div>
         </div>
 
-        <!-- Asset Tagging and Config -->
+        <!-- Operation and Config -->
         <div :class="checkTabSetting == true ? '' : 'd-none'" id="cardAssetTagging">
             <div class="row">
                 <div class="col-6 pb-4">
-                <div class="card card-main h-100" id="cardOperation">
+                    <div class="card card-main h-100" id="cardOperation">
                         <div class="d-flex justify-content-start align-items-center">
                             <div>
                                 <h5>
@@ -926,10 +928,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <hr>
                         <div class="form-group row">
                             <div class="col-12">
-                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;" id="operation">
-                                    <?php foreach ($statusData as $key) : ?>
-                                        <label class="btn btn-outline-primary mr-1 mb-1">
-                                            <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
+                                <div class="btn-group-toggle w-100" data-toggle="buttons" id="operation">
+                                    <?php foreach ($statusData as $key => $val) : ?>
+                                        <label class="btn btn-outline-primary mx-1  mb-1" style="width: calc(25% - 0.5rem) !important;">
+                                            <input type="radio" name="options" data-content="<?= $val->assetStatusName ?>" id="<?= $val->assetStatusId ?>" autocomplete="off"><?= $val->assetStatusName ?>
                                         </label>
                                     <?php endforeach; ?>
                                 </div>
@@ -1021,18 +1023,17 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </div>
             </div>
             <div class="table-responsive mt-2">
-                <table class="table dt-responsive table-hover w-100 display" id="tableParameter">
+                <table class="table dt-responsive table-bordered table-hover w-100 display" id="tableParameter">
                     <thead class="bg-primary">
-
                         <tr>
-                            <th class="text-center">Parameter</th>
-                            <th class="text-center">Description</th>
-                            <th class="text-center">Normal</th>
-                            <th class="text-center">Abnormal</th>
-                            <th class="text-center">UoM</th>
-                            <th class="text-center">Show On</th>
-                            <th class="text-center"><i>Status</i></th>
-                            <th width="10%" class="text-center" style="border-top-right-radius: 5px;">Action</th>
+                            <th width="" class="text-center">Parameter</th>
+                            <th width="" class="text-center">Description</th>
+                            <th width="" class="text-center">Normal</th>
+                            <th width="" class="text-center">Abnormal</th>
+                            <th width="" class="text-center">UoM</th>
+                            <th width="" class="text-center">Show On</th>
+                            <th width="" class="text-center"><i>Status</i></th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1104,29 +1105,18 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <i>(Empty)</i>
                             </td>
                             <td class="text-center">{{ items.showOn }}</td>
-                            <!-- <td class="text-center" v-if="items.createdAt != items.updatedAt">
+                            <td class="text-center" v-if="items.status == 'old'">
+                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
+                            </td>
+                            <td class="text-center" v-else>
+                                <i class="text-warning"><span class="badge badge-warning text-white">Updated</span></i>
+                            </td>
+                            <!-- <td class="text-center" v-if="isEqualParam(i)">
+                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
+                            </td>
+                            <td class="text-center" v-else>
                                 <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
-                            </td>
-                            <td class="text-center" v-else>
-                                <i class="text-success"><span class="badge badge-info text-white">Added</span></i>
                             </td> -->
-                            <!-- <td class="text-center">
-                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
-                            </td> -->
-                            <td class="text-center" v-if="editedParameter.length > 0">
-                                <div v-for="(row, index) in editedParameter">
-                                    <!-- <i class="text-success"><span class="badge badge-info text-white">{{ row.parameterId }}</span></i> -->
-                                    <div v-if="(items.parameterId == row.parameterId)">
-                                        <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
-                                    </div>
-                                    <div v-else>
-                                        <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-center" v-else>
-                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
-                            </td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
@@ -1182,7 +1172,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 var selectedSchWeekly = ref([]);
                 var selectedSchMonthlyDays = ref([]);
                 var onDays = ref('');
-                var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging[0]) . ")" : "reactive({
+                var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging) . ")" : "reactive({
                     assetTaggingId: uuidv4(),
                     assetTaggingValue: '',
                     assetTaggingtype: '',
@@ -1391,15 +1381,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
                     let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
                     if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: "Invalid value!",
+                        swal.fire({
+                            title: 'Invalid Value!',
                             icon: 'error'
                         })
 
@@ -1589,6 +1572,26 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         })
                         $('.type').val('').trigger("change");
                         $('#showOn').val('').trigger('change');
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Add Parameter Successfully'
+                        })
+                        $('#parameterName').focus();
                     }
                 };
 
@@ -1906,13 +1909,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                     if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.assetStatusName == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || (this.assetData.schType == "Daily" && this.assetData.schFrequency == '') || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
                         this.submited = ref(false);
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
+                        swal.fire({
                             title: 'Failed!',
                             text: "Invalid value!",
                             icon: 'error'
@@ -2216,7 +2213,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         formdata.append('schType', this.assetData.schType);
                         if (v.assetData.schType == 'Daily') {
                             formdata.append('schFrequency', this.assetData.schFrequency);
-                        }else{
+                        } else {
                             formdata.append('schFrequency', "");
                         }
                         formdata.append('schFrequency', this.assetData.schFrequency);
@@ -2318,13 +2315,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             method: "POST"
                         }).then(res => {
                             if (res.status == 200) {
-                                const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-success mr-1',
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
+                                swal.fire({
                                     title: 'Success!',
                                     text: 'You have successfully updated data.',
                                     icon: 'success'
@@ -2429,7 +2420,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#abnormal').find('option').remove();
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
+                        this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.description = '';
                     this.param.uom = '';
@@ -2470,7 +2461,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.param.description = this.parameter[index].description;
                     if (this.parameter[index].uom != "") {
                         this.param.uom = this.parameter[index].uom;
-                    }else{
+                    } else {
                         this.param.uom = "";
                     }
                     this.param.min = this.parameter[index].min;
@@ -2717,31 +2708,66 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             i: index,
                         }
                         let lengthEdited = this.editedParameter.length;
-                        // console.log(lengthEdited);
-                        // setTimeout(() => {
-                        //     if (lengthEdited) {
-                        //         for (let i = 0; i < lengthEdited; i++) {
-                        //             // console.log(this.editedParameter[i].parameterId);
-                        //             let idEditedParam = this.editedParameter[i].parameterId
-                        //             if (idEditedParam == this.parameter[index].parameterId) {
-                        //                 return this.editedParameter.splice(i, 1);
-                        //             }
-                        //         }
-                        //     }
-                        // }, 5000);
-                        this.editedParameter.push(this.parameter[index]);
-                        if (lengthEdited) {
-                            const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
-                            const {assetId, createdAt, deletedAt, updatedAt, ...newParam} = this.compareParameter[index];
-                            for (let a = 0; a < lengthEdited; a++) {
-                                const {i, ...newEdited} = this.editedParameter[a];
-                                console.log(newParam);
-                                console.log(newEdited);
-                                // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
-                                // console.log(checkIsEqual);
+                        const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
+                        const {
+                            assetId,
+                            createdAt,
+                            deletedAt,
+                            updatedAt,
+                            ...newParam
+                        } = this.compareParameter[index];
+                        const {
+                            i,
+                            ...newEdited
+                        } = this.parameter[index];
+                        let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
+                        if (checkIsEqual) {
+                            for (let i = 0; i < lengthEdited; i++) {
+                                // console.log(this.editedParameter[i].parameterId);
+                                let idEditedParam = this.editedParameter[i].parameterId
+                                if (idEditedParam == this.parameter[index].parameterId) {
+                                    this.myModal.hide();
+                                    this.parameter[index].status = 'old';
+                                    return this.editedParameter.splice(i, 1);
+                                }
                             }
+                            this.parameter[index].status = 'old';
+                            this.myModal.hide();
+                        } else {
+                            setTimeout(() => {
+                                for (let i = 0; i < lengthEdited; i++) {
+                                    // console.log(this.editedParameter[i].parameterId);
+                                    let idEditedParam = this.editedParameter[i].parameterId
+                                    if (idEditedParam == this.parameter[index].parameterId) {
+                                        this.myModal.hide();
+                                        return this.editedParameter.splice(i, 1);
+                                    }
+                                }
+                            }, 2000);
+                            this.editedParameter.push(this.parameter[index]);
+                            this.parameter[index].status = 'updated';
+                            this.myModal.hide();
                         }
                         this.myModal.hide();
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Successfully Modify Parameter'
+                        })
                     }
                 }
 
@@ -2991,7 +3017,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
+                        this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.description = '';
                     this.param.uom = '';
@@ -3079,7 +3105,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     })
                 };
 
-                function btnSaveSorting(){
+                function btnSaveSorting() {
                     if (v.sortingParameter.length) {
                         axios.post("<?= base_url('Asset/sortingParameter'); ?>", {
                             assetId: v.assetData.assetId,
@@ -3119,17 +3145,17 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 }
 
                 function coordinate() {
-                    v.assetTagging.assetTaggingValue = ref('')
-                    v.assetTagging.assetTaggingtype = 'coordinat';
-                    v.valRfid = ref('');
-                    v.valUhf = ref('');
+                    // v.assetTagging.assetTaggingValue = ref('')
+                    // v.assetTagging.assetTaggingtype = 'coordinat';
+                    // v.valRfid = ref('');
+                    // v.valUhf = ref('');
                 }
 
                 function rfid() {
-                    v.assetTagging.assetTaggingValue = ref('');
-                    v.assetTagging.assetTaggingtype = 'rfid';
-                    v.valCoordinate = ref('');
-                    v.valUhf = ref('');
+                    // v.assetTagging.assetTaggingValue = ref('');
+                    // v.assetTagging.assetTaggingtype = 'rfid';
+                    // v.valCoordinate = ref('');
+                    // v.valUhf = ref('');
                 }
 
                 function uhf() {
@@ -3139,9 +3165,36 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     v.valCoordinate = ref('');
                 }
 
+                function isEqualParam(index, id) {
+                    const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
+                    const {
+                        assetId,
+                        createdAt,
+                        updatedAt,
+                        deletedAt,
+                        ...newParam
+                    } = this.compareParameter[index];
+                    delete this.parameter[index].assetId;
+                    delete this.parameter[index].createdAt;
+                    delete this.parameter[index].updatedAt;
+                    delete this.parameter[index].deletedAt;
+                    delete this.parameter[index].i;
+                    let lengthCompare = this.compareParameter.length;
+                    for (let i = 0; i < lengthCompare; i++) {
+                        if (this.compareParameter[i].parameterId == id) {
+                            console.log(this.compareParameter[i]);
+                        }
+                    }
+                    let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(this.parameter[index]));
+                    return checkIsEqual;
+                }
+
                 onMounted(() => {
                     if (assetData.schMonthlyWeekDays != "" && assetData.schType == "Monthly" && assetData.schWeeks != "") {
                         $('#monthlyOnDays').val(assetData.schMonthlyWeekDays.split(",")).trigger("change");
+                    }
+                    for (let i = 0; i < parameter.length; i++) {
+                        parameter[i].status = 'old';
                     }
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
@@ -3265,9 +3318,47 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     moreDetailAsset,
                     btnCancelModalParam,
                     btnSaveSorting,
+                    isEqualParam
                 }
             },
+            computed: {
+                rfidValue: {
+                    get(){
+                        if (this.assetTagging[0].assetTaggingtype == 'rfid') {
+                            return this.assetTagging[0].assetTaggingValue
+                        }
+                    },
+                    set(newValue){
+                        if (this.assetTagging[0].assetTaggingtype == 'rfid') {
+                            this.assetTagging[0].assetTaggingValue = newValue;
+                        }
+                    }
+                },
+                coordinatValue: {
+                    get(){
+                        let lengthTagging = this.assetTagging.length;
+                        if (lengthTagging) {
+                            for (let i = 0; i < lengthTagging; i++) {
+                                if (this.assetTagging[i].assetTaggingtype == 'coordinat') {
+                                    return this.assetTagging[i].assetTaggingValue
+                                }
+                            }
+                        }
+                    },
+                    set(newValue){
+                        let lengthTagging = this.assetTagging.length;
+                        if (lengthTagging > 1) {
+                            for (let i = 0; i < lengthTagging; i++) {
+                                if (this.assetTagging[i].assetTaggingtype == 'coordinat') {
+                                    this.assetTagging[i].assetTaggingValue = newValue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }).mount('#app');
+
 
         $(function() {
             $('tbody').sortable({
@@ -3328,13 +3419,22 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         })
 
         $(document).ready(function() {
-            if (v.assetTagging.assetTaggingtype != '') {
-                if (v.assetTagging.assetTaggingtype == 'coordinat') {
-                    v.valCoordinate = v.assetTagging.assetTaggingValue;
+            let lengthTagging = v.assetTagging.length;
+            console.log(lengthTagging);
+            if (lengthTagging > 1) {
+                for (let i = 0; i < lengthTagging; i++) {
+                    if (v.assetTagging[i].assetTaggingtype == 'rfid') {
+                        console.log("rfid")
+                    }
                 }
-            } else {
-                v.assetTagging.assetTaggingtype = '';
             }
+            // if (v.assetTagging.assetTaggingtype != '') {
+            //     if (v.assetTagging.assetTaggingtype == 'coordinat') {
+            //         v.valCoordinate = v.assetTagging.assetTaggingValue;
+            //     }
+            // } else {
+            //     v.assetTagging.assetTaggingtype = '';
+            // }
         })
 
         // On change tag, location, operation mode
@@ -3393,45 +3493,48 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         // map tagging
         $(document).ready(function() {
             mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-
-            if (v.assetTagging.assetTaggingtype == 'coordinat' && v.assetTagging.assetTaggingValue != '') {
-                var latlong = v.assetTagging.assetTaggingValue.split(",");
-                var map = new mapboxgl.Map({
-                    container: 'mapTagging', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                    center: [latlong[1], latlong[0]], // starting position [lng, lat]
-                    zoom: 14, // starting zoom
-                });
-                var marker = new mapboxgl.Marker({
-                        draggable: true,
-                    })
-                    .setLngLat([latlong[1], latlong[0]])
-                    .addTo(map);
-            } else {
-                var map = new mapboxgl.Map({
-                    container: 'mapTagging', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                    center: [109.005913, -7.727989], // starting position [lng, lat]
-                    zoom: 14, // starting zoom
-                });
-                var marker = new mapboxgl.Marker({
-                        draggable: true,
-                    })
-                    .setLngLat([109.005913, -7.727989])
-                    .addTo(map);
+            let lengthTagging = v.assetTagging.length;
+            for (let i = 0; i < lengthTagging; i++) {
+                if (v.assetTagging[i].assetTaggingtype == 'coordinat' && v.assetTagging[i].assetTaggingValue != '') {
+                    var latlong = v.assetTagging[i].assetTaggingValue.split(",");
+                    var map = new mapboxgl.Map({
+                        container: 'mapTagging', // container ID
+                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                        center: [latlong[1], latlong[0]], // starting position [lng, lat]
+                        zoom: 14, // starting zoom
+                    });
+                    var marker = new mapboxgl.Marker({
+                            draggable: true,
+                        })
+                        .setLngLat([latlong[1], latlong[0]])
+                        .addTo(map);
+                } else {
+                    var map = new mapboxgl.Map({
+                        container: 'mapTagging', // container ID
+                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                        center: [109.005913, -7.727989], // starting position [lng, lat]
+                        zoom: 14, // starting zoom
+                    });
+                    var marker = new mapboxgl.Marker({
+                            draggable: true,
+                        })
+                        .setLngLat([109.005913, -7.727989])
+                        .addTo(map);
+                }
+                map.addControl(new mapboxgl.FullscreenControl());
+                map.resize();
+    
+                function onDragEnd(params) {
+                    const lnglat = marker.getLngLat();
+                    // coordinates.style.display = 'block';
+                    let lat = lnglat.lat;
+                    let long = lnglat.lng;
+                    v.valCoordinate = lat + "," + long;
+                    v.assetTagging[i].assetTaggingValue = v.valCoordinate;
+                }
+                marker.on('dragend', onDragEnd);
+                return;
             }
-            map.addControl(new mapboxgl.FullscreenControl());
-            map.resize();
-
-            function onDragEnd(params) {
-                const lnglat = marker.getLngLat();
-                // coordinates.style.display = 'block';
-                let lat = lnglat.lat;
-                let long = lnglat.lng;
-                v.valCoordinate = lat + "," + long;
-                v.assetTagging.assetTaggingValue = v.valCoordinate;
-            }
-            marker.on('dragend', onDragEnd);
         })
 
         $(document).ready(function() {

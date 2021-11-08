@@ -475,7 +475,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             </div>
         </div>
 
-        <!-- Schedule and Operation -->
+        <!-- Schedule and Asset Tagging -->
         <div id="cardScheduleOpt">
             <div class="row">
                 <div class="col-6 pb-4">
@@ -554,7 +554,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 <div class="col">
                                                     <div class="btn-group-toggle" id="schWeekly">
                                                         <?php foreach ($schDay as $key => $val) : ?>
-                                                            <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schWeekly<?= $key ?>" style="width: 10% !important; display: inline-table">
+                                                            <label class="btn btn-sm btn-outline-primary mx-1 mb-1" for="schWeekly<?= $key ?>" style="width: calc(25% - 0.5rem) !important; display: inline-table">
                                                                 <input class="form-check-input" name="schWeekly" id="schWeekly<?= $key ?>" type="checkbox" value="<?= $key ?>">
                                                                 <?= $val ?>
                                                             </label>
@@ -596,7 +596,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 <div :class="onDays == 'days' ? 'col' : 'd-none'" id="days">
                                                     <div class="btn-group-toggle" id="monthlyDays">
                                                         <?php foreach ($schDays as $key => $val) : ?>
-                                                            <label class="btn btn-sm btn-outline-primary mr-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: 12% !important; display: inline-table">
+                                                            <label class="btn btn-sm btn-outline-primary mx-1 mb-1" for="schMonthlyDays<?= $val ?>" style="width: calc(14.28% - 0.5rem) !important; display: inline-table">
                                                                 <input class="form-check-input" name="schMonthlyDays" id="schMonthlyDays<?= $val ?>" type="checkbox" value="<?= $val ?>">
                                                                 <?= $val ?>
                                                             </label>
@@ -664,7 +664,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         </div>
                         <hr>
                         <div>
-                            <ul class="nav nav-tabs w-100 d-flex align-items-center" role="tablist">
+                            <ul class="nav nav-tabs w-100 d-flex justify-content-center align-items-center" role="tablist">
                                 <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tabRfid" role="tab" aria-controls="tabRfid" id="rfid_tab" @click="rfid()">
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/solid.svg#cis-qr-code"></use>
@@ -673,10 +673,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-map"></use>
                                         </svg> coordinate </a></li>
-                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tabUhf" role="tab" aria-controls="tabUhf" id="uhf_tab" @click="uhf()">
+                                <li class="nav-item"><a class="nav-link disabled" data-toggle="tab" href="#tabUhf" role="tab" aria-controls="tabUhf" id="uhf_tab" @click="uhf()">
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-waves"></use>
-                                        </svg> uhf </a></li>
+                                        </svg> uhf <svg class="c-icon">
+                                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/duotone.svg#cid-lock-locked"></use>
+                                        </svg> </a></li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="tabRfid" role="tabpanel">
@@ -738,7 +740,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             </div>
         </div>
 
-        <!-- Asset Tagging and Config -->
+        <!-- Operation and Config -->
         <div id="cardAssetTagging">
             <div class="row">
                 <div class="col-6 pb-4">
@@ -760,9 +762,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <hr>
                         <div class="form-group row">
                             <div class="col-12">
-                                <div class="btn-group-toggle" data-toggle="buttons" style="max-height: 100px !important; overflow-y: auto;" id="operation">
+                                <div class="btn-group-toggle" data-toggle="buttons" id="operation">
                                     <?php foreach ($statusData as $key) : ?>
-                                        <label class="btn btn-outline-primary mr-1 mb-1">
+                                        <label class="btn btn-outline-primary mx-1 mb-1" style="width: calc(25% - 0.5rem) !important;">
                                             <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
                                         </label>
                                     <?php endforeach; ?>
@@ -1106,20 +1108,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
                 let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
                 if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
-                    const swalWithBootstrapButtons = swal.mixin({
-                        customClass: {
-                            confirmButton: 'btn btn-danger',
-                        },
-                        buttonsStyling: false
-                    })
-                    swalWithBootstrapButtons.fire({
-                        title: 'Failed!',
-                        text: "Invalid value!",
+                    swal.fire({
+                        title: 'Invalid Value!',
                         icon: 'error'
                     })
 
                     if (this.param.parameterName != '') {
-                        $('.parameter').removeClass('is-invalid');
+                        $('#parameterName').removeClass('is-invalid');
                     }
                     if (this.param.inputType != '') {
                         $('.type').removeClass('is-invalid');
@@ -1164,7 +1159,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                     //add invalid class
                     if (this.param.parameterName == '') {
-                        $('.parameter').addClass('is-invalid');
+                        $('#parameterName').addClass('is-invalid');
                     }
                     if (this.param.inputType == '') {
                         $('.type').addClass('is-invalid');
@@ -1203,7 +1198,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     }
                 } else {
                     if (this.param.parameterName != '') {
-                        $('.parameter').removeClass('is-invalid');
+                        $('#parameterName').removeClass('is-invalid');
                     }
                     if (this.param.inputType != '') {
                         $('.type').removeClass('is-invalid');
@@ -1248,7 +1243,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                     //add invalid class
                     if (this.param.parameterName == '') {
-                        $('.parameter').addClass('is-invalid');
+                        $('#parameterName').addClass('is-invalid');
                     }
                     if (this.param.inputType == '') {
                         $('.type').addClass('is-invalid');
@@ -1306,6 +1301,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#showOn').val('').trigger('change');
                     $('#normal').val('').trigger("change");
                     $('#abnormal').val('').trigger('change');
+                    const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                        icon: 'success',
+                        title: 'Add Parameter Successfully'
+                        })
                     $('#parameterName').focus();
                 }
             }
