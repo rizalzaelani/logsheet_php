@@ -75,8 +75,8 @@
 							<tr>
 								<th>Number</th>
 								<th>Asset</th>
-								<th>Tag</th>
-								<th>Location</th>
+								<th style="width: 27.5%">Tag</th>
+								<th style="width: 27.5%">Location</th>
 								<th>Frequency</th>
 							</tr>
 						</thead>
@@ -226,6 +226,7 @@
 								},
 								{
 									targets: [2, 3],
+									width: '27.5%',
 									render: function(data) {
 										if (data != '-') {
 											// unique = Array.from(new Set(data));
@@ -234,7 +235,7 @@
 											$.each(dt, function(key, value) {
 												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
 											})
-											return '<div style="max-height: 50px !important; overflow-y: auto;">' + list_dt + '</div>';
+											return '<div style="max-height: 50px !important; overflow-y: scroll;">' + list_dt + '</div>';
 										} else {
 											return data;
 										}
