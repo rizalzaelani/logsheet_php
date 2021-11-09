@@ -765,16 +765,16 @@ class Asset extends BaseController
 
 	public function download()
 	{
-		return $this->response->download('../public/download/param1.xlsx', null);
+		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/sampleImportParameter.xlsx', null);
 	}
 	public function uploadFile()
 	{
 		$file = $this->request->getFile('importParam');
 		if ($file) {
 			$newName = "doc" . time() . '.xlsx';
-			$file->move('../uploads/', $newName);
+			$file->move('upload/', $newName);
 			$reader = ReaderEntityFactory::createXLSXReader();
-			$reader->open('../uploads/' . $newName);
+			$reader->open('upload/' . $newName);
 			$dataImport = [];
 			foreach ($reader->getSheetIterator() as $sheet) {
 				$numrow = 1;
@@ -809,7 +809,7 @@ class Asset extends BaseController
 				}
 			}
 			if ($dataImport) {
-				unlink('../uploads/' . $newName);
+				unlink('upload/' . $newName);
 				return $this->response->setJSON(array('status' => 'success', 'message' => '', 'data' => $dataImport));
 			} else {
 				return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Not Found!'));

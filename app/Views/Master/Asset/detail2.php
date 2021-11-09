@@ -398,7 +398,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <div class="row">
                                         <div class="col">
                                             <div class="mb-3">
-                                                <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
+                                                <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100" target="_blank"><i class="fa fa-file-excel"></i> Download Template</a>
                                             </div>
                                             <div>
                                                 <b><i>Ketentuan Upload File</i></b>

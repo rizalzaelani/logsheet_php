@@ -3,11 +3,9 @@
 namespace App\Controllers\Setting;
 
 use App\Controllers\BaseController;
-use App\Controllers\Transaction\ScheduleTrx;
 use App\Models\ApplicationSettingModel;
 use App\Models\AssetStatusModel;
 use App\Models\AssetModel;
-use App\Models\ParameterModel;
 use App\Models\ScheduleTrxModel;
 use Exception;
 
@@ -15,7 +13,15 @@ class Application extends BaseController
 {
     public function index()
     {
-        $userIdApp = $_SESSION["userIdApp"] ?? "fcc9766a-9bda-4fd3-a755-a24130d2f58c";
+        if(!checkRoleList("APPLICATION.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
+        // $userIdApp = $_SESSION["userIdApp"] ?? "fcc9766a-9bda-4fd3-a755-a24130d2f58c";
+        $userIdApp = $_SESSION["userIdApp"] ?? "";
+        if($userIdApp == ""){
+            return View('errors/customError', ['ErrorCode'=>400,'ErrorMessage'=>"Sorry, You don't have any registered appication, please Register New Logsheet App or Relogin First"]);
+        }
 
         $appSettingModel = new ApplicationSettingModel();
         $assetStatusModel = new AssetStatusModel();
@@ -42,6 +48,14 @@ class Application extends BaseController
 
     public function saveSetting()
     {
+        if(!checkRoleList("APPLICATION.MODIFY")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+
         $appSettingModel = new ApplicationSettingModel();
 
         $appSettingId = $this->request->getVar('appSettingId') ?? "";
@@ -116,6 +130,14 @@ class Application extends BaseController
 
     public function saveAssetStatus()
     {
+        if(!checkRoleList("APPLICATION.ASSETSTATUS.MODIFY")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+
         $assetModel = new AssetModel();
         $scheduleTrxModel = new ScheduleTrxModel();
         // $parameterModel = new ParameterModel();
@@ -180,7 +202,14 @@ class Application extends BaseController
 
     public function deleteAssetStatus()
     {
-        $assetStatusModel = new AssetStatusModel();
+        if(!checkRoleList("APPLICATION.ASSETSTATUS.DELETE")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+        
         $assetModel = new AssetModel();
         $json = $this->request->getJSON();
         $id = $json->assetStatusId;

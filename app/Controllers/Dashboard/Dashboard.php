@@ -3,7 +3,6 @@
 namespace App\Controllers\Dashboard;
 
 use App\Controllers\BaseController;
-use App\Libraries\Template;
 use App\Models\AssetModel;
 use App\Models\ScheduleTrxModel;
 use App\Models\TagModel;
@@ -13,6 +12,10 @@ class Dashboard extends BaseController
 {
 	public function index()
 	{
+        if(!checkRoleList("DASHBOARD.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+		
 		$assetModel = new AssetModel();
 		$tagModel = new TagModel();
 		$locationModel = new TagLocationModel();

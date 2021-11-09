@@ -36,13 +36,19 @@
                                 <div class="mt-2">
                                     <div class="d-flex justify-content-between">
                                         <label>Application Logo (Light)</label>
-                                        <span v-if="appSetting.appLogoLight" class="text-danger cursor-pointer" @click="appSetting.appLogoLight = ''">Delete</span>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <span v-if="appSetting.appLogoLight" class="text-danger cursor-pointer" @click="appSetting.appLogoLight = ''">Delete</span>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="fake-card h-100" :class="!appSetting.appLogoLight ? '' : 'd-none'">
-                                        <input type="file" ref="file" class="filepond" name="appLogoLight" id="appLogoLight">
-                                        <div class="invalid-feedback">
-                                            Field cannot be empty.
-                                        </div>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <input type="file" ref="file" class="filepond" name="appLogoLight" id="appLogoLight">
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
+                                        <?php else: ?>
+                                            <h5>No Attachment</h5>
+                                        <?php endif; ?>
                                     </div>
                                     <div :class="appSetting.appLogoLight ? '' : 'd-none'" class="w-100">
                                         <img class="rounded img-fluid img-thumbnail w-100 mb-3" class="w-100" :src="appSetting.appLogoLight">
@@ -51,13 +57,19 @@
                                 <div class="mt-2">
                                     <div class="d-flex justify-content-between">
                                         <label>Application Logo (Dark)</label>
-                                        <span v-if="appSetting.appLogoDark" class="text-danger cursor-pointer" @click="appSetting.appLogoDark = ''">Delete</span>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <span v-if="appSetting.appLogoDark" class="text-danger cursor-pointer" @click="appSetting.appLogoDark = ''">Delete</span>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="fake-card h-100" :class="!appSetting.appLogoDark ? '' : 'd-none'">
-                                        <input type="file" ref="file" class="filepond" name="appLogoDark" id="appLogoDark">
-                                        <div class="invalid-feedback">
-                                            Field cannot be empty.
-                                        </div>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <input type="file" ref="file" class="filepond" name="appLogoDark" id="appLogoDark">
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
+                                        <?php else: ?>
+                                            <h5>No Attachment</h5>
+                                        <?php endif; ?>
                                     </div>
                                     <div :class="appSetting.appLogoDark ? '' : 'd-none'" class="w-100">
                                         <img class="rounded img-fluid img-thumbnail w-100 mb-3" class="w-100" :src="appSetting.appLogoDark">
@@ -66,13 +78,19 @@
                                 <div class="mt-2">
                                     <div class="d-flex justify-content-between">
                                         <label>Application Logo (Icon)</label>
-                                        <span v-if="appSetting.appLogoIcon" class="text-danger cursor-pointer" @click="appSetting.appLogoIcon = ''">Delete</span>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <span v-if="appSetting.appLogoIcon" class="text-danger cursor-pointer" @click="appSetting.appLogoIcon = ''">Delete</span>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="fake-card h-100" :class="!appSetting.appLogoIcon ? '' : 'd-none'">
-                                        <input type="file" ref="file" class="filepond" name="appLogoIcon" id="appLogoIcon">
-                                        <div class="invalid-feedback">
-                                            Field cannot be empty.
-                                        </div>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <input type="file" ref="file" class="filepond" name="appLogoIcon" id="appLogoIcon">
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
+                                        <?php else: ?>
+                                            <h5>No Attachment</h5>
+                                        <?php endif; ?>
                                     </div>
                                     <div :class="appSetting.appLogoIcon ? '' : 'd-none'" class="w-100">
                                         <img class="rounded img-fluid img-thumbnail w-100 mb-3" class="w-100" :src="appSetting.appLogoIcon">

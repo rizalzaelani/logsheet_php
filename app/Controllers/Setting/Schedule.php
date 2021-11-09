@@ -6,13 +6,16 @@ use App\Controllers\BaseController;
 use App\Models\AssetModel;
 use App\Models\ScheduleTrxModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use DateTime;
 use Exception;
 
 class Schedule extends BaseController
 {
     public function index()
     {
+        if(!checkRoleList("SCHEDULE.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
         $data = array(
             'title' => 'Schedule',
             'subtitle' => 'Schedule'
@@ -37,6 +40,14 @@ class Schedule extends BaseController
 
     public function getDataByMonth()
     {
+        if(!checkRoleList("SCHEDULE.LIST")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+
         $month = $this->request->getVar('month') ?? date("m");
         $year = $this->request->getVar('year') ?? date("Y");
 
@@ -58,6 +69,14 @@ class Schedule extends BaseController
 
     public function addScheduleAM()
     {
+        if(!checkRoleList("SCHEDULE.ADD")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+
         $dataAssetAM = json_decode(($this->request->getVar("dataAssetAM") ?? "[]"), true);
         $start = $this->request->getVar("start");
         $end = $this->request->getVar("end");
@@ -128,6 +147,14 @@ class Schedule extends BaseController
 
     public function importSchedule()
     {
+        if(!checkRoleList("SCHEDULE.IMPORT")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+
 		$file = $this->request->getFile('importSch');
 		if ($file) {
 			$newName = "IS_" . time() . '.xlsx';

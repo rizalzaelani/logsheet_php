@@ -111,7 +111,7 @@
         </div>
     </div>
     <div class="col-sm-5">
-        <?php if ($findingData['condition'] == "Open") { ?>
+        <?php if ($findingData['condition'] == "Open" & checkRoleList("FINDING.LOG.ADD")) : ?>
             <div class="card card-main">
                 <div class="card-body">
                     <div class="d-flex justify-content-between mt-1 mb-2">
@@ -128,24 +128,26 @@
                     </div>
                 </div>
             </div>
-        <?php } ?>
+        <?php endif; ?>
 
-        <div class="card card-main">
-            <div class="card-body">
-                <div class="d-flex justify-content-between mt-1 mb-4">
-                    <h4>Timeline</h4>
-                </div>
-                <div class="history-tl-container">
-                    <ul class="tl" id="listTimeline" v-for="(val, key) in _.chain(timelineData).sortBy('createdAt').reverse().value()">
-                        <li class="tl-item" :class="key == (timelineData.length - 1) ? 'dot-danger' : (key == 0 & '<?= $findingData['condition'] ?>' == 'Closed' ? 'dot-primary' : 'dot-success')">
-                            <div class="item-detail">{{ moment(val.createdAt).format("DD MMM YYYY HH:mm:ss") }}</div>
-                            <div class="item-title font-weight-bold mb-2">{{ val.createdBy }}</div>
-                            <div class="item-notes">{{ val.notes }}</div>
-                        </li>
-                    </ul>
+        <?php if (checkRoleList("FINDING.LOG.LIST")) : ?>
+            <div class="card card-main">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mt-1 mb-4">
+                        <h4>Timeline</h4>
+                    </div>
+                    <div class="history-tl-container">
+                        <ul class="tl" id="listTimeline" v-for="(val, key) in _.chain(timelineData).sortBy('createdAt').reverse().value()">
+                            <li class="tl-item" :class="key == (timelineData.length - 1) ? 'dot-danger' : (key == 0 & '<?= $findingData['condition'] ?>' == 'Closed' ? 'dot-primary' : 'dot-success')">
+                                <div class="item-detail">{{ moment(val.createdAt).format("DD MMM YYYY HH:mm:ss") }}</div>
+                                <div class="item-title font-weight-bold mb-2">{{ val.createdBy }}</div>
+                                <div class="item-notes">{{ val.notes }}</div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
 </div>
 <?= $this->endSection(); ?>
@@ -161,14 +163,45 @@
             let timelineData = Vue.reactive([]);
             const timelineNotes = Vue.ref("");
 
-            //Function
-            const getFindingLog = () => {
-                axios.get("<?= site_url("Finding/getFindingLog") ?>?findingId=" + findingData.findingId) //, { findingId: findingData.findingId })
-                    .then((res) => {
+            <?php if (checkRoleList("FINDING.LOG.LIST")) : ?>
+                //Function
+                const getFindingLog = () => {
+                    axios.get("<?= site_url("Finding/getFindingLog") ?>?findingId=" + findingData.findingId) //, { findingId: findingData.findingId })
+                        .then((res) => {
+                            xhrThrowRequest(res)
+                                .then(() => {
+                                    timelineData.splice(0);
+                                    timelineData.push(...res.data.data);
+                                })
+                                .catch((rej) => {
+                                    if (rej.throw) {
+                                        throw new Error(rej.message);
+                                    }
+                                });
+                        });
+                }
+            <?php endif; ?>
+
+            <?php if (checkRoleList("FINDING.LOG.ADD")) : ?>
+                const updateFindingLog = () => {
+                    let response = axios.post("<?= site_url("Finding/addFindingLog") ?>", {
+                        findingId: findingData.findingId,
+                        notes: timelineNotes.value
+                    }).then((res) => {
                         xhrThrowRequest(res)
                             .then(() => {
-                                timelineData.splice(0);
-                                timelineData.push(...res.data.data);
+                                Swal.fire({
+                                    title: res.data.message,
+                                    icon: "success",
+                                    timer: 3000,
+                                    toast: true,
+                                    position: 'top-end',
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                });
+
+                                timelineData.push(res.data.data);
+                                timelineNotes.value = '';
                             })
                             .catch((rej) => {
                                 if (rej.throw) {
@@ -176,90 +209,65 @@
                                 }
                             });
                     });
-            }
+                };
+            <?php endif; ?>
 
-            const updateFindingLog = () => {
-                let response = axios.post("<?= site_url("Finding/addFindingLog") ?>", {
-                    findingId: findingData.findingId,
-                    notes: timelineNotes.value
-                }).then((res) => {
-                    xhrThrowRequest(res)
-                        .then(() => {
+            <?php if (checkRoleList("FINDING.CLOSE")) : ?>
+                const closeFinding = () => {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do You Want to Close this Finding",
+                        icon: "warning",
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
                             Swal.fire({
-                                title: res.data.message,
-                                icon: "success",
-                                timer: 3000,
-                                toast: true,
-                                position: 'top-end',
+                                title: "Wait a minute, Data on Processing",
+                                icon: "info",
                                 showCancelButton: false,
-                                showConfirmButton: false,
+                                showConfirmButton: false
                             });
 
-                            timelineData.push(res.data.data);
-                            timelineNotes.value = '';
-                        })
-                        .catch((rej) => {
-                            if (rej.throw) {
-                                throw new Error(rej.message);
-                            }
-                        });
-                });
-            };
+                            document.getElementById("closeFinding").innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Closing Finding';
+                            document.getElementById("closeFinding").setAttribute("disabled", true);
 
-            const closeFinding = () => {
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do You Want to Close this Finding",
-                    icon: "warning",
-                    showCancelButton: true
-                }).then((result) => {
-                    if (result.value) {
-                        Swal.fire({
-                            title: "Wait a minute, Data on Processing",
-                            icon: "info",
-                            showCancelButton: false,
-                            showConfirmButton: false
-                        });
-
-                        document.getElementById("closeFinding").innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Closing Finding';
-                        document.getElementById("closeFinding").setAttribute("disabled", true);
-
-                        axios.post("<?= base_url("Finding/closeFinding") ?>?findingId=" + findingData.findingId)
-                            .then((res) => {
-                                xhrThrowRequest(res)
-                                    .then(() => {
-                                        Swal.fire({
-                                            title: res.data.message,
-                                            icon: "success",
-                                        }).then(() => {
-                                            window.location.reload();
+                            axios.post("<?= base_url("Finding/closeFinding") ?>?findingId=" + findingData.findingId)
+                                .then((res) => {
+                                    xhrThrowRequest(res)
+                                        .then(() => {
+                                            Swal.fire({
+                                                title: res.data.message,
+                                                icon: "success",
+                                            }).then(() => {
+                                                window.location.reload();
+                                            })
                                         })
-                                    })
-                                    .catch((rej) => {
-                                        if (rej.throw) {
-                                            throw new Error(rej.message);
-                                        }
+                                        .catch((rej) => {
+                                            if (rej.throw) {
+                                                throw new Error(rej.message);
+                                            }
 
-                                        document.getElementById("closeFinding").innerHTML = '<i class="fa fa-check"></i> Close Finding';
-                                        document.getElementById("closeFinding").removeAttribute("disabled");
-                                    });
-                            });
-                    }
-                });
-            }
+                                            document.getElementById("closeFinding").innerHTML = '<i class="fa fa-check"></i> Close Finding';
+                                            document.getElementById("closeFinding").removeAttribute("disabled");
+                                        });
+                                });
+                        }
+                    });
+                }
+            <?php endif; ?>
 
             Vue.onMounted(() => {
-                getFindingLog();
+                <?php (checkRoleList("FINDING.LOG.LIST") ? "getFindingLog();" : "") ?>
             });
 
             return {
                 findingData,
                 timelineData,
                 timelineNotes,
-                updateFindingLog,
                 moment,
-                closeFinding,
-                _
+                _,
+                <?php (checkRoleList("FINDING.LOG.ADD") ? "updateFindingLog," : "") ?>
+                <?php (checkRoleList("FINDING.CLOSE") ? "closeFinding," : "") ?>
             };
         }
     }).mount("#app")
