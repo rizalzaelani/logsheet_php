@@ -676,7 +676,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="invalid-feedback">
                                             Field cannot be empty.
                                         </div>
-                                        <div :class="setSch == 'Manual' ? 'mt-1' : 'd-none'" style="font-size: 80%; width: 100%; color: #e55353">
+                                        <div :class="setSch == 'Manual' ? 'mt-1' : 'd-none'" style="font-size: 80%; width: 100%; color: #20202a">
                                             Please set schedule on schedule page
                                         </div>
                                     </div>
@@ -1172,12 +1172,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 var selectedSchWeekly = ref([]);
                 var selectedSchMonthlyDays = ref([]);
                 var onDays = ref('');
-                var assetTagging = <?= count($tagging) > 0 ? "reactive(" . json_encode($tagging) . ")" : "reactive({
-                    assetTaggingId: uuidv4(),
-                    assetTaggingValue: '',
-                    assetTaggingtype: '',
-                    description: '',
-                })" ?>;
+                var assetTagging = reactive(<?= json_encode($tagging); ?>);
                 var valRfid = ref('');
                 var valCoordinate = ref('');
                 var valUhf = ref('');
@@ -1589,7 +1584,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         })
                         Toast.fire({
                             icon: 'success',
-                            title: 'Add Parameter Successfully'
+                            title: 'Successfully Added Parameter'
                         })
                         $('#parameterName').focus();
                     }
@@ -1867,6 +1862,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
 
                         this.myModal.hide();
+                        const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        iconColor: 'white',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'colored-toast'
+                        },
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Successfully Modify Parameter'
+                    })
                     }
                 };
 
@@ -1899,6 +1913,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             }
                             this.params.splice(index, 1);
                             this.param.sortId = this.param.sortId - 1;
+                            const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        iconColor: 'white',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'colored-toast'
+                        },
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Successfully Deleted Parameter'
+                    })
                         }
                     })
 
@@ -1906,8 +1939,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                 function btnSaveSetting() {
                     this.submited = ref(true);
-
-                    if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.assetStatusName == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || (this.assetData.schType == "Daily" && this.assetData.schFrequency == '') || this.statusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
+                    let checkRfid = this.assetTagging.find(function(key, index) {
+                        if (key.assetTaggingtype == 'rfid') return true;
+                    })
+                    let checkCoordinat = this.assetTagging.find(function(key, index) {
+                        if (key.assetTaggingtype == 'coordinat') return true;
+                    })
+                    let checkValueTagging = (checkRfid.assetTaggingValue == "" && checkCoordinat.assetTaggingValue == "" ? true : false);
+                    if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.assetStatusName == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || (this.assetData.schType == "Daily" && this.assetData.schFrequency == '') || this.statusName == '' || checkValueTagging || $('#tableParameter tbody tr').length < 1) {
                         this.submited = ref(false);
                         swal.fire({
                             title: 'Failed!',
@@ -1960,18 +1999,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
 
                         //tagging
-                        if (this.assetTagging.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'rfid') {
+
+                        if (checkRfid.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid') && checkRfid.assetTaggingtype == 'rfid') {
                             $('#valRfid').removeClass('is-invalid');
                         }
-                        if (this.assetTagging.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'coordinat') {
+                        if (checkCoordinat.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && checkCoordinat.assetTaggingtype == 'coordinat') {
                             $('#valCoordinate').removeClass('is-invalid');
                         }
-                        if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
-                            $('#valUhf').removeClass('is-invalid');
-                        }
-                        if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
-                            $('#taggingType').removeClass('is-invalid');
-                        }
+                        // if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
+                        //     $('#valUhf').removeClass('is-invalid');
+                        // }
+                        // if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
+                        //     $('#taggingType').removeClass('is-invalid');
+                        // }
 
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
@@ -2030,25 +2070,31 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
 
                         // tagging
-                        if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'rfid') {
+                        if (checkRfid.assetTaggingValue == '' && checkRfid.assetTaggingtype == 'rfid') {
                             $('#valRfid').addClass('is-invalid');
                         }
-                        if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'coordinat') {
+                        if (checkCoordinat.assetTaggingValue == '' && checkCoordinat.assetTaggingtype == 'coordinat') {
                             $('#valCoordinate').addClass('is-invalid');
                         }
-                        if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'uhf') {
-                            $('#valUhf').addClass('is-invalid');
-                        }
+                        // if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'uhf') {
+                        //     $('#valUhf').addClass('is-invalid');
+                        // }
 
-                        if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
-                            $('#taggingType').addClass('is-invalid');
-                        }
+                        // if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
+                        //     $('#taggingType').addClass('is-invalid');
+                        // }
                         //end tagging
                         if ($('#tableParameter tbody tr').length < 1) {
                             $('#cardParameter').addClass('card-border');
                             $('#cardParameter').addClass('is-invalid');
                         }
                     } else {
+                        let checkRfid = this.assetTagging.find(function(key, index) {
+                            if (key.assetTaggingtype == 'rfid') return true;
+                        })
+                        let checkCoordinat = this.assetTagging.find(function(key, index) {
+                            if (key.assetTaggingtype == 'coordinat') return true;
+                        })
                         if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
                             $('#assetName').removeClass('is-invalid');
                         }
@@ -2067,19 +2113,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
 
                         // tagging
-                        if (this.assetTagging.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid')) {
+                        if (checkRfid.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid')) {
                             $('#valRfid').removeClass('is-invalid');
                         }
-                        if (this.assetTagging.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid')) {
+                        if (checkCoordinat.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid')) {
                             $('#valCoordinate').removeClass('is-invalid');
                         }
-                        if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid')) {
-                            $('#valUhf').removeClass('is-invalid');
-                        }
+                        // if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid')) {
+                        //     $('#valUhf').removeClass('is-invalid');
+                        // }
 
-                        if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
-                            $('#taggingType').removeClass('is-invalid');
-                        }
+                        // if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
+                        //     $('#taggingType').removeClass('is-invalid');
+                        // }
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
                             $('#cardParameter').removeClass('is-invalid');
@@ -2248,16 +2294,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         formdata.append('assetStatusId', this.assetData.assetStatusId);
                         formdata.append('assetStatusName', this.assetData.assetStatusName);
                         // tagging
-                        formdata.append('assetTaggingId', this.assetTagging.assetTaggingId);
-                        if (v.assetTagging.assetTaggingtype == 'rfid') {
-                            formdata.append('assetTaggingValue', v.assetTagging.assetTaggingValue);
-                        } else if (v.assetTagging.assetTaggingtype == 'coordinat') {
-                            formdata.append('assetTaggingValue', v.assetTagging.assetTaggingValue);
-                        } else {
-                            formdata.append('assetTaggingValue', v.assetTagging.assetTaggingValue);
+                        if (this.assetTagging.length) {
+                            let tagging = this.assetTagging;
+                            tagging.forEach((item, i) => {
+                                formdata.append('assetTagging[]', JSON.stringify(item));
+                            })
                         }
-                        formdata.append('assetTaggingType', this.assetTagging.assetTaggingtype);
-                        formdata.append('assetTaggingDescription', this.assetTagging.description);
 
                         // parameter
                         if (this.params.length > 0) {
@@ -2721,33 +2763,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             ...newEdited
                         } = this.parameter[index];
                         let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
-                        if (checkIsEqual) {
-                            for (let i = 0; i < lengthEdited; i++) {
-                                // console.log(this.editedParameter[i].parameterId);
-                                let idEditedParam = this.editedParameter[i].parameterId
-                                if (idEditedParam == this.parameter[index].parameterId) {
-                                    this.myModal.hide();
-                                    this.parameter[index].status = 'old';
-                                    return this.editedParameter.splice(i, 1);
-                                }
-                            }
-                            this.parameter[index].status = 'old';
-                            this.myModal.hide();
-                        } else {
-                            setTimeout(() => {
-                                for (let i = 0; i < lengthEdited; i++) {
-                                    // console.log(this.editedParameter[i].parameterId);
-                                    let idEditedParam = this.editedParameter[i].parameterId
-                                    if (idEditedParam == this.parameter[index].parameterId) {
-                                        this.myModal.hide();
-                                        return this.editedParameter.splice(i, 1);
-                                    }
-                                }
-                            }, 2000);
-                            this.editedParameter.push(this.parameter[index]);
-                            this.parameter[index].status = 'updated';
-                            this.myModal.hide();
-                        }
                         this.myModal.hide();
                         const Toast = Swal.mixin({
                             toast: true,
@@ -2768,6 +2783,29 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             icon: 'success',
                             title: 'Successfully Modify Parameter'
                         })
+                        if (checkIsEqual) {
+                            for (let i = 0; i < lengthEdited; i++) {
+                                // console.log(this.editedParameter[i].parameterId);
+                                let idEditedParam = this.editedParameter[i].parameterId
+                                if (idEditedParam == this.parameter[index].parameterId) {
+                                    this.parameter[index].status = 'old';
+                                    return this.editedParameter.splice(i, 1);
+                                }
+                            }
+                            this.parameter[index].status = 'old';
+                        } else {
+                            setTimeout(() => {
+                                for (let i = 0; i < lengthEdited; i++) {
+                                    // console.log(this.editedParameter[i].parameterId);
+                                    let idEditedParam = this.editedParameter[i].parameterId
+                                    if (idEditedParam == this.parameter[index].parameterId) {
+                                        return this.editedParameter.splice(i, 1);
+                                    }
+                                }
+                            }, 2000);
+                            this.editedParameter.push(this.parameter[index]);
+                            this.parameter[index].status = 'updated';
+                        }
                     }
                 }
 
@@ -2790,18 +2828,29 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     }).then((result) => {
                         if (result.isConfirmed) {
                             var lengthParams = this.parameter.length;
-                            // for (let i = 0; i < lengthParams; i++) {
-                            //     // console.log(v.params[i].sortId);
-                            //     if (v.parameter[i].sortId > v.parameter[index].sortId) {
-                            //         v.parameter[i].sortId = v.parameter[i].sortId - 1;
-                            //     } else {
-                            //         v.parameter[i].sortId = v.parameter[i].sortId;
-                            //     }
-                            // }
                             let data = this.parameter[index];
                             v.deletedParameter.push(data.parameterId);
                             this.parameter.splice(index, 1);
-                            // this.param.sortId = this.param.sortId - 1;
+                            this.param.sortId = this.param.sortId - 1;
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                iconColor: 'white',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                customClass: {
+                                    popup: 'colored-toast'
+                                },
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Successfully Deleted Parameter'
+                            })
                         }
                     })
 
@@ -3065,6 +3114,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             this.params.push(uniqParam[b]);
                         }
                         $('#listImport').modal('hide');
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Successfully Added Parameter'
+                        })
                         $('#tableImport').DataTable().destroy();
                     } else {
                         swal.fire({
@@ -3159,10 +3227,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 }
 
                 function uhf() {
-                    v.assetTagging.assetTaggingValue = ref('');
-                    v.assetTagging.assetTaggingtype = 'uhf';
-                    v.valRfid = ref('');
-                    v.valCoordinate = ref('');
+                    // v.assetTagging.assetTaggingValue = ref('');
+                    // v.assetTagging.assetTaggingtype = 'uhf';
+                    // v.valRfid = ref('');
+                    // v.valCoordinate = ref('');
                 }
 
                 function isEqualParam(index, id) {
@@ -3323,19 +3391,41 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             },
             computed: {
                 rfidValue: {
-                    get(){
-                        if (this.assetTagging[0].assetTaggingtype == 'rfid') {
-                            return this.assetTagging[0].assetTaggingValue
+                    get() {
+                        let lengthTagging = this.assetTagging.length;
+                        if (lengthTagging) {
+                            let checkRfid = this.assetTagging.find(function(key, index) {
+                                if (key.assetTaggingtype == 'rfid') return true;
+                            })
+                            if (checkRfid) {
+                                return checkRfid.assetTaggingValue;
+                            } else {
+                                this.assetTagging.push({
+                                    'assetId': this.assetData.assetId,
+                                    'assetTaggingId': uuidv4(),
+                                    'assetTaggingtype': 'rfid',
+                                    'assetTaggingValue': ''
+                                })
+                            }
                         }
                     },
-                    set(newValue){
-                        if (this.assetTagging[0].assetTaggingtype == 'rfid') {
-                            this.assetTagging[0].assetTaggingValue = newValue;
+                    set(newValue) {
+                        let lengthTagging = this.assetTagging.length;
+                        if (lengthTagging) {
+                            if (this.assetTagging[0].assetTaggingtype == 'rfid') {
+                                this.assetTagging[0].assetTaggingValue = newValue;
+                            } else {
+                                for (let i = 0; i < this.assetTagging.length; i++) {
+                                    if (this.assetTagging[i].assetTaggingtype == 'rfid') {
+                                        this.assetTagging[i].assetTaggingValue = newValue;
+                                    }
+                                }
+                            }
                         }
                     }
                 },
                 coordinatValue: {
-                    get(){
+                    get() {
                         let lengthTagging = this.assetTagging.length;
                         if (lengthTagging) {
                             for (let i = 0; i < lengthTagging; i++) {
@@ -3345,9 +3435,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             }
                         }
                     },
-                    set(newValue){
+                    set(newValue) {
                         let lengthTagging = this.assetTagging.length;
-                        if (lengthTagging > 1) {
+                        if (lengthTagging) {
                             for (let i = 0; i < lengthTagging; i++) {
                                 if (this.assetTagging[i].assetTaggingtype == 'coordinat') {
                                     this.assetTagging[i].assetTaggingValue = newValue;
@@ -3419,15 +3509,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         })
 
         $(document).ready(function() {
-            let lengthTagging = v.assetTagging.length;
-            console.log(lengthTagging);
-            if (lengthTagging > 1) {
-                for (let i = 0; i < lengthTagging; i++) {
-                    if (v.assetTagging[i].assetTaggingtype == 'rfid') {
-                        console.log("rfid")
-                    }
-                }
-            }
+            // let lengthTagging = v.assetTagging.length;
+            // console.log(lengthTagging);
+            // if (lengthTagging > 1) {
+            //     for (let i = 0; i < lengthTagging; i++) {
+            //         if (v.assetTagging[i].assetTaggingtype == 'rfid') {
+            //             console.log("rfid")
+            //         }
+            //     }
+            // }
             // if (v.assetTagging.assetTaggingtype != '') {
             //     if (v.assetTagging.assetTaggingtype == 'coordinat') {
             //         v.valCoordinate = v.assetTagging.assetTaggingValue;
@@ -3493,48 +3583,49 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         // map tagging
         $(document).ready(function() {
             mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-            let lengthTagging = v.assetTagging.length;
-            for (let i = 0; i < lengthTagging; i++) {
-                if (v.assetTagging[i].assetTaggingtype == 'coordinat' && v.assetTagging[i].assetTaggingValue != '') {
-                    var latlong = v.assetTagging[i].assetTaggingValue.split(",");
-                    var map = new mapboxgl.Map({
-                        container: 'mapTagging', // container ID
-                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                        center: [latlong[1], latlong[0]], // starting position [lng, lat]
-                        zoom: 14, // starting zoom
-                    });
-                    var marker = new mapboxgl.Marker({
-                            draggable: true,
-                        })
-                        .setLngLat([latlong[1], latlong[0]])
-                        .addTo(map);
+            for (let i = 0; i < v.assetTagging.length; i++) {
+                let checkCoordinat = v.assetTagging.find(function(key, index) {
+                    if (key.assetTaggingtype == 'coordinat') return true;
+                })
+                if (checkCoordinat) {
+                    var latlong = (checkCoordinat.assetTaggingValue.split(",")).reverse();
+                    break;
                 } else {
-                    var map = new mapboxgl.Map({
-                        container: 'mapTagging', // container ID
-                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                        center: [109.005913, -7.727989], // starting position [lng, lat]
-                        zoom: 14, // starting zoom
-                    });
-                    var marker = new mapboxgl.Marker({
-                            draggable: true,
-                        })
-                        .setLngLat([109.005913, -7.727989])
-                        .addTo(map);
+                    v.assetTagging.push({
+                        'assetId': v.assetData.assetId,
+                        'assetTaggingId': uuidv4(),
+                        'assetTaggingtype': 'coordinat',
+                        'assetTaggingValue': ''
+                    })
+                    var latlong = [109.01134179104685, -7.730072747845469];
+                    break;
                 }
-                map.addControl(new mapboxgl.FullscreenControl());
-                map.resize();
-    
-                function onDragEnd(params) {
-                    const lnglat = marker.getLngLat();
-                    // coordinates.style.display = 'block';
-                    let lat = lnglat.lat;
-                    let long = lnglat.lng;
-                    v.valCoordinate = lat + "," + long;
-                    v.assetTagging[i].assetTaggingValue = v.valCoordinate;
-                }
-                marker.on('dragend', onDragEnd);
-                return;
             }
+            var map = new mapboxgl.Map({
+                container: 'mapTagging', // container ID
+                style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                center: [latlong[0], latlong[1]], // starting position [lng, lat]
+                zoom: 14, // starting zoom
+            });
+            var marker = new mapboxgl.Marker({
+                    draggable: true,
+                })
+                .setLngLat([latlong[0], latlong[1]])
+                .addTo(map);
+
+            function onDragEnd(params) {
+                const lnglat = marker.getLngLat();
+                // coordinates.style.display = 'block';
+                let lat = lnglat.lat;
+                let long = lnglat.lng;
+                v.valCoordinate = lat + "," + long;
+                for (let i = 0; i < v.assetTagging.length; i++) {
+                    if (v.assetTagging[i].assetTaggingtype == 'coordinat') {
+                        v.assetTagging[i].assetTaggingValue = v.valCoordinate;
+                    }
+                }
+            }
+            marker.on('dragend', onDragEnd);
         })
 
         $(document).ready(function() {
