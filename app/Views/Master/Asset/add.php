@@ -172,8 +172,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col-9 p-0">
                                             <input type="number" class="form-control min" name="min" placeholder="Min Value" v-model="param.min">
                                             <div class="invalid-feedback">
-                                                    Field cannot be empty.
-                                                </div>
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
                                     <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
@@ -181,8 +181,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col-9 p-0">
                                             <input type="number" class="form-control max" name="max" placeholder="Max Value" v-model="param.max">
                                             <div class="invalid-feedback">
-                                                    Field cannot be empty.
-                                                </div>
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
                                     <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
@@ -208,8 +208,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col-9 p-0">
                                             <input type="text" class="form-control uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
                                             <div class="invalid-feedback">
-                                                    Field cannot be empty.
-                                                </div>
+                                                Field cannot be empty.
+                                            </div>
                                         </div>
                                     </div>
                                     <div :class="((param.inputType == 'select') || (param.inputType == 'checkbox') ? 'row mb-3' : 'd-none')">
@@ -510,7 +510,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="invalid-feedback">
                                             Field cannot be empty.
                                         </div>
-                                        <div :class="setSch == 'Manual' ? 'mt-1' : 'd-none'" style="font-size: 80%; width: 100%; color: #e55353">
+                                        <div :class="setSch == 'Manual' ? 'mt-1' : 'd-none'" style="font-size: 80%; width: 100%; color: #20202a">
                                             Please set schedule on schedule page
                                         </div>
                                     </div>
@@ -647,7 +647,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     </div>
                 </div>
                 <div class="col-6 pb-4">
-                <div class="card card-main h-100" id="cardTagging">
+                    <div class="card card-main h-100" id="cardTagging">
                         <div class="d-flex justify-content-start align-items-center">
                             <div>
                                 <h5>
@@ -689,7 +689,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                     <label for="asset">Value <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="text" class="form-control" id="valRfid" name="valRfid" placeholder="Tagging Value" v-model="assetTagging.assetTaggingValue" required>
+                                                    <input type="text" class="form-control" id="valRfid" name="valRfid" placeholder="Tagging Value" v-model="rfidValue" required>
                                                     <div class="invalid-feedback">
                                                         Field cannot be empty.
                                                     </div>
@@ -703,10 +703,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         <div class="col-12">
                                             <div class="form-group row d-flex align-items-center">
                                                 <div class="col-3">
-                                                    <label for="asset">Value<span class="required">*</span></label>
+                                                    <label for="asset">Value <span class="required">*</span></label>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="text" class="form-control" id="valCoordinate" name="valCoordinate" placeholder="Latitude, Longitude" v-model="valCoordinate" required>
+                                                    <input type="text" class="form-control" id="valCoordinate" name="valCoordinate" placeholder="Latitude, Longitude" v-model="coordinatValue" required>
                                                     <div class="invalid-feedback">
                                                         Field cannot be empty.
                                                     </div>
@@ -956,12 +956,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 tagId: [],
                 tagLocationId: [],
             });
-            var assetTagging = reactive({
-                assetId: assetData.assetId,
-                assetTaggingId: uuidv4(),
-                assetTaggingtype: 'rfid',
-                assetTaggingValue: '',
-            });
+            var assetTagging = reactive([{
+                    assetId: assetData.assetId,
+                    assetTaggingId: uuidv4(),
+                    assetTaggingtype: 'rfid',
+                    assetTaggingValue: '',
+                },
+                {
+                    assetId: assetData.assetId,
+                    assetTaggingId: uuidv4(),
+                    assetTaggingtype: 'coordinat',
+                    assetTaggingValue: '',
+                }
+            ]);
             var setSch = ref('');
             var selectedSchWeekly = ref([]);
             var selectedSchMonthlyDays = ref([]);
@@ -1053,6 +1060,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         this.params.push(uniqParam[i]);
                     }
                     $('#listImport').modal('hide');
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        iconColor: 'white',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'colored-toast'
+                        },
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Successfully Added Parameter'
+                    })
                     $('#tableImport').DataTable().destroy();
                 } else {
                     swal.fire({
@@ -1060,37 +1086,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         title: "There's no data added!"
                     })
                 }
-                return
-                axios.post("<?= base_url('Asset/insertParameter'); ?>", {
-                    dataParam: v.listNewParam,
-                    assetId: this.assetData.assetId
-                }).then(res => {
-                    console.log(res);
-                    if (res.data.status == 'success') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire(
-                            'Success!',
-                            'You have successfully add parameter.',
-                            'success'
-                        ).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
-                        })
-                    }
-                })
             };
 
             function addParameter() {
@@ -1302,24 +1297,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('#normal').val('').trigger("change");
                     $('#abnormal').val('').trigger('change');
                     const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            iconColor: 'white',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
-                            customClass: {
-                                popup: 'colored-toast'
-                            },
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        })
-                        Toast.fire({
+                        toast: true,
+                        position: 'top-end',
+                        iconColor: 'white',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'colored-toast'
+                        },
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+                    Toast.fire({
                         icon: 'success',
-                        title: 'Add Parameter Successfully'
-                        })
+                        title: 'Successfully Added Parameter'
+                    })
                     $('#parameterName').focus();
                 }
             }
@@ -1610,6 +1605,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.param.inputType = '';
                     this.param.showOn = '';
                     this.param.i = null;
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        iconColor: 'white',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'colored-toast'
+                        },
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Successfully Modify Parameter'
+                    })
 
                     $('#previewImg').hide();
                     $('#imgParam').remove();
@@ -1643,6 +1657,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     reverseButtons: false
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Successfully Deleted Parameter'
+                        })
                         this.params.splice(index, 1)
                     }
                 })
@@ -1777,7 +1810,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             function save() {
                 this.submited = true;
                 let checkSchType = ((this.assetData.schType == "") && (this.setSch == 'Automatic')) ? true : false;
-                if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || this.setSch == "" || checkSchType == true || (v.assetData.schType == 'Daily' && v.assetData.schFrequency == "") || (v.assetData.schType == 'Weekly' && v.assetData.schWeekDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == 'days' && v.assetData.schDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == "on" && v.assetData.schWeeks == "") || this.assetData.assetStatusName == '' || this.assetTagging.assetTaggingValue == '' || this.assetTagging.assetTaggingtype == '' || $('#tableParameter tbody tr').length < 1) {
+                let checkRfid = this.assetTagging.find(function(key, index) {
+                    if (key.assetTaggingtype == 'rfid') return true;
+                })
+                let checkCoordinat = this.assetTagging.find(function(key, index) {
+                    if (key.assetTaggingtype == 'coordinat') return true;
+                })
+                let checkValueTagging = (checkRfid.assetTaggingValue == "" && checkCoordinat.assetTaggingValue == "" ? true : false);
+                if (this.assetData.assetName == "" || this.assetData.assetNumber == "" || this.assetData.tagId == "" || this.assetData.tagLocationId == "" || this.setSch == "" || checkSchType == true || (v.assetData.schType == 'Daily' && v.assetData.schFrequency == "") || (v.assetData.schType == 'Weekly' && v.assetData.schWeekDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == 'days' && v.assetData.schDays == "") || (v.assetData.schType == 'Monthly' && v.onDays == "on" && v.assetData.schWeeks == "") || this.assetData.assetStatusName == '' || checkValueTagging || $('#tableParameter tbody tr').length < 1) {
                     this.submited = false;
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
@@ -1839,18 +1879,18 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     }
 
                     //tagging
-                    if (this.assetTagging.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'rfid') {
+                    if (checkRfid.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid') && checkRfid.assetTaggingtype == 'rfid') {
                         $('#valRfid').removeClass('is-invalid');
                     }
-                    if (this.assetTagging.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'coordinat') {
+                    if (checkCoordinat.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && checkCoordinat.assetTaggingtype == 'coordinat') {
                         $('#valCoordiinate').removeClass('is-invalid');
                     }
-                    if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
-                        $('#valUhf').removeClass('is-invalid');
-                    }
-                    if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
-                        $('#taggingType').removeClass('is-invalid');
-                    }
+                    // if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
+                    //     $('#valUhf').removeClass('is-invalid');
+                    // }
+                    // if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
+                    //     $('#taggingType').removeClass('is-invalid');
+                    // }
 
                     if ($('#tableParameter tbody tr').length >= 1) {
                         $('#cardParameter').removeClass('card-border');
@@ -1912,24 +1952,30 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('#operation').addClass('invalid');
                     }
                     //tagging
-                    if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'rfid') {
+                    if (checkRfid.assetTaggingValue == '' && checkRfid.assetTaggingtype == 'rfid') {
                         $('#valRfid').addClass('is-invalid');
                     }
-                    if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'coordinat') {
+                    if (checkCoordinat.assetTaggingValue == '' && checkCoordinat.assetTaggingtype == 'coordinat') {
                         $('#valCoordinate').addClass('is-invalid');
                     }
-                    if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'uhf') {
-                        $('#valUhf').addClass('is-invalid');
-                    }
-                    if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
-                        $('#taggingType').addClass('is-invalid');
-                    }
+                    // if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'uhf') {
+                    //     $('#valUhf').addClass('is-invalid');
+                    // }
+                    // if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
+                    //     $('#taggingType').addClass('is-invalid');
+                    // }
                     //end tagging
 
                     if ($('#tableParameter tbody tr').length < 1) {
                         $('#cardParameter').addClass('card-border');
                     }
                 } else {
+                    let checkRfid = this.assetTagging.find(function(key, index) {
+                        if (key.assetTaggingtype == 'rfid') return true;
+                    })
+                    let checkCoordinat = this.assetTagging.find(function(key, index) {
+                        if (key.assetTaggingtype == 'coordinat') return true;
+                    })
                     if (this.assetData.assetName != '' && $('#assetName').hasClass('is-invalid')) {
                         $('#assetName').removeClass('is-invalid');
                     }
@@ -1948,18 +1994,18 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     }
 
                     //tagging
-                    if (this.assetTagging.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'rfid') {
+                    if (checkRfid.assetTaggingValue != '' && $('#valRfid').hasClass('is-invalid') && checkRfid.assetTaggingtype == 'rfid') {
                         $('#valRfid').removeClass('is-invalid');
                     }
-                    if (this.assetTagging.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'coordinat') {
+                    if (checkCoordinat.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && checkCoordinat.assetTaggingtype == 'coordinat') {
                         $('#valCoordinate').removeClass('is-invalid');
                     }
-                    if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
-                        $('#valUhf').removeClass('is-invalid');
-                    }
-                    if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
-                        $('#taggingType').removeClass('is-invalid');
-                    }
+                    // if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
+                    //     $('#valUhf').removeClass('is-invalid');
+                    // }
+                    // if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
+                    //     $('#taggingType').removeClass('is-invalid');
+                    // }
 
                     if ($('#tableParameter tbody tr').length >= 1) {
                         $('#cardParameter').removeClass('card-border');
@@ -2121,10 +2167,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     formdata.append('assetStatusId', this.assetData.assetStatusId);
                     formdata.append('assetStatusName', this.assetData.assetStatusName);
                     // tagging
-                    formdata.append('assetTaggingId', this.assetTagging.assetTaggingId);
-                    formdata.append('assetTaggingValue', this.assetTagging.assetTaggingValue);
-                    formdata.append('assetTaggingtype', this.assetTagging.assetTaggingtype);
-                    formdata.append('assetTaggingDescription', "");
+                    if (this.assetTagging.length) {
+                        let tagging = this.assetTagging;
+                        tagging.forEach((item, i) => {
+                            formdata.append('assetTagging[]', JSON.stringify(item));
+                        })
+                    }
 
                     // parameter
                     if (this.params.length > 0) {
@@ -2204,14 +2252,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function coordinate() {
-                v.assetTagging.assetTaggingValue = ref('')
-                v.assetTagging.assetTaggingtype = 'coordinat';
+                // v.assetTagging.assetTaggingValue = ref('')
+                // v.assetTagging.assetTaggingtype = 'coordinat';
             };
 
             function rfid() {
-                v.assetTagging.assetTaggingValue = ref('');
-                v.assetTagging.assetTaggingtype = 'rfid';
-                v.valCoordinate = ref('');
+                // v.assetTagging.assetTaggingValue = ref('');
+                // v.assetTagging.assetTaggingtype = 'rfid';
+                // v.valCoordinate = ref('');
             };
 
             function uhf() {
@@ -2297,6 +2345,52 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 submited,
             };
         },
+        computed: {
+            rfidValue: {
+                get() {
+                    let lengthTagging = this.assetTagging.length;
+                    if (lengthTagging) {
+                        for (let i = 0; i < lengthTagging; i++) {
+                            if (this.assetTagging[i].assetTaggingtype == 'rfid') {
+                                return this.assetTagging[i].assetTaggingValue
+                            }
+                        }
+                    }
+                },
+                set(newValue) {
+                    let lengthTagging = this.assetTagging.length;
+                    if (lengthTagging) {
+                        for (let i = 0; i < this.assetTagging.length; i++) {
+                            if (this.assetTagging[i].assetTaggingtype == 'rfid') {
+                                this.assetTagging[i].assetTaggingValue = newValue;
+                            }
+                        }
+                    }
+                }
+            },
+            coordinatValue: {
+                get() {
+                    let lengthTagging = this.assetTagging.length;
+                    if (lengthTagging) {
+                        for (let i = 0; i < lengthTagging; i++) {
+                            if (this.assetTagging[i].assetTaggingtype == 'coordinat') {
+                                return this.assetTagging[i].assetTaggingValue
+                            }
+                        }
+                    }
+                },
+                set(newValue) {
+                    let lengthTagging = this.assetTagging.length;
+                    if (lengthTagging) {
+                        for (let i = 0; i < lengthTagging; i++) {
+                            if (this.assetTagging[i].assetTaggingtype == 'coordinat') {
+                                this.assetTagging[i].assetTaggingValue = newValue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }).mount('#app');
 
     function uuidv4() {
@@ -2848,7 +2942,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             let lat = lnglat.lat;
             let long = lnglat.lng;
             v.valCoordinate = lat + "," + long;
-            v.assetTagging.assetTaggingValue = v.valCoordinate;
+            for (let i = 0; i < v.assetTagging.length; i++) {
+                if (v.assetTagging[i].assetTaggingtype == 'coordinat') {
+                    v.assetTagging[i].assetTaggingValue = v.valCoordinate;
+                }
+            }
         }
         marker.on('dragend', onDragEnd);
     })
