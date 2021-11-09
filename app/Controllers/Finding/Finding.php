@@ -225,7 +225,11 @@ class Finding extends BaseController
 	public function closeFinding()
 	{
         if(!checkRoleList("FINDING.CLOSE")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
         }
 
 		$scheduleTrxModel = new ScheduleTrxModel();

@@ -132,8 +132,8 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <?php if ($scheduleTrxData["approvedAt"] == null) { ?>
+
+                    <?php if ($scheduleTrxData["approvedAt"] == null & checkRoleList("TRX.APPROVE")) { ?>
                         <div class="slide-button mt-5" id="slideApproveBg">
                             <button type="button" class="btn btn-success" id="slideApprove"><i class="fa fa-check font-xl"></i></button>
                             <label>Slide to Approve</label>
@@ -179,7 +179,22 @@
 
                                     <?php if ($scheduleTrxData["approvedAt"] != null) { ?>
                                         <td class="text-center">
-                                            <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
+                                            <template v-if="isNullEmptyOrUndefined(val.findingId)">
+                                                <?php if (checkRoleList("FINDING.OPEN")) { ?>
+                                                    <a :href="'<?= base_url() ?>/Finding/issue?trxId=' + val.trxId" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</button>
+                                                <?php } ?>
+                                            </template>
+                                            <template v-else>
+                                                <?php if (checkRoleList("FINDING.DETAIL.VIEW")) { ?>
+                                                    <a :href="'<?= base_url() ?>/Finding/detail?findingId=' + val.findingId" target="_blank" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</button>
+                                                <?php } ?>
+                                            </template>
+
+                                            <!-- <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a> -->
                                         </td>
                                     <?php } ?>
                                 </tr>
@@ -243,54 +258,56 @@
                 scheduleTrxData.descriptionJson = [];
             }
 
-            const approveTrx = () => {
-                Swal.fire({
-                    title: "Do You Want Approve This Transaction ?",
-                    html: "<textarea id='notesApprove' class='form-control' placeholder='Leave a comment'></textarea>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Yes"
-                }).then((result) => {
-                    let notesApprove = $("#notesApprove").val();
-                    $("#btnAppTrx").html('<i class="fa fa-spinner fa-pulse"></i> Processing');
-                    $("#btnAppTrx").attr("disabled", true);
-                    if (result.value) {
-                        Swal.fire({
-                            title: "Wait a minute, Approve on processing",
-                            icon: "info",
-                            showCancelButton: false,
-                            showConfirmButton: false
-                        });
+            <?php if ($scheduleTrxData["approvedAt"] == null & checkRoleList("TRX.APPROVE")) : ?>
+                const approveTrx = () => {
+                    Swal.fire({
+                        title: "Do You Want Approve This Transaction ?",
+                        html: "<textarea id='notesApprove' class='form-control' placeholder='Leave a comment'></textarea>",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes"
+                    }).then((result) => {
+                        let notesApprove = $("#notesApprove").val();
+                        $("#btnAppTrx").html('<i class="fa fa-spinner fa-pulse"></i> Processing');
+                        $("#btnAppTrx").attr("disabled", true);
+                        if (result.value) {
+                            Swal.fire({
+                                title: "Wait a minute, Approve on processing",
+                                icon: "info",
+                                showCancelButton: false,
+                                showConfirmButton: false
+                            });
 
-                        let response = axios.post("<?= base_url() ?>/Transaction/approveTrx", {
-                            "scheduleTrxId": "<?= $scheduleTrxData["scheduleTrxId"]; ?>",
-                            "approvedNotes": notesApprove
-                        }).then((res) => {
-                            xhrThrowRequest(res)
-                                .then(() => {
-                                    Swal.fire({
-                                        title: res.data.message,
-                                        icon: "success",
-                                        timer: 3000
-                                    }).then(() => {
-                                        window.location.reload();
+                            let response = axios.post("<?= base_url() ?>/Transaction/approveTrx", {
+                                "scheduleTrxId": "<?= $scheduleTrxData["scheduleTrxId"]; ?>",
+                                "approvedNotes": notesApprove
+                            }).then((res) => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        Swal.fire({
+                                            title: res.data.message,
+                                            icon: "success",
+                                            timer: 3000
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
+                                        }
+                                        $('#slideApprove').removeClass('unlocked');
+                                        $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
                                     });
-                                })
-                                .catch((rej) => {
-                                    if (rej.throw) {
-                                        throw new Error(rej.message);
-                                    }
-                                    $('#slideApprove').removeClass('unlocked');
-                                    $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
-                                });
-                        });
-                    } else {
-                        $('#slideApprove').removeClass('unlocked');
-                        $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
-                    }
-                });
-            };
+                            });
+                        } else {
+                            $('#slideApprove').removeClass('unlocked');
+                            $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
+                        }
+                    });
+                };
+            <?php endif; ?>
 
             return {
                 moment,
@@ -299,76 +316,80 @@
                 attachmentTrxData,
                 isNullEmptyOrUndefined,
                 xhrThrowRequest,
-                approveTrx,
-                checkAbnormal
+                checkAbnormal,
+
+                <?= (($scheduleTrxData["approvedAt"] == null & checkRoleList("TRX.APPROVE")) ? "approveTrx," : "") ?>
+                <?= (($scheduleTrxData["approvedAt"] == null & checkRoleList("TRX.APPROVE")) ? "" : "") ?>
             }
         }
     }).mount("#app");
 
-    (function() {
-        var initialMouse = 0;
-        var slideMovementTotal = 0;
-        var mouseIsDown = false;
-        var slider = $('#slideApprove');
+    <?php if ($scheduleTrxData["approvedAt"] == null & checkRoleList("TRX.APPROVE")) : ?>
+            (function() {
+                var initialMouse = 0;
+                var slideMovementTotal = 0;
+                var mouseIsDown = false;
+                var slider = $('#slideApprove');
 
-        slider.on('mousedown touchstart', function(event) {
-            mouseIsDown = true;
-            slideMovementTotal = $('#slideApproveBg').width() - $(this).width() + 10;
-            initialMouse = event.clientX || event.originalEvent.touches[0].pageX;
-        });
-
-        $(document.body, '#slideApprove').on('mouseup touchend', function(event) {
-            if (!mouseIsDown)
-                return;
-            mouseIsDown = false;
-            var currentMouse = event.clientX || event.changedTouches[0].pageX;
-            var relativeMouse = currentMouse - initialMouse;
-
-            if (relativeMouse < slideMovementTotal) {
-                $('.slide-button label').fadeTo(300, 1);
-                slider.animate({
-                    left: "0px"
-                }, 300);
-                return;
-            }
-            slider.addClass('unlocked');
-            slider.html(`<i class="fa fa-spinner fa-spin font-xl"></i> Approving`);
-            v.approveTrx();
-
-            setTimeout(() => {
-                slider.css({
-                    'left': '0px'
+                slider.on('mousedown touchstart', function(event) {
+                    mouseIsDown = true;
+                    slideMovementTotal = $('#slideApproveBg').width() - $(this).width() + 10;
+                    initialMouse = event.clientX || event.originalEvent.touches[0].pageX;
                 });
-                $('.slide-button label').fadeTo(0, 100);
-            }, 100);
-        });
 
-        $(document.body).on('mousemove touchmove', function(event) {
-            if (!mouseIsDown)
-                return;
+                $(document.body, '#slideApprove').on('mouseup touchend', function(event) {
+                    if (!mouseIsDown)
+                        return;
+                    mouseIsDown = false;
+                    var currentMouse = event.clientX || event.changedTouches[0].pageX;
+                    var relativeMouse = currentMouse - initialMouse;
 
-            var currentMouse = event.clientX || event.originalEvent.touches[0].pageX;
-            var relativeMouse = currentMouse - initialMouse;
-            var slidePercent = 1 - (relativeMouse / slideMovementTotal);
+                    if (relativeMouse < slideMovementTotal) {
+                        $('.slide-button label').fadeTo(300, 1);
+                        slider.animate({
+                            left: "0px"
+                        }, 300);
+                        return;
+                    }
+                    slider.addClass('unlocked');
+                    slider.html(`<i class="fa fa-spinner fa-spin font-xl"></i> Approving`);
+                    v.approveTrx();
 
-            $('.slide-button label').fadeTo(0, slidePercent);
-
-            if (relativeMouse <= 0) {
-                slider.css({
-                    'left': '0px'
+                    setTimeout(() => {
+                        slider.css({
+                            'left': '0px'
+                        });
+                        $('.slide-button label').fadeTo(0, 100);
+                    }, 100);
                 });
-                return;
-            }
-            if (relativeMouse >= slideMovementTotal + 10) {
-                slider.css({
-                    'left': slideMovementTotal + 'px'
+
+                $(document.body).on('mousemove touchmove', function(event) {
+                    if (!mouseIsDown)
+                        return;
+
+                    var currentMouse = event.clientX || event.originalEvent.touches[0].pageX;
+                    var relativeMouse = currentMouse - initialMouse;
+                    var slidePercent = 1 - (relativeMouse / slideMovementTotal);
+
+                    $('.slide-button label').fadeTo(0, slidePercent);
+
+                    if (relativeMouse <= 0) {
+                        slider.css({
+                            'left': '0px'
+                        });
+                        return;
+                    }
+                    if (relativeMouse >= slideMovementTotal + 10) {
+                        slider.css({
+                            'left': slideMovementTotal + 'px'
+                        });
+                        return;
+                    }
+                    slider.css({
+                        'left': relativeMouse - 10
+                    });
                 });
-                return;
-            }
-            slider.css({
-                'left': relativeMouse - 10
-            });
-        });
-    })();
+            })();
+    <?php endif; ?>
 </script>
 <?= $this->endSection(); ?>

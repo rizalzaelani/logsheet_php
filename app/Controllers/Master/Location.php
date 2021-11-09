@@ -3,8 +3,6 @@
 namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
-use App\Models\AssetModel;
-use App\Models\AssetTaggingModel;
 use App\Models\AssetTagLocationModel;
 use App\Models\TagLocationModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
@@ -13,6 +11,10 @@ class Location extends BaseController
 {
     public function index()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
         $data = array(
             'title' => 'Location',
             'subtitle' => 'List Location',
@@ -33,11 +35,23 @@ class Location extends BaseController
 
     public function datatable()
     {
+		$request = \Config\Services::request();
+
+        if(!checkRoleList("MASTER.TAGLOCATION.VIEW")){
+			echo json_encode(array(
+				"draw" => $request->getPost('draw'),
+				"recordsTotal" => 0,
+				"recordsFiltered" => 0,
+				"data" => [],
+				'status' => 403,
+				'message' => "You don't have access to this page"
+			));
+        }
+
         $table = "tblm_tagLocation";
         $column_order = array('tagLocationName', 'latitude', 'longitude', 'description', 'createdAt');
         $column_search = array('tagLocationName', 'latitude', 'longitude', 'description', 'createdAt');
         $order = array('createdAt' => 'asc');
-        $request = \Config\Services::request();
         $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
         $where = [];
         $list = $DTModel->datatable($where);
@@ -54,6 +68,10 @@ class Location extends BaseController
 
     public function detail($tagLocationId)
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.DETAIL")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
         $model = new TagLocationModel();
         $location = $model->where('tagLocationId', $tagLocationId)->first();
         $data = array(
@@ -79,6 +97,10 @@ class Location extends BaseController
 
     public function add()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.ADD")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
         $model = new TagLocationModel();
         $data = array(
             'title' => 'Add Tag Location',
@@ -102,6 +124,14 @@ class Location extends BaseController
 
     public function addTagLocation()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.ADD")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $model = new TagLocationModel();
         $json = $this->request->getJSON();
         if ($json->tagLocationName != '') {
@@ -121,6 +151,14 @@ class Location extends BaseController
 
     public function update()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.UPDATE")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $model = new TagLocationModel();
         $json = $this->request->getJSON();
         $id = $json->tagLocationId;
@@ -139,6 +177,14 @@ class Location extends BaseController
 
     public function delete()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.DELETE")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $locationModel = new TagLocationModel();
         $assetLocationModel = new AssetTagLocationModel();
         $json = $this->request->getJSON();
@@ -155,10 +201,22 @@ class Location extends BaseController
 
     public function download()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT.SAMPLE")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
         return $this->response->download('../public/download/location.xlsx', null);
     }
     public function uploadFile()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $file = $this->request->getFile('fileImportLocation');
         if ($file) {
             $newName = "doc" . time();
@@ -224,6 +282,14 @@ class Location extends BaseController
 
     public function insertLocation()
     {
+        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $tagLocationModel = new TagLocationModel();
         $json = $this->request->getJSON();
         $dataLocation = $json->dataLocation;

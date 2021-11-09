@@ -129,9 +129,20 @@
 
                                     <?php if ($scheduleTrxData["approvedAt"] != null) : ?>
                                         <td class="text-center">
-                                            <?php if (checkRoleList("FINDING.DETAIL.VIEW")) : ?>
-                                                <a :href="'<?= base_url() ?>/Finding/' + (isNullEmptyOrUndefined(val.findingId) ? 'issue?trxId=' + val.trxId : 'detail?findingId=' + val.findingId)" :target="(isNullEmptyOrUndefined(val.findingId) ? '' : '_blank')" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
-                                            <?php endif; ?>
+                                            <template v-if="isNullEmptyOrUndefined(val.findingId)">
+                                                <?php if (checkRoleList("FINDING.OPEN")) { ?>
+                                                    <a :href="'<?= base_url() ?>/Finding/issue?trxId=' + val.trxId" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</button>
+                                                <?php } ?>
+                                            </template>
+                                            <template v-else>
+                                                <?php if (checkRoleList("FINDING.DETAIL.VIEW")) { ?>
+                                                    <a :href="'<?= base_url() ?>/Finding/detail?findingId=' + val.findingId" target="_blank" class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</a>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-sm" v-if="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != ''" :class="(checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class != '' ? 'btn-' + (checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>')).class : ''">{{ checkAbnormal(val, '<?= $scheduleTrxData["approvedAt"] ?? '' ?>').name }}</button>
+                                                <?php } ?>
+                                            </template>
                                         </td>
                                     <?php endif; ?>
                                 </tr>
