@@ -24,8 +24,13 @@ class Asset extends BaseController
 		$this->db = db_connect();
 		helper('form');
 	}
+
 	public function index()
 	{
+        if(!checkRoleList("MASTER.ASSET.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$assetModel			= new AssetModel();
 		$tagModel			= new TagModel();
 		$tagLocationModel	= new TagLocationModel();
@@ -55,11 +60,23 @@ class Asset extends BaseController
 
 	public function datatable()
 	{
+		$request = \Config\Services::request();
+
+        if(!checkRoleList("MASTER.ASSET.VIEW")){
+			echo json_encode(array(
+				"draw" => $request->getPost('draw'),
+				"recordsTotal" => 0,
+				"recordsFiltered" => 0,
+				"data" => [],
+				'status' => 403,
+				'message' => "You don't have access to this page"
+			));
+        }
+
 		$table = 'vw_asset';
 		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
 		$column_search = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
 		$order = array('createdAt' => 'desc');
-		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 
 		$filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
@@ -82,6 +99,10 @@ class Asset extends BaseController
 
 	public function add()
 	{
+        if(!checkRoleList("MASTER.ASSET.ADD.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$modelAsset = new AssetModel();
 
 		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
@@ -115,12 +136,19 @@ class Asset extends BaseController
 
 	public function addAsset()
 	{
+        if(!checkRoleList("MASTER.ASSET.ADD")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
 		$assetModel = new AssetModel();
 		$tagModel	= new TagModel();
 		$tagLocationModel	= new TagLocationModel();
 		$assetTagLocationModel = new AssetTagLocationModel();
 		$assetTagModel = new AssetTagModel();
-		$assetStatusModel = new AssetStatusModel();
 		$assetTaggingModel = new AssetTaggingModel();
 		$parameterModel = new ParameterModel();
 
@@ -278,9 +306,11 @@ class Asset extends BaseController
 
 	public function detail($assetId)
 	{
+        if(!checkRoleList("MASTER.ASSET.DETAIL")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$model = new AssetModel();
-		$parameterModel = new ParameterModel();
-		$assetStatusModel = new AssetStatusModel();
 		$assetTaggingModel = new AssetTaggingModel();
 
 		$assetData = $model->getById($assetId);
@@ -340,6 +370,14 @@ class Asset extends BaseController
 
 	public function saveSetting()
 	{
+        if(!checkRoleList("MASTER.ASSET.UPDATE")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
 		$assetModel = new AssetModel();
 		$tagModel = new TagModel();
 		$tagLocationModel = new TagLocationModel();
@@ -577,6 +615,14 @@ class Asset extends BaseController
 
 	public function delete()
 	{
+        if(!checkRoleList("MASTER.ASSET.DELETE")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
 		$model = new AssetModel();
 		$json  = $this->request->getJSON();
 		if (!empty($json->assetId)) {
@@ -588,229 +634,25 @@ class Asset extends BaseController
 		die();
 	}
 
-	public function updateTag()
-	{
-		$assetTagModel = new AssetTagModel();
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		if ($json->assetId != '' && count($json->tagId) > 0) {
-			$length = count($json->tagId);
-			$assetTagModel->deleteById($assetId);
-			for ($i = 0; $i < $length; $i++) {
-				$data = array(
-					'assetTagId' => null,
-					'assetId' => $json->assetId,
-					'tagId' => $json->tagId[$i]
-				);
-				$assetTagModel->insert($data);
-			}
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		} else {
-			$assetTagModel->deleteById($assetId);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		}
-		die();
-	}
-
-	public function updateTagLocation()
-	{
-		$assetTagLocationModel = new AssetTagLocationModel();
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		if ($json->assetId != '' && count($json->tagLocationId) > 0) {
-			$length = count($json->tagLocationId);
-			$assetTagLocationModel->deleteById($assetId);
-			for ($i = 0; $i < $length; $i++) {
-				$data = array(
-					'assetTagLocationId' => null,
-					'assetId' => $json->assetId,
-					'tagLocationId' => $json->tagLocationId[$i]
-				);
-				$assetTagLocationModel->insert($data);
-			}
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		} else {
-			$assetTagLocationModel->deleteById($assetId);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		}
-		die();
-	}
-
-	public function updateOperation()
-	{
-		$assetModel = new AssetModel();
-		$assetStatusModel = new AssetStatusModel();
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		$assetStatusId = $json->assetStatusId;
-		$assetStatus = $assetStatusModel->where('assetStatusId', $assetStatusId)->get()->getResult();
-		if (count($assetStatus) < 1) {
-			$statusData = array(
-				'assetStatusId' => $json->assetStatusId,
-				'assetStatusName' => $json->assetStatusName,
-			);
-			$assetStatusModel->insert($statusData);
-			$data = array(
-				'assetStatusId' => $json->assetStatusId
-			);
-			$assetModel->update($assetId, $data);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		} else {
-			$data = array(
-				'assetStatusId' => $json->assetStatusId,
-			);
-			$assetModel->update($assetId, $data);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-		}
-		die();
-	}
-
-	public function updateTagging()
-	{
-		$assetTaggingModel = new AssetTaggingModel();
-		$builder = $this->db->table('tblm_assetTagging');
-		$json = $this->request->getJSON();
-		$assetId = $json->assetId;
-		$builder->where('assetId', $assetId);
-		$result = $builder->get()->getResult();
-		$assetTaggingId = $json->assetTaggingId;
-		if ($json->assetId != '') {
-			if (count($result) > 0) {
-				$data = array(
-					'assetId' => $assetId,
-					'assetTaggingValue' => $json->assetTaggingValue,
-					'assetTaggingtype' => $json->assetTaggingType,
-					'description' => $json->description
-				);
-				$assetTaggingModel->update($assetTaggingId, $data);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
-			} else {
-				$dataTagging = array(
-					'assetTaggingId' => null,
-					'assetId' => $assetId,
-					'assetTaggingValue' => $json->assetTaggingValue,
-					'assetTaggingtype' => $json->assetTaggingType,
-					'description' => $json->description
-				);
-				$assetTaggingModel->insert($dataTagging);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully add data.', 'data' => $dataTagging));
-			}
-		} else {
-			echo json_encode(array('status' => 'success', 'message' => 'Bad Request!'));
-		}
-		die();
-	}
-
-	public function addTag()
-	{
-		$tagModel = new TagModel();
-		$assetTagModel = new AssetTagModel();
-		$json = $this->request->getJSON();
-		if ($json->tagName != '') {
-			$data = array(
-				'tagId' => $json->tagId,
-				'tagName' => $json->tagName,
-				'description' => $json->description
-			);
-			$tagModel->insert($data);
-			$dataAssetTag = array(
-				'assetTagId' => null,
-				'assetId' => $json->assetId,
-				'tagId' => $json->tagId
-			);
-			$assetTagModel->insert($dataAssetTag);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully added data.', 'data' => $data));
-		} else {
-			echo json_encode(array('status' => 'failed', 'message' => 'Field tag name cannot be empty!'));
-		}
-		die();
-	}
-
-	public function addTagLocation()
-	{
-		$tagLocationModel = new TagLocationModel();
-		$assetTagLocationModel = new AssetTagLocationModel();
-		$json = $this->request->getJSON();
-		if ($json->tagLocationName != '') {
-			$data = array(
-				'tagLocationId' => $json->tagLocationId,
-				'tagLocationName' => $json->tagLocationName,
-				'latitude' => $json->latitude,
-				'longitude' => $json->longitude,
-				'description' => $json->description
-			);
-			$tagLocationModel->insert($data);
-			$dataAssetTagLocation = array(
-				'assetTagLocationId' => null,
-				'assetId' => $json->assetId,
-				'tagLocationId' => $json->tagLocationId
-			);
-			$assetTagLocationModel->insert($dataAssetTagLocation);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully added data.', 'data' => $data));
-		} else {
-			echo json_encode(array('status' => 'success', 'message' => 'Field location name cannot be empty!'));
-		}
-		die();
-	}
-
 	public function download()
 	{
-		return $this->response->download('../public/download/param1.xlsx', null);
-	}
-	public function uploadFile()
-	{
-		$file = $this->request->getFile('importParam');
-		if ($file) {
-			$newName = "doc" . time() . '.xlsx';
-			$file->move('../uploads/', $newName);
-			$reader = ReaderEntityFactory::createXLSXReader();
-			$reader->open('../uploads/' . $newName);
-			$dataImport = [];
-			foreach ($reader->getSheetIterator() as $sheet) {
-				$numrow = 1;
-				foreach ($sheet->getRowIterator() as $row) {
-					if ($numrow > 1) {
-						if ($row->getCellAtIndex(1) != '' && $row->getCellAtIndex(2) != '') {
-							$dataImport[] = array(
-								'no' => $row->getCellAtIndex(0)->getValue(),
-								'parameterName' => $row->getCellAtIndex(1)->getValue(),
-								'description' => $row->getCellAtIndex(2)->getValue(),
+        if(!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
 
-								'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
-								'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
-								'uomOption' => (($row->getCellAtIndex(7)->getValue()) ? $row->getCellAtIndex(7)->getValue() : $row->getCellAtIndex(8)->getValue()),
-
-								'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
-								'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
-								'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
-								'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
-								'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
-								'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
-
-								'inputType' => $row->getCellAtIndex(9)->getValue(),
-								'showOn' => $row->getCellAtIndex(10)->getValue(),
-
-							);
-						} else {
-							return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Does Not Match'));
-						}
-					}
-					$numrow++;
-				}
-			}
-			if ($dataImport) {
-				unlink('../uploads/' . $newName);
-				return $this->response->setJSON(array('status' => 'success', 'message' => '', 'data' => $dataImport));
-			} else {
-				return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Not Found!'));
-			}
-		} else {
-			return $this->response->setJSON((array('status' => 'failed', 'message' => 'Bad Request!')));
-		}
+		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/sampleImportParameter.xlsx', null);
 	}
 
 	public function sortingParameter()
 	{
+        if(!checkRoleList("MASTER.ASSET.PARAMETER.SORT")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+		
 		$parameterModel = new ParameterModel();
 		$json = $this->request->getJSON();
 		$data = $json->data;

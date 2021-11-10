@@ -62,8 +62,12 @@
                             <div class="col-12 d-flex justify-content-end align-items-center">
                                 <button class="btn btn-sm btn-outline-primary mr-1" type="button" @click="editLocation()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
                                 <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="cancelEditLocation()" id="btnCancelEdit"><i class="fa fa-times"></i> Cancel</button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="deleteLocation()" id="btnDelete"><i class="fa fa-trash"></i> Delete</button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="saveEditLocation()" id="btnSaveEdit"><i class="fa fa-save"></i> Save</button>
+                                <?php if (checkRoleList("MASTER.TAGLOCATION.DELETE")) : ?>
+                                    <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="deleteLocation()" id="btnDelete"><i class="fa fa-trash"></i> Delete</button>
+                                <?php endif; ?>
+                                <?php if (checkRoleList("MASTER.TAGLOCATION.UPDATE")) : ?>
+                                    <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="saveEditLocation()" id="btnSaveEdit"><i class="fa fa-save"></i> Save</button>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -80,7 +84,10 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-    const { reactive, ref } = Vue;
+    const {
+        reactive,
+        ref
+    } = Vue;
     let v = Vue.createApp({
         el: '#app',
         setup() {
@@ -95,6 +102,7 @@
                 $('#btnSaveEdit').show();
                 $('#btnDelete').show();
             };
+
             function cancelEditLocation() {
                 $("input[type=text]").attr("readonly", "readonly");
                 $('textarea[id=description]').attr("readonly", "readonly");
@@ -103,92 +111,100 @@
                 $('#btnSaveEdit').hide();
                 $('#btnDelete').hide();
             };
-            function saveEditLocation() {
-                axios.post("<?= base_url('Location/update'); ?>", {
-                    tagLocationId: this.tagLocation.tagLocationId,
-                    tagLocationName: this.tagLocation.tagLocationName,
-                    latitude: this.tagLocation.latitude,
-                    longitude: this.tagLocation.longitude,
-                    description: this.tagLocation.description
-                }).then(res => {
-                    if (res.data.status == 'success') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success mr-1',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Success!',
-                            text: res.data.message,
-                            icon: 'success'
-                        }).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
-                        })
-                    }
-                })
-            };
-            function deleteLocation() {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-1'
-                    },
-                    buttonsStyling: false
-                })
-                swalWithBootstrapButtons.fire({
-                    title: 'Delete this data?',
-                    text: "You will delete this data!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    cancelButtonText: "<i class='fa fa-times'></i> Cancel",
-                    confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
-                    reverseButtons: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        axios.post("<?= base_url('Location/delete'); ?>", {
-                            tagLocationId: this.tagLocation.tagLocationId
-                        }).then(res => {
-                            if (res.data.status == 'success') {
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: res.data.message,
-                                    icon: 'success',
-                                    allowOutsideClick: false
-                                }).then(okay => {
-                                    if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Redirecting..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
-                                        window.tagLocation.href = "<?= base_url('Location/'); ?>";
-                                    }
-                                })
-                            }
-                        })
-                    }
-                })
-            };
+
+            <?php if (checkRoleList("MASTER.TAGLOCATION.UPDATE")) : ?>
+
+                function saveEditLocation() {
+                    axios.post("<?= base_url('Location/update'); ?>", {
+                        tagLocationId: this.tagLocation.tagLocationId,
+                        tagLocationName: this.tagLocation.tagLocationName,
+                        latitude: this.tagLocation.latitude,
+                        longitude: this.tagLocation.longitude,
+                        description: this.tagLocation.description
+                    }).then(res => {
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success mr-1',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Success!',
+                                text: res.data.message,
+                                icon: 'success'
+                            }).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        }
+                    })
+                };
+            <?php endif; ?>
+
+            <?php if (checkRoleList("MASTER.TAGLOCATION.DELETE")) : ?>
+
+                function deleteLocation() {
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-danger ml-1'
+                        },
+                        buttonsStyling: false
+                    })
+                    swalWithBootstrapButtons.fire({
+                        title: 'Delete this data?',
+                        text: "You will delete this data!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: "<i class='fa fa-times'></i> Cancel",
+                        confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
+                        reverseButtons: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.post("<?= base_url('Location/delete'); ?>", {
+                                tagLocationId: this.tagLocation.tagLocationId
+                            }).then(res => {
+                                if (res.data.status == 'success') {
+                                    swalWithBootstrapButtons.fire({
+                                        title: 'Success!',
+                                        text: res.data.message,
+                                        icon: 'success',
+                                        allowOutsideClick: false
+                                    }).then(okay => {
+                                        if (okay) {
+                                            swal.fire({
+                                                title: 'Please Wait!',
+                                                text: 'Redirecting..',
+                                                onOpen: function() {
+                                                    swal.showLoading()
+                                                }
+                                            })
+                                            window.tagLocation.href = "<?= base_url('Location/'); ?>";
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                };
+            <?php endif; ?>
 
             return {
                 tagLocation,
                 myModal,
                 editLocation,
                 cancelEditLocation,
-                saveEditLocation,
-                deleteLocation
+                <?php (checkRoleList("MASTER.TAGLOCATION.UPDATE") ? "saveEditLocation," : ""); ?>
+                <?php (checkRoleList("MASTER.TAGLOCATION.DELETE") ? "deleteLocation," : ""); ?>
             };
         },
     }).mount('#app');

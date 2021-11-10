@@ -14,9 +14,13 @@ class Finding extends BaseController
 {
 	public function index()
 	{
+        if(!checkRoleList("FINDING.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$data = array(
 			'title' => 'Finding',
-			'subtitle' => 'All Finding IPC Logsheet'
+			'subtitle' => 'All Finding Logsheet'
 		);
 
 		return $this->template->render('Finding/index', $data);
@@ -24,10 +28,14 @@ class Finding extends BaseController
 
 	public function detailList()
 	{
+        if(!checkRoleList("FINDING.DETAIL.LIST.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$scheduleTrxId = $this->request->getVar("scheduleTrxId") ?? "";
 
 		if($scheduleTrxId == ""){
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>site_url("Finding")]);
 		}
 
 		$scheduleTrxModel = new ScheduleTrxModel();
@@ -35,7 +43,7 @@ class Finding extends BaseController
 
 		$getSchedule = $scheduleTrxModel->getById($scheduleTrxId);
 		if(empty($getSchedule)){
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>site_url("Finding")]);
 		}
 
 		$data["scheduleTrxData"] = $getSchedule;
@@ -63,6 +71,10 @@ class Finding extends BaseController
 
 	public function detail()
 	{
+        if(!checkRoleList("FINDING.DETAIL.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$data = array(
 			'title' => 'Detail Finding',
 			'subtitle' => 'Detail Finding'
@@ -73,7 +85,7 @@ class Finding extends BaseController
 
 		$checkFinding = $findingModel->getById($findingId);
 		if (empty($checkFinding)) {
-			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>$_SERVER['HTTP_REFERER']]);
 		}
 
 		$data["findingData"] = $checkFinding;
@@ -100,11 +112,23 @@ class Finding extends BaseController
 
 	public function datatable()
 	{
+		$request = \Config\Services::request();
+
+        if(!checkRoleList("FINDING.VIEW")){
+			echo json_encode(array(
+				"draw" => $request->getPost('draw'),
+				"recordsTotal" => 0,
+				"recordsFiltered" => 0,
+				"data" => [],
+				'status' => 403,
+				'message' => "You don't have access to this page"
+			));
+        }
+
 		$table = 'vw_scheduleTrx';
 		$column_order = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'condition', 'scheduleTrxId');
 		$column_search = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'condition', 'scheduleTrxId');
 		$order = array('createdAt' => 'asc');
-		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 		$where = [
 			'scannedAt IS NOT NULL' => null,
@@ -125,6 +149,10 @@ class Finding extends BaseController
 
 	public function issue()
 	{
+        if(!checkRoleList("FINDING.OPEN")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
 		$findingModel = new FindingModel();
@@ -136,7 +164,7 @@ class Finding extends BaseController
 
 		$checkTrx = $trxModel->where('trxId', $trxId)->get()->getRowArray();
 		if (empty($checkTrx)) {
-			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>$_SERVER['HTTP_REFERER']]);
 		}
 
 		try {
@@ -196,6 +224,14 @@ class Finding extends BaseController
 
 	public function closeFinding()
 	{
+        if(!checkRoleList("FINDING.CLOSE")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
 		$findingModel = new FindingModel();
@@ -276,6 +312,14 @@ class Finding extends BaseController
 
 	public function getFindingLog()
 	{
+        if(!checkRoleList("FINDING.LOG.LIST")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+
 		$isValid = $this->validate([
 			'findingId' => 'required',
 		]);
@@ -301,6 +345,14 @@ class Finding extends BaseController
 
 	public function addFindingLog()
 	{
+        if(!checkRoleList("FINDING.LOG.ADD")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+        }
+
 		$isValid = $this->validate([
 			'findingId' => 'required',
 			'notes' => 'required',

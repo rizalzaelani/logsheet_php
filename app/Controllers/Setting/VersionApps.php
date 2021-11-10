@@ -9,6 +9,10 @@ class VersionApps extends BaseController
 {
 	public function index()
 	{
+        if(!checkRoleList("VERSIONAPPS.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$data = array(
 			'title' => 'Version Apps',
 			'subtitle' => 'Versioning Mobile Application'
@@ -28,11 +32,23 @@ class VersionApps extends BaseController
 
 	public function datatable()
 	{
+		$request = \Config\Services::request();
+
+        if(!checkRoleList("VERSIONAPPS.VIEW")){
+			echo json_encode(array(
+				"draw" => $request->getPost('draw'),
+				"recordsTotal" => 0,
+				"recordsFiltered" => 0,
+				"data" => [],
+				'status' => 403,
+				'message' => "You don't have access to this page"
+			));
+        }
+
 		$table = "tblt_versionApp";
 		$column_order = array('versionAppId', 'name', 'version', 'description', 'createdAt');
 		$column_search = array('versionAppId', 'name', 'version', 'description', 'createdAt');
 		$order = array('createdAt' => 'asc');
-		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 		$where = [];
 		$list = $DTModel->datatable($where);
@@ -49,6 +65,14 @@ class VersionApps extends BaseController
 
 	public function new()
 	{
+        if(!checkRoleList("VERSIONAPPS.RELEASE")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+		}
+
 		$model = new VersionAppsModel();
 		$post = $this->request->getPost();
 		$file = $this->request->getFile('fileApp');
@@ -74,6 +98,14 @@ class VersionApps extends BaseController
 
 	public function detail()
 	{
+        if(!checkRoleList("VERSIONAPPS.DETAIL")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+		}
+
 		$versionAppsModel = new VersionAppsModel();
 		$json = $this->request->getJSON();
 		if ($json->versionAppId != '') {
@@ -88,6 +120,10 @@ class VersionApps extends BaseController
 
 	public function download($id)
 	{
+        if(!checkRoleList("VERSIONAPPS.DOWNLOAD")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$versionAppsModel = new VersionAppsModel();
 		$appsData = $versionAppsModel->where('versionAppId', $id)->get()->getResultArray();
 		$apk = $appsData[0]['fileApp'];
@@ -96,6 +132,10 @@ class VersionApps extends BaseController
 
 	public function edit()
 	{
+        if(!checkRoleList("VERSIONAPPS.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$versionAppsModel = new VersionAppsModel();
 		$json = $this->request->getJSON();
 		if ($json->versionAppId != '') {
@@ -110,6 +150,14 @@ class VersionApps extends BaseController
 
 	public function update()
 	{
+        if(!checkRoleList("VERSIONAPPS.UPDATE")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+		}
+
 		$versionAppsModel = new VersionAppsModel();
 		$post = $this->request->getPost();
 		$versionAppId = $post['versionAppId'];
@@ -152,6 +200,14 @@ class VersionApps extends BaseController
 
 	public function delete()
 	{
+        if(!checkRoleList("VERSIONAPPS.DELETE")){
+            return $this->response->setJson([
+                'status' => 403,
+                'message' => "Sorry, You don't have access",
+                'data' => []
+            ], 403);
+		}
+
 		$versionAppsModel = new VersionAppsModel();
 		$json = $this->request->getJSON();
 		$versionAppId = $json->versionAppId;

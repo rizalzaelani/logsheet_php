@@ -52,8 +52,12 @@
                             </div>
                             <div class="d-flex justify-content-between mb-3">
                                 <div class="">
-                                    <button type="button" class="btn btn-primary mr-2" @click="showModalAM()"><i class="fa fa-plus"></i> Add</button>
-                                    <button type="button" class="btn btn-success mr-2" @click="showModalIS()"><i class="fa fa-upload"></i> Import</button>
+                                    <?php if (checkRoleList("SCHEDULE.ADD")) : ?>
+                                        <button type="button" class="btn btn-primary mr-2" @click="showModalAM()"><i class="fa fa-plus"></i> Add</button>
+                                    <?php endif; ?>
+                                    <?php if (checkRoleList("SCHEDULE.IMPORT")) : ?>
+                                        <button type="button" class="btn btn-success mr-2" @click="showModalIS()"><i class="fa fa-upload"></i> Import</button>
+                                    <?php endif; ?>
                                 </div>
                                 <button type="button" class="btn btn-outline-primary dt-search" data-target="#tableRawData"><i class="fa fa-search"></i></button>
                             </div>
@@ -78,121 +82,125 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalAddSchManual" tabindex="-1" role="dialog" aria-labelledby="modalAddSchManualLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-fs" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalAddSchManualLabel">Asset Data</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row" :class="formAM == 1 ? 'd-none' : ''" id="formAM1">
-                        <div class="col-md-8">
-                            <div class="dt-search-input" style="top: -0.7rem;width: calc(100% - 1rem)">
-                                <div class="input-container">
-                                    <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
-                                    <input name="dt-search" class="material-input" type="text" data-target="#tableAssetManual" placeholder="Search Data Transaction">
+    <?php if (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT")) : ?>
+        <!-- Modal -->
+        <div class="modal fade" id="modalAddSchManual" tabindex="-1" role="dialog" aria-labelledby="modalAddSchManualLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-fs" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalAddSchManualLabel">Asset Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" :class="formAM == 1 ? 'd-none' : ''" id="formAM1">
+                            <div class="col-md-8">
+                                <div class="dt-search-input" style="top: -0.7rem;width: calc(100% - 1rem)">
+                                    <div class="input-container">
+                                        <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
+                                        <input name="dt-search" class="material-input" type="text" data-target="#tableAssetManual" placeholder="Search Data Transaction">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">{{ assetIdAM.length + ' Asset Selected' }}</h5>
+                                    <!-- <button type="button" class="btn btn-outline-primary"><i class="fa fa-arrow-right"></i> Next</button> -->
+                                    <button type="button" class="btn btn-outline-primary dt-search" data-target="#tableAssetManual"><i class="fa fa-search"></i></button>
+                                </div>
+                                <div class="table table-responsive mb-0">
+                                    <table class="table table-striped w-100" id="tableAssetManual">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20px;">#</th>
+                                                <th>Asset</th>
+                                                <th>Number</th>
+                                                <th>Tag</th>
+                                                <th>Location</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0">{{ assetIdAM.length + ' Asset Selected' }}</h5>
-                                <!-- <button type="button" class="btn btn-outline-primary"><i class="fa fa-arrow-right"></i> Next</button> -->
-                                <button type="button" class="btn btn-outline-primary dt-search" data-target="#tableAssetManual"><i class="fa fa-search"></i></button>
-                            </div>
-                            <div class="table table-responsive mb-0">
-                                <table class="table table-striped w-100" id="tableAssetManual">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 20px;">#</th>
-                                            <th>Asset</th>
-                                            <th>Number</th>
-                                            <th>Tag</th>
-                                            <th>Location</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                            <div class="col-md-4">
+                                <h5 class="mb-3 text-center" id="labelScheduleAMDR">{{ moment().format("DD MMM YYYY") + ' to ' + moment().format("DD MMM YYYY") }}</h5>
+                                <div class="form-group text-center">
+                                    <input type="text" id="scheduleAMDR" class="form-control d-none" />
+                                </div>
+                                <div class="text-center">
+                                    <button class="btn btn-primary" @click="nextFormAM()"><i class="fa fa-arrow-right"></i> Next</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <h5 class="mb-3 text-center" id="labelScheduleAMDR">{{ moment().format("DD MMM YYYY") + ' to ' + moment().format("DD MMM YYYY") }}</h5>
-                            <div class="form-group text-center">
-                                <input type="text" id="scheduleAMDR" class="form-control d-none" />
-                            </div>
-                            <div class="text-center">
-                                <button class="btn btn-primary" @click="nextFormAM()"><i class="fa fa-arrow-right"></i> Next</button>
+                        <div class="row" :class="formAM != 1 ? 'd-none' : ''" id="formAM2">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <button type="button" class="btn btn-primary" @click="formAM = 0"><i class="fa fa-arrow-left"></i> Prev</button>
+                                    <button type="button" class="btn btn-primary" @click="saveAddAM()"><i class="fab fa-telegram-plane"></i> Save</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered w-100">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="2" style="vertical-align: middle">Asset</th>
+                                                <template v-for="(val, key) in dateRangeSchAM()">
+                                                    <th class="text-center" :colspan="val.length">{{ key }}</th>
+                                                </template>
+                                            </tr>
+                                            <tr>
+                                                <template v-for="(val, key) in dateRangeSchAM()">
+                                                    <template v-for="(v, k) in val">
+                                                        <th class="text-center">{{ v.day }}</th>
+                                                    </template>
+                                                </template>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(va, ka) in getDataCKAM()">
+                                                <td>{{ va.assetName }}</td>
+                                                <template v-for="(val, key) in dateRangeSchAM()">
+                                                    <template v-for="(v, k) in val">
+                                                        <td class="text-center" :class="_.filter(adviceDateAM, (vf) => vf.assetId == va.assetId && vf.date == v.date).length > 0 ? 'bg-success' : ''" @click="addAdviceDate(va.assetId, v.date)"></td>
+                                                    </template>
+                                                </template>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row" :class="formAM != 1 ? 'd-none' : ''" id="formAM2">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between mb-3">
-                                <button type="button" class="btn btn-primary" @click="formAM = 0"><i class="fa fa-arrow-left"></i> Prev</button>
-                                <button type="button" class="btn btn-primary" @click="saveAddAM()"><i class="fab fa-telegram-plane"></i> Save</button>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered w-100">
-                                    <thead>
-                                        <tr>
-                                            <th rowspan="2" style="vertical-align: middle">Asset</th>
-                                            <template v-for="(val, key) in dateRangeSchAM()">
-                                                <th class="text-center" :colspan="val.length">{{ key }}</th>
-                                            </template>
-                                        </tr>
-                                        <tr>
-                                            <template v-for="(val, key) in dateRangeSchAM()">
-                                                <template v-for="(v, k) in val">
-                                                    <th class="text-center">{{ v.day }}</th>
-                                                </template>
-                                            </template>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(va, ka) in getDataCKAM()">
-                                            <td>{{ va.assetName }}</td>
-                                            <template v-for="(val, key) in dateRangeSchAM()">
-                                                <template v-for="(v, k) in val">
-                                                    <td class="text-center" :class="_.filter(adviceDateAM, (vf) => vf.assetId == va.assetId && vf.date == v.date).length > 0 ? 'bg-success' : ''" @click="addAdviceDate(va.assetId, v.date)"></td>
-                                                </template>
-                                            </template>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="modal-footer d-none">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="saveAddAM()"><i class="fa fa-check"></i> Submit</button>
                     </div>
-                </div>
-                <div class="modal-footer d-none">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="saveAddAM()"><i class="fa fa-check"></i> Submit</button>
                 </div>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 
-    <div class="modal fade" id="modalImport" tabindex="-1" role="dialog" aria-labelledby="modalImportLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalImportLabel">Import Schedule</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="file" class="filepond" name="importSch" id="importSch">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success"><i class="far fa-file-excel"></i> Template</button>
-                    <!-- <button type="button" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> Submit</button> -->
+    <?php if (checkRoleList("SCHEDULE.IMPORT")) : ?>
+        <div class="modal fade" id="modalImport" tabindex="-1" role="dialog" aria-labelledby="modalImportLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalImportLabel">Import Schedule</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="file" class="filepond" name="importSch" id="importSch">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success"><i class="far fa-file-excel"></i> Template</button>
+                        <!-- <button type="button" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> Submit</button> -->
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 </div>
 <?= $this->endSection(); ?>
 
@@ -299,78 +307,6 @@
                 });
             }
 
-            const assetManualDT = () => {
-                tableAM = $("#tableAssetManual").DataTable({
-                    drawCallback: function(settings) {
-                        $(document).ready(function() {
-                            $('[data-toggle="tooltip"]').tooltip();
-                        })
-                    },
-                    data: assetManualData,
-                    processing: true,
-                    // serverSide: false,
-                    // scrollY: "calc(100vh - 310px)",
-                    responsive: true,
-                    language: {
-                        processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
-                        lengthMenu: "Showing _MENU_ ",
-                        info: "of _MAX_ entries",
-                        infoEmpty: 'of 0 entries',
-                    },
-                    dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
-                    columns: [{
-                            data: "assetId",
-                            name: "assetId"
-                        },
-                        {
-                            data: "assetNumber",
-                            name: "assetNumber",
-                        },
-                        {
-                            data: "assetName",
-                            name: "assetName",
-                        },
-                        {
-                            data: "tagName",
-                            name: "tagName",
-                        },
-                        {
-                            data: "tagLocationName",
-                            name: "tagLocationName",
-                        },
-                    ],
-                    order: [1, 'asc'],
-                    columnDefs: [{
-                            targets: "_all",
-                            className: "dt-head-center"
-                        },
-                        {
-                            targets: 0,
-                            orderable: false,
-                            render: function(data) {
-                                return `<input type="checkbox" name="ckAssetManual[]" value="${data}" onchange="v.changeCKAM(event)" ${assetIdAM.includes(data) ? 'checked' : ''} />`;
-                            },
-                        },
-                        {
-                            targets: [3, 4],
-                            render: function(data) {
-                                if (data != '-') {
-                                    // unique = Array.from(new Set(data));
-                                    var dt = Array.from(new Set(data.split(',')));
-                                    var list_dt = '';
-                                    $.each(dt, function(key, value) {
-                                        list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
-                                    })
-                                    return list_dt;
-                                } else {
-                                    return data;
-                                }
-                            }
-                        }
-                    ],
-                });
-            };
-
             const refreshEvent = () => {
                 let listEvent = calendar.getEvents();
                 listEvent.forEach(event => {
@@ -387,182 +323,264 @@
                 });
             }
 
-            const showModalAM = () => {
-                $('#tableAssetManual').dataTable().fnClearTable();
-                $('#tableAssetManual').dataTable().fnAddData(assetManualData);
-                $("#modalAddSchManual").modal("show");
-            }
+            <?php if (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT")) : ?>
 
-            const showModalIS = () => {
-                $("#modalImport").modal("show");
-            }
+                const assetManualDT = () => {
+                    tableAM = $("#tableAssetManual").DataTable({
+                        drawCallback: function(settings) {
+                            $(document).ready(function() {
+                                $('[data-toggle="tooltip"]').tooltip();
+                            })
+                        },
+                        data: assetManualData,
+                        processing: true,
+                        // serverSide: false,
+                        // scrollY: "calc(100vh - 310px)",
+                        responsive: true,
+                        language: {
+                            processing: `<div class="spinner-border text-primary" role="status"><pan class= "sr-only">Loading... </span></div>`,
+                            lengthMenu: "Showing _MENU_ ",
+                            info: "of _MAX_ entries",
+                            infoEmpty: 'of 0 entries',
+                        },
+                        dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
+                        columns: [{
+                                data: "assetId",
+                                name: "assetId"
+                            },
+                            {
+                                data: "assetNumber",
+                                name: "assetNumber",
+                            },
+                            {
+                                data: "assetName",
+                                name: "assetName",
+                            },
+                            {
+                                data: "tagName",
+                                name: "tagName",
+                            },
+                            {
+                                data: "tagLocationName",
+                                name: "tagLocationName",
+                            },
+                        ],
+                        order: [1, 'asc'],
+                        columnDefs: [{
+                                targets: "_all",
+                                className: "dt-head-center"
+                            },
+                            {
+                                targets: 0,
+                                orderable: false,
+                                render: function(data) {
+                                    return `<input type="checkbox" name="ckAssetManual[]" value="${data}" onchange="v.changeCKAM(event)" ${assetIdAM.includes(data) ? 'checked' : ''} />`;
+                                },
+                            },
+                            {
+                                targets: [3, 4],
+                                render: function(data) {
+                                    if (data != '-') {
+                                        // unique = Array.from(new Set(data));
+                                        var dt = Array.from(new Set(data.split(',')));
+                                        var list_dt = '';
+                                        $.each(dt, function(key, value) {
+                                            list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
+                                        })
+                                        return list_dt;
+                                    } else {
+                                        return data;
+                                    }
+                                }
+                            }
+                        ],
+                    });
+                };
 
-            const changeCKAM = (ev) => {
-                let valAM = ev.target.value;
-                if (ev.target.checked) {
-                    assetIdAM.push(valAM);
-                } else {
-                    let inVOf = assetIdAM.findIndex((v) => v == valAM);
-                    if (inVOf != undefined) {
-                        assetIdAM.splice(inVOf, 1);
-                    }
+                const showModalAM = () => {
+                    $('#tableAssetManual').dataTable().fnClearTable();
+                    $('#tableAssetManual').dataTable().fnAddData(assetManualData);
+                    $("#modalAddSchManual").modal("show");
                 }
-                let assetIdAMTemp = _.uniqBy(assetIdAM);
-                assetIdAM.splice(0, assetIdAM.length);
-                assetIdAM.push(...assetIdAMTemp);
-            }
+            <?php endif; ?>
 
-            const getDataCKAM = () => {
-                return _.map(assetIdAM, (v) => {
-                    let a = _.filter(assetManualData, (vf) => vf.assetId == v);
-                    if (a.length > 0) {
-                        return a[0];
-                    }
-                })
-            }
-
-            const dateRangeSchAM = () => {
-                let startDR = moment(startSAM.value, "YYYY-MM-DD");
-                let endDR = moment(endSAM.value, "YYYY-MM-DD");
-
-                let duration = moment.duration(endDR.diff(startDR));
-                let diffDay = Math.round(duration.asDays());
-
-                let dataDate = [];
-                for (let i = 0; i <= diffDay; i++) {
-                    let dateTemp = moment(startSAM.value, "YYYY-MM-DD").add("days", i);
-                    dataDate.push({
-                        "MY": dateTemp.format("MMM YYYY"),
-                        "date": dateTemp.format("YYYY-MM-DD"),
-                        "day": dateTemp.format("DD")
-                    })
+            <?php if (checkRoleList("SCHEDULE.IMPORT")) : ?>
+                const showModalIS = () => {
+                    $("#modalImport").modal("show");
                 }
+            <?php endif; ?>
 
-                return _.groupBy(dataDate, "MY");
-            }
-
-            const nextFormAM = () => {
-                if (assetIdAM.length > 0 && pickerAddAM.getStartDate() && pickerAddAM.getEndDate()) {
-                    formAM.value = 1;
-                } else {
-                    Swal.fire({
-                        title: "Data Is Not Valid",
-                        text: "Please Select Asset and Date First",
-                        icon: "warning"
-                    })
-                }
-            }
-
-            const saveAddAM = () => {
-                let dataAssetAM = [];
-                assetIdAM.forEach((assetId) => {
-                    let getAsset = _.filter(assetManualData, (v) => v.assetId == assetId);
-                    if (getAsset.length > 0) {
-                        let ck = _.filter(adviceDateAM, (v) => v.assetId == assetId);
-                        if (ck.length > 0) {
-                            dataAssetAM.push({
-                                "assetId": assetId,
-                                "assetStatusId": getAsset[0].assetStatusId,
-                                "adviceDate": ck[0].date
-                            });
-                        } else {
-                            dataAssetAM.push({
-                                "assetId": assetId,
-                                "assetStatusId": getAsset[0].assetStatusId,
-                                "adviceDate": ""
-                            });
+            <?php if (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT")) : ?>
+                const changeCKAM = (ev) => {
+                    let valAM = ev.target.value;
+                    if (ev.target.checked) {
+                        assetIdAM.push(valAM);
+                    } else {
+                        let inVOf = assetIdAM.findIndex((v) => v == valAM);
+                        if (inVOf != undefined) {
+                            assetIdAM.splice(inVOf, 1);
                         }
                     }
-                });
+                    let assetIdAMTemp = _.uniqBy(assetIdAM);
+                    assetIdAM.splice(0, assetIdAM.length);
+                    assetIdAM.push(...assetIdAMTemp);
+                }
 
-                if (dataAssetAM.length > 0 && pickerAddAM.getStartDate() && pickerAddAM.getEndDate()) {
-                    let response = axios.post("<?= base_url() ?>/Schedule/addScheduleAM", {
-                        "dataAssetAM": JSON.stringify(dataAssetAM),
-                        "start": pickerAddAM.getStartDate().format("YYYY-MM-DD"),
-                        "end": pickerAddAM.getEndDate().format("YYYY-MM-DD")
-                    }).then((res) => {
-                        xhrThrowRequest(res)
-                            .then(() => {
-                                Swal.fire({
-                                    title: res.data.message,
-                                    icon: "success",
-                                    timer: 3000
-                                }).then(() => {
-                                    scheduleData.push(...res.data.data);
-
-                                    formAM.value = 0;
-                                    adviceDateAM.splice(0, adviceDateAM.length);
-                                    assetIdAM.splice(0, assetIdAM.length);
-
-                                    $("#modalAddSchManual").modal("hide");
-                                    $('#tableAssetManual').dataTable().fnClearTable();
-                                    $('#tableAssetManual').dataTable().fnAddData(assetManualData);
-
-                                    calendar.removeAllEvents();
-                                    scheduleData.forEach((v, k) => {
-                                        calendar.addEvent({
-                                            title: v.assetName,
-                                            start: moment(v.scheduleFrom).valueOf(),
-                                            end: moment(v.scheduleTo).valueOf(),
-                                            allDay: false
-                                        })
-                                    });
-
-                                    setTimeout(() => {
-                                        if ($.fn.DataTable.isDataTable('#tableRawData'))
-                                            table.clear().rows.add(scheduleData).draw();
-                                        else
-                                            rawDataDT();
-                                    }, 10);
-                                });
-                            })
-                            .catch((rej) => {
-                                if (rej.throw) {
-                                    throw new Error(rej.message);
-                                }
-                                $('#slideApprove').removeClass('unlocked');
-                                $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
-                            });
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Data Is Not Valid",
-                        text: "Please Select Asset and Date First",
-                        icon: "warning"
+                const getDataCKAM = () => {
+                    return _.map(assetIdAM, (v) => {
+                        let a = _.filter(assetManualData, (vf) => vf.assetId == v);
+                        if (a.length > 0) {
+                            return a[0];
+                        }
                     })
                 }
-            }
 
-            const addAdviceDate = (assetId, date) => {
-                if (assetId && date) {
-                    let cekAD = _.filter(adviceDateAM, (val) => val.assetId == assetId);
-                    if (cekAD.length < 1) {
-                        adviceDateAM.push({
-                            'assetId': assetId,
-                            'date': date
+                const dateRangeSchAM = () => {
+                    let startDR = moment(startSAM.value, "YYYY-MM-DD");
+                    let endDR = moment(endSAM.value, "YYYY-MM-DD");
+
+                    let duration = moment.duration(endDR.diff(startDR));
+                    let diffDay = Math.round(duration.asDays());
+
+                    let dataDate = [];
+                    for (let i = 0; i <= diffDay; i++) {
+                        let dateTemp = moment(startSAM.value, "YYYY-MM-DD").add("days", i);
+                        dataDate.push({
+                            "MY": dateTemp.format("MMM YYYY"),
+                            "date": dateTemp.format("YYYY-MM-DD"),
+                            "day": dateTemp.format("DD")
+                        })
+                    }
+
+                    return _.groupBy(dataDate, "MY");
+                }
+
+                const nextFormAM = () => {
+                    if (assetIdAM.length > 0 && pickerAddAM.getStartDate() && pickerAddAM.getEndDate()) {
+                        formAM.value = 1;
+                    } else {
+                        Swal.fire({
+                            title: "Data Is Not Valid",
+                            text: "Please Select Asset and Date First",
+                            icon: "warning"
+                        })
+                    }
+                }
+
+                const saveAddAM = () => {
+                    let dataAssetAM = [];
+                    assetIdAM.forEach((assetId) => {
+                        let getAsset = _.filter(assetManualData, (v) => v.assetId == assetId);
+                        if (getAsset.length > 0) {
+                            let ck = _.filter(adviceDateAM, (v) => v.assetId == assetId);
+                            if (ck.length > 0) {
+                                dataAssetAM.push({
+                                    "assetId": assetId,
+                                    "assetStatusId": getAsset[0].assetStatusId,
+                                    "adviceDate": ck[0].date
+                                });
+                            } else {
+                                dataAssetAM.push({
+                                    "assetId": assetId,
+                                    "assetStatusId": getAsset[0].assetStatusId,
+                                    "adviceDate": ""
+                                });
+                            }
+                        }
+                    });
+
+                    if (dataAssetAM.length > 0 && pickerAddAM.getStartDate() && pickerAddAM.getEndDate()) {
+                        let response = axios.post("<?= base_url() ?>/Schedule/addScheduleAM", {
+                            "dataAssetAM": JSON.stringify(dataAssetAM),
+                            "start": pickerAddAM.getStartDate().format("YYYY-MM-DD"),
+                            "end": pickerAddAM.getEndDate().format("YYYY-MM-DD")
+                        }).then((res) => {
+                            xhrThrowRequest(res)
+                                .then(() => {
+                                    Swal.fire({
+                                        title: res.data.message,
+                                        icon: "success",
+                                        timer: 3000
+                                    }).then(() => {
+                                        scheduleData.push(...res.data.data);
+
+                                        formAM.value = 0;
+                                        adviceDateAM.splice(0, adviceDateAM.length);
+                                        assetIdAM.splice(0, assetIdAM.length);
+
+                                        $("#modalAddSchManual").modal("hide");
+                                        $('#tableAssetManual').dataTable().fnClearTable();
+                                        $('#tableAssetManual').dataTable().fnAddData(assetManualData);
+
+                                        calendar.removeAllEvents();
+                                        scheduleData.forEach((v, k) => {
+                                            calendar.addEvent({
+                                                title: v.assetName,
+                                                start: moment(v.scheduleFrom).valueOf(),
+                                                end: moment(v.scheduleTo).valueOf(),
+                                                allDay: false
+                                            })
+                                        });
+
+                                        setTimeout(() => {
+                                            if ($.fn.DataTable.isDataTable('#tableRawData'))
+                                                table.clear().rows.add(scheduleData).draw();
+                                            else
+                                                rawDataDT();
+                                        }, 10);
+                                    });
+                                })
+                                .catch((rej) => {
+                                    if (rej.throw) {
+                                        throw new Error(rej.message);
+                                    }
+                                    $('#slideApprove').removeClass('unlocked');
+                                    $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
+                                });
                         });
                     } else {
-                        let itemIndex = adviceDateAM.findIndex(i => i.assetId == assetId);
-                        if (itemIndex != undefined) {
-                            if (cekAD[0].date == date) {
-                                adviceDateAM.splice(itemIndex, 1);
-                            } else {
-                                adviceDateAM[itemIndex].date = date;
+                        Swal.fire({
+                            title: "Data Is Not Valid",
+                            text: "Please Select Asset and Date First",
+                            icon: "warning"
+                        })
+                    }
+                }
+
+                const addAdviceDate = (assetId, date) => {
+                    if (assetId && date) {
+                        let cekAD = _.filter(adviceDateAM, (val) => val.assetId == assetId);
+                        if (cekAD.length < 1) {
+                            adviceDateAM.push({
+                                'assetId': assetId,
+                                'date': date
+                            });
+                        } else {
+                            let itemIndex = adviceDateAM.findIndex(i => i.assetId == assetId);
+                            if (itemIndex != undefined) {
+                                if (cekAD[0].date == date) {
+                                    adviceDateAM.splice(itemIndex, 1);
+                                } else {
+                                    adviceDateAM[itemIndex].date = date;
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
+            <?php endif; ?>
 
-            const filepondOpt = {
-                acceptedFileTypes: '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
-                allowMultiple: false,
-                credits: false,
-                styleLoadIndicatorPosition: 'center bottom',
-                styleProgressIndicatorPosition: 'right bottom',
-                styleButtonRemoveItemPosition: 'left bottom',
-                styleButtonProcessItemPosition: 'right bottom',
-            };
+
+            <?php if (checkRoleList("SCHEDULE.IMPORT")) : ?>
+                const filepondOpt = {
+                    acceptedFileTypes: '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
+                    allowMultiple: false,
+                    credits: false,
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                };
+            <?php endif; ?>
 
             onMounted(() => {
                 document.addEventListener('DOMContentLoaded', function() {
@@ -616,7 +634,6 @@
                     });
                     calendar.render();
                 });
-                assetManualDT();
 
                 let searchRawData = $(".dt-search-input input[data-target='#tableRawData']");
                 searchRawData.unbind().bind("keyup", function(e) {
@@ -624,74 +641,79 @@
                     table.search(searchData).draw();
                 });
 
-                let searchAM = $(".dt-search-input input[data-target='#tableAssetManual']");
-                searchAM.unbind().bind("keyup", function(e) {
-                    let searchData = searchAM.val();
-                    tableAM.search(searchData).draw();
-                });
+                <?php if (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT")) : ?>
+                    assetManualDT();
+                    let searchAM = $(".dt-search-input input[data-target='#tableAssetManual']");
+                    searchAM.unbind().bind("keyup", function(e) {
+                        let searchData = searchAM.val();
+                        tableAM.search(searchData).draw();
+                    });
 
-                pickerAddAM = new Lightpick({
-                    field: document.getElementById('scheduleAMDR'),
-                    singleDate: false,
-                    inline: true,
-                    format: 'DD MMM YYYY',
-                    minDate: moment(),
-                    onSelect: function(start, end) {
-                        let str = '';
-                        str += start ? start.format('DD MMM YYYY') + ' - ' : '';
-                        str += end ? end.format('DD MMM YYYY') : '...';
-                        document.getElementById('labelScheduleAMDR').innerHTML = str;
+                    pickerAddAM = new Lightpick({
+                        field: document.getElementById('scheduleAMDR'),
+                        singleDate: false,
+                        inline: true,
+                        format: 'DD MMM YYYY',
+                        minDate: moment(),
+                        onSelect: function(start, end) {
+                            let str = '';
+                            str += start ? start.format('DD MMM YYYY') + ' - ' : '';
+                            str += end ? end.format('DD MMM YYYY') : '...';
+                            document.getElementById('labelScheduleAMDR').innerHTML = str;
 
-                        if (start) startSAM.value = start.format('YYYY-MM-DD');
-                        if (end) endSAM.value = end.format('YYYY-MM-DD');
-                    }
-                });
+                            if (start) startSAM.value = start.format('YYYY-MM-DD');
+                            if (end) endSAM.value = end.format('YYYY-MM-DD');
+                        }
+                    });
+                <?php endif; ?>
+ 
+                <?php if (checkRoleList("SCHEDULE.IMPORT")) : ?>
+                    FilePond.registerPlugin(FilePondPluginFileValidateType);
+                    importSchFP = FilePond.create(document.querySelector('#importSch'), filepondOpt);
 
-                FilePond.registerPlugin(FilePondPluginFileValidateType);
-                importSchFP = FilePond.create(document.querySelector('#importSch'), filepondOpt);
+                    importSchFP.on('addfile', (error, file) => {
+                        let formData = new FormData();
+                        formData.append("importSch", file.file);
+                        axios.post("<?= site_url("Schedule/importSchedule") ?>", formData)
+                            .then((res) => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        $("#modalImport").modal("hide");
+                                        importSchFP.removeFiles();
 
-                importSchFP.on('addfile', (error, file) => {
-                    let formData = new FormData();
-                    formData.append("importSch", file.file);
-                    axios.post("<?= site_url("Schedule/importSchedule") ?>", formData)
-                        .then((res) => {
-                            xhrThrowRequest(res)
-                                .then(() => {
-                                    $("#modalImport").modal("hide");
-                                    importSchFP.removeFiles();
+                                        startSAM.value = res.data.data.start;
+                                        endSAM.value = res.data.data.end;
 
-                                    startSAM.value = res.data.data.start;
-                                    endSAM.value = res.data.data.end;
+                                        pickerAddAM.setDateRange(moment(startSAM.value, "YYYY-MM-DD"), moment(endSAM.value, "YYYY-MM-DD"))
 
-                                    pickerAddAM.setDateRange(moment(startSAM.value, "YYYY-MM-DD"), moment(endSAM.value, "YYYY-MM-DD"))
+                                        assetIdAM.splice(0, assetIdAM.length);
+                                        adviceDateAM.splice(0, adviceDateAM.length);
+                                        res.data.data.data.forEach((v, k) => {
+                                            let checkAssetM = _.filter(assetManualData, (vf) => vf.assetNumber == v.assetNumber);
+                                            if (checkAssetM.length > 0) {
+                                                assetIdAM.push(checkAssetM[0].assetId);
+                                                adviceDateAM.push({
+                                                    'assetId': checkAssetM[0].assetId,
+                                                    'date': v.adviceScan
+                                                });
+                                            }
+                                        });
 
-                                    assetIdAM.splice(0, assetIdAM.length);
-                                    adviceDateAM.splice(0, adviceDateAM.length);
-                                    res.data.data.data.forEach((v, k) => {
-                                        let checkAssetM = _.filter(assetManualData, (vf) => vf.assetNumber == v.assetNumber);
-                                        if (checkAssetM.length > 0) {
-                                            assetIdAM.push(checkAssetM[0].assetId);
-                                            adviceDateAM.push({
-                                                'assetId': checkAssetM[0].assetId,
-                                                'date': v.adviceScan
-                                            });
+                                        setTimeout(() => {
+                                            nextFormAM();
+                                            showModalAM();
+                                        }, 10)
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
                                         }
+                                        $('#slideApprove').removeClass('unlocked');
+                                        $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
                                     });
-
-                                    setTimeout(() => {
-                                        nextFormAM();
-                                        showModalAM();
-                                    }, 10)
-                                })
-                                .catch((rej) => {
-                                    if (rej.throw) {
-                                        throw new Error(rej.message);
-                                    }
-                                    $('#slideApprove').removeClass('unlocked');
-                                    $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
-                                });
-                        });
-                });
+                            });
+                    });
+                <?php endif; ?>
             });
 
             return {
@@ -700,16 +722,9 @@
                 scheduleData,
                 rawDataDT,
                 formAM,
-                showModalAM,
-                showModalIS,
-                adviceDateAM,
-                changeCKAM,
-                assetIdAM,
-                getDataCKAM,
-                dateRangeSchAM,
-                nextFormAM,
-                saveAddAM,
-                addAdviceDate
+                
+                <?= (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT") ? "showModalAM,adviceDateAM,changeCKAM,assetIdAM,getDataCKAM,dateRangeSchAM,nextFormAM,saveAddAM,addAdviceDate," : "") ?>
+                <?= (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT") ? "showModalIS," : "") ?>
             }
         }
     }).mount('#app');

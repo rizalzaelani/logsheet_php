@@ -90,22 +90,6 @@
 			var data = null;
 			var table = null;
 
-			Vue.onMounted(() => {
-				getData();
-
-				let search = $(".dt-search-input input[data-target='#tableTrx']");
-				search.unbind().bind("keypress", function(e) {
-					if (e.which == 13 || e.keyCode == 13) {
-						let searchData = search.val();
-						table.search(searchData).draw();
-					}
-				});
-
-				$(document).on('click', '#tableTrx tbody tr', function() {
-					window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
-				});
-			});
-			
 			const getData = () => {
 				return new Promise(async (resolve, reject) => {
 					try {
@@ -176,17 +160,19 @@
 								},
 								{
 									targets: -1,
-									render: function(data){
+									render: function(data) {
 										return isNullEmptyOrUndefined(data) ? "Waiting" : "Approved"
 									}
 								}
 							],
 							'createdRow': function(row, data) {
-								row.setAttribute("data-id", data.scheduleTrxId);
-								row.classList.add("cursor-pointer");
-								// row.setAttribute("data-toggle", "tooltip");
-								// row.setAttribute("data-html", "true");
-								// row.setAttribute("title", "<div>Click to go to asset detail</div>");
+								<?php if (checkRoleList("TRX.DETATIL.VIEW")) : ?>
+									row.setAttribute("data-id", data.scheduleTrxId);
+									row.classList.add("cursor-pointer");
+									// row.setAttribute("data-toggle", "tooltip");
+									// row.setAttribute("data-html", "true");
+									// row.setAttribute("title", "<div>Click to go to asset detail</div>");
+								<?php endif; ?>
 							},
 						});
 					} catch (er) {
@@ -195,6 +181,24 @@
 					}
 				})
 			}
+
+			Vue.onMounted(() => {
+				getData();
+
+				let search = $(".dt-search-input input[data-target='#tableTrx']");
+				search.unbind().bind("keypress", function(e) {
+					if (e.which == 13 || e.keyCode == 13) {
+						let searchData = search.val();
+						table.search(searchData).draw();
+					}
+				});
+
+				<?php if (checkRoleList("TRX.DETATIL.VIEW")) : ?>
+					$(document).on('click', '#tableTrx tbody tr', function() {
+						window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
+					});
+				<?php endif; ?>
+			});
 
 			return {
 				data,

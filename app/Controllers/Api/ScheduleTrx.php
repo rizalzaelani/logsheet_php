@@ -34,7 +34,7 @@ class ScheduleTrx extends ResourceController
         $month = $dateTime->format("n");
         $weekOfYear = $dateTime->format("W");
 
-        $whereSch = "((schType = 'Daily' AND DATE(scheduleFrom) = '". $dateTime->format("Y-m-d") ."') OR (schType = 'Weekly' AND WEEKOFYEAR(scheduleFrom) = ". $weekOfYear ." AND YEAR(scheduleFrom) = " . $year . ") OR (schType = 'Monthly' AND MONTH(scheduleFrom) = ". $month ." AND YEAR(scheduleFrom) = " . $year . "))";
+        $whereSch = "((((schType = 'Daily' AND DATE(scheduleFrom) = '". $dateTime->format("Y-m-d") ."') OR (schType = 'Weekly' AND WEEKOFYEAR(scheduleFrom) = ". $weekOfYear ." AND YEAR(scheduleFrom) = " . $year . ") OR (schType = 'Monthly' AND MONTH(scheduleFrom) = ". $month ." AND YEAR(scheduleFrom) = " . $year . ")) AND schManual = '0') OR (CAST(scheduleFrom as DATE) <= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND CAST(scheduleTo as DATE) >= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND schManual = '1'))";
 
         $where["userId"] = $this->request->getVar("userId");
         $where[$whereSch] = null;

@@ -160,11 +160,13 @@
 								}
 							],
 							'createdRow': function(row, data) {
-								row.setAttribute("data-id", data.scheduleTrxId);
-								row.classList.add("cursor-pointer");
-								// row.setAttribute("data-toggle", "tooltip");
-								// row.setAttribute("data-html", "true");
-								// row.setAttribute("title", "<div>Click to go to asset detail</div>");
+								<?php if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : ?>
+									row.setAttribute("data-id", data.scheduleTrxId);
+									row.classList.add("cursor-pointer");
+									// row.setAttribute("data-toggle", "tooltip");
+									// row.setAttribute("data-html", "true");
+									// row.setAttribute("title", "<div>Click to go to asset detail</div>");
+								<?php endif; ?>
 							},
 						});
 					} catch (er) {
@@ -185,12 +187,17 @@
 					}
 				});
 
-				$(document).on('click', '#tableFinding tbody tr', function() {
-					window.location.href = "<?= site_url('Finding/detailList') ?>?scheduleTrxId=" + $(this).attr("data-id");
-				});
+				<?php if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : ?>
+					$(document).on('click', '#tableFinding tbody tr', function() {
+						window.location.href = "<?= site_url('Finding/detailList') ?>?scheduleTrxId=" + $(this).attr("data-id");
+					});
+				<?php endif; ?>
 			});
 
-			return { table, getData }
+			return {
+				table,
+				getData
+			}
 		}
 	}).mount("#app");
 </script>

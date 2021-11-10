@@ -11,6 +11,9 @@ class Tag extends BaseController
 {
     public function index()
     {
+        if(!checkRoleList("MASTER.TAG.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
         $data = array(
             'title' => 'Tag',
             'subtitle' => 'List Tag',
@@ -31,11 +34,23 @@ class Tag extends BaseController
 
     public function datatable()
     {
+		$request = \Config\Services::request();
+
+        if(!checkRoleList("MASTER.TAG.VIEW")){
+			echo json_encode(array(
+				"draw" => $request->getPost('draw'),
+				"recordsTotal" => 0,
+				"recordsFiltered" => 0,
+				"data" => [],
+				'status' => 403,
+				'message' => "You don't have access to this page"
+			));
+        }
+
         $table = "tblm_tag";
         $column_order = array('tagId', 'tagName', 'description', 'createdAt');
         $column_search = array('tagId', 'tagName', 'description', 'createdAt');
         $order = array('createdAt' => 'asc');
-        $request = \Config\Services::request();
         $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
         $where = [];
         $list = $DTModel->datatable($where);
@@ -52,6 +67,14 @@ class Tag extends BaseController
 
     public function add()
     {
+        if(!checkRoleList("MASTER.TAG.ADD")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $model = new TagModel();
         $data = $this->request->getJSON();
         if ($data->tagName != '' && $data->description != '') {
@@ -71,6 +94,14 @@ class Tag extends BaseController
 
     public function edit()
     {
+        if(!checkRoleList("MASTER.TAG.VIEW")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $model = new TagModel();
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
@@ -81,6 +112,14 @@ class Tag extends BaseController
 
     public function update()
     {
+        if(!checkRoleList("MASTER.TAG.UPDATE")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $model = new TagModel();
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
@@ -99,6 +138,14 @@ class Tag extends BaseController
 
     public function deleteTag()
     {
+        if(!checkRoleList("MASTER.TAG.DELETE")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $modelAssetTag = new AssetTagModel();
         $modelTag = new TagModel();
         $json = $this->request->getJSON();
@@ -115,10 +162,22 @@ class Tag extends BaseController
 
     public function download()
     {
+        if(!checkRoleList("MASTER.TAG.IMPORT.SAMPLE")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
         return $this->response->download('../public/download/tag.xlsx', null);
     }
     public function uploadFile()
     {
+        if(!checkRoleList("MASTER.TAG.IMPORT")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $file = $this->request->getFile('fileImportTag');
         if ($file) {
             $newName = "doc" . time();
@@ -177,6 +236,14 @@ class Tag extends BaseController
 
     public function insertTag()
     {
+        if(!checkRoleList("MASTER.TAG.IMPORT")){
+			return $this->response->setJSON([
+				'status' => 403,
+                'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+        }
+
         $tagModel = new TagModel();
         $json = $this->request->getJSON();
         $dataTag = $json->dataTag;

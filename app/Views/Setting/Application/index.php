@@ -36,13 +36,19 @@
                                 <div class="mt-2">
                                     <div class="d-flex justify-content-between">
                                         <label>Application Logo (Light)</label>
-                                        <span v-if="appSetting.appLogoLight" class="text-danger cursor-pointer" @click="appSetting.appLogoLight = ''">Delete</span>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <span v-if="appSetting.appLogoLight" class="text-danger cursor-pointer" @click="appSetting.appLogoLight = ''">Delete</span>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="fake-card h-100" :class="!appSetting.appLogoLight ? '' : 'd-none'">
-                                        <input type="file" ref="file" class="filepond" name="appLogoLight" id="appLogoLight">
-                                        <div class="invalid-feedback">
-                                            Field cannot be empty.
-                                        </div>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <input type="file" ref="file" class="filepond" name="appLogoLight" id="appLogoLight">
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
+                                        <?php else : ?>
+                                            <h5>No Attachment</h5>
+                                        <?php endif; ?>
                                     </div>
                                     <div :class="appSetting.appLogoLight ? '' : 'd-none'" class="w-100">
                                         <img class="rounded img-fluid img-thumbnail w-100 mb-3" class="w-100" :src="appSetting.appLogoLight">
@@ -51,13 +57,19 @@
                                 <div class="mt-2">
                                     <div class="d-flex justify-content-between">
                                         <label>Application Logo (Dark)</label>
-                                        <span v-if="appSetting.appLogoDark" class="text-danger cursor-pointer" @click="appSetting.appLogoDark = ''">Delete</span>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <span v-if="appSetting.appLogoDark" class="text-danger cursor-pointer" @click="appSetting.appLogoDark = ''">Delete</span>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="fake-card h-100" :class="!appSetting.appLogoDark ? '' : 'd-none'">
-                                        <input type="file" ref="file" class="filepond" name="appLogoDark" id="appLogoDark">
-                                        <div class="invalid-feedback">
-                                            Field cannot be empty.
-                                        </div>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <input type="file" ref="file" class="filepond" name="appLogoDark" id="appLogoDark">
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
+                                        <?php else : ?>
+                                            <h5>No Attachment</h5>
+                                        <?php endif; ?>
                                     </div>
                                     <div :class="appSetting.appLogoDark ? '' : 'd-none'" class="w-100">
                                         <img class="rounded img-fluid img-thumbnail w-100 mb-3" class="w-100" :src="appSetting.appLogoDark">
@@ -66,13 +78,19 @@
                                 <div class="mt-2">
                                     <div class="d-flex justify-content-between">
                                         <label>Application Logo (Icon)</label>
-                                        <span v-if="appSetting.appLogoIcon" class="text-danger cursor-pointer" @click="appSetting.appLogoIcon = ''">Delete</span>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <span v-if="appSetting.appLogoIcon" class="text-danger cursor-pointer" @click="appSetting.appLogoIcon = ''">Delete</span>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="fake-card h-100" :class="!appSetting.appLogoIcon ? '' : 'd-none'">
-                                        <input type="file" ref="file" class="filepond" name="appLogoIcon" id="appLogoIcon">
-                                        <div class="invalid-feedback">
-                                            Field cannot be empty.
-                                        </div>
+                                        <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                                            <input type="file" ref="file" class="filepond" name="appLogoIcon" id="appLogoIcon">
+                                            <div class="invalid-feedback">
+                                                Field cannot be empty.
+                                            </div>
+                                        <?php else : ?>
+                                            <h5>No Attachment</h5>
+                                        <?php endif; ?>
                                     </div>
                                     <div :class="appSetting.appLogoIcon ? '' : 'd-none'" class="w-100">
                                         <img class="rounded img-fluid img-thumbnail w-100 mb-3" class="w-100" :src="appSetting.appLogoIcon">
@@ -137,20 +155,22 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="cropImage" tabindex="-1" role="dialog" aria-labelledby="CropLogoImage" aria-hidden="true" data-backdrop="static">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-body p-0 w-100">
-                    <img id="cropLogo" class="w-100" :src="imgSrcSource">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="cancelCrop();">Close</button>
-                    <button type="button" class="btn btn-primary" @click="doCrop();">Save</button>
+    <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+        <!-- Modal -->
+        <div class="modal fade" id="cropImage" tabindex="-1" role="dialog" aria-labelledby="CropLogoImage" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-body p-0 w-100">
+                        <img id="cropLogo" class="w-100" :src="imgSrcSource">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="cancelCrop();">Close</button>
+                        <button type="button" class="btn btn-primary" @click="doCrop();">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 </div>
 
 <?= $this->endSection(); ?>
@@ -187,17 +207,19 @@
             let appLogoDarkFP;
             let appLogoIconFP;
 
-            const filepondOpt = {
-                acceptedFileTypes: ['image/png', 'image/jpeg'],
-                allowImagePreview: true,
-                allowImageCrop: true,
-                allowMultiple: false,
-                credits: false,
-                styleLoadIndicatorPosition: 'center bottom',
-                styleProgressIndicatorPosition: 'right bottom',
-                styleButtonRemoveItemPosition: 'left bottom',
-                styleButtonProcessItemPosition: 'right bottom',
-            };
+            <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                const filepondOpt = {
+                    acceptedFileTypes: ['image/png', 'image/jpeg'],
+                    allowImagePreview: true,
+                    allowImageCrop: true,
+                    allowMultiple: false,
+                    credits: false,
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                };
+            <?php endif; ?>
 
             function uuidv4() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -207,74 +229,135 @@
                 });
             };
 
-            const deleteAssetStatus = async (id) => {
-                let isNew = false;
-                _.map(assetStatus, (v) => {
-                    if (v.assetStatusId == id) {
-                        v.deleted = true;
-                        isNew = v.isNew;
+            <?php if (checkRoleList("APPLICATION.ASSETSTATUS.DELETE")) : ?>
+                const deleteAssetStatus = async (id) => {
+                    let isNew = false;
+                    _.map(assetStatus, (v) => {
+                        if (v.assetStatusId == id) {
+                            v.deleted = true;
+                            isNew = v.isNew;
+                        }
+                    });
+                    if (isNew) {
+                        _.remove(assetStatus, (v) => {
+                            return v.assetStatusId == id;
+                        })
                     }
-                });
-                if (isNew) {
-                    _.remove(assetStatus, (v) => {
-                        return v.assetStatusId == id;
-                    })
                 }
-            }
+            <?php endif; ?>
 
-            const restoreAssetStatus = async (id) => {
-                _.map(assetStatus, (v) => {
-                    if (v.assetStatusId == id) {
-                        v.deleted = false;
+            <?php if (checkRoleList("APPLICATION.ASSETSTATUS.RESTORE")) : ?>
+                const restoreAssetStatus = async (id) => {
+                    _.map(assetStatus, (v) => {
+                        if (v.assetStatusId == id) {
+                            v.deleted = false;
+                        }
+                        return v;
+                    });
+                }
+            <?php endif; ?>
+
+            <?php if (checkRoleList("APPLICATION.ASSETSTATUS.MODIFY")) : ?>
+                const addAssetStatus = async (e) => {
+                    let checkStatus = _.filter(assetStatus, {
+                        assetStatusName: e.value
+                    });
+
+                    if (checkStatus.length < 1 & e.value != '') {
+                        var id = uuidv4();
+                        await assetStatus.push({
+                            assetStatusId: id,
+                            userId: userId,
+                            assetStatusName: e.value,
+                            assetStatusName1: e.value,
+                            isNew: true,
+                            deleted: false,
+                        })
+
+                        e.value = '';
+
+                        let tableStatus = document.getElementById("tableStatus");
+                        let trStatus = tableStatus.rows[tableStatus.rows.length - 2];
+                        trStatus.querySelector("input[name='assetStatusName[]']").focus();
                     }
-                    return v;
-                });
-            }
-
-            const addAssetStatus = async (e) => {
-                let checkStatus = _.filter(assetStatus, {
-                    assetStatusName: e.value
-                });
-
-                if (checkStatus.length < 1 & e.value != '') {
-                    var id = uuidv4();
-                    await assetStatus.push({
-                        assetStatusId: id,
-                        userId: userId,
-                        assetStatusName: e.value,
-                        assetStatusName1: e.value,
-                        isNew: true,
-                        deleted: false,
-                    })
-
-                    e.value = '';
-
-                    let tableStatus = document.getElementById("tableStatus");
-                    let trStatus = tableStatus.rows[tableStatus.rows.length - 2];
-                    trStatus.querySelector("input[name='assetStatusName[]']").focus();
                 }
-            }
+            <?php endif; ?>
 
-            const saveSetting = () => {
-                try {
-                    if ($('#appName').hasClass('is-invalid')) {
-                        $('#appName').removeClass('is-invalid');
-                    };
-                    if (appSetting.appName != '' && appSetting.appLogoLight != '' && appSetting.appLogoDark != '' && appSetting.appLogoIcon != '') {
-                        let dataPost = {
-                            appSettingId: appSetting.appSettingId,
-                            userId: appSetting.userId,
-                            appName: appSetting.appName,
-                            appLogoLight: (appSetting.appLogoLight == appSetting.appLogoLight1 ? '' : appSetting.appLogoLight),
-                            appLogoDark: (appSetting.appLogoDark == appSetting.appLogoDark1 ? '' : appSetting.appLogoDark),
-                            appLogoIcon: (appSetting.appLogoIcon == appSetting.appLogoIcon1 ? '' : appSetting.appLogoIcon)
+            <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                const saveSetting = () => {
+                    try {
+                        if ($('#appName').hasClass('is-invalid')) {
+                            $('#appName').removeClass('is-invalid');
                         };
+                        if (appSetting.appName != '' && appSetting.appLogoLight != '' && appSetting.appLogoDark != '' && appSetting.appLogoIcon != '') {
+                            let dataPost = {
+                                appSettingId: appSetting.appSettingId,
+                                userId: appSetting.userId,
+                                appName: appSetting.appName,
+                                appLogoLight: (appSetting.appLogoLight == appSetting.appLogoLight1 ? '' : appSetting.appLogoLight),
+                                appLogoDark: (appSetting.appLogoDark == appSetting.appLogoDark1 ? '' : appSetting.appLogoDark),
+                                appLogoIcon: (appSetting.appLogoIcon == appSetting.appLogoIcon1 ? '' : appSetting.appLogoIcon)
+                            };
 
-                        axios({
-                            url: "<?= base_url('Application/saveSetting') ?>",
-                            method: 'POST',
-                            data: dataPost,
-                        }).then(res => {
+                            axios({
+                                url: "<?= base_url('Application/saveSetting') ?>",
+                                method: 'POST',
+                                data: dataPost,
+                            }).then(res => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        const swalWithBootstrapButtons = swal.mixin({
+                                            customClass: {
+                                                confirmButton: 'btn btn-success mr-1',
+                                            },
+                                            buttonsStyling: false
+                                        })
+                                        swalWithBootstrapButtons.fire({
+                                            title: 'Success!',
+                                            text: res.data.message,
+                                            icon: 'success'
+                                        }).then(okay => {
+                                            if (okay) {
+                                                swal.fire({
+                                                    title: 'Please Wait!',
+                                                    text: 'Reloading page..',
+                                                    onOpen: function() {
+                                                        swal.showLoading()
+                                                    }
+                                                })
+                                                location.reload();
+                                            }
+                                        })
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
+                                        }
+                                    });
+                            })
+                        } else {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-danger',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Failed!',
+                                text: "All field cannot be empty.",
+                                icon: 'error'
+                            });
+                        }
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+            <?php endif; ?>
+
+            <?php if (checkRoleList("APPLICATION.ASSETSTATUS.MODIFY,APPLICATION.ASSETSTATUS.DELETE,APPLICATION.ASSETSTATUS.RESTORE")) : ?>
+                const saveAssetStatus = () => {
+                    axios.post("<?= base_url('Application/saveAssetStatus') ?>", assetStatus)
+                        .then(res => {
                             xhrThrowRequest(res)
                                 .then(() => {
                                     const swalWithBootstrapButtons = swal.mixin({
@@ -296,7 +379,7 @@
                                                     swal.showLoading()
                                                 }
                                             })
-                                            location.reload();
+                                            // location.reload();
                                         }
                                     })
                                 })
@@ -306,59 +389,8 @@
                                     }
                                 });
                         })
-                    } else {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: "All field cannot be empty.",
-                            icon: 'error'
-                        });
-                    }
-                } catch (error) {
-                    console.log(error)
                 }
-            }
-
-            const saveAssetStatus = () => {
-                axios.post("<?= base_url('Application/saveAssetStatus') ?>", assetStatus)
-                    .then(res => {
-                        xhrThrowRequest(res)
-                            .then(() => {
-                                const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-success mr-1',
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: res.data.message,
-                                    icon: 'success'
-                                }).then(okay => {
-                                    if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Reloading page..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
-                                        // location.reload();
-                                    }
-                                })
-                            })
-                            .catch((rej) => {
-                                if (rej.throw) {
-                                    throw new Error(rej.message);
-                                }
-                            });
-                    })
-            }
+            <?php endif; ?>
 
             const createCropper = (ar) => {
                 if (cropper) cropper.destroy();
@@ -380,66 +412,71 @@
                 });
             };
 
-            const doCrop = () => {
-                if (targetFP.value == "L") {
-                    appLogoLightFP.removeFiles();
-                    appSetting.appLogoLight = cropper.getCroppedCanvas().toDataURL("image/png");
-                } else if (targetFP.value == "D") {
-                    appLogoDarkFP.removeFiles();
-                    appSetting.appLogoDark = cropper.getCroppedCanvas().toDataURL("image/png");
-                } else if (targetFP.value == "I") {
-                    appLogoIconFP.removeFiles();
-                    appSetting.appLogoIcon = cropper.getCroppedCanvas().toDataURL("image/png");
-                }
-                $("#cropImage").modal("hide");
-            };
+            <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                const doCrop = () => {
+                    if (targetFP.value == "L") {
+                        appLogoLightFP.removeFiles();
+                        appSetting.appLogoLight = cropper.getCroppedCanvas().toDataURL("image/png");
+                    } else if (targetFP.value == "D") {
+                        appLogoDarkFP.removeFiles();
+                        appSetting.appLogoDark = cropper.getCroppedCanvas().toDataURL("image/png");
+                    } else if (targetFP.value == "I") {
+                        appLogoIconFP.removeFiles();
+                        appSetting.appLogoIcon = cropper.getCroppedCanvas().toDataURL("image/png");
+                    }
+                    $("#cropImage").modal("hide");
+                };
 
-            const cancelCrop = () => {
-                if (targetFP.value == "L") {
-                    appLogoLightFP.removeFiles();
-                } else if (targetFP.value == "D") {
-                    appLogoDarkFP.removeFiles();
-                } else if (targetFP.value == "I") {
-                    appLogoIconFP.removeFiles();
-                }
-                $("#cropImage").modal("hide");
-            };
+                const cancelCrop = () => {
+                    if (targetFP.value == "L") {
+                        appLogoLightFP.removeFiles();
+                    } else if (targetFP.value == "D") {
+                        appLogoDarkFP.removeFiles();
+                    } else if (targetFP.value == "I") {
+                        appLogoIconFP.removeFiles();
+                    }
+                    $("#cropImage").modal("hide");
+                };
 
-            const showCropModal = async (file, ar) => {
-                imgSrcSource.value = URL.createObjectURL(file);
-                if (cropper) {
-                    cropper.destroy();
-                }
+                const showCropModal = async (file, ar) => {
+                    imgSrcSource.value = URL.createObjectURL(file);
+                    if (cropper) {
+                        cropper.destroy();
+                    }
 
-                await $("#cropImage").modal("show");
-                setTimeout(() => {
-                    createCropper(ar);
+                    await $("#cropImage").modal("show");
                     setTimeout(() => {
-                        window.dispatchEvent(new Event('resize'));
+                        createCropper(ar);
+                        setTimeout(() => {
+                            window.dispatchEvent(new Event('resize'));
+                        }, 100);
                     }, 100);
-                }, 100);
-            }
+                }
+            <?php endif; ?>
 
             Vue.onMounted(() => {
-                FilePond.registerPlugin(FilePondPluginImagePreview);
-                appLogoLightFP = FilePond.create(document.querySelector('#appLogoLight'), filepondOpt);
-                appLogoDarkFP = FilePond.create(document.querySelector('#appLogoDark'), filepondOpt);
-                appLogoIconFP = FilePond.create(document.querySelector('#appLogoIcon'), filepondOpt);
 
-                appLogoLightFP.on('addfile', (error, file) => {
-                    targetFP.value = "L";
-                    showCropModal(file.file);
-                });
+                <?php if (checkRoleList("APPLICATION.MODIFY")) : ?>
+                    FilePond.registerPlugin(FilePondPluginImagePreview);
+                    appLogoLightFP = FilePond.create(document.querySelector('#appLogoLight'), filepondOpt);
+                    appLogoDarkFP = FilePond.create(document.querySelector('#appLogoDark'), filepondOpt);
+                    appLogoIconFP = FilePond.create(document.querySelector('#appLogoIcon'), filepondOpt);
 
-                appLogoDarkFP.on('addfile', (error, file) => {
-                    targetFP.value = "D";
-                    showCropModal(file.file);
-                });
+                    appLogoLightFP.on('addfile', (error, file) => {
+                        targetFP.value = "L";
+                        showCropModal(file.file);
+                    });
 
-                appLogoIconFP.on('addfile', (error, file) => {
-                    targetFP.value = "I";
-                    showCropModal(file.file, 1);
-                });
+                    appLogoDarkFP.on('addfile', (error, file) => {
+                        targetFP.value = "D";
+                        showCropModal(file.file);
+                    });
+
+                    appLogoIconFP.on('addfile', (error, file) => {
+                        targetFP.value = "I";
+                        showCropModal(file.file, 1);
+                    });
+                <?php endif; ?>
             })
 
             return {
@@ -448,15 +485,12 @@
                 assetStatus,
 
                 uuidv4,
-                saveSetting,
-                addAssetStatus,
-                saveAssetStatus,
-                deleteAssetStatus,
-                restoreAssetStatus,
                 imgSrcSource,
-                createCropper,
-                doCrop,
-                cancelCrop
+                
+                <?= (checkRoleList("APPLICATION.MODIFY") ? "saveSetting,createCropper,doCrop,cancelCrop," : "") ?>
+                <?= (checkRoleList("APPLICATION.ASSETSTATUS.MODIFY") ? "saveAssetStatus,addAssetStatus," : "") ?>
+                <?= (checkRoleList("APPLICATION.ASSETSTATUS.DELETE") ? "deleteAssetStatus," : "") ?>
+                <?= (checkRoleList("APPLICATION.ASSETSTATUS.RESTORE") ? "restoreAssetStatus," : "") ?>
             }
         },
     }).mount('#app');

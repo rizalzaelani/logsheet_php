@@ -9,12 +9,15 @@ use App\Models\ScheduleTrxModel;
 use App\Models\TagLocationModel;
 use App\Models\TagModel;
 use App\Models\TransactionModel;
-use DateTime;
 
 class Asset extends BaseController
 {
 	public function index()
 	{
+        if(!checkRoleList("REPORT.ASSET.VIEW")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$assetModel			= new AssetModel();
 		$tagModel			= new TagModel();
 		$tagLocationModel	= new TagLocationModel();
@@ -43,6 +46,10 @@ class Asset extends BaseController
 	}
 
 	public function detail(){
+        if(!checkRoleList("REPORT.ASSET.DETAIL")){
+            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        }
+
 		$assetModel = new AssetModel();
 		$parameterModel = new ParameterModel();
 		$scheduleTrxModel = new ScheduleTrxModel();
@@ -94,49 +101,25 @@ class Asset extends BaseController
 		return $this->template->render('Reporting/Asset/detail', $data);
 	}
 
-	public function detail2()
-	{
-		$json = file_get_contents('json/transactionsParameter.json');
-		$arr = json_decode($json);
-		$dataParameter = $arr->dataParameter;
-		$dataSchedule = $arr->dataSchedule;
-		$dataRecord = $arr->dataRecord;
-		$groupSch = array();
-		foreach ($dataSchedule as $key) {
-			$groupSch[date('d M Y', strtotime($key->scheduleFrom))][] = $key;
-		}
-		$data = array(
-			'title' => 'Detail Reporting',
-			'subtitle' => 'Detail Reporting',
-		);
-		$data['dataParameter'] = $dataParameter;
-		$data['dataSchedule'] = $dataSchedule;
-		$data['dataRecord'] = $dataRecord;
-		$data['groupSch'] = $groupSch;
-		$data["breadcrumbs"] = [
-			[
-				"title"	=> "Home",
-				"link"	=> "Dashboard"
-			],
-			[
-				"title"	=> "Reporting Asset",
-				"link"	=> "ReportingAsset"
-			],
-			[
-				"title"	=> "Detail",
-				"link"	=> ""
-			],
-		];
-		return $this->template->render('Reporting/Asset/detail', $data);
-	}
-
 	public function datatable()
 	{
+		$request = \Config\Services::request();
+
+        if(!checkRoleList("REPORT.ASSET.VIEW")){
+			echo json_encode(array(
+				"draw" => $request->getPost('draw'),
+				"recordsTotal" => 0,
+				"recordsFiltered" => 0,
+				"data" => [],
+				'status' => 403,
+				'message' => "You don't have access to this page"
+			));
+        }
+
 		$table = 'vw_asset';
 		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
 		$column_search = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
 		$order = array('createdAt' => 'asc');
-		$request = \Config\Services::request();
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 
 		$filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
@@ -155,18 +138,5 @@ class Asset extends BaseController
 			'message' => 'success'
 		);
 		echo json_encode($output);
-	}
-
-	public function tableDetail()
-	{
-		$json = file_get_contents('json/transactionsParameter.json');
-		$arr = json_decode($json);
-		$dataParameter = $arr->dataParameter;
-		$dataSchedule = $arr->dataSchedule;
-		$data = array(
-			'dataParameter' => $dataParameter,
-			'dataSchedule' => $dataSchedule,
-		);
-		echo json_encode($data);
 	}
 }

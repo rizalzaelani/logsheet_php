@@ -41,7 +41,7 @@ class ScheduleTrx extends BaseController
         $weekOfYear = $dateTime->format("W");
         $weekDay = $dateTime->format("w");
 
-        $getDataAsset = $assetModel->getAll(["deletedAt IS NULL" => null]);
+        $getDataAsset = $assetModel->getAll(["schManual" => "0","deletedAt IS NULL" => null]);
         $getDataSchMonthly = $scheduleTrxModel->getAll(["schType" => "Monthly", "schManual" => "0", "MONTH(scheduleFrom)" => $month, "YEAR(scheduleFrom)" => $year]);
         $getDataSchWeekly = $scheduleTrxModel->getAll(["schType" => "Weekly", "schManual" => "0", "WEEKOFYEAR(scheduleFrom)" => $weekOfYear, "YEAR(scheduleFrom)" => $year]);
         $getDataSchDaily = $scheduleTrxModel->getAll(["schType" => "Daily", "schManual" => "0", "DATE(scheduleFrom)" => $dateTime->format("Y-m-d")]);
