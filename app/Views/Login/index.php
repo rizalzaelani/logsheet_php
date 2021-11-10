@@ -103,7 +103,7 @@
                         $('#password input').attr('type', 'password');
                         $('#togglePassword').removeClass('fa-eye');
                         $('#togglePassword').addClass('fa-eye-slash');
-                    } else if($('#password input').attr('type') == 'password'){
+                    } else if ($('#password input').attr('type') == 'password') {
                         $('#password input').attr('type', 'text');
                         $('#togglePassword').removeClass('fa-eye-slash');
                         $('#togglePassword').addClass('fa-eye');
@@ -140,7 +140,50 @@
                             data: formdata,
                             method: 'POST'
                         }).then((res) => {
+                            let dt = res.data;
+                            if (dt.status == 200) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    iconColor: 'white',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    customClass: {
+                                        popup: 'colored-toast'
+                                    },
+                                    didOpen: (toast) => {
+                                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                    }
+                                })
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: dt.message
+                                })
 
+                                // window.location.href = "<?= base_url() ?>";
+                            } else if(dt.status == 400){
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    iconColor: 'white',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    customClass: {
+                                        popup: 'colored-toast'
+                                    },
+                                    didOpen: (toast) => {
+                                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                    }
+                                })
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: dt.message
+                                })
+                            }
                         })
                     }
                 }
