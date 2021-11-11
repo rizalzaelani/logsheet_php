@@ -45,15 +45,23 @@ class Login extends BaseController
                 'status' => 400,
                 'message' => $message
             ));
-        }else{
+        } else {
             $dataArr = $data->data;
             unset($dataArr->token);
-            $session->set($dataArr);
+            unset($dataArr->parameter);
+            $session->set((array) $dataArr);
             return $this->response->setJSON(array(
                 'status' => 200,
                 'message' => 'Success Login'
             ));
         }
         die();
+    }
+    
+    public function logout()
+    {
+        $session = \Config\Services::session();
+        $session->destroy();
+        return redirect()->to(base_url());
     }
 }

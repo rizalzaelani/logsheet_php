@@ -12,7 +12,11 @@
         </button>
         <!-- <h6 class="text-uppercase mb-0"><?= $title ?></h6> -->
         <ol class="breadcrumb border-bottom-0">
-            <?php foreach (($breadcrumbs ?? []) as $key => $row) { ?>
+            <?php
+
+                                                use PhpParser\Node\Stmt\Echo_;
+
+foreach (($breadcrumbs ?? []) as $key => $row) { ?>
                 <?php if (count($breadcrumbs ?? []) == $key + 1) { ?>
                     <li class="breadcrumb-item active text-capitalize"><?= $row['title']; ?></li>
                 <?php } else { ?>
@@ -43,9 +47,10 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right pt-0 mr-2">
                 <div class="dropdown-header bg-light py-2">
-                    <strong>Account</strong>
+                    <strong class="text-uppercase"><?php $session = \Config\Services::session();
+                            echo $session->get('name') ?></strong>
                 </div>
-                <a class="dropdown-item" href="#">
+                <!-- <a class="dropdown-item" href="#">
                     <svg class="c-icon mfe-2">
                         <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-bell') ?>"></use>
                     </svg> Updates<span class="badge badge-info mfs-auto">42</span>
@@ -93,8 +98,8 @@
                     <svg class="c-icon mfe-2">
                         <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-lock-locked') ?>"></use>
                     </svg> Lock Account
-                </a>
-                <a class="dropdown-item" href="#">
+                </a> -->
+                <a class="dropdown-item" href="<?= base_url('/logout'); ?>">
                     <svg class="c-icon mfe-2">
                         <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-account-logout') ?>"></use>
                     </svg> Logout

@@ -162,8 +162,8 @@
                                     title: dt.message
                                 })
 
-                                // window.location.href = "<?= base_url() ?>";
-                            } else if(dt.status == 400){
+                                window.location.href = "<?= base_url('/Dashboard') ?>";
+                            } else if (dt.status == 400) {
                                 const Toast = Swal.mixin({
                                     toast: true,
                                     position: 'top-end',
