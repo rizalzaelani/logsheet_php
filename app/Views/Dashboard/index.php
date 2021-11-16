@@ -99,9 +99,9 @@
 	</div>
 	<div class="row mb-4">
 		<div class="col-4">
-			<div class="card h-100 bg-info p-0">
+			<div class="card h-100 card-asset p-0">
 				<div class="card-body">
-					<div class="d-flex justify-content-between align-items-center text-white mt-2">
+					<div class="d-flex justify-content-between align-items-center  mt-2">
 						<p class="m-0" style="height: 2rem; width: 2rem; font-size: 1.5rem"><?= $totalAsset ?></p>
 						<div>
 							<svg class="c-icon mr-4" style="width: 2rem; height: 2rem; font-size: 2rem">
@@ -110,15 +110,15 @@
 						</div>
 					</div>
 					<div>
-						<p class="text-value text-white mb-0">Total Asset</p>
+						<h5 class="py-1 mb-0">Asset</h5>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="col-4">
-			<div class="card h-100 bg-info">
+			<div class="card h-100 card-tag">
 				<div class="card-body">
-					<div class="d-flex justify-content-between align-items-center text-white mt-2">
+					<div class="d-flex justify-content-between align-items-center mt-2">
 						<p class="m-0" style="height: 2rem; width: 2rem; font-size: 1.5rem"><?= $totalTag ?></p>
 						<div>
 							<svg class="c-icon mr-4" style="width: 2rem; height: 2rem; font-size: 2rem">
@@ -127,15 +127,15 @@
 						</div>
 					</div>
 					<div>
-						<p class="text-value text-white mb-0">Total Tag</p>
+						<h5 class="py-1 mb-0">Tag</h5>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="col-4">
-			<div class="card h-100 bg-info">
+			<div class="card h-100 card-tag-location">
 				<div class="card-body">
-					<div class="d-flex justify-content-between align-items-center text-white mt-2">
+					<div class="d-flex justify-content-between align-items-center  mt-2">
 						<p class="m-0" style="height: 2rem; width: 2rem; font-size: 1.5rem"><?= $totalLocation ?></p>
 						<div>
 							<svg class="c-icon mr-4" style="width: 2rem; height: 2rem; font-size: 2rem">
@@ -144,7 +144,7 @@
 						</div>
 					</div>
 					<div>
-						<p class="text-value text-white mb-0">Total Tag Location</p>
+						<h5 class="py-1  mb-0">Tag Location</h5>
 					</div>
 				</div>
 			</div>
@@ -372,7 +372,7 @@
 				'#ee6666',
 			],
 			title: {
-				text: 'Approve / Non Approve',
+				text: 'Approve & Waiting',
 				left: 'center'
 			},
 			tooltip: {
@@ -411,7 +411,7 @@
 					},
 					{
 						value: v.approveNull,
-						name: 'Non Approve'
+						name: 'Waiting'
 					},
 				]
 			}]
