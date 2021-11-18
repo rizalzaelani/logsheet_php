@@ -75,8 +75,8 @@
 							<tr>
 								<th>Number</th>
 								<th>Asset</th>
-								<th>Tag</th>
-								<th>Location</th>
+								<th width="27.5%">Tag</th>
+								<th width="27.5%">Location</th>
 								<th>Schedule</th>
 							</tr>
 						</thead>
@@ -91,10 +91,14 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-	const { onMounted, ref, reactive } = Vue;
+	const {
+		onMounted,
+		ref,
+		reactive
+	} = Vue;
 	let v = Vue.createApp({
 		el: '#app',
-		setup(){
+		setup() {
 			var myModal = ref(null);
 			var table = ref(null);
 
@@ -126,8 +130,7 @@
 									resolve();
 								}
 							},
-							columns: [
-								{
+							columns: [{
 									data: "assetNumber",
 									name: "assetNumber",
 								},
@@ -161,9 +164,9 @@
 											var dt = Array.from(new Set(data.split(',')));
 											var list_dt = '';
 											$.each(dt, function(key, value) {
-												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
+												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 11px; padding: 5px !important;">' + value + '</span>';
 											})
-											return list_dt;
+											return '<div style="max-height: 50px !important; overflow-y: scroll;">' + list_dt + '</div>';
 										} else {
 											return data;
 										}
@@ -194,7 +197,7 @@
 						v.table.search(searchData).draw();
 					}
 				});
-	
+
 				$(document).on('click', '#tableEq tbody tr', function() {
 					window.location.href = "<?= site_url('ReportingAsset/detail') ?>?assetId=" + $(this).attr("data-id");
 				});
