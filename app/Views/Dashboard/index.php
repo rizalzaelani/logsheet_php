@@ -336,7 +336,7 @@
 			dataset: {
 				source: [
 					['product', 'Normal', 'Finding', 'Open', 'Close'],
-					['20', v.normal, 3, 7, v.closed],
+					['20', v.normal, v.finding, v.open, v.closed],
 				]
 			},
 			xAxis: [{

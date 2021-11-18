@@ -22,10 +22,10 @@ class Dashboard extends BaseController
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$approvedAtNull = $scheduleTrxModel->where('approvedAt', null)->get()->getResultArray();
 		$approvedAtNotNull = $scheduleTrxModel->where('approvedAt !=', null)->get()->getResultArray();
-		$normal = $scheduleTrxModel->where('condition', 'normal')->get()->getResultArray();
-		$finding = $scheduleTrxModel->where('condition', 'finding')->get()->getResultArray();
-		$open = $scheduleTrxModel->where('condition', 'open')->get()->getResultArray();
-		$closed = $scheduleTrxModel->where('condition', 'closed')->get()->getResultArray();
+		$normal = $scheduleTrxModel->where('condition', 'Normal')->get()->getResultArray();
+		$finding = $scheduleTrxModel->where('condition', 'Finding')->get()->getResultArray();
+		$open = $scheduleTrxModel->where('condition', 'Open')->get()->getResultArray();
+		$closed = $scheduleTrxModel->where('condition', 'Closed')->get()->getResultArray();
 		$dataAsset = $assetModel->where('deletedAt', null)->get()->getResultArray();
 		$dataTag = $tagModel->findAll();
 		$dataLocation = $locationModel->findAll();
