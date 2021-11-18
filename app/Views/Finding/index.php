@@ -138,10 +138,7 @@
 								},
 							],
 							order: [0, 'asc'],
-							columnDefs: [{
-									targets: "_all",
-									className: "dt-head-center",
-								},
+							columnDefs: [
 								{
 									targets: [3, 4],
 									render: function(data) {
@@ -150,9 +147,9 @@
 											var dt = Array.from(new Set(data.split(',')));
 											var list_dt = '';
 											$.each(dt, function(key, value) {
-												list_dt += '<span class="badge badge-dark p-1 mr-1 mb-1" style="font-size: 11px; padding: 5px !important;">' + value + '</span>';
+												list_dt += '<span class="badge badge-dark p-1 mr-1 mb-1 badge-size">' + value + '</span>';
 											});
-											return '<div style="max-height: 50px !important; overflow-y: scroll;">' + list_dt + '</div>';
+											return '<div style="max-height: 56px !important; overflow-y: scroll;">' + list_dt + '</div>';
 										} else {
 											return data;
 										}

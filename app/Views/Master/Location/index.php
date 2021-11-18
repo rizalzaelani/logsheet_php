@@ -199,10 +199,6 @@
                                 },
                             ],
                             order: [0, 'asc'],
-                            columnDefs: [{
-                                targets: "_all",
-                                // className: "dt-head-center",
-                            }, ],
                             'createdRow': function(row, data) {
                                 row.setAttribute("data-id", data.tagLocationId);
                                 row.classList.add("cursor-pointer");

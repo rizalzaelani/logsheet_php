@@ -201,7 +201,7 @@
 									data: "assetName",
 									name: "assetName",
 									render: function(data, type, row, meta) {
-										return '<div>' + row.assetName + '<br><span class="sub-text">' + row.assetNumber + '<span class="text-lowercase"><i> ' + (row.schType == '' ? '' : '(' + row.schType + ')') + '</i></span>' + '</span</div>';
+										return '<div>' + row.assetName + '<br><span class="sub-text">' + row.assetNumber + '<span class="text-lowercase"><i> ' + (row.schType == '' ? '' : '(' + row.schType + ')') + '</i></span>' + '</span></div>';
 									}
 								},
 								{
@@ -214,10 +214,7 @@
 								},
 							],
 							order: [0, 'asc'],
-							columnDefs: [{
-									targets: "_all",
-									// className: "dt-head-center",
-								},
+							columnDefs: [
 								{
 									targets: [1, 2],
 									width: '27.5%',

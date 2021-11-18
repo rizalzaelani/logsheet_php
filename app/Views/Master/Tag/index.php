@@ -204,10 +204,6 @@
                                         <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteTag(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
                                     },
                                 },
-                                {
-                                    targets: "_all",
-                                    // className: "dt-head-center",
-                                },
                             ]
                         });
                     } catch (er) {

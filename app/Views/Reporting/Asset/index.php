@@ -73,11 +73,9 @@
 					<table class="table table-hover w-100 display" id="tableEq" @current-items="getFiltered()">
 						<thead class="bg-primary">
 							<tr>
-								<th>Number</th>
-								<th>Asset</th>
-								<th width="27.5%">Tag</th>
-								<th width="27.5%">Location</th>
-								<th>Schedule</th>
+								<th style="width: 30%;">Asset</th>
+								<th style="width: 35%;">Tag</th>
+								<th style="width: 35%;">Location</th>
 							</tr>
 						</thead>
 					</table>
@@ -131,12 +129,11 @@
 								}
 							},
 							columns: [{
-									data: "assetNumber",
-									name: "assetNumber",
-								},
-								{
 									data: "assetName",
 									name: "assetName",
+									render: function(data, type, row, meta) {
+										return '<div>' + row.assetName + '<br><span class="sub-text">' + row.assetNumber + '<i class="text-lowercase"> ' + (row.schType == "" ? '' : '(' + row.schType + ')') + '</i></span></div>'
+									}
 								},
 								{
 									data: "tagName",
@@ -146,27 +143,23 @@
 									data: "tagLocationName",
 									name: "tagLocationName",
 								},
-								{
-									data: "schType",
-									name: "schType",
-								},
 							],
 							order: [0, 'asc'],
 							columnDefs: [{
 									targets: "_all",
-									className: "dt-head-center",
+									// className: "dt-head-center",
 								},
 								{
-									targets: [2, 3],
+									targets: [1, 2],
 									render: function(data) {
 										if (data != '-') {
 											// unique = Array.from(new Set(data));
 											var dt = Array.from(new Set(data.split(',')));
 											var list_dt = '';
 											$.each(dt, function(key, value) {
-												list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 11px; padding: 5px !important;">' + value + '</span>';
+												list_dt += '<span class="badge badge-dark mr-1 mb-1 badge-size">' + value + '</span>';
 											})
-											return '<div style="max-height: 50px !important; overflow-y: scroll;">' + list_dt + '</div>';
+											return '<div style="max-height: 56px !important; overflow-y: scroll;">' + list_dt + '</div>';
 										} else {
 											return data;
 										}
