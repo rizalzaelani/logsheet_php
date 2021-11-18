@@ -34,9 +34,9 @@
                     <table class="table w-100 table-hover" id="tableTag">
                         <thead class="bg-primary">
                             <tr>
-                                <th>Tag Name</th>
-                                <th>Description</th>
-                                <th class="text-center" width="20%">Action</th>
+                                <th style="width: 30%">Tag Name</th>
+                                <th style="width: 50%">Description</th>
+                                <th style="width: 20%">Action</th>
                             </tr>
                         </thead>
                     </table>
@@ -189,7 +189,10 @@
                                 },
                                 {
                                     data: "description",
-                                    name: "description"
+                                    name: "description",
+                                    render: function(data, type, row, meta) {
+                                        return row.description == "" ? '-' : row.description;
+                                    }
                                 },
                             ],
                             order: [0, 'asc'],
@@ -197,13 +200,13 @@
                                     targets: 2,
                                     data: "tagId",
                                     render: function(data, type, row, meta) {
-                                        return `<div class='d-flex justify-content-center align-items-center'><button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editTag(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
+                                        return `<div class='d-flex justify-content-start align-items-center'><button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editTag(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
                                         <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteTag(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
                                     },
                                 },
                                 {
                                     targets: "_all",
-                                    className: "dt-head-center",
+                                    // className: "dt-head-center",
                                 },
                             ]
                         });
