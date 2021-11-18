@@ -35,8 +35,8 @@
                         <thead class="bg-primary">
                             <tr>
                                 <th>Tag Location</th>
-                                <th>Latitude</th>
-                                <th>Longitude</th>
+                                <!-- <th>Latitude</th>
+                                <th>Longitude</th> -->
                                 <th>Description</th>
                             </tr>
                         </thead>
@@ -127,8 +127,8 @@
                                         <thead>
                                             <tr>
                                                 <th>Location</th>
-                                                <th>Latitude</th>
-                                                <th>Longitude</th>
+                                                <!-- <th>Latitude</th>
+                                                <th>Longitude</th> -->
                                                 <th>Description</th>
                                             </tr>
                                         </thead>
@@ -151,10 +151,13 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-    const { onMounted, ref} = Vue;
+    const {
+        onMounted,
+        ref
+    } = Vue;
     let v = Vue.createApp({
         el: '#app',
-        setup(){
+        setup() {
             var data = ref(null);
             var modalLocation = ref('');
             var table = ref(null);
@@ -191,20 +194,24 @@
                                     data: "tagLocationName",
                                     name: "tagLocationName"
                                 },
-                                {
-                                    data: "latitude",
-                                    name: "latitude"
-                                },
-                                {
-                                    data: "longitude",
-                                    name: "longitude"
-                                },
+                                // {
+                                //     data: "latitude",
+                                //     name: "latitude"
+                                // },
+                                // {
+                                //     data: "longitude",
+                                //     name: "longitude"
+                                // },
                                 {
                                     data: "description",
                                     name: "description"
                                 },
                             ],
                             order: [0, 'asc'],
+                            columnDefs: [{
+                                targets: "_all",
+                                className: "dt-head-center",
+                            }, ],
                             'createdRow': function(row, data) {
                                 row.setAttribute("data-id", data.tagLocationId);
                                 row.classList.add("cursor-pointer");
@@ -220,45 +227,45 @@
 
             };
             handleAdd = () => {
-                this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
-                this.modalLocation.show();
-            },
-            uploadFile = () => {
-                this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
-                this.modalLocation.show();
-            },
-            insertLocation = () => {
-                axios.post("<?= base_url('Location/insertLocation'); ?>", {
-                    dataLocation: importList,
-                    tagLocationId: uuidv4()
-                }).then(res => {
-                    console.log(res);
-                    if (res.data.status == 'success') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire(
-                            'Success!',
-                            'You have successfully add Location.',
-                            'success'
-                        ).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
-                        })
-                    }
-                })
-            }
+                    this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
+                    this.modalLocation.show();
+                },
+                uploadFile = () => {
+                    this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
+                    this.modalLocation.show();
+                },
+                insertLocation = () => {
+                    axios.post("<?= base_url('Location/insertLocation'); ?>", {
+                        dataLocation: importList,
+                        tagLocationId: uuidv4()
+                    }).then(res => {
+                        console.log(res);
+                        if (res.data.status == 'success') {
+                            const swalWithBootstrapButtons = swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success',
+                                },
+                                buttonsStyling: false
+                            })
+                            swalWithBootstrapButtons.fire(
+                                'Success!',
+                                'You have successfully add Location.',
+                                'success'
+                            ).then(okay => {
+                                if (okay) {
+                                    swal.fire({
+                                        title: 'Please Wait!',
+                                        text: 'Reloading page..',
+                                        onOpen: function() {
+                                            swal.showLoading()
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            })
+                        }
+                    })
+                }
             onMounted(() => {
                 getData();
                 let search = $(".dt-search-input input[data-target='#tableLocation']");
@@ -268,7 +275,7 @@
                         v.table.search(searchData).draw();
                     }
                 });
-    
+
                 $(document).on('click', '#tableLocation tbody tr', function() {
                     window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
                 });
@@ -338,12 +345,12 @@
             "columns": [{
                     "data": "locationName"
                 },
-                {
-                    "data": "latitude"
-                },
-                {
-                    "data": "longitude"
-                },
+                // {
+                //     "data": "latitude"
+                // },
+                // {
+                //     "data": "longitude"
+                // },
                 {
                     "data": "description"
                 },

@@ -100,26 +100,25 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     <!-- tab parameter -->
                     <div class=" tab-pane" id="parameter" role="tabpanel">
                         <div class="table-responsive mt-2">
-                            <table class="table dt-responsive table-hover w-100" id="tableParam">
+                            <table class="table dt-responsive table-hover" id="tableParam" style="width: 100%">
                                 <thead>
                                     <tr class="bg-primary text-center">
                                         <th>Parameter</th>
                                         <th>Description</th>
+                                        <th>Normal</th>
+                                        <th>Abnormal</th>
                                         <th>UoM</th>
-                                        <th>Min</th>
-                                        <th>Max</th>
                                         <th>Show On</th>
                                         <th>Sorting</th>
                                     </tr>
-                                    <tr style="display: none;">
-                                        <th>#</th>
-                                        <th width="12,5%">Parameter</th>
-                                        <th width="12,5%">Description</th>
-                                        <th width="12,5%">UoM</th>
-                                        <th width="12,5%">Min</th>
-                                        <th width="12,5%">Max</th>
-                                        <th width="15%">Show On</th>
-                                        <th></th>
+                                    <tr class="d-none">
+                                        <th width="10%">Parameter</th>
+                                        <th width="10%">Description</th>
+                                        <th width="20%">Normal</th>
+                                        <th width="20%">Abnormal</th>
+                                        <th width="10%">UoM</th>
+                                        <th width="20%">Show On</th>
+                                        <th width="10%">Sorting</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -130,34 +129,34 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             <td class="text-center" style="display: none;"><?= $key['parameterId']; ?></td>
                                             <td class="text-center"><?= $key['parameterName']; ?></td>
                                             <td class="text-center"><?= $key['description']; ?></td>
-                                            <td class="text-center">
-                                                <?php
-                                                if ($key['uom'] != '') {
-                                                    echo $key['uom'];
-                                                } else if ($key['uom'] == '' && $key['option'] == '') {
-                                                    echo '<i>(Empty)</i>';
+                                            <td class="text-center" style="max-width: 150px !important">
+                                                <?php if ($key['max'] != '') {
+                                                    echo $key['max'];
+                                                } else if ($key['max'] == '' && $key['normal'] == '') {
+                                                    echo '<i>-</i>';
                                                 } else {
-                                                    echo $key['option'];
+                                                    echo $key['normal'];
                                                 }
                                                 ?>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center" style="max-width: 150px !important">
                                                 <?php if ($key['min'] != '') {
                                                     echo $key['min'];
                                                 } else if ($key['min'] == '' && $key['abnormal'] == '') {
-                                                    echo '<i>(Empty)</i>';
+                                                    echo '<i>-</i>';
                                                 } else {
                                                     echo $key['abnormal'];
                                                 }
                                                 ?>
                                             </td>
                                             <td class="text-center">
-                                                <?php if ($key['max'] != '') {
-                                                    echo $key['max'];
-                                                } else if ($key['max'] == '' && $key['normal'] == '') {
-                                                    echo '<i>(Empty)</i>';
+                                                <?php
+                                                if ($key['uom'] != '') {
+                                                    echo $key['uom'];
+                                                } else if ($key['uom'] == '' && $key['option'] == '') {
+                                                    echo '<i>-</i>';
                                                 } else {
-                                                    echo $key['normal'];
+                                                    echo $key['option'];
                                                 }
                                                 ?>
                                             </td>
@@ -1023,16 +1022,16 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </div>
             </div>
             <div class="table-responsive mt-2">
-                <table class="table dt-responsive table-bordered table-hover w-100 display" id="tableParameter">
+                <table class="table table-bordered table-hover w-100 display" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
-                            <th width="" class="text-center">Parameter</th>
-                            <th width="" class="text-center">Description</th>
-                            <th width="" class="text-center">Normal</th>
-                            <th width="" class="text-center">Abnormal</th>
-                            <th width="" class="text-center">UoM</th>
-                            <th width="" class="text-center">Show On</th>
-                            <th width="" class="text-center"><i>Status</i></th>
+                            <th class="text-center">Parameter</th>
+                            <th class="text-center">Description</th>
+                            <th class="text-center">Normal</th>
+                            <th class="text-center">Abnormal</th>
+                            <th class="text-center">UoM</th>
+                            <th class="text-center">Show On</th>
+                            <th class="text-center"><i>Status</i></th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -1043,20 +1042,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td class="text-center" v-if="items.max != null">
                                 {{ items.max }}
                             </td>
-                            <td class="text-center" v-else-if="items.normal != ''">
+                            <td class="text-center" v-else-if="items.normal != ''" style="max-height: 150px !important;">
                                 {{ items.normal }}
                             </td>
                             <td class="text-center" v-else>
-                                <i>(Empty)</i>
+                                <i>-</i>
                             </td>
                             <td class="text-center" v-if="items.min != null">
                                 {{ items.min }}
                             </td>
-                            <td class="text-center" v-else-if="items.abnormal != ''">
+                            <td class="text-center" v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
                             <td class="text-center" v-else>
-                                <i>(Empty)</i>
+                                <i>-</i>
                             </td>
                             <td class="text-center" v-if="items.uom != ''">
                                 {{ items.uom }}
@@ -1065,11 +1064,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 {{ items.option }}
                             </td>
                             <td class="text-center" v-else>
-                                <i>(Empty)</i>
+                                <i>-</i>
                             </td>
                             <td class="text-center">{{ items.showOn}}</td>
                             <td class="text-center"><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
-                            <td class="text-center">
+                            <td class="text-center" style="min-width: 90px !important">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i); checkModalAdd = false; checkModalExist = false"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
@@ -1080,20 +1079,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td class="text-center" v-if="items.max != null">
                                 {{ items.max }}
                             </td>
-                            <td class="text-center" v-else-if="items.normal != ''">
+                            <td class="text-center" v-else-if="items.normal != ''" style="max-width: 150px !important">
                                 {{ items.normal }}
                             </td>
                             <td class="text-center" v-else>
-                                <i>(Empty)</i>
+                                <i>-</i>
                             </td>
                             <td class="text-center" v-if="items.min != null">
                                 {{ items.min }}
                             </td>
-                            <td class="text-center" v-else-if="items.abnormal != ''">
+                            <td class="text-center" v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
                             <td class="text-center" v-else>
-                                <i>(Empty)</i>
+                                <i>-</i>
                             </td>
                             <td class="text-center" v-if="items.uom != ''">
                                 {{ items.uom }}
@@ -1102,7 +1101,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 {{ items.option }}
                             </td>
                             <td class="text-center" v-else>
-                                <i>(Empty)</i>
+                                <i>-</i>
                             </td>
                             <td class="text-center">{{ items.showOn }}</td>
                             <td class="text-center" v-if="items.status == 'old'">
@@ -1117,7 +1116,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td class="text-center" v-else>
                                 <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
                             </td> -->
-                            <td class="text-center">
+                            <td class="text-center" style="min-width: 90px !important">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
@@ -1863,24 +1862,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                         this.myModal.hide();
                         const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        iconColor: 'white',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        customClass: {
-                            popup: 'colored-toast'
-                        },
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        }
-                    })
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Successfully Modify Parameter'
-                    })
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Successfully Modify Parameter'
+                        })
                     }
                 };
 
@@ -1914,24 +1913,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             this.params.splice(index, 1);
                             this.param.sortId = this.param.sortId - 1;
                             const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        iconColor: 'white',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        customClass: {
-                            popup: 'colored-toast'
-                        },
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        }
-                    })
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Successfully Deleted Parameter'
-                    })
+                                toast: true,
+                                position: 'top-end',
+                                iconColor: 'white',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                customClass: {
+                                    popup: 'colored-toast'
+                                },
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Successfully Deleted Parameter'
+                            })
                         }
                     })
 

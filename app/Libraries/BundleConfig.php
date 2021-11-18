@@ -35,6 +35,8 @@ class BundleConfig
 			base_url('/js/main.js'),
 			base_url('/js/addon.js'),
 			base_url('/js/string-manipulation.js'),
+			base_url('/js/jquery.steps.min.js'),
+			// base_url('/js/bd-wizard.js'),
 		);
 		return $plugin;
 	}
@@ -57,7 +59,7 @@ class BundleConfig
 			base_url('/vendors/jquery-ui/jquery-ui.css'),
 			base_url('/vendors/mapbox/mapbox-gl.css'),
 			base_url('/vendors/lightpick/lightpick.css'),
-
+			// base_url('/css/bd-wizard.css'),
 		);
 		return $plugin;
 	}
