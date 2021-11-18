@@ -791,3 +791,12 @@ ul.tl li .timestamp {
 }
 
 /* End validation */
+
+
+/* Button */
+
+.btn-warning, .btn-warning:hover {
+  color: #fff;
+}
+
+/* end Button */

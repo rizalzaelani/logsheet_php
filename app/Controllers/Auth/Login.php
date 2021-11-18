@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Controllers\Login;
+namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
-use App\Models\UserModel;
-use CodeIgniter\HTTP\Response;
-use PhpParser\Node\Stmt\Echo_;
 
 class Login extends BaseController
 {
@@ -16,7 +13,7 @@ class Login extends BaseController
             'subtitle' => 'Logsheet Digital'
         );
 
-        return $this->template->render('Login/index', $data);
+        return $this->template->render('Auth/login', $data);
     }
     public function auth()
     {

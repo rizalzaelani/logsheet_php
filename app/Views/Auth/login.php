@@ -1,11 +1,4 @@
 <!DOCTYPE html>
-<!--
-* CoreUI Pro based Bootstrap Admin Template
-* @version v3.2.0
-* @link https://coreui.io/pro/
-* Copyright (c) 2020 creativeLabs Łukasz Holeczek
-* License (https://coreui.io/pro/license)
--->
 <html lang="en">
 
 <head>
@@ -13,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
-    <meta name="author" content="Łukasz Holeczek">
+    <meta name="description" content="Logsheet Digital">
+    <meta name="author" content="Nocola IoT Solution">
     <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
-    <title>CoreUI Pro Bootstrap Admin Template</title>
+    <title>Login Page | Logsheet Digital</title>
     <?php if (isset($css)) : ?>
         <?php foreach ($css as $item) : ?>
             <link href="<?= $item ?>" rel="stylesheet">
@@ -34,49 +27,51 @@
     <div class="container" id="app">
         <div class="row justify-content-center">
             <div class="col-10">
-                <div class="card-group shadow" style="border-radius: 20px 20px;">
-                    <div class="card card-main bg-primary d-md-down-none" style="border-radius: 20px 0px 0px 20px; padding: 5rem 1rem;">
-                        <div class="card-body">
-                            <h1 class="text-white">Logsheet Digital</h1>
-                            <p class="text-white">Sign In to your account</p>
-                            <div class="input-group my-4" id="email">
-                                <div class="input-group-prepend"><span class="input-group-text">
-                                        <svg class="c-icon">
-                                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-user') ?>"></use>
-                                        </svg></span></div>
-                                <input class="form-control" type="email" placeholder="Email" v-model="email">
+                <div class="card-group shadow">
+                    <div class="card card-main">
+                        <div class="card-body p-5">
+                            <div class="d-flex justify-content-between">
+                                <img src="<?= base_url('/img/logo-act.png') ?>" width="120">
+                                <a href="<?= site_url("register") ?>" class="h6 mb-0 text-muted font-weight-500 text-decoration-none">Sign Up</a>
                             </div>
-                            <div class="invalid-feedback-email d-none">
-                                Field cannot be empty.
-                            </div>
-                            <div class="input-group my-4" id="password">
-                                <div class="input-group-prepend"><span class="input-group-text">
-                                        <svg class="c-icon">
-                                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-lock-locked') ?>"></use>
-                                        </svg></span></div>
-                                <input class="form-control" type="password" placeholder="Password" v-model="password">
-                                <div class="input-group-append" @click="togglePassword()">
-                                    <span class="input-group-text bg-white" @click="togglePassword()">
-                                        <i class="fa fa-eye-slash" id="togglePassword" @click="togglePassword()" style="cursor: pointer"></i>
-                                    </span>
+                            <form class="mt-5" v-on:submit.prevent="login()">
+                                <h2>Sign In</h2>
+                                <p class="text-medium-emphasis text-muted">Sign In to continue to Losheet Application</p>
+                                <div class="input-group my-4" id="email">
+                                    <div class="input-group-prepend"><span class="input-group-text">
+                                            <svg class="c-icon">
+                                                <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-user') ?>"></use>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" name="email" type="email" placeholder="Email" v-model="email">
                                 </div>
-                            </div>
-                            <div class="invalid-feedback-password d-none">
-                                Field cannot be empty.
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <button class="btn w-100 px-4 text-primary" style="background-color: white;" @click="submit()"><i class="fa fa-sign-in"></i> LOGIN</button>
+                                <div class="invalid-feedback-email d-none">
+                                    Field cannot be empty.
                                 </div>
-                            </div>
+                                <div class="input-group my-4" id="password">
+                                    <div class="input-group-prepend"><span class="input-group-text">
+                                            <svg class="c-icon">
+                                                <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-lock-locked') ?>"></use>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" name="password" type="password" placeholder="Password" v-model="password">
+                                    <div class="input-group-append" @click="togglePassword()">
+                                        <span class="input-group-text bg-white" @click="togglePassword()">
+                                            <i class="fa fa-eye-slash" id="togglePassword" @click="togglePassword()" style="cursor: pointer"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="invalid-feedback-password d-none">
+                                    Field cannot be empty.
+                                </div>
+                                <button class="btn btn-info w-100" @click="login()"><i class="fa fa-sign-in"></i> LOGIN</button>
+                            </form>
                         </div>
                     </div>
-                    <div class="card card-main d-md-down-none" style="padding: 5rem 0; border-radius: 0px 20px 20px 0px;">
-                        <div class="card-body d-flex justify-content-center align-items-center text-center">
-                            <div class="row">
-                                <img src="<?= base_url('/img/logo-act.png') ?>" height="80" width="324" class="c-sidebar-brand-full">
-                            </div>
-                        </div>
+                    <div class="card card-main d-md-down-none">
+                        <img src="<?= base_url('/img/ilustration/login-animate.png') ?>" class="w-100">
                     </div>
                 </div>
             </div>
@@ -110,7 +105,7 @@
                     }
                 }
 
-                function submit() {
+                function login() {
                     if (this.email == "" || this.password == "") {
                         swal.fire({
                             title: 'Invalid Value',
@@ -191,7 +186,7 @@
                     email,
                     password,
                     togglePassword,
-                    submit
+                    login
                 }
             }
         }).mount('#app');

@@ -143,6 +143,12 @@
 									className: "dt-head-center",
 								},
 								{
+									targets: 0,
+									render: function(data, type, row) {
+										return moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")
+									}
+								},
+								{
 									targets: [3, 4],
 									render: function(data) {
 										if (data != '-') {
