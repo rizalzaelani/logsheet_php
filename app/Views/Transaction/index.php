@@ -64,12 +64,10 @@
 					<table class="table table-hover w-100" id="tableTrx">
 						<thead class="bg-primary">
 							<tr>
-								<th>Scanned</th>
+								<th style="width: 150px;">Time</th>
 								<th>Asset Name</th>
-								<th>Asset Number</th>
-								<th width="27.5%">Tag</th>
-								<th width="27.5%">Location</th>
-								<th>Status</th>
+								<th>Tag</th>
+								<th>Location</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -125,31 +123,28 @@
 									data: "assetName",
 								},
 								{
-									data: "assetNumber",
-								},
-								{
 									data: "tagName",
 								},
 								{
 									data: "tagLocationName",
 								},
-								{
-									data: "approvedAt",
-								},
 							],
 							order: [0, 'asc'],
-							columnDefs: [{
-									targets: "_all",
-									className: "dt-head-center",
-								},
+							columnDefs: [
 								{
 									targets: 0,
 									render: function(data, type, row) {
-										return moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")
+										return (row.approvedAt ? `<span class="badge badge-success" style="width: 15px;height: 15px;border-radius: 50%;"> </span> ` : `<span class="badge badge-warning" style="width: 15px;height: 15px;border-radius: 50%;"> </span> `) + moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")
 									}
 								},
 								{
-									targets: [3, 4],
+									targets: 1,
+									render: function(data, type, row) {
+										return data + `<small class="text-muted d-block">${row.assetNumber}</small>`
+									}
+								},
+								{
+									targets: [2, 3],
 									render: function(data) {
 										if (data != '-') {
 											// unique = Array.from(new Set(data));
@@ -162,13 +157,8 @@
 										} else {
 											return data;
 										}
-									}
-								},
-								{
-									targets: -1,
-									render: function(data) {
-										return isNullEmptyOrUndefined(data) ? "Waiting" : "Approved"
-									}
+									},
+									className: "text-center",
 								}
 							],
 							'createdRow': function(row, data) {

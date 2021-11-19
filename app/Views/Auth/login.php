@@ -10,11 +10,12 @@
     <meta name="author" content="Nocola IoT Solution">
     <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
     <title>Login Page | Logsheet Digital</title>
-    <?php if (isset($css)) : ?>
-        <?php foreach ($css as $item) : ?>
-            <link href="<?= $item ?>" rel="stylesheet">
-        <?php endforeach; ?>
-    <?php endif; ?>
+
+    <link href="<?= base_url(); ?>/css/style.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/css/custom-style.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/icons/coreui/css/all.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/vendors/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/vendors/fontawesome/css/all.css" rel="stylesheet">
 </head>
 <style>
     .invalid-value {
@@ -34,10 +35,10 @@
                                 <img src="<?= base_url('/img/logo-act.png') ?>" width="120">
                                 <a href="<?= site_url("register") ?>" class="h6 mb-0 text-muted font-weight-500 text-decoration-none">Sign Up</a>
                             </div>
-                            <form class="mt-5" v-on:submit.prevent="login()">
+                            <form class="mt-5" action="<?= env('base_url') ?>Login/auth" method="POST" autocomplete="off" ref="form" @submit.prevent="login">
                                 <h2>Sign In</h2>
                                 <p class="text-medium-emphasis text-muted">Sign In to continue to Losheet Application</p>
-                                <div class="input-group my-4" id="email">
+                                <div class="input-group my-4" :class="emailErr ? 'invalid-value' : ''">
                                     <div class="input-group-prepend"><span class="input-group-text">
                                             <svg class="c-icon">
                                                 <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-user') ?>"></use>
@@ -49,24 +50,31 @@
                                 <div class="invalid-feedback-email d-none">
                                     Field cannot be empty.
                                 </div>
-                                <div class="input-group my-4" id="password">
+                                <div class="input-group mt-4 mb-0" :class="passwordErr ? 'invalid-value' : ''">
                                     <div class="input-group-prepend"><span class="input-group-text">
                                             <svg class="c-icon">
                                                 <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-lock-locked') ?>"></use>
                                             </svg>
                                         </span>
                                     </div>
-                                    <input class="form-control" name="password" type="password" placeholder="Password" v-model="password">
-                                    <div class="input-group-append" @click="togglePassword()">
-                                        <span class="input-group-text bg-white" @click="togglePassword()">
-                                            <i class="fa fa-eye-slash" id="togglePassword" @click="togglePassword()" style="cursor: pointer"></i>
+                                    <input class="form-control" name="password" :type="showPassword ? 'text' : 'password'" placeholder="Password" v-model="password">
+                                    <div class="input-group-append" @click="showPassword = !showPassword;" style="cursor: pointer">
+                                        <span class="input-group-text bg-white">
+                                            <i class="fa" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
                                         </span>
                                     </div>
+                                </div>
+                                <div class="w-100 text-right">
+                                    <a href="" class="text-info">forgot password?</a>
                                 </div>
                                 <div class="invalid-feedback-password d-none">
                                     Field cannot be empty.
                                 </div>
-                                <button class="btn btn-info w-100" @click="login()"><i class="fa fa-sign-in"></i> LOGIN</button>
+
+                                <div class="d-flex justify-content-center mt-3">
+                                    <div class="g-recaptcha" name="captcha" data-sitekey="<?= env('site_key') ?>"></div>
+                                </div>
+                                <button class="btn btn-info w-100 mt-4" type="submit" v-html="loginBtn"></button>
                             </form>
                         </div>
                     </div>
@@ -77,11 +85,17 @@
             </div>
         </div>
     </div>
-    <?php if ($js) : ?>
-        <?php foreach ($js as $item) : ?>
-            <script type="text/javascript" src="<?= $item ?>"></script>
-        <?php endforeach; ?>
-    <?php endif; ?>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/axios/axios.min.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/lodash/lodash.min.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/moment/moment.min.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/moment/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/vue/vue.global.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/jquery-ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/sweetalert2/sweetalert2.all.min.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/js/main.js"></script>
+
+    <script src='https://www.google.com/recaptcha/api.js' async defer></script>
     <script>
         const {
             ref
@@ -89,103 +103,76 @@
         const v = Vue.createApp({
             el: '#app',
             setup() {
+                var form = ref(null);
+                var loginBtn = ref('<i class="fas fa-sign-in-alt"></i> Sign In');
+                var showPassword = ref(false);
+
                 var email = ref('');
+                var emailErr = ref(null);
                 var password = ref('');
+                var passwordErr = ref(null);
 
-                function togglePassword() {
-                    // console.log($('#showHidePassword input').attr('type') == 'text' ? true : false);
-                    if ($('#password input').attr('type') == 'text') {
-                        $('#password input').attr('type', 'password');
-                        $('#togglePassword').removeClass('fa-eye');
-                        $('#togglePassword').addClass('fa-eye-slash');
-                    } else if ($('#password input').attr('type') == 'password') {
-                        $('#password input').attr('type', 'text');
-                        $('#togglePassword').removeClass('fa-eye-slash');
-                        $('#togglePassword').addClass('fa-eye');
-                    }
-                }
-
-                function login() {
-                    if (this.email == "" || this.password == "") {
-                        swal.fire({
-                            title: 'Invalid Value',
-                            icon: 'error'
-                        })
-                        if (!this.email) {
-                            $('#email').addClass('invalid-value');
-                            // $('.invalid-feedback-email').removeClass('d-none');
-                        } else {
-                            $('#email').removeClass('invalid-value');
-                            // $('.invalid-feedback-email').addClass('d-none');
-                        }
-
-                        if (!this.password) {
-                            $('#password').addClass('invalid-value');
-                            // $('.invalid-feedback-password').removeClass('d-none');
-                        } else {
-                            $('#password').removeClass('invalid-value');
-                            // $('.invalid-feedback-password').addClass('d-none');
-                        }
+                const login = () => {
+                    if (!email.value || !password.value) {
+                        emailErr.value = (!email.value ? 'Input your email account' : null);
+                        passwordErr.value = (!passwordErr.value ? 'Input your password' : null);
                     } else {
-                        var formdata = new FormData();
-                        formdata.append('email', this.email);
-                        formdata.append('password', this.password);
+                        loginBtn.value = '<i class="fa fa-spin fa-spinner"></i> Processing...';
+                        let formdata = new FormData(form.value);
                         axios({
-                            url: "<?= base_url('Login/auth') ?>",
-                            data: formdata,
-                            method: 'POST'
-                        }).then((res) => {
-                            let dt = res.data;
-                            if (dt.status == 200) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-end',
-                                    iconColor: 'white',
-                                    showConfirmButton: false,
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    customClass: {
-                                        popup: 'colored-toast'
-                                    },
-                                    didOpen: (toast) => {
-                                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                                    }
-                                })
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: dt.message
-                                })
+                                url: "<?= base_url('Login/auth') ?>",
+                                data: formdata,
+                                method: 'POST'
+                            }).then((res) => {
+                                let resData = res.data;
+                                if (resData.status == 200) {
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Signed in successfully'
+                                    });
+                                    window.location.href = "<?= base_url('/Dashboard') ?>";
+                                } else if (resData.status == 400) {
+                                    Toast.fire({
+                                        icon: 'warning',
+                                        title: resData.message
+                                    });
+                                    loginBtn.value = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                                    password.value = '';
+                                    grecaptcha.reset();
+                                } else {
+                                    Swal.fire({
+                                        title: resData.status,
+                                        icon: resData.alertType ?? 'error',
+                                        text: resData.message
+                                    });
+                                    loginBtn.value = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                                    password.value = '';
+                                    grecaptcha.reset();
+                                }
 
-                                window.location.href = "<?= base_url('/Dashboard') ?>";
-                            } else if (dt.status == 400) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-end',
-                                    iconColor: 'white',
-                                    showConfirmButton: false,
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    customClass: {
-                                        popup: 'colored-toast'
-                                    },
-                                    didOpen: (toast) => {
-                                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                                    }
-                                })
+                            })
+                            .catch((rej) => {
+                                if (rej.throw) {
+                                    throw new Error(rej.message);
+                                }
                                 Toast.fire({
                                     icon: 'error',
-                                    title: dt.message
-                                })
-                            }
-                        })
+                                    title: 'Internal server error'
+                                });
+
+                                loginBtn.value = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                                grecaptcha.reset();
+                            });
                     }
                 }
                 return {
+                    form,
+                    loginBtn,
+                    showPassword,
                     email,
+                    emailErr,
                     password,
-                    togglePassword,
+                    passwordErr,
                     login
                 }
             }

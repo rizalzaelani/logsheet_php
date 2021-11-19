@@ -1,3 +1,15 @@
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+})
+
 const xhrThrowRequest = (res) => {
     return new Promise((resolve, reject) => {
         try {
@@ -31,7 +43,7 @@ const xhrThrowRequest = (res) => {
                         message: ""
                     });
                 } else {
-                    if(resData.exception){
+                    if (resData.exception) {
                         Swal.fire({
                             title: resData.message,
                             icon: resData.alertType ?? 'error',
@@ -132,7 +144,7 @@ var tableToExcel = (function () {
         var ctx = { worksheet: "Sheet 1" || 'Worksheet', table: table.innerHTML }
         var link = document.createElement('a');
         document.body.appendChild(link);
-        link.download = name+".xls";
+        link.download = name + ".xls";
         link.href = uri + base64(format(template, ctx));
         link.click();
     }
@@ -145,10 +157,10 @@ let isXhrRequest = new Promise((resolve) => {
     resolve(true);
 });
 
-(function() {
+(function () {
     isXhrRequest.then(() => {
         let loaderTgt = document.getElementById("loader");
-        if(loaderTgt) loaderTgt.classList.add("d-none");
+        if (loaderTgt) loaderTgt.classList.add("d-none");
     });
 })();
 
@@ -156,18 +168,18 @@ function hideShowLoader() {
     let loaderTgt = document.getElementById("loader");
     // loading
     axios.interceptors.request.use((config) => {
-        if(loaderTgt) loaderTgt.classList.remove("d-none");
+        if (loaderTgt) loaderTgt.classList.remove("d-none");
         return config;
     }, (error) => {
-        if(loaderTgt) loaderTgt.classList.remove("d-none");
+        if (loaderTgt) loaderTgt.classList.remove("d-none");
         return Promise.reject(error);
     });
 
     axios.interceptors.response.use((response) => {
-        if(loaderTgt) loaderTgt.classList.add("d-none");
+        if (loaderTgt) loaderTgt.classList.add("d-none");
         return response;
     }, (error) => {
-        if(loaderTgt) loaderTgt.classList.add("d-none");
+        if (loaderTgt) loaderTgt.classList.add("d-none");
         return Promise.reject(error);
     });
 }

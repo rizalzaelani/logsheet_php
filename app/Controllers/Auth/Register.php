@@ -50,6 +50,10 @@ class Register extends BaseController
         $data['postalCode'] = $this->request->getVar('postalCode');
         $data['country'] = $this->request->getVar('country');
 
+        $data["name"] = $this->request->getVar('country');
+        $data["code"] = str_replace(" ", "-", strtolower($data["name"]));
+        $data["description"] = "";
+
         $appModel = new AppsModel();
         $res = $appModel->createApps($data);
 

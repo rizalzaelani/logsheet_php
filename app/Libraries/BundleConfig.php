@@ -28,6 +28,8 @@ class BundleConfig
 			base_url('/vendors/mapbox/mapbox.js'),
 			base_url('/vendors/mapbox/mapbox-gl.js'),
 			base_url('/vendors/lightpick/lightpick.js'),
+			base_url('/vendors/sweetalert2/sweetalert2.all.min.js'),
+
 			base_url('/js/coreui.bundle.min.js'),
 			base_url('/js/coreui-utils.js'),
 			base_url('/js/custom-func.js'),
@@ -47,36 +49,33 @@ class BundleConfig
 			base_url('/css/style.css'),
 			base_url('/css/custom-style.css'),
 			base_url('/icons/coreui/css/all.min.css'),
+
+			base_url('/vendors/jquery-ui/jquery-ui.css'),
 			base_url('/vendors/datatables/dataTables.bootstrap4.css'),
 			base_url('/vendors/daterangepicker/daterangepicker.min.css'),
+			base_url('/vendors/lightpick/lightpick.css'),
 			base_url('/vendors/fontawesome/css/all.css'),
+			base_url('/vendors/fullcalendar/css/main.css'),
 			base_url('/vendors/select2/css/select2-coreui.min.css'),
 			base_url('/vendors/select2/css/select2.min.css'),
 			base_url('/vendors/filepond/filepond.css'),
 			base_url('/vendors/filepond/filepond-plugin-image-preview.css'),
-			base_url('/vendors/cropperjs/cropper.css'),
-			base_url('/vendors/fullcalendar/css/main.css'),
-			base_url('/vendors/jquery-ui/jquery-ui.css'),
+			base_url('/vendors/sweetalert2/sweetalert2.all.min.js'),
 			base_url('/vendors/mapbox/mapbox-gl.css'),
-			base_url('/vendors/lightpick/lightpick.css'),
-			// base_url('/css/bd-wizard.css'),
+			base_url('/vendors/cropperjs/cropper.css'),
 		);
 		return $plugin;
 	}
 
 	public function pluginJs()
 	{
-		$plugin = array(
-			base_url('/vendors/sweetalert2/sweetalert2.all.min.js')
-		);
+		$plugin = array();
 		return $plugin;
 	}
 
 	public function pluginCSS()
 	{
-		$plugin = array(
-			base_url('/vendors/sweetalert2/sweetalert2.min.css')
-		);
+		$plugin = array();
 
 		return $plugin;
 	}
