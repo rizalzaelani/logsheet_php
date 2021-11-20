@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 use App\Models\ScheduleTrxModel;
 use CodeIgniter\RESTful\ResourceController;
 use DateTime;
+use Exception;
 
 class ScheduleTrx extends ResourceController
 {
@@ -16,33 +17,33 @@ class ScheduleTrx extends ResourceController
     }
 
     public function getAll(){
-        $isValid = $this->validate([
-            'userId' => 'required'
-        ]);
+        try {
+            $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
+            $encodedToken = getJWTFromRequest($authHeader);
+            $jwtData = getJWTData($encodedToken);
+        
+            $dateTime = new DateTime();
+            $year = $dateTime->format("Y");
+            $month = $dateTime->format("n");
+            $weekOfYear = $dateTime->format("W");
 
-        if (!$isValid) {
+            $whereSch = "((((schType = 'Daily' AND DATE(scheduleFrom) = '". $dateTime->format("Y-m-d") ."') OR (schType = 'Weekly' AND WEEKOFYEAR(scheduleFrom) = ". $weekOfYear ." AND YEAR(scheduleFrom) = " . $year . ") OR (schType = 'Monthly' AND MONTH(scheduleFrom) = ". $month ." AND YEAR(scheduleFrom) = " . $year . ")) AND schManual = '0') OR (CAST(scheduleFrom as DATE) <= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND CAST(scheduleTo as DATE) >= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND schManual = '1'))";
+
+            $where["userId"] = $jwtData->adminId;
+            $where[$whereSch] = null;
+
             return $this->respond([
-                'status' => 400,
+                "status"    => 200,
+                "message"   => "Success Get Data Schedule Transaction Today",
+                "data"      => $this->scheduleTrxModel->getAll($where)
+            ]);
+        } catch (Exception $e) {
+            return $this->respond([
+                'status' => 500,
                 'error' => true,
-                'message' => $this->validator->getErrors(),
+                'message' => $e->getMessage(),
                 'data' => []
             ], 400);
         }
-        
-        $dateTime = new DateTime();
-        $year = $dateTime->format("Y");
-        $month = $dateTime->format("n");
-        $weekOfYear = $dateTime->format("W");
-
-        $whereSch = "((((schType = 'Daily' AND DATE(scheduleFrom) = '". $dateTime->format("Y-m-d") ."') OR (schType = 'Weekly' AND WEEKOFYEAR(scheduleFrom) = ". $weekOfYear ." AND YEAR(scheduleFrom) = " . $year . ") OR (schType = 'Monthly' AND MONTH(scheduleFrom) = ". $month ." AND YEAR(scheduleFrom) = " . $year . ")) AND schManual = '0') OR (CAST(scheduleFrom as DATE) <= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND CAST(scheduleTo as DATE) >= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND schManual = '1'))";
-
-        $where["userId"] = $this->request->getVar("userId");
-        $where[$whereSch] = null;
-
-        return $this->respond([
-            "status"    => 200,
-            "message"   => "Success Get Data Schedule Transaction Today",
-            "data"      => $this->scheduleTrxModel->getAll($where)
-        ]);
     }
 }

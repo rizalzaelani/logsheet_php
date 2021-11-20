@@ -17,8 +17,8 @@ function validateJWTFromRequest(string $encodedToken)
 {
     $key = Services::getSecretKey();
     $decodedToken = JWT::decode($encodedToken, $key, ['HS256']);
-    $username = ($decodedToken->data->username ?? "-");
-    if($username != "user01"){
+    $email = ($decodedToken->data->email ?? "");
+    if($email == ""){
         throw new Exception('User does not exist for specified username');
     }
     // $userModel = new UserModel();
@@ -38,4 +38,14 @@ function getSignedJWTForUser(string $email)
 
     $jwt = JWT::encode($payload, Services::getSecretKey());
     return $jwt;
+}
+
+function getJWTData(string $encodedToken){
+    $key = Services::getSecretKey();
+    $decodedToken = JWT::decode($encodedToken, $key, ['HS256']);
+    $email = ($decodedToken->data->email ?? "");
+    if($email == ""){
+        throw new Exception('User does not exist for specified username');
+    }
+    return $decodedToken->data;
 }

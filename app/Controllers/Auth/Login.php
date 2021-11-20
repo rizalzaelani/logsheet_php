@@ -51,12 +51,6 @@ class Login extends BaseController
                     $userModel = new UserModel();
                     $dataRes = $userModel->clientAuth($params);
 
-                    // return $this->response->setJSON(array(
-                    //     'status'    =>  400,
-                    //     'message'   =>  'Test Incorect Password',
-                    //     'data'      => $dataRes
-                    // ), 400);
-
                     $data = json_decode($dataRes['data']);
                     if ($dataRes['error']) {
                         return $this->response->setJSON(array(
