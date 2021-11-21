@@ -4,23 +4,23 @@ const checkAbnormal = (val, approvedAt) => {
             if (val.findingId == null) {
                 return {
                     'class': 'danger',
-                    'name': 'Follow Up'
+                    'name': 'Open'
                 };
             } else {
                 if (val.condition == 'Closed') {
                     return {
                         'class': 'primary',
-                        'name': 'Is Closed'
+                        'name': 'Closed'
                     };
                 } else if (val.condition == 'Open') {
                     return {
                         'class': 'warning',
-                        'name': 'Is Followed Up'
+                        'name': 'Responded'
                     };
                 } else {
                     return {
                         'class': 'danger',
-                        'name': 'Follow Up'
+                        'name': 'Open'
                     };
                 }
             }
@@ -40,7 +40,7 @@ const checkAbnormal = (val, approvedAt) => {
             } else {
                 return {
                     'class': 'danger',
-                    'name': 'Follow Up'
+                    'name': 'Open'
                 };
             }
         } else if (val.inputType == "select") {
@@ -54,7 +54,7 @@ const checkAbnormal = (val, approvedAt) => {
             } else {
                 return {
                     'class': 'danger',
-                    'name': 'Follow Up'
+                    'name': 'Open'
                 };
             }
         } else {

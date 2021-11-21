@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Models\TagLocationModel;
 use CodeIgniter\RESTful\ResourceController;
+use Exception;
 
 class TagLocation extends ResourceController
 {
@@ -14,30 +15,32 @@ class TagLocation extends ResourceController
         $this->tagLocationModel = new TagLocationModel();
     }
 
-    public function getAll(){
-        $isValid = $this->validate([
-            'userId' => 'required'
-        ]);
+    public function getAll()
+    {
+        try {
+            $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
+            $encodedToken = getJWTFromRequest($authHeader);
+            $jwtData = getJWTData($encodedToken);
 
-        if (!$isValid) {
+            $where["userId"] = $jwtData->adminId;
+
             return $this->respond([
-                'status' => 400,
+                "status"    => 200,
+                "message"   => "Success Get Data TagLocation",
+                "data"      => $this->tagLocationModel->getAll($where)
+            ]);
+        } catch (Exception $e) {
+            return $this->respond([
+                'status' => 500,
                 'error' => true,
-                'message' => $this->validator->getErrors(),
+                'message' => $e->getMessage(),
                 'data' => []
             ], 400);
         }
-
-        $where["userId"] = $this->request->getVar("userId");
-
-        return $this->respond([
-            "status"    => 200,
-            "message"   => "Success Get Data TagLocation",
-            "data"      => $this->tagLocationModel->getAll($where)
-        ]);
     }
 
-    public function getById(){
+    public function getById()
+    {
         $isValid = $this->validate([
             'tagLocationId' => 'required'
         ]);

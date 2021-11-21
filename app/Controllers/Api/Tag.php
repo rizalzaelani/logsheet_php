@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Models\TagModel;
 use CodeIgniter\RESTful\ResourceController;
+use Exception;
 
 class Tag extends ResourceController
 {
@@ -15,26 +16,26 @@ class Tag extends ResourceController
     }
 
     public function getAll(){
-        $isValid = $this->validate([
-            'userId' => 'required'
-        ]);
+        try {
+            $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
+            $encodedToken = getJWTFromRequest($authHeader);
+            $jwtData = getJWTData($encodedToken);
 
-        if (!$isValid) {
+            $where["userId"] = $jwtData->adminId;
+
             return $this->respond([
-                'status' => 400,
+                "status"    => 200,
+                "message"   => "Success Get Data Tag",
+                "data"      => $this->tagModel->getAll($where)
+            ]);
+        } catch (Exception $e) {
+            return $this->respond([
+                'status' => 500,
                 'error' => true,
-                'message' => $this->validator->getErrors(),
+                'message' => $e->getMessage(),
                 'data' => []
             ], 400);
         }
-
-        $where["userId"] = $this->request->getVar("userId");
-
-        return $this->respond([
-            "status"    => 200,
-            "message"   => "Success Get Data Tag",
-            "data"      => $this->tagModel->getAll($where)
-        ]);
     }
 
     public function getById(){

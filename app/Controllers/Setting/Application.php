@@ -13,15 +13,15 @@ class Application extends BaseController
 {
     public function index()
     {
-        if(!checkRoleList("APPLICATION.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+        // if(!checkRoleList("APPLICATION.VIEW")){
+        //     return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+        // }
 
-        // $userIdApp = $_SESSION["userIdApp"] ?? "fcc9766a-9bda-4fd3-a755-a24130d2f58c";
-        $userIdApp = $_SESSION["userIdApp"] ?? "";
-        if($userIdApp == ""){
-            return View('errors/customError', ['ErrorCode'=>400,'ErrorMessage'=>"Sorry, You don't have any registered appication, please Register New Logsheet App or Relogin First"]);
-        }
+        $userIdApp = $_SESSION["userIdApp"] ?? "fcc9766a-9bda-4fd3-a755-a24130d2f58c";
+        // $userIdApp = $_SESSION["userIdApp"] ?? "";
+        // if($userIdApp == ""){
+        //     return View('errors/customError', ['ErrorCode'=>400,'ErrorMessage'=>"Sorry, You don't have any registered appication, please Register New Logsheet App or Relogin First"]);
+        // }
 
         $appSettingModel = new ApplicationSettingModel();
         $assetStatusModel = new AssetStatusModel();

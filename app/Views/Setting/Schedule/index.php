@@ -201,6 +201,39 @@
             </div>
         </div>
     <?php endif; ?>
+
+
+    <div class="modal fade" id="modalDetailAssetList" tabindex="-1" role="dialog" aria-labelledby="modalDetailAssetListLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDetailAssetListLabel">{{ assetListEventTitle }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover w-100">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th>Asset</th>
+                                    <th>Number</th>
+                                    <th class="text-center">Tag</th>
+                                    <th class="text-center">Location</th>
+                                    <!-- <th class="text-center">Schedule</th> -->
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <?= $this->endSection(); ?>
 
@@ -220,12 +253,16 @@
             var calendar;
             var table;
             var tableAM;
+            var tableAE;
             var assetIdAM = reactive([]);
             var adviceDateAM = reactive([]);
             var pickerAddAM;
             var formAM = ref(0);
             var startSAM = ref(null);
             var endSAM = ref(null);
+
+            var assetListEvent = reactive([]);
+            var assetListEventTitle = ref("");
 
             let importSchFP;
 
@@ -304,6 +341,52 @@
                         // row.setAttribute("data-html", "true");
                         // row.setAttribute("title", "<div>Click to go to asset detail</div>");
                     },
+                });
+            }
+
+            const assetEventDT = () => {
+                tableAE = $("#modalDetailAssetList table").DataTable({
+                    data: assetListEvent,
+                    processing: true,
+                    columns: [{
+                            data: "assetNumber",
+                            name: "assetNumber",
+                        },
+                        {
+                            data: "assetName",
+                            name: "assetName",
+                        },
+                        {
+                            data: "tagName",
+                            name: "tagName",
+                        },
+                        {
+                            data: "tagLocationName",
+                            name: "tagLocationName",
+                        },
+                    ],
+                    order: [0, 'asc'],
+                    columnDefs: [{
+                            targets: "_all",
+                            className: "dt-head-center",
+                        },
+                        {
+                            targets: [2, 3],
+                            render: function(data) {
+                                if (data != '-') {
+                                    // unique = Array.from(new Set(data));
+                                    var dt = Array.from(new Set(data.split(',')));
+                                    var list_dt = '';
+                                    $.each(dt, function(key, value) {
+                                        list_dt += '<span class="badge badge-dark mr-1 mb-1" style="font-size: 13px; padding: 5px !important;">' + value + '</span>';
+                                    })
+                                    return list_dt;
+                                } else {
+                                    return data;
+                                }
+                            }
+                        }
+                    ],
                 });
             }
 
@@ -512,13 +595,26 @@
                                         $('#tableAssetManual').dataTable().fnClearTable();
                                         $('#tableAssetManual').dataTable().fnAddData(assetManualData);
 
+                                        let dtClndr = _.chain(scheduleData)
+                                            .groupBy((v) => (moment(v.scheduleFrom).format("DD MMM YYYY") + ' to ' + moment(v.scheduleTo).format("DD MMM YYYY")))
+                                            .map((v, k) => {
+                                                return {
+                                                    title: v.length + ' Asset (' + k + ')',
+                                                    start: moment(v[0].scheduleFrom).valueOf(),
+                                                    end: moment(v[0].scheduleTo).valueOf(),
+                                                    allDay: false,
+                                                    data: v
+                                                }
+                                            }).value();
+
                                         calendar.removeAllEvents();
-                                        scheduleData.forEach((v, k) => {
+                                        dtClndr.forEach((v, k) => {
                                             calendar.addEvent({
-                                                title: v.assetName,
-                                                start: moment(v.scheduleFrom).valueOf(),
-                                                end: moment(v.scheduleTo).valueOf(),
-                                                allDay: false
+                                                title: v.title,
+                                                start: v.start,
+                                                end: v.end,
+                                                allDay: false,
+                                                data: v.data
                                             })
                                         });
 
@@ -604,16 +700,18 @@
                                         .then(() => {
                                             scheduleData.push(...res.data.data);
 
-                                            successCallback(
-                                                scheduleData.map((v, k) => {
+                                            let dtClndr = _.chain(scheduleData)
+                                                .groupBy((v) => (moment(v.scheduleFrom).format("DD MMM YYYY") + ' to ' + moment(v.scheduleTo).format("DD MMM YYYY")))
+                                                .map((v, k) => {
                                                     return {
-                                                        title: v.assetName,
-                                                        start: moment(v.scheduleFrom).valueOf(),
-                                                        end: moment(v.scheduleTo).valueOf(),
-                                                        allDay: false
+                                                        title: v.length + ' Asset (' + k + ')',
+                                                        start: moment(v[0].scheduleFrom).valueOf(),
+                                                        end: moment(v[0].scheduleTo).valueOf(),
+                                                        allDay: false,
+                                                        data: v
                                                     }
-                                                })
-                                            );
+                                                }).value();
+                                            successCallback(dtClndr);
 
                                             setTimeout(() => {
                                                 if ($.fn.DataTable.isDataTable('#tableRawData'))
@@ -629,6 +727,23 @@
                                             }
                                         });
                                 });
+                            }
+                        },
+                        eventClick: function(info) {
+                            console.log(info)
+                            let dt = info.event._def.extendedProps.data;
+                            if (dt) {
+                                assetListEvent.splice(0, assetListEvent.length);
+                                assetListEvent.push(...dt);
+                                assetListEventTitle.value = info.event._def.title;
+
+
+                                if ($.fn.DataTable.isDataTable('#modalDetailAssetList table'))
+                                    tableAE.clear().rows.add(assetListEvent).draw();
+                                else
+                                    assetEventDT();
+
+                                $("#modalDetailAssetList").modal("show");
                             }
                         }
                     });
@@ -666,7 +781,7 @@
                         }
                     });
                 <?php endif; ?>
- 
+
                 <?php if (checkRoleList("SCHEDULE.IMPORT")) : ?>
                     FilePond.registerPlugin(FilePondPluginFileValidateType);
                     importSchFP = FilePond.create(document.querySelector('#importSch'), filepondOpt);
@@ -722,7 +837,9 @@
                 scheduleData,
                 rawDataDT,
                 formAM,
-                
+                assetListEvent,
+                assetListEventTitle,
+
                 <?= (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT") ? "showModalAM,adviceDateAM,changeCKAM,assetIdAM,getDataCKAM,dateRangeSchAM,nextFormAM,saveAddAM,addAdviceDate," : "") ?>
                 <?= (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT") ? "showModalIS," : "") ?>
             }
