@@ -29,4 +29,8 @@ class AssetStatusModel extends Model
     {
         return $this->builder()->where($this->primaryKey, $assetStatusId)->delete();
     }
+
+    public function getByName($name){
+        return $this->builder()->where(['assetStatusName' => $name, 'deletedAt' => null])->get()->getRowArray();
+    }
 }

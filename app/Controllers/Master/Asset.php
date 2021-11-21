@@ -14,6 +14,7 @@ use App\Models\ParameterModel;
 use CodeIgniter\API\ResponseTrait;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Exception;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class Asset extends BaseController
 {
@@ -27,9 +28,9 @@ class Asset extends BaseController
 
 	public function index()
 	{
-        if(!checkRoleList("MASTER.ASSET.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("MASTER.ASSET.VIEW")) {
+			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$assetModel			= new AssetModel();
 		$tagModel			= new TagModel();
@@ -62,7 +63,7 @@ class Asset extends BaseController
 	{
 		$request = \Config\Services::request();
 
-        if(!checkRoleList("MASTER.ASSET.VIEW")){
+		if (!checkRoleList("MASTER.ASSET.VIEW")) {
 			echo json_encode(array(
 				"draw" => $request->getPost('draw'),
 				"recordsTotal" => 0,
@@ -71,7 +72,7 @@ class Asset extends BaseController
 				'status' => 403,
 				'message' => "You don't have access to this page"
 			));
-        }
+		}
 
 		$table = 'vw_asset';
 		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
@@ -99,9 +100,9 @@ class Asset extends BaseController
 
 	public function add()
 	{
-        if(!checkRoleList("MASTER.ASSET.ADD.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("MASTER.ASSET.ADD.VIEW")) {
+			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$modelAsset = new AssetModel();
 
@@ -136,13 +137,13 @@ class Asset extends BaseController
 
 	public function addAsset()
 	{
-        if(!checkRoleList("MASTER.ASSET.ADD")){
+		if (!checkRoleList("MASTER.ASSET.ADD")) {
 			return $this->response->setJSON([
 				'status' => 403,
-                'message' => "Sorry, You don't have access",
+				'message' => "Sorry, You don't have access",
 				'data' => []
 			], 403);
-        }
+		}
 
 		$assetModel = new AssetModel();
 		$tagModel	= new TagModel();
@@ -306,9 +307,9 @@ class Asset extends BaseController
 
 	public function detail($assetId)
 	{
-        if(!checkRoleList("MASTER.ASSET.DETAIL")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("MASTER.ASSET.DETAIL")) {
+			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$model = new AssetModel();
 		$assetTaggingModel = new AssetTaggingModel();
@@ -370,13 +371,13 @@ class Asset extends BaseController
 
 	public function saveSetting()
 	{
-        if(!checkRoleList("MASTER.ASSET.UPDATE")){
+		if (!checkRoleList("MASTER.ASSET.UPDATE")) {
 			return $this->response->setJSON([
 				'status' => 403,
-                'message' => "Sorry, You don't have access",
+				'message' => "Sorry, You don't have access",
 				'data' => []
 			], 403);
-        }
+		}
 
 		$assetModel = new AssetModel();
 		$tagModel = new TagModel();
@@ -615,13 +616,13 @@ class Asset extends BaseController
 
 	public function delete()
 	{
-        if(!checkRoleList("MASTER.ASSET.DELETE")){
+		if (!checkRoleList("MASTER.ASSET.DELETE")) {
 			return $this->response->setJSON([
 				'status' => 403,
-                'message' => "Sorry, You don't have access",
+				'message' => "Sorry, You don't have access",
 				'data' => []
 			], 403);
-        }
+		}
 
 		$model = new AssetModel();
 		$json  = $this->request->getJSON();
@@ -636,23 +637,75 @@ class Asset extends BaseController
 
 	public function download()
 	{
-        if(!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
+			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/sampleImportParameter.xlsx', null);
 	}
 
+	public function uploadFile()
+	{
+		$file = $this->request->getFile('importParam');
+		if ($file) {
+			$newName = "doc" . time() . '.xlsx';
+			$file->move('../uploads/', $newName);
+			$reader = ReaderEntityFactory::createXLSXReader();
+			$reader->open('../uploads/' . $newName);
+			$dataImport = [];
+			foreach ($reader->getSheetIterator() as $sheet) {
+				$numrow = 1;
+				foreach ($sheet->getRowIterator() as $row) {
+					if ($numrow > 1) {
+						if ($row->getCellAtIndex(1) != '' && $row->getCellAtIndex(2) != '') {
+							$dataImport[] = array(
+								'no' => $row->getCellAtIndex(0)->getValue(),
+								'parameterName' => $row->getCellAtIndex(1)->getValue(),
+								'description' => $row->getCellAtIndex(2)->getValue(),
+
+								'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
+								'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
+								'uomOption' => (($row->getCellAtIndex(7)->getValue()) ? $row->getCellAtIndex(7)->getValue() : $row->getCellAtIndex(8)->getValue()),
+
+								'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
+								'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
+								'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
+								'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
+								'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
+								'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
+
+								'inputType' => $row->getCellAtIndex(9)->getValue(),
+								'showOn' => $row->getCellAtIndex(10)->getValue(),
+
+							);
+						} else {
+							return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Does Not Match'));
+						}
+					}
+					$numrow++;
+				}
+			}
+			if ($dataImport) {
+				unlink('../uploads/' . $newName);
+				return $this->response->setJSON(array('status' => 'success', 'message' => '', 'data' => $dataImport));
+			} else {
+				return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Not Found!'));
+			}
+		} else {
+			return $this->response->setJSON((array('status' => 'failed', 'message' => 'Bad Request!')));
+		}
+	}
+
 	public function sortingParameter()
 	{
-        if(!checkRoleList("MASTER.ASSET.PARAMETER.SORT")){
+		if (!checkRoleList("MASTER.ASSET.PARAMETER.SORT")) {
 			return $this->response->setJSON([
 				'status' => 403,
-                'message' => "Sorry, You don't have access",
+				'message' => "Sorry, You don't have access",
 				'data' => []
 			], 403);
-        }
-		
+		}
+
 		$parameterModel = new ParameterModel();
 		$json = $this->request->getJSON();
 		$data = $json->data;
@@ -678,5 +731,333 @@ class Asset extends BaseController
 		} catch (Exception $e) {
 			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
 		}
+	}
+
+	public function downloadSampleAsset()
+	{
+		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
+			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+		}
+		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . '/download/SampleImportAsset.xlsx', null);
+	}
+
+	public function import()
+	{
+		$data = array(
+			'title' => 'Import Asset',
+			'subtitle' => 'Import Asset',
+		);
+		$data["breadcrumbs"] = [
+			[
+				"title"    => "Home",
+				"link"    => "Dashboard"
+			],
+			[
+				"title"    => "Asset",
+				"link"    => "Asset"
+			],
+			[
+				'title' => "Import",
+			]
+		];
+
+		return $this->template->render('Master/Asset/import', $data);
+	}
+
+	public function getDataImport()
+	{
+		$file = $this->request->getFile('importAsset');
+		if ($file) {
+			$name = 'docAsset' . time() . '.xlsx';
+			$file->move('../uploads/', $name);
+			$reader = ReaderEntityFactory::createXLSXReader();
+			$reader->open('../uploads/' . $name);
+			$dataAsset = [];
+			$desc = [];
+			foreach ($reader->getSheetIterator() as $sheet) {
+				$rowAsset = 2;
+				if ($sheet->getName() == 'Asset') {
+					foreach ($sheet->getRowIterator() as $row) {
+						if ($rowAsset > 3) {
+							$dataAsset[] = array(
+								'assetName' => $row->getCellAtIndex(0)->getValue(),
+								'assetNumber' => $row->getCellAtIndex(1)->getValue(),
+								'description' => $row->getCellAtIndex(2)->getValue(),
+								'tagLocation' => $row->getCellAtIndex(3)->getValue(),
+								'tag' => $row->getCellAtIndex(4)->getValue(),
+								'schManual' => $row->getCellAtIndex(5)->getValue(),
+								'schType' => $row->getCellAtIndex(6)->getValue(),
+								'schFrequency' => $row->getCellAtIndex(7)->getValue(),
+								'schWeeks' => $row->getCellAtIndex(10)->getValue(),
+								'schWeekDays' => $row->getCellAtIndex(6)->getValue() === "Monthly" ? $row->getCellAtIndex(11)->getValue() : $row->getCellAtIndex(8)->getValue(),
+								'schDays' => $row->getCellAtIndex(9)->getValue(),
+								'rfid' => $row->getCellAtIndex(12)->getValue(),
+								'coordinat' => str_replace("'", '', $row->getCellAtIndex(13)->getValue()),
+								'assetStatus' => $row->getCellAtIndex(14)->getValue()
+							);
+						}
+						$rowAsset++;
+					}
+				}
+				$rowDescription = 1;
+				$rowDesc = 2;
+				if ($sheet->getName() == 'Asset') {
+					foreach ($sheet->getRowIterator() as $index => $row) {
+						if ($rowDescription > 1) {
+							$desc = array(
+								$row->getCellAtIndex(15)->getValue(),
+								$row->getCellAtIndex(16)->getValue(),
+								$row->getCellAtIndex(17)->getValue(),
+								$row->getCellAtIndex(18)->getValue(),
+								$row->getCellAtIndex(19)->getValue(),
+							);
+							break;
+						}
+						$rowDescription++;
+					}
+					$descJson = [];
+					foreach ($sheet->getRowIterator() as $index => $row) {
+						if ($rowDesc > 3) {
+							$json['value'] = [
+								array('key' => $desc[0], 'value' => $row->getCellAtIndex(15)->getValue()),
+								array('key' => $desc[1], 'value' => $row->getCellAtIndex(16)->getValue()),
+								array('key' => $desc[2], 'value' => $row->getCellAtIndex(17)->getValue()),
+								array('key' => $desc[3], 'value' => $row->getCellAtIndex(18)->getValue()),
+								array('key' => $desc[4], 'value' => $row->getCellAtIndex(19)->getValue()),
+							];
+							array_push($descJson, $json);
+						}
+						$rowDesc++;
+					}
+					$lengthAsset = count($dataAsset);
+					for ($i = 0; $i < $lengthAsset; $i++) {
+						$descAsset = $dataAsset[$i]['description'];
+						if ($descAsset == "") {
+							$dataAsset[$i]['description'] = json_encode($descJson[$i]['value']);
+						}
+					}
+				}
+				$rowParam = 1;
+				for ($i = 0; $i < count($dataAsset); $i++) {
+					if ($sheet->getIndex() == $i + 1) {
+						$parameter = [];
+						// var_dump("test");
+						foreach ($sheet->getRowIterator() as $row) {
+							if ($rowParam > 1) {
+								$parameter[] = array(
+									'parameterId' => $this->uuid(),
+									'sortId' => $row->getCellAtIndex(0)->getValue(),
+									'parameterName' => $row->getCellAtIndex(1)->getValue(),
+									'description' => $row->getCellAtIndex(2)->getValue(),
+
+									'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
+									'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
+
+									'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
+									'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
+									'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
+									'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
+									'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
+									'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
+
+									'inputType' => $row->getCellAtIndex(9)->getValue(),
+									'showOn' => $row->getCellAtIndex(10)->getValue(),
+								);
+							}
+							$rowParam++;
+						}
+						$dataAsset[$i]['parameter'] = $parameter;
+					}
+				}
+			}
+			$reader->close();
+			$data['dataAsset'] = $dataAsset;
+			unlink('../uploads/' . $name);
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message' => 'Success Reading Data.',
+				'data' => $data,
+			));
+		} else {
+			return $this->response->setJSON(array(
+				'status' => 500,
+				'message' => 'Bad Request!'
+			));
+		}
+		die();
+	}
+
+	function uuid()
+	{
+		return sprintf(
+			'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0x0fff) | 0x4000,
+			mt_rand(0, 0x3fff) | 0x8000,
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff)
+		);
+	}
+
+	public function importAsset()
+	{
+		$assetModel = new AssetModel();
+		$tagModel = new TagModel();
+		$tagLocationModel = new TagLocationModel();
+		$assetTagModel = new AssetTagModel();
+		$assetTagLocationModel = new AssetTagLocationModel();
+		$assetStatusModel = new AssetStatusModel();
+		$assetTaggingModel = new AssetTaggingModel();
+		$parameterModel = new ParameterModel();
+		$asset = $this->request->getPost('dataAsset');
+		$userId = '3f0857bf-0fab-11ec-95b6-5600026457d1';
+		$lengthAsset = count($asset);
+		try {
+			$dataAsset = "";
+			foreach ($asset as $key => $value) {
+				$row = json_decode($value);
+				$dataAsset = $row;
+				break;
+			}
+			for ($i = 0; $i < $lengthAsset; $i++) {
+				$dataInsert = array(
+					'assetId' => $this->uuid(),
+					'userId' => $userId,
+					'assetName' => $dataAsset[$i]->assetName,
+					'assetNumber' => $dataAsset[$i]->assetNumber,
+					'description' => $dataAsset[$i]->description,
+					'schManual' => $dataAsset[$i]->schManual == "Automatic" ? 0 : 1,
+					'schType' => $dataAsset[$i]->schType,
+					'schFrequency' => $dataAsset[$i]->schFrequency,
+					'schWeeks' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schWeeks : '',
+					'schDays' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schDays : '',
+				);
+				// schWeekDays
+				$schWeekDays = explode(",", $dataAsset[$i]->schWeekDays);
+				$arrWeekDays = [];
+				foreach ($schWeekDays as $key => $val) {
+					array_push($arrWeekDays, substr($val, 0, 2));
+				}
+				$strWeekDays = implode(",", $arrWeekDays);
+				$dataInsert['schWeekDays'] = $strWeekDays;
+
+				// asset status
+				$status = $dataAsset[$i]->assetStatus;
+				$dataStatus = $assetStatusModel->getByName($status);
+				if ($dataStatus == NULL) {
+					$newStatus = array(
+						'assetStatusId' => $this->uuid(),
+						'userId' => $userId,
+						'assetStatusName' => $status,
+					);
+					$assetStatusModel->insert($newStatus);
+					$dataInsert['assetStatusId'] = $newStatus['assetStatusId'];
+				} else {
+					$dataInsert['assetStatusId'] = $dataStatus['assetStatusId'];
+				}
+				$assetModel->insert($dataInsert);
+
+				//parameter
+				$parameter = $dataAsset[$i]->parameter;
+				foreach ($parameter as $key => $val) {
+					$parameter[$key]->assetId = $dataInsert['assetId'];
+					$parameterModel->insert($parameter[$key]);
+				}
+
+				// tag
+				$tag = $dataAsset[$i]->tag;
+				$arrTag = explode(",", $tag);
+				foreach ($arrTag as $key => $val) {
+					$dataTag = $tagModel->getByName($val);
+					if ($dataTag == NULL) {
+						$newTag = array(
+							'tagId' => $this->uuid(),
+							'userId' => $userId,
+							'tagName' => $val,
+							'description' => ''
+						);
+						$tagModel->insert($newTag);
+						$insertNewAssetTag = array(
+							'assetTagId' => $this->uuid(),
+							'assetId' => $dataInsert['assetId'],
+							'tagId' => $newTag['tagId']
+						);
+						$assetTagModel->insert($insertNewAssetTag);
+					} else {
+						$tagId = $dataTag['tagId'];
+						$insertAssetTag = array(
+							'assetTagId' => $this->uuid(),
+							'assetId' => $dataInsert['assetId'],
+							'tagId' => $tagId
+						);
+						$assetTagModel->insert($insertAssetTag);
+					}
+				}
+				// tag location
+				$tagLocation = $dataAsset[$i]->tagLocation;
+				$arrTagLocation = explode(",", $tagLocation);
+				foreach ($arrTagLocation as $key => $val) {
+					$dataTagLocation = $tagLocationModel->getByName($val);
+					if ($dataTagLocation == NULL) {
+						$newTagLocation = array(
+							'tagLocationId' => $this->uuid(),
+							'userId' => $userId,
+							'tagLocationName' => $val,
+							'latitude' => '',
+							'longitude' => '',
+							'description' => '',
+						);
+						$tagLocationModel->insert($newTagLocation);
+						$insertNewAssetTagLocation = array(
+							'assetTagLocationId' => $this->uuid(),
+							'assetId' => $dataInsert['assetId'],
+							'tagLocationId' => $newTagLocation['tagLocationId']
+						);
+						$assetTagLocationModel->insert($insertNewAssetTagLocation);
+					} else {
+						$tagLocationId = $dataTagLocation['tagLocationId'];
+						$insertAssetTagLocation = array(
+							'assetTagLocationId' => $this->uuid(),
+							'assetId' => $dataInsert['assetId'],
+							'tagLocationId' => $tagLocationId
+						);
+						$assetTagLocationModel->insert($insertAssetTagLocation);
+					}
+				}
+
+				// asset tagging
+				$rfid = $dataAsset[$i]->rfid;
+				if ($rfid != "") {
+					$dataRFID = array(
+						'assetTaggingId' => $this->uuid(),
+						'assetId' => $dataInsert['assetId'],
+						'assetTaggingValue' => $rfid,
+						'assetTaggingtype' => 'rfid'
+					);
+					$assetTaggingModel->insert($dataRFID);
+				}
+				$coordinat = $dataAsset[$i]->coordinat;
+				if ($coordinat != "") {
+					$dataCoordinat = array(
+						'assetTaggingId' => $this->uuid(),
+						'assetId' => $dataInsert['assetId'],
+						'assetTaggingValue' => $coordinat,
+						'assetTaggingtype' => 'coordinat'
+					);
+					$assetTaggingModel->insert($dataCoordinat);
+				}
+			}
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message' => 'Successfully Import Asset',
+				'data' => ''
+			));
+		} catch (Exception $e) {
+			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+		}
+		die();
 	}
 }

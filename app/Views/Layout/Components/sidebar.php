@@ -53,6 +53,11 @@
                     <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-tags') ?>"></use>
                 </svg> Tag</a>
         </li>
+        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Schedule') ?>">
+                <svg class="c-sidebar-nav-icon">
+                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-calendar') ?>"></use>
+                </svg> Schedule</a>
+        </li>
         <!-- <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Operation') ?>">
                 <svg class="c-sidebar-nav-icon">
                     <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-settings') ?>"></use>
@@ -69,15 +74,10 @@
                     <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-list-numbered') ?>"></use>
                 </svg> Application</a>
         </li>
-        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/VersionApps') ?>">
+        <li class="c-sidebar-nav-item d-none"><a class="c-sidebar-nav-link" href="<?= base_url('/VersionApps') ?>">
                 <svg class="c-sidebar-nav-icon">
                     <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-paper-plane') ?>"></use>
                 </svg> Version Apps</a>
-        </li>
-        <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/Schedule') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-calendar') ?>"></use>
-                </svg> Schedule</a>
         </li>
         <li class="c-sidebar-nav-title">LOG ACTIVTY</li>
         <li class="c-sidebar-nav-item"><a class="c-sidebar-nav-link" href="<?= base_url('/LogActivity') ?>">

@@ -55,6 +55,7 @@ $routes->get('/Asset/deletedData', 'Master/Asset::deletedData');
 $routes->get('/Asset/waitingApproved', 'Master/Asset::waitingApproved');
 $routes->get('/Asset/getData', 'Master/Asset::getData');
 $routes->add('/Asset/import', 'Master/Asset::import');
+$routes->post('/Asset/importAsset', 'Master/Asset::importAsset');
 $routes->add('/Asset/export', 'Master/Asset::export');
 $routes->add('/Asset/exportCsv', 'Master/Asset::exportCsv');
 $routes->add('/Asset/exportOds', 'Master/Asset::exportOds');
@@ -72,6 +73,7 @@ $routes->post('/Asset/importexcel', 'Master/Asset::importexcel');
 $routes->post('/Asset/update', 'Master\Asset::update');
 $routes->add('/Asset/delete', 'Master\Asset::delete');
 $routes->get('/Asset/download', 'Master/Asset::download');
+$routes->get('/Asset/downloadSampleAsset', 'Master/Asset::downloadSampleAsset');
 $routes->get('/Asset/detailData', 'Master/Asset::detailData');
 $routes->get('/Asset/detailData/(:any)', 'Master/Asset::detailData/$1');
 

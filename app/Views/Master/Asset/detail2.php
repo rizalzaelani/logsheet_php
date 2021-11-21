@@ -2,6 +2,17 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+<style>
+    table>thead>tr>th {
+        vertical-align: middle !important;
+        text-align: left;
+    }
+
+    table>tbody>tr>td {
+        vertical-align: middle !important;
+        text-align: left;
+    }
+</style>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -126,10 +137,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     foreach ($parameter as $key) : ?>
                                         <tr>
                                             <td style="display: none;"><?= $i++; ?></td>
-                                            <td class="text-center" style="display: none;"><?= $key['parameterId']; ?></td>
-                                            <td class="text-center"><?= $key['parameterName']; ?></td>
-                                            <td class="text-center"><?= $key['description']; ?></td>
-                                            <td class="text-center" style="max-width: 150px !important">
+                                            <td style="display: none;"><?= $key['parameterId']; ?></td>
+                                            <td><?= $key['parameterName']; ?></td>
+                                            <td><?= $key['description']; ?></td>
+                                            <td style="max-width: 150px !important">
                                                 <?php if ($key['max'] != '') {
                                                     echo $key['max'];
                                                 } else if ($key['max'] == '' && $key['normal'] == '') {
@@ -139,7 +150,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 }
                                                 ?>
                                             </td>
-                                            <td class="text-center" style="max-width: 150px !important">
+                                            <td style="max-width: 150px !important">
                                                 <?php if ($key['min'] != '') {
                                                     echo $key['min'];
                                                 } else if ($key['min'] == '' && $key['abnormal'] == '') {
@@ -149,7 +160,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 }
                                                 ?>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 <?php
                                                 if ($key['uom'] != '') {
                                                     echo $key['uom'];
@@ -160,8 +171,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 }
                                                 ?>
                                             </td>
-                                            <td class="text-center"><?= $key['showOn']; ?></td>
-                                            <td class="text-center handle" style="cursor: move;"><i class="fa fa-bars"></i></td>
+                                            <td><?= $key['showOn']; ?></td>
+                                            <td class="handle" style="cursor: move;"><i class="fa fa-bars"></i></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -1025,89 +1036,89 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 <table class="table table-bordered table-hover w-100 display" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
-                            <th class="text-center">Parameter</th>
-                            <th class="text-center">Description</th>
-                            <th class="text-center">Normal</th>
-                            <th class="text-center">Abnormal</th>
-                            <th class="text-center">UoM</th>
-                            <th class="text-center">Show On</th>
-                            <th class="text-center"><i>Status</i></th>
-                            <th class="text-center">Action</th>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                            <th>Normal</th>
+                            <th>Abnormal</th>
+                            <th>UoM</th>
+                            <th>Show On</th>
+                            <th><i>Status</i></th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(items, i) in params" :key="i">
-                            <td class="text-center">{{ items.parameterName}}</td>
-                            <td class="text-center">{{ items.description}}</td>
-                            <td class="text-center" v-if="items.max != null">
+                            <td>{{ items.parameterName}}</td>
+                            <td>{{ items.description}}</td>
+                            <td v-if="items.max != null">
                                 {{ items.max }}
                             </td>
-                            <td class="text-center" v-else-if="items.normal != ''" style="max-height: 150px !important;">
+                            <td v-else-if="items.normal != ''" style="max-height: 150px !important;">
                                 {{ items.normal }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>-</i>
                             </td>
-                            <td class="text-center" v-if="items.min != null">
+                            <td v-if="items.min != null">
                                 {{ items.min }}
                             </td>
-                            <td class="text-center" v-else-if="items.abnormal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>-</i>
                             </td>
-                            <td class="text-center" v-if="items.uom != ''">
+                            <td v-if="items.uom != ''">
                                 {{ items.uom }}
                             </td>
-                            <td class="text-center" v-else-if="items.option != ''">
+                            <td v-else-if="items.option != ''">
                                 {{ items.option }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>-</i>
                             </td>
-                            <td class="text-center">{{ items.showOn}}</td>
-                            <td class="text-center"><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
-                            <td class="text-center" style="min-width: 90px !important">
+                            <td>{{ items.showOn}}</td>
+                            <td><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
+                            <td style="min-width: 90px !important">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i); checkModalAdd = false; checkModalExist = false"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                         <tr v-for="(items, i) in parameter" :key="i">
-                            <td class="text-center">{{ items.parameterName}}</td>
-                            <td class="text-center">{{ items.description}}</td>
-                            <td class="text-center" v-if="items.max != null">
+                            <td>{{ items.parameterName}}</td>
+                            <td>{{ items.description}}</td>
+                            <td v-if="items.max != null">
                                 {{ items.max }}
                             </td>
-                            <td class="text-center" v-else-if="items.normal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.normal != ''" style="max-width: 150px !important">
                                 {{ items.normal }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>-</i>
                             </td>
-                            <td class="text-center" v-if="items.min != null">
+                            <td v-if="items.min != null">
                                 {{ items.min }}
                             </td>
-                            <td class="text-center" v-else-if="items.abnormal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>-</i>
                             </td>
-                            <td class="text-center" v-if="items.uom != ''">
+                            <td v-if="items.uom != ''">
                                 {{ items.uom }}
                             </td>
-                            <td class="text-center" v-else-if="items.option != ''">
+                            <td v-else-if="items.option != ''">
                                 {{ items.option }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>-</i>
                             </td>
-                            <td class="text-center">{{ items.showOn }}</td>
-                            <td class="text-center" v-if="items.status == 'old'">
+                            <td>{{ items.showOn }}</td>
+                            <td v-if="items.status == 'old'">
                                 <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i class="text-warning"><span class="badge badge-warning text-white">Updated</span></i>
                             </td>
                             <!-- <td class="text-center" v-if="isEqualParam(i)">
@@ -1116,7 +1127,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td class="text-center" v-else>
                                 <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
                             </td> -->
-                            <td class="text-center" style="min-width: 90px !important">
+                            <td style="min-width: 90px !important">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
