@@ -12,6 +12,7 @@ class Asset extends ResourceController
 
     public function __construct()
     {
+        helper(['JWTAuth']);
         $this->assetModel = new AssetModel();
     }
 

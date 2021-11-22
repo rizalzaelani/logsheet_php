@@ -13,6 +13,7 @@ class ScheduleTrx extends ResourceController
 
     public function __construct()
     {
+        helper(['JWTAuth']);
         $this->scheduleTrxModel = new ScheduleTrxModel();
     }
 
