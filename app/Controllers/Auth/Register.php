@@ -4,6 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
 use App\Models\USMAN\AppsModel;
+use Exception;
 use HTTP_Request2;
 use HTTP_Request2_Exception;
 
@@ -40,28 +41,50 @@ class Register extends BaseController
                 'data' => []
             ], 400);
         }
+        
 
-        $data['fullname'] = $this->request->getVar('fullname');
-        $data['noTelp'] = $this->request->getVar('noTelp');
+        $data["name"] = $this->request->getVar('appName');
+        $data["code"] = str_replace(" ", "-", strtolower($data["name"]));
+        $data["description"] = "-";
+
         $data['email'] = $this->request->getVar('email');
         $data['password'] = $this->request->getVar('password');
-        $data['street'] = $this->request->getVar('street');
-        $data['city'] = $this->request->getVar('city');
-        $data['postalCode'] = $this->request->getVar('postalCode');
-        $data['country'] = $this->request->getVar('country');
+        $data['confirm_password'] = $this->request->getVar('password');
+        $data['app_url'] = base_url("/");
+        $data['app_group'] = "logsheet";
 
-        $data["name"] = $this->request->getVar('country');
-        $data["code"] = str_replace(" ", "-", strtolower($data["name"]));
-        $data["description"] = "";
+        $data['parameter[fullname]'] = $this->request->getVar('fullname');
+        $data['parameter[noTelp]'] = $this->request->getVar('noTelp');
+        $data['parameter[street]'] = $this->request->getVar('street');
+        $data['parameter[city]'] = $this->request->getVar('city');
+        $data['parameter[postalCode]'] = $this->request->getVar('postalCode');
+        $data['parameter[country]'] = $this->request->getVar('country');
 
-        $appModel = new AppsModel();
-        $res = $appModel->createApps($data);
-
-        return $this->response->setJSON([
-            'status' => 200,
-            'error' => true,
-            'message' => "Success Create App",
-            'data' => $res
-        ], 200);
+        try {
+            $appModel = new AppsModel();
+            $dataRes = $appModel->createApps($data);
+            
+            $data = $dataRes['data'];
+            if ($dataRes['error']) {
+                return $this->response->setJSON(array(
+                    'status' => isset($data->message) ? 400 : 500,
+                    'message' => $data->message ?? $dataRes['message'],
+                    'data' => $data
+                ), isset($data->message) ? 400 : 500);
+            } else {
+                return $this->response->setJSON([
+                    'status' => 200,
+                    'error' => true,
+                    'message' => "Success Create App",
+                    'data' => $data
+                ], 200);
+            }
+        } catch (Exception $e){
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => $e->getMessage(),
+                'data' => $e
+            ], 500);
+        }
     }
 }

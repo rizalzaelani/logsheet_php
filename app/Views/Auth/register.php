@@ -15,6 +15,8 @@
     <link href="<?= base_url(); ?>/css/style.css" rel="stylesheet">
     <link href="<?= base_url(); ?>/css/custom-style.css" rel="stylesheet">
     <link href="<?= base_url(); ?>/icons/coreui/css/all.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/vendors/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/vendors/fontawesome/css/all.css" rel="stylesheet">
 </head>
 <style>
     .invalid-value {
@@ -166,6 +168,7 @@
     <script type="text/javascript" src="<?= base_url() ?>/vendors/vue/vue.global.js"></script>
     <script type="text/javascript" src="<?= base_url() ?>/vendors/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="<?= base_url() ?>/vendors/jquery-ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/sweetalert2/sweetalert2.all.min.js"></script>
     <script>
         const {
             ref,
@@ -230,7 +233,7 @@
                         formData.append("postalCode", registerData.postalCode);
                         formData.append("country", registerData.country);
 
-                        if(adminClient == 1){
+                        if (adminClient.value == 1) {
                             formData.append("appName", registerData.appName);
                             formData.append("appCode", "");
                         } else {
@@ -239,23 +242,42 @@
                         }
 
                         axios({
-                            url: "<?= base_url('register/doRegister') ?>",
-                            data: formData,
-                            method: 'POST'
-                        }).then((res) => {
-                            if (res.res.status == 200) {
+                                url: "<?= base_url('register/doRegister') ?>",
+                                data: formData,
+                                method: 'POST'
+                            }).then((res) => {
+                                let resData = res.data;
+                                if (resData.status == 200) {
+                                    Swal.fire({
+                                        title: "Success registered new account",
+                                        icon: 'success',
+                                    }).then((sres) => {
+                                        window.location.href = "<?= base_url() ?>";
+                                    })
+                                } else if (resData.status == 400) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: resData.message
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: resData.status,
+                                        icon: resData.alertType ?? 'error',
+                                        text: resData.message
+                                    });
+                                }
+                            })
+                            .catch((rej) => {
+                                if (rej.throw) {
+                                    throw new Error(rej.message);
+                                }
                                 Swal.fire({
-                                    title: "Success registered new account",
-                                    icon: 'success',
-                                }).then((sres) => {
-                                    window.location.href = "<?= base_url() ?>";
-                                })
-                            } else {
-
-                            }
-                        })
+                                    icon: 'error',
+                                    title: 'Internal server error, please try again',
+                                    text: rej.message
+                                });
+                            });
                     } else {
-                        console.log("test")
                         validateForm(2);
                     }
                 }

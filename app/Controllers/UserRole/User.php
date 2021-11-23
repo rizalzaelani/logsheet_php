@@ -1,14 +1,8 @@
 <?php
 
-namespace App\Controllers\Finding;
+namespace App\Controllers\UserRole;
 
 use App\Controllers\BaseController;
-use App\Models\FindingLogModel;
-use App\Models\FindingModel;
-use App\Models\ScheduleTrxModel;
-use App\Models\TransactionModel;
-use DateTime;
-use Exception;
 
 class Finding extends BaseController
 {

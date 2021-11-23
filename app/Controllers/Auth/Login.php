@@ -14,21 +14,24 @@ class Login extends BaseController
 		if($session->has('userId')){
             return redirect()->to("Dashboard");
         }
-        
+        $appCode = ['logsheet01','logsheet02','logsheet03','logsheet04','logsheet05'];
         $data = array(
             'title' => 'Login Page | Logsheet Digital',
-            'subtitle' => 'Logsheet Digital'
+            'subtitle' => 'Logsheet Digital',
+            'appCode' => $appCode,
+            'appCodeSelected' => get_cookie("appCodeSelected") ?? (!empty($appCode) ? $appCode[0] : "")
         );
 
         return $this->template->render('Auth/login', $data);
     }
+    
     public function auth()
     {
         $session = \Config\Services::session();
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
         $captcha = $this->request->getPost('g-recaptcha-response');
-        $appCode = 'logsheet01';
+        $appCode = $this->request->getPost('appCode');
         $params = [
             'email' => $email,
             'password' => $password,
@@ -51,7 +54,7 @@ class Login extends BaseController
                     $userModel = new UserModel();
                     $dataRes = $userModel->clientAuth($params);
 
-                    $data = json_decode($dataRes['data']);
+                    $data = $dataRes['data'];
                     if ($dataRes['error']) {
                         return $this->response->setJSON(array(
                             'status' => isset($data->message) ? 400 : 500,
@@ -59,9 +62,10 @@ class Login extends BaseController
                         ), isset($data->message) ? 400 : 500);
                     } else {
                         $dataArr = $data->data;
-                        unset($dataArr->token);
-                        unset($dataArr->parameter);
                         $session->set((array) $dataArr);
+                        $this->response->setCookie('clientToken', $dataArr->token, 3600);
+                        $this->response->setCookie('appCodeSelected', $appCode, 60 * 60 * 24 * 365);
+                        
                         return $this->response->setJSON(array(
                             'status' => 200,
                             'message' => 'Success Login'
@@ -87,6 +91,9 @@ class Login extends BaseController
     {
         $session = \Config\Services::session();
         $session->destroy();
+		$this->response->deleteCookie('clientToken');
+        delete_cookie("clientToken");
+
         return redirect()->to(base_url());
     }
 }

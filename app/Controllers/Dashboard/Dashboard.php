@@ -29,6 +29,7 @@ class Dashboard extends BaseController
 		$dataAsset = $assetModel->where('deletedAt', null)->get()->getResultArray();
 		$dataTag = $tagModel->findAll();
 		$dataLocation = $locationModel->findAll();
+
 		$data = array(
 			'title' => "Dashboard",
 			'subtitle' => 'Dashboard Equipment Record'

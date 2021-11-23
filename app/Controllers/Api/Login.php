@@ -35,7 +35,7 @@ class Login extends ResourceController
         $userModel = new UserModel();
         $dataRes = $userModel->clientAuth($param);
         
-        $data = json_decode($dataRes['data']);
+        $data = $dataRes['data'];
         if ($dataRes['error']) {
             return $this->respond([
                 'status' => 400,
