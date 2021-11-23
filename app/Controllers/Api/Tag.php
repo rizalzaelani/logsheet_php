@@ -12,6 +12,7 @@ class Tag extends ResourceController
 
     public function __construct()
     {
+        helper(['JWTAuth']);
         $this->tagModel = new TagModel();
     }
 

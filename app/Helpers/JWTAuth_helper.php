@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\UserModel;
 use Config\Services;
 use Firebase\JWT\JWT;
 
