@@ -12,6 +12,7 @@ class TagLocation extends ResourceController
 
     public function __construct()
     {
+        helper(['JWTAuth']);
         $this->tagLocationModel = new TagLocationModel();
     }
 

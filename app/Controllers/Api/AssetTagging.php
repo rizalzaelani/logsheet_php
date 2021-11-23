@@ -12,17 +12,18 @@ class AssetTagging extends ResourceController
     
     public function __construct()
     {
+        helper(['JWTAuth']);
         $this->assetTaggingModel = new AssetTaggingModel();
     }
 
-    public function getAll(){
+    public function getAll()
+    {
         try {
             $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
             $encodedToken = getJWTFromRequest($authHeader);
             $jwtData = getJWTData($encodedToken);
 
             $where["userId"] = $jwtData->adminId;
-
             return $this->respond([
                 "status"    => 200,
                 "message"   => "Success Get Data AssetTagging",

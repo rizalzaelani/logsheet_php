@@ -12,6 +12,7 @@ class Parameter extends ResourceController
 
     public function __construct()
     {
+        helper(['JWTAuth']);
         $this->parameterModel = new ParameterModel();
     }
 
