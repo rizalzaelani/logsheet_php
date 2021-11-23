@@ -27,4 +27,8 @@ class TagLocationModel extends Model
 
         return $query->get()->getResultArray();
     }
+
+    public function getByName($name){
+        return $this->builder()->where('tagLocationName', $name)->get()->getRowArray();
+    }
 }

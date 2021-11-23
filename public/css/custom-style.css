@@ -231,6 +231,13 @@ div.dataTables_wrapper div.dataTables_length select {
 .dataTables_scrollHeadInner {
   width: 100% !important;
 }
+.badge-size {
+  font-size: 10px !important;
+  padding: 5px !important;
+}
+.sub-text {
+  color: rgba(0, 0, 0, 0.45);
+}
 
 .dt-search-input {
   display: none;
