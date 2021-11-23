@@ -27,4 +27,8 @@ class TagModel extends Model
 
         return $query->get()->getResultArray();
     }
+
+    public function getByName($name){
+        return $this->builder()->where('tagName', $name)->get()->getRowArray();
+    }
 }

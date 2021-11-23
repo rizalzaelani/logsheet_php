@@ -64,10 +64,12 @@
 					<table class="table table-hover w-100" id="tableTrx">
 						<thead class="bg-primary">
 							<tr>
-								<th style="width: 150px;">Time</th>
+								<th>Scanned</th>
 								<th>Asset Name</th>
-								<th>Tag</th>
-								<th>Location</th>
+								<th>Asset Number</th>
+								<th width="27.5%">Tag</th>
+								<th width="27.5%">Location</th>
+								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -123,42 +125,41 @@
 									data: "assetName",
 								},
 								{
+									data: "assetNumber",
+								},
+								{
 									data: "tagName",
 								},
 								{
 									data: "tagLocationName",
 								},
+								{
+									data: "approvedAt",
+								},
 							],
 							order: [0, 'asc'],
 							columnDefs: [
 								{
-									targets: 0,
-									render: function(data, type, row) {
-										return (row.approvedAt ? `<span class="badge badge-success" style="width: 15px;height: 15px;border-radius: 50%;"> </span> ` : `<span class="badge badge-warning" style="width: 15px;height: 15px;border-radius: 50%;"> </span> `) + moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")
-									}
-								},
-								{
-									targets: 1,
-									render: function(data, type, row) {
-										return data + `<small class="text-muted d-block">${row.assetNumber}</small>`
-									}
-								},
-								{
-									targets: [2, 3],
+									targets: [3, 4],
 									render: function(data) {
 										if (data != '-') {
 											// unique = Array.from(new Set(data));
 											var dt = Array.from(new Set(data.split(',')));
 											var list_dt = '';
 											$.each(dt, function(key, value) {
-												list_dt += '<span class="badge badge-dark p-1 mr-1 mb-1" style="font-size: 11px; padding: 5px !important;">' + value + '</span>';
+												list_dt += '<span class="badge badge-dark p-1 mr-1 mb-1 badge-size">' + value + '</span>';
 											});
-											return '<div style="max-height: 50px !important; overflow-y: scroll;">' + list_dt + '</div>';
+											return '<div style="max-height: 56px !important; overflow-y: scroll;">' + list_dt + '</div>';
 										} else {
 											return data;
 										}
-									},
-									className: "text-center",
+									}
+								},
+								{
+									targets: -1,
+									render: function(data) {
+										return isNullEmptyOrUndefined(data) ? "Waiting" : "Approved"
+									}
 								}
 							],
 							'createdRow': function(row, data) {

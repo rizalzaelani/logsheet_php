@@ -34,10 +34,8 @@
                     <table class="table w-100 table-hover" id="tableLocation">
                         <thead class="bg-primary">
                             <tr>
-                                <th>Tag Location</th>
-                                <!-- <th>Latitude</th>
-                                <th>Longitude</th> -->
-                                <th>Description</th>
+                                <th style="width: 40%;">Tag Location</th>
+                                <th style="width: 60%;">Description</th>
                             </tr>
                         </thead>
                     </table>
@@ -126,10 +124,8 @@
                                     <table class="table w-100" id="tableImport">
                                         <thead>
                                             <tr>
-                                                <th>Location</th>
-                                                <!-- <th>Latitude</th>
-                                                <th>Longitude</th> -->
-                                                <th>Description</th>
+                                                <th style="width: 30% !important;">Location</th>
+                                                <th style="width: 70% !important;">Description</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -194,24 +190,15 @@
                                     data: "tagLocationName",
                                     name: "tagLocationName"
                                 },
-                                // {
-                                //     data: "latitude",
-                                //     name: "latitude"
-                                // },
-                                // {
-                                //     data: "longitude",
-                                //     name: "longitude"
-                                // },
                                 {
                                     data: "description",
-                                    name: "description"
+                                    name: "description",
+                                    render: function(data, type, row, meta) {
+                                        return row.description == "" ? '-' : row.description;
+                                    }
                                 },
                             ],
                             order: [0, 'asc'],
-                            columnDefs: [{
-                                targets: "_all",
-                                className: "dt-head-center",
-                            }, ],
                             'createdRow': function(row, data) {
                                 row.setAttribute("data-id", data.tagLocationId);
                                 row.classList.add("cursor-pointer");
