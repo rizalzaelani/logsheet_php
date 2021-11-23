@@ -773,12 +773,13 @@ class Asset extends BaseController
 			$reader = ReaderEntityFactory::createXLSXReader();
 			$reader->open('../uploads/' . $name);
 			$dataAsset = [];
+			$parameter = [];
 			$desc = [];
 			foreach ($reader->getSheetIterator() as $sheet) {
-				$rowAsset = 2;
+				$rowAsset = 1;
 				if ($sheet->getName() == 'Asset') {
 					foreach ($sheet->getRowIterator() as $row) {
-						if ($rowAsset > 3) {
+						if ($rowAsset > 1) {
 							$dataAsset[] = array(
 								'assetName' => $row->getCellAtIndex(0)->getValue(),
 								'assetNumber' => $row->getCellAtIndex(1)->getValue(),
@@ -800,78 +801,216 @@ class Asset extends BaseController
 					}
 				}
 				$rowDescription = 1;
-				$rowDesc = 2;
-				if ($sheet->getName() == 'Asset') {
-					foreach ($sheet->getRowIterator() as $index => $row) {
-						if ($rowDescription > 1) {
-							$desc = array(
-								$row->getCellAtIndex(15)->getValue(),
-								$row->getCellAtIndex(16)->getValue(),
-								$row->getCellAtIndex(17)->getValue(),
-								$row->getCellAtIndex(18)->getValue(),
-								$row->getCellAtIndex(19)->getValue(),
-							);
-							break;
+				if ($sheet->getIndex() == 1) {
+					$description = [];
+					$special = [];
+					foreach ($sheet->getRowIterator() as $row) {
+						if ($rowDescription > 2) {
+							$assetNumber = $row->getCellAtIndex(0)->getValue();
+							$key = $row->getCellAtIndex(1)->getValue();
+							$value = $row->getCellAtIndex(2)->getValue();
+							$description[] = array("assetNumber" => $assetNumber, "key" => $key, "value" => $value);
 						}
 						$rowDescription++;
 					}
-					$descJson = [];
-					foreach ($sheet->getRowIterator() as $index => $row) {
-						if ($rowDesc > 3) {
-							$json['value'] = [
-								array('key' => $desc[0], 'value' => $row->getCellAtIndex(15)->getValue()),
-								array('key' => $desc[1], 'value' => $row->getCellAtIndex(16)->getValue()),
-								array('key' => $desc[2], 'value' => $row->getCellAtIndex(17)->getValue()),
-								array('key' => $desc[3], 'value' => $row->getCellAtIndex(18)->getValue()),
-								array('key' => $desc[4], 'value' => $row->getCellAtIndex(19)->getValue()),
-							];
-							array_push($descJson, $json);
-						}
-						$rowDesc++;
-					}
-					$lengthAsset = count($dataAsset);
-					for ($i = 0; $i < $lengthAsset; $i++) {
-						$descAsset = $dataAsset[$i]['description'];
-						if ($descAsset == "") {
-							$dataAsset[$i]['description'] = json_encode($descJson[$i]['value']);
-						}
-					}
-				}
-				$rowParam = 1;
-				for ($i = 0; $i < count($dataAsset); $i++) {
-					if ($sheet->getIndex() == $i + 1) {
-						$parameter = [];
-						// var_dump("test");
-						foreach ($sheet->getRowIterator() as $row) {
-							if ($rowParam > 1) {
-								$parameter[] = array(
-									'parameterId' => $this->uuid(),
-									'sortId' => $row->getCellAtIndex(0)->getValue(),
-									'parameterName' => $row->getCellAtIndex(1)->getValue(),
-									'description' => $row->getCellAtIndex(2)->getValue(),
-
-									'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
-									'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
-
-									'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
-									'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
-									'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
-									'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
-									'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
-									'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
-
-									'inputType' => $row->getCellAtIndex(9)->getValue(),
-									'showOn' => $row->getCellAtIndex(10)->getValue(),
-								);
+					// var_dump($description);
+					foreach ($dataAsset as $i => $items) {
+						$descAssetAll = [];
+						$descAsset = [];
+						foreach ($description as $index => $val) {
+							$assetNumber = $val['assetNumber'];
+							$key = $val['key'];
+							$value = $val['value'];
+							if ($assetNumber == "all") {
+								$descAssetAll[] = array("key" => $key, "value" => $value);
+							} else {
+								$cekAssetNumber = array_filter($dataAsset, function ($items) use ($assetNumber) {
+									return $items['assetNumber'] = $assetNumber;
+								});
+								if ($cekAssetNumber) {
+									$descAsset[] = array('assetNumber' => $assetNumber, "key" => $key, "value" => $value);
+								}
 							}
-							$rowParam++;
 						}
-						$dataAsset[$i]['parameter'] = $parameter;
+						foreach ($description as $index => $rows) {
+							$assetNumber = $rows['assetNumber'];
+							if ($dataAsset[$i]['assetNumber'] != $assetNumber) {
+								if ($dataAsset[$i]['description'] == "") {
+									$dataAsset[$i]['description'] = $descAssetAll;
+								}
+							}
+						}
+					}
+					foreach ($descAsset as $descKey => $descValue) {
+						foreach ($dataAsset as $a => $assetVal) {
+							$cekIsString = is_string($dataAsset[$a]['description']);
+							if ($descValue['assetNumber'] == $assetVal['assetNumber']) {
+								$valkey = $descValue['key'];
+								$valVal = $descValue['value'];
+								if (!$cekIsString) {
+									array_push($dataAsset[$a]['description'], array("key" => $valkey, "value" => $valVal));
+								}
+							}
+						}
+					}
+					foreach ($dataAsset as $b => $bVal) {
+						$isString = is_string($bVal['description']);
+						if (!$isString) {
+							$dataAsset[$b]['description'] = json_encode($dataAsset[$b]['description']);
+						}
+					}
+					// foreach ($sheet->getRowIterator() as $row) {
+					// 	$assetNumber = "";
+					// 	$descSpecial = [];
+					// 	if ($rowDescription > 2) {
+					// 		$assetNumber = $row->getCellAtIndex(0)->getValue();
+					// 		if (strtolower($assetNumber) == 'all') {
+					// 			$descAll = [
+					// 				'key' => $row->getCellAtIndex(1)->getValue(),
+					// 				'value' => $row->getCellAtIndex(2)->getValue()
+					// 			];
+					// 			array_push($description, $descAll);
+					// 			foreach ($dataAsset as $key => $value) {
+					// 				if ($value['assetNumber'] != $assetNumber) {
+					// 					$dataAsset[$key]['description'] = $description;
+					// 				}
+					// 			}
+					// 		} else {
+					// 			$cekAssetNumber = array_filter($dataAsset, function ($val) use ($assetNumber) {
+					// 				return $val['assetNumber'] == $assetNumber;
+					// 			});
+					// 			if (!empty($cekAssetNumber)) {
+					// 				$descSpecial['assetNumber'] = $assetNumber;
+					// 				$descSpecial[] = [
+					// 					'key' => $row->getCellAtIndex(1)->getValue(),
+					// 					'value' => $row->getCellAtIndex(2)->getValue()
+					// 				];
+					// 				array_push($special, $descSpecial);
+					// 			}
+					// 		}
+					// 	}
+					// 	$rowDescription++;
+					// }
+
+					// for ($i = 0; $i < count($special); $i++) {
+					// 	foreach ($dataAsset as $key => $val) {
+					// 		$cekIsString = is_string($val['description']);
+					// 		if (!$cekIsString) {
+					// 			if ($special[$i]['assetNumber'] == $val['assetNumber']) {
+					// 				array_push($dataAsset[$key]['description'], $special[$i][0]);
+					// 			}
+					// 		}
+					// 	}
+					// }
+					// foreach ($dataAsset as $key => $value) {
+					// 	$cekIsString = is_string($value['description']);
+					// 	if (!$cekIsString) {
+					// 		$dataAsset[$key]['description'] = json_encode($dataAsset[$key]['description']);
+					// 	}
+					// }
+				}
+
+				$rowParameter = 1;
+				if ($sheet->getIndex() == 2) {
+					foreach ($sheet->getRowIterator() as $row) {
+						if ($rowParameter > 1) {
+							$parameter[] = array(
+								// 'parameterId' => $this->uuid(),
+								'sortId' => $row->getCellAtIndex(0)->getValue(),
+								'parameterName' => $row->getCellAtIndex(1)->getValue(),
+								'description' => $row->getCellAtIndex(2)->getValue(),
+
+								'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
+								'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
+
+								'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
+								'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
+								'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
+								'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
+								'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
+								'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
+
+								'inputType' => $row->getCellAtIndex(9)->getValue(),
+								'showOn' => $row->getCellAtIndex(10)->getValue(),
+							);
+						}
+						$rowParameter++;
 					}
 				}
+				// $rowDescription = 1;
+				// $rowDesc = 2;
+				// if ($sheet->getName() == 'Asset') {
+				// 	foreach ($sheet->getRowIterator() as $index => $row) {
+				// 		if ($rowDescription > 1) {
+				// 			$desc = array(
+				// 				$row->getCellAtIndex(15)->getValue(),
+				// 				$row->getCellAtIndex(16)->getValue(),
+				// 				$row->getCellAtIndex(17)->getValue(),
+				// 				$row->getCellAtIndex(18)->getValue(),
+				// 				$row->getCellAtIndex(19)->getValue(),
+				// 			);
+				// 			break;
+				// 		}
+				// 		$rowDescription++;
+				// 	}
+				// 	$descJson = [];
+				// 	foreach ($sheet->getRowIterator() as $index => $row) {
+				// 		if ($rowDesc > 3) {
+				// 			$json['value'] = [
+				// 				array('key' => $desc[0], 'value' => $row->getCellAtIndex(15)->getValue()),
+				// 				array('key' => $desc[1], 'value' => $row->getCellAtIndex(16)->getValue()),
+				// 				array('key' => $desc[2], 'value' => $row->getCellAtIndex(17)->getValue()),
+				// 				array('key' => $desc[3], 'value' => $row->getCellAtIndex(18)->getValue()),
+				// 				array('key' => $desc[4], 'value' => $row->getCellAtIndex(19)->getValue()),
+				// 			];
+				// 			array_push($descJson, $json);
+				// 		}
+				// 		$rowDesc++;
+				// 	}
+				// 	$lengthAsset = count($dataAsset);
+				// 	for ($i = 0; $i < $lengthAsset; $i++) {
+				// 		$descAsset = $dataAsset[$i]['description'];
+				// 		if ($descAsset == "") {
+				// 			$dataAsset[$i]['description'] = json_encode($descJson[$i]['value']);
+				// 		}
+				// 	}
+				// }
+				// $rowParam = 1;
+				// for ($i = 0; $i < count($dataAsset); $i++) {
+				// 	if ($sheet->getIndex() == $i + 1) {
+				// 		$parameter = [];
+				// 		// var_dump("test");
+				// 		foreach ($sheet->getRowIterator() as $row) {
+				// 			if ($rowParam > 1) {
+				// 				$parameter[] = array(
+				// 					'parameterId' => $this->uuid(),
+				// 					'sortId' => $row->getCellAtIndex(0)->getValue(),
+				// 					'parameterName' => $row->getCellAtIndex(1)->getValue(),
+				// 					'description' => $row->getCellAtIndex(2)->getValue(),
+
+				// 					'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
+				// 					'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
+
+				// 					'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
+				// 					'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
+				// 					'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
+				// 					'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
+				// 					'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
+				// 					'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
+
+				// 					'inputType' => $row->getCellAtIndex(9)->getValue(),
+				// 					'showOn' => $row->getCellAtIndex(10)->getValue(),
+				// 				);
+				// 			}
+				// 			$rowParam++;
+				// 		}
+				// 		$dataAsset[$i]['parameter'] = $parameter;
+				// 	}
+				// }
 			}
 			$reader->close();
 			$data['dataAsset'] = $dataAsset;
+			$data['parameter'] = $parameter;
 			unlink('../uploads/' . $name);
 			return $this->response->setJSON(array(
 				'status' => 200,
@@ -913,6 +1052,7 @@ class Asset extends BaseController
 		$assetTaggingModel = new AssetTaggingModel();
 		$parameterModel = new ParameterModel();
 		$asset = $this->request->getPost('dataAsset');
+		$parameter = $this->request->getPost('parameter');
 		$userId = '3f0857bf-0fab-11ec-95b6-5600026457d1';
 		$lengthAsset = count($asset);
 		try {
@@ -961,11 +1101,21 @@ class Asset extends BaseController
 				$assetModel->insert($dataInsert);
 
 				//parameter
-				$parameter = $dataAsset[$i]->parameter;
-				foreach ($parameter as $key => $val) {
-					$parameter[$key]->assetId = $dataInsert['assetId'];
-					$parameterModel->insert($parameter[$key]);
+				$dataParameter = "";
+				foreach ($parameter as $key => $value) {
+					$dataParameter = json_decode($value);
 				}
+				foreach ($dataParameter as $key => $value) {
+					$arrParameter = (array) $value;
+					$dataParameter['parameterId'] = $this->uuid();
+					$arrParameter['assetId'] = $dataInsert['assetId'];
+					$parameterModel->insert($arrParameter);
+				}
+				// $parameter = $dataAsset[$i]->parameter;
+				// foreach ($parameter as $key => $val) {
+				// 	$parameter[$key]->assetId = $dataInsert['assetId'];
+				// 	$parameterModel->insert($parameter[$key]);
+				// }
 
 				// tag
 				$tag = $dataAsset[$i]->tag;

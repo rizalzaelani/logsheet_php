@@ -152,9 +152,14 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col">
-                                <div class="d-flex justify-content-end align-items-center">
-                                    <button class="btn-custom btn-custom-outline-danger mr-1" @click="reloadPage()"><i class="fa fa-times"></i> Cancel</button>
-                                    <button class="btn-custom btn-custom-primary" @click="btnImport()"><i class="fa fa-upload"></i> Import now</button>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5>Asset</h5>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button class="btn-custom btn-custom-outline-danger mr-1" @click="reloadPage()"><i class="fa fa-times"></i> Cancel</button>
+                                        <button class="btn-custom btn-custom-primary" @click="btnImport()"><i class="fa fa-upload"></i> Import now</button>
+                                    </div>
                                 </div>
                                 <div class="w-100 table-responsive mt-2">
                                     <table class="table table-hover" id="tableAsset">
@@ -174,7 +179,7 @@
                                                 <th scope="col">RFID</th>
                                                 <th scope="col">Coordinat</th>
                                                 <th scope="col">Operation Status</th>
-                                                <th scope="col">Parameter</th>
+                                                <th class="d-none" scope="col">Parameter</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -194,7 +199,46 @@
                                                 <td>{{ items.rfid }}</td>
                                                 <td>{{ items.coordinat }}</td>
                                                 <td>{{ items.assetStatus }}</td>
-                                                <td><button class="btn btn-link btn-sm p-0" @click="modalParameter(i)">Click here</button></td>
+                                                <td class="d-none"><button class="btn btn-link btn-sm p-0" @click="modalParameter(i)">Click here</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-4">
+                            <div class="col">
+                                <div>
+                                    <h5>Parameter</h5>
+                                </div>
+                                <div class="table-responsive w-100">
+                                    <table class="w-100 table table-hover">
+                                        <thead>
+                                            <tr style="background-color: #f2f4f8;">
+                                                <th>Parameter</th>
+                                                <th>Description</th>
+                                                <th>Input Type</th>
+                                                <th>Normal</th>
+                                                <th>Abnormal</th>
+                                                <th>Max</th>
+                                                <th>Min</th>
+                                                <th>Uom</th>
+                                                <th>Option</th>
+                                                <th>Show On</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(val, key) in parameter">
+                                                <td>{{ val.parameterName }}</td>
+                                                <td>{{ val.description }}</td>
+                                                <td>{{ val.inputType }}</td>
+                                                <td>{{ val.normal }}</td>
+                                                <td>{{ val.abnormal }}</td>
+                                                <td>{{ val.max }}</td>
+                                                <td>{{ val.min }}</td>
+                                                <td>{{ val.uom }}</td>
+                                                <td>{{ val.option }}</td>
+                                                <td>{{ val.showOn }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -241,7 +285,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 v-if="parameter != ''" class="modal-title" id="parameterTitle">Parameter {{ dataAsset[parameter.i].assetName }}</h5>
+                    <!-- <h5 v-if="parameter != ''" class="modal-title" id="parameterTitle">Parameter {{ dataAsset[parameter.i].assetName }}</h5> -->
                     <h5 v-else class="modal-title" id="parameterTitle">Hello</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -266,18 +310,20 @@
                                             <th>Show On</th>
                                         </tr>
                                     </thead>
-                                    <tr v-for="(val, key) in parameter">
-                                        <td>{{ val.parameterName }}</td>
-                                        <td>{{ val.description }}</td>
-                                        <td>{{ val.inputType }}</td>
-                                        <td>{{ val.normal }}</td>
-                                        <td>{{ val.abnormal }}</td>
-                                        <td>{{ val.max }}</td>
-                                        <td>{{ val.min }}</td>
-                                        <td>{{ val.uom }}</td>
-                                        <td>{{ val.option }}</td>
-                                        <td>{{ val.showOn }}</td>
-                                    </tr>
+                                    <tbody>
+                                        <tr v-for="(val, key) in parameter">
+                                            <td>{{ val.parameterName }}</td>
+                                            <td>{{ val.description }}</td>
+                                            <td>{{ val.inputType }}</td>
+                                            <td>{{ val.normal }}</td>
+                                            <td>{{ val.abnormal }}</td>
+                                            <td>{{ val.max }}</td>
+                                            <td>{{ val.min }}</td>
+                                            <td>{{ val.uom }}</td>
+                                            <td>{{ val.option }}</td>
+                                            <td>{{ val.showOn }}</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -307,7 +353,7 @@
             var dataImport = ref('');
             var data = ref([]);
             var descJson = ref([]);
-            var parameter = ref('');
+            var parameter = ref([]);
 
             function assetUpload() {
                 setTimeout(() => {
@@ -329,18 +375,22 @@
             }
 
             function modalParameter(i) {
-                let modal = new coreui.Modal(document.getElementById('modalParameter'), {});
-                modal.show();
-                this.parameter = this.dataAsset[i].parameter;
-                this.parameter.i = i;
+                // let modal = new coreui.Modal(document.getElementById('modalParameter'), {});
+                // modal.show();
+                // this.parameter = this.dataAsset[i].parameter;
+                // this.parameter.i = i;
             }
 
             function btnImport() {
                 let formdata = new FormData();
                 let asset = this.dataAsset;
+                let parameter = this.parameter;
                 asset.forEach((item, k) => {
                     formdata.append("dataAsset[]", JSON.stringify(this.dataAsset));
                 });
+                parameter.forEach((item, i) => {
+                    formdata.append("parameter[]", JSON.stringify(this.parameter));
+                })
                 axios({
                     url: '<?= base_url('Asset/importAsset') ?>',
                     method: 'POST',
@@ -405,6 +455,7 @@
                     var rsp = JSON.parse(res);
                     if (rsp.status == 200) {
                         v.dataAsset = rsp.data.dataAsset;
+                        v.parameter = rsp.data.parameter;
                         v.dataAsset.forEach((items, i) => {
                             v.dataAsset[i].descJson = false;
                             if (IsJsonString(items?.description)) {
