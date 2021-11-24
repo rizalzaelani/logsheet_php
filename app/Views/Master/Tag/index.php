@@ -225,7 +225,7 @@
             function add() {
                 axios.post("<?= base_url('Tag/add'); ?>", {
                     tagId: this.tagId,
-                    userId: '3f0857bf-0fab-11ec-95b6-5600026457d1',
+                    userId: '<?= $this->session->get("adminId") ?>',
                     tagName: this.tagName,
                     description: this.description
                 }).then(res => {

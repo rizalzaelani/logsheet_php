@@ -52,7 +52,9 @@ class Tag extends BaseController
         $column_search = array('tagId', 'tagName', 'description', 'createdAt');
         $order = array('createdAt' => 'asc');
         $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
-        $where = [];
+        $where = [
+			'userId' => $this->session->get("adminId"),
+        ];
         $list = $DTModel->datatable($where);
         $output = array(
             "draw" => $request->getPost('draw'),
@@ -80,7 +82,7 @@ class Tag extends BaseController
         if ($data->tagName != '' && $data->description != '') {
             $dt = array(
                 'tagId' => $data->tagId,
-                'userId' => $data->userId,
+                'userId' => $this->session->get("adminId"),
                 'tagName' => $data->tagName,
                 'description' => $data->description
             );
@@ -212,28 +214,6 @@ class Tag extends BaseController
         }
     }
 
-    function gen_uuid() {
-        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
-    
-            // 16 bits for "time_mid"
-            mt_rand( 0, 0xffff ),
-    
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            mt_rand( 0, 0x0fff ) | 0x4000,
-    
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand( 0, 0x3fff ) | 0x8000,
-    
-            // 48 bits for "node"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
-        );
-    }
-
     public function insertTag()
     {
         if(!checkRoleList("MASTER.TAG.IMPORT")){
@@ -249,8 +229,8 @@ class Tag extends BaseController
         $dataTag = $json->dataTag;
         $length = count($dataTag);
         for ($i = 0; $i < $length; $i++) {
-            $uuid = $this->gen_uuid();
             $data = [
+                'tagId' => null,
                 'tagName'   => $dataTag[$i]->tagName,
                 'description'   => $dataTag[$i]->description,
             ];

@@ -28,18 +28,32 @@
         color: #d93025;
         font-size: 12px;
     }
+    .font-weight-500 {
+        font-weight: 500;
+    }
+
+    /* @media (max-width: 576px) {
+        .card {
+            box-shadow: unset !important;
+        }
+        body {
+            background-color: #fff !important;
+        }
+    } */
 </style>
 
 <body class="c-app flex-row align-items-center">
     <div class="container" id="app">
         <div class="row justify-content-center">
-            <div class="col-10">
+            <div class="col-sm-10">
                 <div class="card-group">
                     <div class="card card-main">
-                        <div class="card-body p-5">
+                        <div class="card-body p-4 p-sm-5">
                             <form v-on:submit.prevent="">
-                                <h2>Sign Up</h2>
-                                <p class="text-medium-emphasis text-muted">Register new account</p>
+                                <template v-if="formPos <= 2">
+                                    <h2>Sign Up</h2>
+                                    <p class="text-medium-emphasis text-muted">Register new account</p>
+                                </template>
                                 <div id="form1" :class="formPos == 1 ? '' : 'd-none'">
                                     <div class="form-group mb-0 mt-3">
                                         <label for="fullname">Full Name</label>
@@ -144,11 +158,40 @@
                                         {{ errInput.country }}
                                     </span>
                                 </div>
+                                <div id="preview" :class="formPos == 3 ? '' : 'd-none'">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th>App Name</th>
+                                            <th style="width: 5px">:</th>
+                                            <td>Logsheet Digital 01</td>
+                                        </tr>
+                                        <tr>
+                                            <th>App Code</th>
+                                            <th>:</th>
+                                            <td>logsheet-digital-01</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>:</th>
+                                            <td>admin@gmail.com</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Full Name</th>
+                                            <th>:</th>
+                                            <td>Andrianto</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Phone Number</th>
+                                            <th>:</th>
+                                            <td>+627368751834</td>
+                                        </tr>
+                                    </table>
+                                </div>
                                 <div class="d-flex justify-content-between mt-3">
-                                    <button type="button" class="btn btn-secondary text-center px-3" :class="formPos > 1 ? '' : 'd-none'" @click="formPos = 1">Back</button>
-                                    <a href="<?= site_url() ?>" type="button" class="btn btn-link text-info font-weight-500 text-decoration-none h6 mb-0" :class="formPos <= 1 ? '' : 'd-none'">Sign in instead</a>
-                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos <= 1 ? '' : 'd-none'" @click="validateForm(1)">Next</button>
-                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos > 1 ? '' : 'd-none'" @click="doRegister()">Submit</button>
+                                    <button type="button" class="btn btn-secondary text-center px-3" :class="formPos == 2 ? '' : 'd-none'" @click="formPos = 1">Back</button>
+                                    <a href="<?= site_url() ?>" type="button" class="btn btn-link text-info font-weight-500 text-decoration-none h6 mb-0" :class="formPos == 1 ? '' : 'd-none'">Sign in instead</a>
+                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos == 1 ? '' : 'd-none'" @click="validateForm(1)">Next</button>
+                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos == 2 ? '' : 'd-none'" @click="doRegister()">Submit</button>
                                 </div>
                             </form>
                         </div>

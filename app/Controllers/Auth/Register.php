@@ -43,26 +43,30 @@ class Register extends BaseController
         }
         
 
-        $data["name"] = $this->request->getVar('appName');
-        $data["code"] = str_replace(" ", "-", strtolower($data["name"]));
-        $data["description"] = "-";
+        $param["name"] = $this->request->getVar('appName');
+        $param["code"] = str_replace(" ", "-", strtolower($param["name"]));
+        $param["description"] = "-";
 
-        $data['email'] = $this->request->getVar('email');
-        $data['password'] = $this->request->getVar('password');
-        $data['confirm_password'] = $this->request->getVar('password');
-        $data['app_url'] = base_url("/");
-        $data['app_group'] = "logsheet";
+        $param['email'] = $this->request->getVar('email');
+        $param['password'] = $this->request->getVar('password');
+        $param['confirm_password'] = $this->request->getVar('password');
+        $param['app_url'] = base_url("/");
+        $param['app_group'] = "logsheet";
 
-        $data['parameter[fullname]'] = $this->request->getVar('fullname');
-        $data['parameter[noTelp]'] = $this->request->getVar('noTelp');
-        $data['parameter[street]'] = $this->request->getVar('street');
-        $data['parameter[city]'] = $this->request->getVar('city');
-        $data['parameter[postalCode]'] = $this->request->getVar('postalCode');
-        $data['parameter[country]'] = $this->request->getVar('country');
+        $param['parameter[fullname]'] = $this->request->getVar('fullname');
+        $param['parameter[noTelp]'] = $this->request->getVar('noTelp');
+        $param['parameter[street]'] = $this->request->getVar('street');
+        $param['parameter[city]'] = $this->request->getVar('city');
+        $param['parameter[postalCode]'] = $this->request->getVar('postalCode');
+        $param['parameter[country]'] = $this->request->getVar('country');
+        
+        $param['group'] = "Superadmin";
+        $param['role'] = getenv("ROLELIST");
+        $param['roleGroup[Superadmin]'] = getenv("ROLELIST");
 
         try {
             $appModel = new AppsModel();
-            $dataRes = $appModel->createApps($data);
+            $dataRes = $appModel->createApps($param);
             
             $data = $dataRes['data'];
             if ($dataRes['error']) {

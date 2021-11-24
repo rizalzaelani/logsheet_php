@@ -99,6 +99,7 @@ class Transaction extends BaseController
 		$order = array('createdAt' => 'asc');
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 		$where = [
+			'userId' => $this->session->get("adminId"),
 			'scannedAt IS NOT NULL' => null
 		];
 		$list = $DTModel->datatable($where);

@@ -24,24 +24,48 @@
         border: 1px solid #e55353;
         border-radius: 0.25rem;
     }
+
+    .select2-container {
+        width: unset !important;
+    }
+    .font-weight-500 {
+        font-weight: 500;
+    }
+
+    @media (max-width: 576px) {
+        .card {
+            box-shadow: unset !important;
+        }
+        body {
+            background-color: #fff !important;
+        }
+    }
 </style>
 
-<body class="c-app flex-row align-items-center">
+<body class="c-app flex-sm-row align-items-sm-center">
     <div class="container" id="app">
         <div class="row justify-content-center">
-            <div class="col-10">
-                <div class="card-group shadow">
+            <div class="col-sm-10 p-0 p-sm-1">
+                <div class="card-group">
                     <div class="card card-main">
-                        <div class="card-body p-5">
-                            <div class="d-flex justify-content-between">
+                        <div class="card-body p-sm-5">
+                            <img src="<?= base_url('/img/ilustration/login-animate.png') ?>" class="w-100 d-block d-sm-none">
+                            <div class="d-flex justify-content-between d-sm-down-none">
                                 <img src="<?= base_url('/img/logo-act.png') ?>" width="120">
                                 <a href="<?= site_url("register") ?>" class="h6 mb-0 text-muted font-weight-500 text-decoration-none">Sign Up</a>
                             </div>
-                            <form class="mt-5" action="<?= base_url() ?>/Login/auth" method="POST" ref="form" @submit.prevent="login">
+                            <form class="mt-3 mt-sm-5" action="<?= base_url() ?>/Login/auth" method="POST" ref="form" @submit.prevent="login">
                                 <h2>Sign In</h2>
                                 <p class="text-medium-emphasis text-muted">Sign In to continue to Losheet Application</p>
                                 <div class="input-group mt-3" :class="appCodeErr ? 'invalid-value' : ''">
-                                    <select class="form-control w-100" name="appCode" v-model="appCode">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <svg class="c-icon">
+                                                <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-bank') ?>"></use>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <select class="custom-select" name="appCode" v-model="appCode">
                                         <?php foreach ($appCode as $row) : ?>
                                             <option value="<?= $row; ?>"><?= $row; ?></option>
                                         <?php endforeach; ?>
@@ -49,7 +73,8 @@
                                 </div>
 
                                 <div class="input-group mt-3" :class="emailErr ? 'invalid-value' : ''">
-                                    <div class="input-group-prepend"><span class="input-group-text">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
                                             <svg class="c-icon">
                                                 <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-user') ?>"></use>
                                             </svg>
@@ -61,7 +86,8 @@
                                     Field cannot be empty.
                                 </div>
                                 <div class="input-group mt-3 mb-0" :class="passwordErr ? 'invalid-value' : ''">
-                                    <div class="input-group-prepend"><span class="input-group-text">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
                                             <svg class="c-icon">
                                                 <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-lock-locked') ?>"></use>
                                             </svg>
@@ -74,8 +100,8 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="w-100 text-right">
-                                    <a href="" class="text-info">forgot password?</a>
+                                <div class="w-100 text-right mt-2">
+                                    <a href="" class="text-info font-weight-500">Forgot password?</a>
                                 </div>
                                 <div class="invalid-feedback-password d-none">
                                     Field cannot be empty.
@@ -85,6 +111,11 @@
                                     <div class="g-recaptcha" name="captcha" data-sitekey="<?= env('site_key') ?>"></div>
                                 </div>
                                 <button class="btn btn-info w-100 mt-4" type="submit" v-html="loginBtn"></button>
+
+                                <div class="d-block d-sm-none w-100 text-center mt-4">
+                                    <span class="text-muted font-weight-500">New to Logsheet Digital? </span>
+                                    <a href="<?= site_url("register") ?>" class="text-info font-weight-500"> Sign Up</a>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -130,7 +161,6 @@
                         emailErr.value = (!email.value ? 'Input your email account' : null);
                         passwordErr.value = (!passwordErr.value ? 'Input your password' : null);
                     } else {
-                        console.log(form.value)
                         loginBtn.value = '<i class="fa fa-spin fa-spinner"></i> Processing...';
                         let formdata = new FormData(form.value);
                         axios({
@@ -180,9 +210,13 @@
                 }
 
                 Vue.onMounted(() => {
-                    $('select[name=appCode]').select2({
+                    let appCodeS2 = $('select[name=appCode]').select2({
                         theme: 'coreui',
                         placeholder: "Application Code"
+                    })
+
+                    appCodeS2.on("select2:selecting", (v) => {
+                        appCode.value = v.params.args.data.text;
                     })
                 });
 

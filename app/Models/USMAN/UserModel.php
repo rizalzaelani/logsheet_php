@@ -92,7 +92,7 @@ class UserModel extends Model
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
 
-        $request->setUrl(env('usmanURL') . 'api/auth/refreshToken');
+        $request->setUrl(env('usmanURL') . 'api/auth/refresh_token');
         $request->setMethod(HTTP_Request2::METHOD_POST);
         $request->setConfig(array(
             'follow_redirects' => TRUE
@@ -119,6 +119,11 @@ class UserModel extends Model
                         'data' => $dataRes
                     );
                 } else {
+                    return array(
+                        'error' => true,
+                        'message' => "Can't Get Token, Please Try Again",
+                        'data' => $dataRes
+                    );
                 }
             } else {
                 return array(

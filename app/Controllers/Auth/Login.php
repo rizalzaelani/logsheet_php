@@ -14,7 +14,7 @@ class Login extends BaseController
 		if($session->has('userId')){
             return redirect()->to("Dashboard");
         }
-        $appCode = ['logsheet01','logsheet02','logsheet03','logsheet04','logsheet05'];
+        $appCode = ['logsheet01','cems-pltu-s2p','toilet-checklist'];
         $data = array(
             'title' => 'Login Page | Logsheet Digital',
             'subtitle' => 'Logsheet Digital',

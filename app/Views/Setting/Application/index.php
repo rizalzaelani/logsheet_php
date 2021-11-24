@@ -186,8 +186,7 @@
     let v = Vue.createApp({
         setup() {
             let cropper;
-            var userId = uuidv4();
-            var appSetting = reactive(<?= json_encode($appSetting); ?>);
+            var appSetting = reactive(<?= json_encode($appSetting ?? []); ?>);
 
             appSetting.appLogoLight1 = appSetting.appLogoLight;
             appSetting.appLogoDark1 = appSetting.appLogoDark;
@@ -267,7 +266,6 @@
                         var id = uuidv4();
                         await assetStatus.push({
                             assetStatusId: id,
-                            userId: userId,
                             assetStatusName: e.value,
                             assetStatusName1: e.value,
                             isNew: true,
@@ -292,7 +290,6 @@
                         if (appSetting.appName != '' && appSetting.appLogoLight != '' && appSetting.appLogoDark != '' && appSetting.appLogoIcon != '') {
                             let dataPost = {
                                 appSettingId: appSetting.appSettingId,
-                                userId: appSetting.userId,
                                 appName: appSetting.appName,
                                 appLogoLight: (appSetting.appLogoLight == appSetting.appLogoLight1 ? '' : appSetting.appLogoLight),
                                 appLogoDark: (appSetting.appLogoDark == appSetting.appLogoDark1 ? '' : appSetting.appLogoDark),
@@ -480,7 +477,6 @@
             })
 
             return {
-                userId,
                 appSetting,
                 assetStatus,
 

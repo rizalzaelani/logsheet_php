@@ -973,7 +973,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             var selectedSchWeekly = ref([]);
             var selectedSchMonthlyDays = ref([]);
             var valCoordinate = ref('');
-            var userId = ref(uuidv4());
             var onDays = ref('');
             var assetLatitude = ref('');
             var assetLongitude = ref('');
@@ -2308,7 +2307,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 coordinate,
                 uhf,
                 assetTagging,
-                userId,
                 onDays,
                 assetLatitude,
                 assetLongitude,

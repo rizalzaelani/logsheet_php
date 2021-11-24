@@ -82,7 +82,7 @@ class VersionApps extends BaseController
 			$file->move('../public/assets/uploads/apk', $name);
 			$data = array(
 				'versionAppId' => $post['versionAppId'],
-				'userId' => $post['userId'],
+				'userId' => $this->session->get("adminId"),
 				'name' => $post['name'],
 				'version' => $post['version'],
 				'description' => $post['description'],
@@ -168,7 +168,7 @@ class VersionApps extends BaseController
 				$name = $post['name'] . '_' . 'v' . $post['version'] . '.apk';
 				rename('../public/assets/uploads/apk/' . $dataVersionApps[0]['fileApp'], '../public/assets/uploads/apk/' . $name);
 				$data = array(
-					'userId' => $post['userId'],
+					'userId' => $this->session->get("adminId"),
 					'name' => $post['name'],
 					'version' => $post['version'],
 					'description' => $post['description'],
@@ -183,7 +183,7 @@ class VersionApps extends BaseController
 				$name = $post['name'] . '_' . 'v' . $post['version'] . '.apk';
 				$file->move('../public/assets/uploads/apk', $name);
 				$data = array(
-					'userId' => $post['userId'],
+					'userId' => $this->session->get("adminId"),
 					'name' => $post['name'],
 					'version' => $post['version'],
 					'description' => $post['description'],

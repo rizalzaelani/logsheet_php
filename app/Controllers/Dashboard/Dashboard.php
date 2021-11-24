@@ -20,15 +20,15 @@ class Dashboard extends BaseController
 		$tagModel = new TagModel();
 		$locationModel = new TagLocationModel();
 		$scheduleTrxModel = new ScheduleTrxModel();
-		$approvedAtNull = $scheduleTrxModel->where('approvedAt', null)->get()->getResultArray();
-		$approvedAtNotNull = $scheduleTrxModel->where('approvedAt !=', null)->get()->getResultArray();
-		$normal = $scheduleTrxModel->where('condition', 'Normal')->get()->getResultArray();
-		$finding = $scheduleTrxModel->where('condition', 'Finding')->get()->getResultArray();
-		$open = $scheduleTrxModel->where('condition', 'Open')->get()->getResultArray();
-		$closed = $scheduleTrxModel->where('condition', 'Closed')->get()->getResultArray();
-		$dataAsset = $assetModel->where('deletedAt', null)->get()->getResultArray();
-		$dataTag = $tagModel->findAll();
-		$dataLocation = $locationModel->findAll();
+		$approvedAtNull = $scheduleTrxModel->where(['userId' => $this->session->get("adminId"), 'approvedAt', null])->from("vw_scheduleTrx")->get()->getResultArray();
+		$approvedAtNotNull = $scheduleTrxModel->where(['userId' => $this->session->get("adminId"), 'approvedAt !=', null])->from("vw_scheduleTrx")->get()->getResultArray();
+		$normal = $scheduleTrxModel->where(['userId' => $this->session->get("adminId"), 'condition', 'Normal'])->from("vw_scheduleTrx")->get()->getResultArray();
+		$finding = $scheduleTrxModel->where(['userId' => $this->session->get("adminId"), 'condition', 'Finding'])->from("vw_scheduleTrx")->get()->getResultArray();
+		$open = $scheduleTrxModel->where(['userId' => $this->session->get("adminId"), 'condition', 'Open'])->from("vw_scheduleTrx")->get()->getResultArray();
+		$closed = $scheduleTrxModel->where(['userId' => $this->session->get("adminId"), 'condition', 'Closed'])->from("vw_scheduleTrx")->get()->getResultArray();
+		$dataAsset = $assetModel->where(['userId' => $this->session->get("adminId"), 'deletedAt', null])->get()->getResultArray();
+		$dataTag = $tagModel->where(['userId' => $this->session->get("adminId"), 'deletedAt', null])->get()->getResultArray();
+		$dataLocation = $locationModel->where(['userId' => $this->session->get("adminId"), 'deletedAt', null])->get()->getResultArray();
 
 		$data = array(
 			'title' => "Dashboard",

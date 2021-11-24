@@ -171,6 +171,10 @@ $routes->post('/Schedule/schJson', 'Setting/Schedule::schJson');
 $routes->post('/Schedule/checkAssetId', 'Setting/Schedule::checkAssetId');
 
 
+$routes->get('/user', 'UserRole/User::index');
+$routes->get('/user/listUser', 'UserRole/User::listUser');
+
+
 
 /*
  * --------------------------------------------------------------------

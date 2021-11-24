@@ -10,7 +10,7 @@ class TagLocationModel extends Model
     protected $table                = 'tblm_tagLocation';
     protected $primaryKey           = 'tagLocationId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['tagLocationId', 'tagLocationName', 'latitude', 'longitude', 'description'];
+    protected $allowedFields        = ['tagLocationId', 'userId', 'tagLocationName', 'latitude', 'longitude', 'description'];
     protected $createdField         = 'createdAt';
 
     public function getById($id)

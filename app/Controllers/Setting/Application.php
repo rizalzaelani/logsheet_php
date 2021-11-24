@@ -17,8 +17,7 @@ class Application extends BaseController
         //     return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
         // }
 
-        $userIdApp = $_SESSION["userIdApp"] ?? "fcc9766a-9bda-4fd3-a755-a24130d2f58c";
-        // $userIdApp = $_SESSION["userIdApp"] ?? "";
+        $userIdApp = $this->session->get("adminId");
         // if($userIdApp == ""){
         //     return View('errors/customError', ['ErrorCode'=>400,'ErrorMessage'=>"Sorry, You don't have any registered appication, please Register New Logsheet App or Relogin First"]);
         // }
@@ -59,7 +58,7 @@ class Application extends BaseController
         $appSettingModel = new ApplicationSettingModel();
 
         $appSettingId = $this->request->getVar('appSettingId') ?? "";
-        $userId = $this->request->getVar('userId') ?? "65910438-b82d-4414-95cc-b3165527e08f";
+        $userId = $this->session->get("adminId");
         $appName = $this->request->getVar('appName');
         $appLogoLight = $this->request->getVar('appLogoLight');
         $appLogoDark = $this->request->getVar('appLogoDark');
@@ -162,13 +161,13 @@ class Application extends BaseController
                 if ($val["isNew"] == true) {
                     array_push($dataInsert, array(
                         "assetStatusId" => null,
-                        "userId" => $_SESSION["userId"] ?? "65910438-b82d-4414-95cc-b3165527e08f",
+                        "userId" => $this->session->get("adminId"),
                         "assetStatusName" => $val["assetStatusName"]
                     ));
                 } else {
                     array_push($dataUpdate, array(
                         "assetStatusId" => $val["assetStatusId"],
-                        // "userId" => $_SESSION["userId"] ?? "65910438-b82d-4414-95cc-b3165527e08f",
+                        // "userId" => $this->session->get("adminId"),
                         "assetStatusName" => $val["assetStatusName"]
                     ));
                 }

@@ -272,7 +272,7 @@
 				if (this.applicationName != '' && this.version != '' && this.description != '' && this.fileUploaded != '') {
 					var formdata = new FormData();
 					formdata.append('versionAppId', uuidv4());
-					formdata.append('userId', uuidv4());
+					formdata.append('userId', '<?= $this->session->get("adminId") ?>');
 					formdata.append('name', this.applicationName);
 					formdata.append('version', this.version);
 					formdata.append('description', this.description);

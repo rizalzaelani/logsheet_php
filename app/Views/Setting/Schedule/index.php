@@ -482,7 +482,7 @@
 
                 const showModalAM = () => {
                     $('#tableAssetManual').dataTable().fnClearTable();
-                    $('#tableAssetManual').dataTable().fnAddData(assetManualData);
+                    if(assetManualData.length > 0) $('#tableAssetManual').dataTable().fnAddData(assetManualData);
                     $("#modalAddSchManual").modal("show");
                 }
             <?php endif; ?>

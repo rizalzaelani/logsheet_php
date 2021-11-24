@@ -29,6 +29,8 @@ class BaseController extends Controller
 	 * @var IncomingRequest|CLIRequest
 	 */
 	protected $request;
+	
+	protected $session;
 
 	/**
 	 * An array of helpers to be loaded automatically upon
@@ -50,12 +52,16 @@ class BaseController extends Controller
 	{
 		// Do Not Edit This Line
 		parent::initController($request, $response, $logger);
+		$this->session = \Config\Services::session();
+		// if (session_status() == PHP_SESSION_NONE)
+        // {
+        // }
 
 		//--------------------------------------------------------------------
 		// Preload any models, libraries, etc, here.
 		//--------------------------------------------------------------------
 		// E.g.: $this->session = \Config\Services::session();
-	$this->template = new Template();
+		$this->template = new Template();
 	}
 
 }
