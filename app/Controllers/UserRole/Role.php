@@ -7,26 +7,14 @@ use App\Models\USMAN\RoleGroupModel;
 use App\Models\USMAN\UserModel;
 use Exception;
 
-class User extends BaseController
+class Role extends BaseController
 {
-	public function index()
-	{
-        // if(!checkRoleList("USER.VIEW")){
-        //     return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        // }
-
-		$data = array(
-			'title' => 'User Logsheet Digital',
-			'subtitle' => 'All User Logsheet'
-		);
-
-		return $this->template->render('UserRole/User/index', $data);
-	}
-
-	public function userList()
+	public function groupList()
 	{
 		try {
             $userModel = new UserModel();
+            $roleGroupModel = new RoleGroupModel();
+
             $clientToken = get_cookie("clientToken");
             if(!isset($clientToken) || $clientToken == null){
                 $resRT = $userModel->refreshToken();
@@ -38,7 +26,7 @@ class User extends BaseController
                     ), isset($resRT['data']->message) ? 400 : 500);
                 }
             }
-            $dataRes = $userModel->userList();
+            $dataRes = $roleGroupModel->groupList();
             
             $data = $dataRes['data'];
             if ($dataRes['error']) {
@@ -52,7 +40,7 @@ class User extends BaseController
                     'status' => 200,
                     'error' => true,
                     'message' => "Success Get User List",
-                    'data' => $data->data ?? []
+                    'data' => $data
                 ], 200);
             }
         } catch (Exception $e){
@@ -64,10 +52,12 @@ class User extends BaseController
         }
 	}
 
-    public function getUserById()
+	public function roleList()
 	{
 		try {
             $userModel = new UserModel();
+            $roleGroupModel = new RoleGroupModel();
+
             $clientToken = get_cookie("clientToken");
             if(!isset($clientToken) || $clientToken == null){
                 $resRT = $userModel->refreshToken();
@@ -79,9 +69,7 @@ class User extends BaseController
                     ), isset($resRT['data']->message) ? 400 : 500);
                 }
             }
-
-            $userId = $this->request->getGet("userId") ?? "";
-            $dataRes = $userModel->userDetail($userId);
+            $dataRes = $roleGroupModel->roleList();
             
             $data = $dataRes['data'];
             if ($dataRes['error']) {
@@ -94,8 +82,8 @@ class User extends BaseController
                 return $this->response->setJSON([
                     'status' => 200,
                     'error' => true,
-                    'message' => "Success Get User Detail",
-                    'data' => $data->data ?? []
+                    'message' => "Success Get User List",
+                    'data' => $data
                 ], 200);
             }
         } catch (Exception $e){

@@ -74,6 +74,8 @@ class Application extends BaseController
         try {
             $data["userId"] = $userId;
             $data["appName"] = $appName;
+            
+            $this->response->setCookie('appName', $data["appName"], 60 * 60 * 24 * 365);
 
             if($appLogoLight != ""){
                 $appLogoLight = str_replace('data:image/png;base64,', '', $appLogoLight);
@@ -83,6 +85,8 @@ class Application extends BaseController
                 $fileName = "AppLogoL_" . uniqid() . '.png';
                 file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLL);
                 $data["appLogoLight"] = base_url() . "/" . $dirPath . $fileName;
+
+                $this->response->setCookie('appLogoLight', $data["appLogoLight"], 60 * 60 * 24 * 365);
             }
 
             if($appLogoDark != ""){
@@ -93,6 +97,8 @@ class Application extends BaseController
                 $fileName = "AppLogoD_" . uniqid() . '.png';
                 file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLD);
                 $data["appLogoDark"] = base_url() . "/" . $dirPath . $fileName;
+
+                $this->response->setCookie('appLogoDark', $data["appLogoDark"], 60 * 60 * 24 * 365);
             }
 
             if($appLogoIcon != ""){
@@ -103,6 +109,8 @@ class Application extends BaseController
                 $fileName = "AppLogoI_" . uniqid() . '.png';
                 file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLI);
                 $data["appLogoIcon"] = base_url() . "/" . $dirPath . $fileName;
+                
+                $this->response->setCookie('appLogoIcon', $data["appLogoIcon"], 60 * 60 * 24 * 365);
             }
 
             if (!empty($appSetting)) {

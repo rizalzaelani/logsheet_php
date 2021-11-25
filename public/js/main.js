@@ -18,7 +18,7 @@ const xhrThrowRequest = (res) => {
                 if (resData.status == 200) {
                     resolve(true);
                 } else if (resData.status == 500) {
-                    if (!isNullEmptyOrUndefined(resData.data) & typeof (resData.data) == "object") {
+                    if (!isNullEmptyOrUndefined(resData.data) && typeof (resData.data) == "object") {
                         let outAlert = `<ul class="list-group">`;
                         for (let r in resData.data) {
                             outAlert += `<li class="list-group-item list-group-item-warning">${resData.data[r]}</li>`;

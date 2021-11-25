@@ -170,9 +170,13 @@ $routes->post('/Schedule/updateSchedule', 'Setting/Schedule::updateSchedule');
 $routes->post('/Schedule/schJson', 'Setting/Schedule::schJson');
 $routes->post('/Schedule/checkAssetId', 'Setting/Schedule::checkAssetId');
 
-
 $routes->get('/user', 'UserRole/User::index');
-$routes->get('/user/listUser', 'UserRole/User::listUser');
+$routes->get('/user/userList', 'UserRole/User::userList');
+$routes->get('/user/getUserById', 'UserRole/User::getUserById');
+
+$routes->get('/role', 'UserRole/Role::index');
+$routes->get('/role/groupList', 'UserRole/Role::groupList');
+$routes->get('/role/roleList', 'UserRole/Role::roleList');
 
 
 

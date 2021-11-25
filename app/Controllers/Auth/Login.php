@@ -3,6 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
+use App\Models\ApplicationSettingModel;
 use App\Models\USMAN\UserModel;
 use Exception;
 
@@ -62,8 +63,23 @@ class Login extends BaseController
                         ), isset($data->message) ? 400 : 500);
                     } else {
                         $dataArr = $data->data;
+
+                        $appSettingModel = new ApplicationSettingModel();
+                        $appSetting = $appSettingModel->where("userId", $dataArr->adminId)->get()->getRowArray();
+                        if(empty($appSetting)){
+                            $this->response->setCookie('appName', "", 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoLight', "", 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoDark', "", 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoIcon', "", 60 * 60 * 24 * 365);
+                        } else {
+                            $this->response->setCookie('appName', $appSetting["appName"], 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoLight', $appSetting["appLogoLight"], 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoDark', $appSetting["appLogoDark"], 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoIcon', $appSetting["appLogoIcon"], 60 * 60 * 24 * 365);
+                        }
+
                         $session->set((array) $dataArr);
-                        $this->response->setCookie('clientToken', $dataArr->token, 3600);
+                        $this->response->setCookie('clientToken', "active", 3600);
                         $this->response->setCookie('appCodeSelected', $appCode, 60 * 60 * 24 * 365);
                         
                         return $this->response->setJSON(array(

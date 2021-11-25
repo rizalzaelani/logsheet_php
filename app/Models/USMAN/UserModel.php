@@ -57,7 +57,7 @@ class UserModel extends Model
         ));
         $request->setHeader(array(
             'X-Requested-With' => 'XMLHttpRequest',
-            'Authorization' => get_cookie('clientToken')
+            'Authorization' => $sess->get("token")
         ));
         $request->addPostParameter(array(
             'appId' => $sess->get("appId")
@@ -87,9 +87,53 @@ class UserModel extends Model
         }
     }
 
+    public function userDetail($userId = ""){
+        $sess = \Config\Services::session();
+        $request = new HTTP_Request2();
+
+        $request->setUrl(env('usmanURL') . 'api/users/getUserDetail');
+        $request->setMethod(HTTP_Request2::METHOD_POST);
+        $request->setConfig(array(
+            'follow_redirects' => TRUE
+        ));
+        $request->setHeader(array(
+            'X-Requested-With' => 'XMLHttpRequest',
+            'Authorization' => $sess->get("token")
+        ));
+        $request->addPostParameter(array(
+            'appId' => $sess->get("appId"),
+            'userId' => $userId
+        ));
+        
+        try {
+            $response = $request->send();
+            if ($response->getStatus() == 200) {
+                return array(
+                    'error' => false,
+                    'message' => 'Success Get User Detail',
+                    'data' => json_decode($response->getBody())
+                );
+            } else {
+                return array(
+                    'error' => true,
+                    'message' => 'Unexpected HTTP status: ' . $response->getStatus() . ' ' . $response->getReasonPhrase(),
+                    'data' =>  json_decode($response->getBody())
+                );
+            }
+        } catch (HTTP_Request2_Exception $e) {
+            return array(
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => []
+            );
+        }
+    }
+
     public function refreshToken()
     {
         $sess = \Config\Services::session();
+        $resp = \Config\Services::response();
+
         $request = new HTTP_Request2();
 
         $request->setUrl(env('usmanURL') . 'api/auth/refresh_token');
@@ -111,7 +155,7 @@ class UserModel extends Model
 
                 if (isset($dataRes->token)) {
                     $sess->set("token", $dataRes->token);
-                    $this->response->setCookie('clientToken', $dataRes->token, 3600);
+                    $resp->setCookie("clientToken", "active", 3600);
 
                     return array(
                         'error' => false,

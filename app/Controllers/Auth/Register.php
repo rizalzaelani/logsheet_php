@@ -27,7 +27,7 @@ class Register extends BaseController
             'noTelp' => 'required',
             'email' => 'required',
             'password' => 'required',
-            'street' => 'required',
+            'company' => 'required',
             'city' => 'required',
             'postalCode' => 'required',
             'country' => 'required',
@@ -55,7 +55,7 @@ class Register extends BaseController
 
         $param['parameter[fullname]'] = $this->request->getVar('fullname');
         $param['parameter[noTelp]'] = $this->request->getVar('noTelp');
-        $param['parameter[street]'] = $this->request->getVar('street');
+        $param['parameter[company]'] = $this->request->getVar('company');
         $param['parameter[city]'] = $this->request->getVar('city');
         $param['parameter[postalCode]'] = $this->request->getVar('postalCode');
         $param['parameter[country]'] = $this->request->getVar('country');

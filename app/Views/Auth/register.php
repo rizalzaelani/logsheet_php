@@ -103,33 +103,19 @@
                                     </span>
                                 </div>
                                 <div id="form2" :class="formPos == 2 ? '' : 'd-none'">
-                                    <div class="d-flex justify-content-center col-form-label">
-                                        <div class="form-check form-check-inline mr-3">
-                                            <input class="form-check-input" id="radioAdmin" type="radio" value="admin" name="inline-radios" @change="adminClient = 1" :checked="adminClient == 1">
-                                            <label class="form-check-label" for="radioAdmin">Admin</label>
-                                        </div>
-                                        <div class="form-check form-check-inline mr-3">
-                                            <input class="form-check-input" id="radioClient" type="radio" value="client" name="inline-radios" @change="adminClient = 2" :checked="adminClient == 2">
-                                            <label class="form-check-label" for="radioClient">Client</label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" :class="adminClient == 1 ? '' : 'd-none'">
-                                        <label for="street">Application Name</label>
+                                    <div class="form-group">
+                                        <label for="appName">Application Name</label>
                                         <input class="form-control" id="appName" v-model="registerData.appName" type="text" placeholder="Enter App Name">
                                     </div>
-                                    <div class="form-group" :class="adminClient == 2 ? '' : 'd-none'">
-                                        <label for="street">Application Code</label>
-                                        <input class="form-control" id="appCode" v-model="registerData.appCode" type="text" placeholder="Enter App Code">
-                                    </div>
                                     <div class="form-group">
-                                        <label for="street">Street</label>
-                                        <input class="form-control" id="street" v-model="registerData.street" type="text" placeholder="Enter Street">
+                                        <label for="company">Company</label>
+                                        <input class="form-control" id="company" v-model="registerData.company" type="text" placeholder="Enter Copany Name">
                                     </div>
-                                    <span class="invalid-feedback-password" :class="errInput.street ? '' : 'd-none'">
+                                    <span class="invalid-feedback-password" :class="errInput.company ? '' : 'd-none'">
                                         <svg aria-hidden="true" fill="currentColor" focusable="false" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
                                         </svg>
-                                        {{ errInput.street }}
+                                        {{ errInput.company }}
                                     </span>
                                     <div class="row">
                                         <div class="form-group col-sm-8">
@@ -223,7 +209,6 @@
                 var registerData = reactive([]);
                 var errInput = reactive([]);
                 var formPos = ref(1);
-                var adminClient = ref(1);
 
                 const validateForm = (formType) => {
                     if (registerData.fullname && registerData.noTelp && registerData.email && registerData.password && registerData.confirmPass) {
@@ -239,17 +224,17 @@
                             formPos.value = 2;
 
                             if (formType == 2) {
-                                if (registerData.street && registerData.city && registerData.postalCode && registerData.country) {
+                                if (registerData.company && registerData.city && registerData.postalCode && registerData.country) {
                                     return true;
                                 } else {
-                                    if (!registerData.street) errInput.street = 'Enter your street address';
+                                    if (!registerData.company) errInput.company = 'Enter your company name';
                                     if (!registerData.city) errInput.city = 'Enter your city';
                                     if (!registerData.postalCode) errInput.city = 'Enter your postalCode';
                                     if (!registerData.city && !registerData.postalCode) errInput.city = 'Enter your city & postalCode';
                                     if (!registerData.country) errInput.country = 'Enter your country';
                                 }
                             } else {
-                                errInput.street = '';
+                                errInput.company = '';
                                 errInput.city = '';
                                 errInput.country = '';
                             }
@@ -265,24 +250,17 @@
                 }
 
                 const doRegister = () => {
-                    if (registerData.fullname && registerData.noTelp && registerData.email && registerData.password && registerData.confirmPass && registerData.street && registerData.city && registerData.postalCode && registerData.country) {
+                    if (registerData.fullname && registerData.noTelp && registerData.email && registerData.password && registerData.confirmPass && registerData.company && registerData.city && registerData.postalCode && registerData.country) {
                         let formData = new FormData();
                         formData.append("fullname", registerData.fullname);
                         formData.append("noTelp", registerData.noTelp);
                         formData.append("email", registerData.email);
                         formData.append("password", registerData.password);
-                        formData.append("street", registerData.street);
+                        formData.append("appName", registerData.appName);
+                        formData.append("company", registerData.company);
                         formData.append("city", registerData.city);
                         formData.append("postalCode", registerData.postalCode);
                         formData.append("country", registerData.country);
-
-                        if (adminClient.value == 1) {
-                            formData.append("appName", registerData.appName);
-                            formData.append("appCode", "");
-                        } else {
-                            formData.append("appName", "");
-                            formData.append("appCode", registerData.appCode);
-                        }
 
                         axios({
                                 url: "<?= base_url('register/doRegister') ?>",
@@ -333,7 +311,6 @@
                     registerData,
                     errInput,
                     formPos,
-                    adminClient,
 
                     validateForm,
                     doRegister

@@ -31,7 +31,7 @@ function firstLower(s) {
 }
 
 function isNullEmptyOrUndefined(value) {
-    if (value === "" || value == null || value == undefined) {
+    if (value === "" || value == null || value == undefined || (value ?? "").length == 0 || Object.keys(value).length === 0) {
         return true;
     }
     else {
