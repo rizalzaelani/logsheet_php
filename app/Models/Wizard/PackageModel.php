@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Wizard;
 
 use CodeIgniter\Model;
 use Exception;
@@ -15,6 +15,11 @@ class PackageModel extends Model
     public function getAll()
     {
         return $this->orderBy('assetMax', 'asc')->findAll();
+    }
+
+    public function getById($packageId)
+    {
+        return $this->builder('tblm_package')->where($this->primaryKey, $packageId)->get()->getRowArray();
     }
 
     public function getByName(array $where = null)

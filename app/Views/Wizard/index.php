@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Logsheet Digital</title>
-    <?php if (isset($css)) : ?>
+    <?php
+
+    use CodeIgniter\Database\BaseUtils;
+
+    if (isset($css)) : ?>
         <?php foreach ($css as $item) : ?>
             <link href="<?= $item ?>" rel="stylesheet">
         <?php endforeach; ?>
@@ -239,16 +243,8 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                             <input type="text" name="companyName" id="companyName" onkeyup="companyName(event.target)" class="form-control" placeholder="Company Name">
                         </div>
                         <div class="form-group">
-                            <label for="typeCompany" class="sr-only">Type Of Company</label>
-                            <input type="text" name="typeCompany" id="typeCompany" onkeyup="typeCompany(event.target)" class="form-control" placeholder="Type Of Company">
-                        </div>
-                        <div class="form-group">
-                            <label for="position" class="sr-only">Position On Company</label>
-                            <input type="text" name="position" id="position" onkeyup="position(event.target)" class="form-control" placeholder="Position On Company">
-                        </div>
-                        <div class="form-group">
-                            <label for="numberEmployee" class="sr-only">Number Of Employees</label>
-                            <input type="number" name="numberEmployee" id="numberEmployee" onkeyup="numberEmployee(event.target)" class="form-control" placeholder="Number Of Employees">
+                            <label for="address" class="sr-only">Address</label>
+                            <textarea class="form-control" name="address" id="address" cols="30" rows="5" placeholder="Address" onkeyup="address(event.target)"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="email" class="sr-only">Email</label>
@@ -344,6 +340,7 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
         var personalData = {
             fullName: "",
             companyName: "",
+            address: "",
             typeCompany: "",
             position: "",
             numberEmployee: "",
@@ -389,13 +386,11 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
             }
             formdata.append('fullName', personalData.fullName);
             formdata.append('companyName', personalData.companyName);
-            formdata.append('typeCompany', personalData.typeCompany);
-            formdata.append('position', personalData.position);
-            formdata.append('numberEmployee', personalData.numberEmployee);
+            formdata.append('address', personalData.address);
             formdata.append('email', personalData.email);
             formdata.append('phoneNumber', personalData.phoneNumber);
             axios({
-                url: '<?= base_url('/register') ?>',
+                url: '<?= base_url('Wizard/getInvoice') ?>',
                 data: formdata,
                 method: 'POST',
                 headers: {
@@ -405,6 +400,22 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
             }).then((res) => {
                 let rsp = res.data;
                 if (rsp.status == 200) {
+                    $('#btnFinish').text('');
+                    $('#btnFinish').attr('disabled', false);
+                    $('#btnFinish').text('Finish');
+                    swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: rsp.message
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            localStorage.clear();
+                            localStorage.setItem('invoice', JSON.stringify(res.data));
+                            window.open('<?= base_url('Wizard/Invoice'); ?>' + '/' + rsp.data.ref_number);
+                            window.location.href = '<?= base_url() ?>';
+                        }
+                    })
+                } else {
                     $('#btnFinish').text('');
                     $('#btnFinish').attr('disabled', false);
                     $('#btnFinish').text('Finish');
@@ -420,23 +431,7 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                         }
                     })
                     Toast.fire({
-                        icon: 'success',
-                        title: rsp.message
-                    })
-                } else {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        }
-                    })
-                    Toast.fire({
-                        icon: 'success',
+                        icon: 'error',
                         title: rsp.message
                     })
                 }
@@ -453,19 +448,9 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
             personalData.companyName = val;
         }
 
-        function typeCompany(e) {
+        function address(e) {
             let val = e.value;
-            personalData.typeCompany = val;
-        }
-
-        function position(e) {
-            let val = e.value;
-            personalData.position = val;
-        }
-
-        function numberEmployee(e) {
-            let val = e.value;
-            personalData.numberEmployee = val;
+            personalData.address = val;
         }
 
         function email(e) {
@@ -477,128 +462,6 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
             let val = e.value;
             personalData.phoneNumber = val;
         }
-    </script>
-    <script>
-        window.addEventListener('DOMContentLoaded', (event) => {
-            /* ---- particles.js config ---- */
-
-            particlesJS("particles-js", {
-                "particles": {
-                    "number": {
-                        "value": 100,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": "#ffffff"
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                        "polygon": {
-                            "nb_sides": 5
-                        },
-                        "image": {
-                            "src": "img/github.svg",
-                            "width": 100,
-                            "height": 100
-                        }
-                    },
-                    "opacity": {
-                        "value": 0.5,
-                        "random": false,
-                        "anim": {
-                            "enable": false,
-                            "speed": 1,
-                            "opacity_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 40,
-                            "size_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.4,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 3,
-                        "direction": "none",
-                        "random": false,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": false,
-                            "rotateX": 600,
-                            "rotateY": 1200
-                        }
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "grab"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "grab": {
-                            "distance": 140,
-                            "line_linked": {
-                                "opacity": 1
-                            }
-                        },
-                        "bubble": {
-                            "distance": 400,
-                            "size": 40,
-                            "duration": 2,
-                            "opacity": 8,
-                            "speed": 3
-                        },
-                        "repulse": {
-                            "distance": 200,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                        "remove": {
-                            "particles_nb": 2
-                        }
-                    }
-                },
-                "retina_detect": true
-            });
-        })
-
-        // $(document).ready(function() {
-        //     $('#month').select2({
-        //         theme: 'coreui'
-        //     })
-        // })
     </script>
 </body>
 

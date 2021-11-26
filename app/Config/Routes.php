@@ -39,6 +39,11 @@ $routes->get('/logout', 'Auth/Login::logout');
 $routes->get('/register', 'Auth/Register::index');
 $routes->post('/register/doRegister', 'Auth/Register::doRegister');
 
+$routes->get('/Wizard', 'Wizard/Wizard::index');
+$routes->post('/Wizard/getInvoice', 'Wizard/Wizard::getInvoice');
+$routes->add('/Wizard/Invoice/(:any)', 'Wizard\Wizard::invoice/$1');
+$routes->post('/Wizard/Invoice/download', 'Wizard/Wizard::download');
+
 $routes->get('/Dashboard', 'Dashboard/Dashboard::index');
 // $routes->get('/Dashboard', 'Dashboard/Dashboard::index');
 $routes->get('/Company', 'Master/Company::index');

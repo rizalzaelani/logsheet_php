@@ -23,13 +23,13 @@ $('#btnPackage').on('click', function() {
 
 $('#btnPersonalData').on('click', function(){
     $('#reviewChild').remove();
-    if (personalData.fullName == "" || personalData.companyName == "" || personalData.typeCompany == "" || personalData.position == "" || personalData.numberEmployee == "" || personalData.email == "" || personalData.phoneNumber == "") {
+    if (personalData.fullName == "" || personalData.companyName == "" || personalData.address == "" || personalData.email == "" || personalData.phoneNumber == "") {
         $('#personalMessage').removeClass('d-none');
         return;
     }else{
         $('#personalMessage').addClass('d-none');
         var review = "";
-        var period = "3-Month";
+        var period = "1-Month";
         if (selectedPackage.packageGroupName == 'small') {
             review += `<div class="text-uppercase d-flex align-items-center justify-content-between my-4">
                 <div>
@@ -64,8 +64,8 @@ $('#btnPersonalData').on('click', function(){
             </div>
             <div>
                 <select id="month">
-                    <option value="1-Month">1 Month</option>
-                    <option value="3-Month" selected>3 Month</option>
+                    <option value="1-Month" selected>1 Month</option>
+                    <option value="3-Month">3 Month</option>
                     <option value="6-Month">6 Month</option>
                     <option value="12-Month">12 Month</option>
                 </select>
@@ -140,19 +140,9 @@ $('#btnPersonalData').on('click', function(){
                                     <td class="text-uppercase"><p>`+ " " + personalData.companyName +`</p></td>
                                 </tr>
                                 <tr>
-                                    <th><p>Type Of Company</p></th>
+                                    <th><p>Address</p></th>
                                     <td><p>:</p></td>
-                                    <td class="text-uppercase"><p>`+ " " + personalData.typeCompany +`</p></td>
-                                </tr>
-                                <tr>
-                                    <th><p>Position On Company</p></th>
-                                    <td><p>:</p></td>
-                                    <td class="text-uppercase"><p>`+ " " + personalData.position +`</p></td>
-                                </tr>
-                                <tr>
-                                    <th><p>Number Of Employee</p></th>
-                                    <td><p>:</p></td>
-                                    <td class="text-uppercase"><p>`+ " " + personalData.numberEmployee +`</p></td>
+                                    <td class="text-uppercase"><p>`+ " " + personalData.address +`</p></td>
                                 </tr>
                                 <tr>
                                     <th><p>Email</p></th>

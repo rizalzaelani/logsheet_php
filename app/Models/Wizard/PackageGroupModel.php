@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Wizard;
 
 use CodeIgniter\Model;
 use Exception;

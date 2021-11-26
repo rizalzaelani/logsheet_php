@@ -11,10 +11,10 @@ class Login extends BaseController
     public function index()
     {
         $session = \Config\Services::session();
-		if($session->has('userId')){
+        if ($session->has('userId')) {
             return redirect()->to("Dashboard");
         }
-        
+
         $data = array(
             'title' => 'Login Page | Logsheet Digital',
             'subtitle' => 'Logsheet Digital'
@@ -35,7 +35,7 @@ class Login extends BaseController
             'appCode' => $appCode
         ];
 
-        if(!$captcha){
+        if (!$captcha) {
             return $this->response->setJSON(array(
                 'status'    =>  400,
                 'message'   =>  'Complete the captcha first'
@@ -47,7 +47,7 @@ class Login extends BaseController
                 $response_captcha = file_get_contents($url);
                 $response_captcha_key = json_decode($response_captcha, true);
 
-                if($response_captcha_key['success']){
+                if ($response_captcha_key['success']) {
                     $userModel = new UserModel();
                     $dataRes = $userModel->clientAuth($params);
 
@@ -73,7 +73,7 @@ class Login extends BaseController
                         'message'   =>  'Too many attemps, try again later'
                     ), 400);
                 }
-            } catch (Exception $e){
+            } catch (Exception $e) {
                 return $this->response->setJSON([
                     'status' => 500,
                     'message' => $e->getMessage(),
