@@ -4,7 +4,7 @@
 <!-- Custom Style Css -->
 <style>
     table>tbody>tr>td {
-        min-width: 120px;
+        min-width: 100px;
         vertical-align: middle !important;
     }
 
@@ -165,14 +165,10 @@
                                     <table class="table table-hover" id="tableAsset">
                                         <thead>
                                             <tr style="background-color: #f2f4f8;">
-                                                <th scope="col">Asset Name</th>
-                                                <th scope="col">Asset Number</th>
-                                                <th scope="col">Description</th>
+                                                <th scope="col">Asset</th>
                                                 <th scope="col">Tag Location</th>
                                                 <th scope="col">Tag</th>
-                                                <th scope="col">Set As</th>
                                                 <th scope="col">Schedule Type</th>
-                                                <th scope="col">Schedule Daily</th>
                                                 <th scope="col">Schedule WeekDays</th>
                                                 <th scope="col">Schedule Days</th>
                                                 <th scope="col">Schedule Weeks</th>
@@ -184,20 +180,45 @@
                                         </thead>
                                         <tbody>
                                             <tr style="text-align: left;" v-for="(items, i) in dataAsset">
-                                                <td>{{ items.assetName }}</td>
-                                                <td>{{ items.assetNumber }}</td>
-                                                <td v-if="items.descJson == true"><button class="btn btn-link btn-sm p-0" @click="modalDetail(i)">Click here</button></td>
-                                                <td v-else>{{ items.description }}</td>
-                                                <td>{{ items.tagLocation }}</td>
-                                                <td>{{ items.tag }}</td>
-                                                <td>{{ items.schManual }}</td>
-                                                <td>{{ items.schType }}</td>
-                                                <td>{{ items.schFrequency }}</td>
-                                                <td>{{ items.schWeekDays }}</td>
+                                                <td>
+                                                    <span>{{ items.assetName }}</span><br>
+                                                    <span class="text-muted mr-1">{{ items.assetNumber }}</span><i class="fa fa-eye text-info cursor-pointer" @click="modalDetail(i)"></i>
+                                                </td>
+                                                <td>
+                                                    <div v-for="(val, i) in items.tagLocation">
+                                                        <span class="badge badge-dark text-white p-1">{{ val }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div v-for="(val, i) in items.tag">
+                                                        <span class="badge badge-dark text-white p-1">{{ val }}</span>
+                                                    </div>
+                                                </td>
+                                                <td v-if="items.schManual == 'Automatic'">
+                                                    {{ items.schType }} <br>
+                                                    {{ items.schFrequency }}
+                                                </td>
+                                                <td v-else>
+                                                    {{ items.schManual }} <br>
+                                                    {{ items.schFrequency }}
+                                                </td>
+                                                <td>
+                                                    <div v-for="(val, i) in items.schWeekDays">
+                                                        {{ val }}
+                                                    </div>
+                                                </td>
                                                 <td>{{ items.schDays }}</td>
-                                                <td>{{ items.schWeeks }}</td>
+                                                <td>
+                                                    <div v-for="(val, i) in items.schWeeks">
+                                                        {{ val }}
+                                                    </div>
+                                                </td>
                                                 <td>{{ items.rfid }}</td>
-                                                <td>{{ items.coordinat }}</td>
+                                                <td>
+                                                    <div v-if="items.coordinat != ''">
+                                                        <button class="btn btn-sm btn-link m-0 p-0" @click="mapCoordinat(items.coordinat)">Open Map</button>
+                                                    </div>
+                                                </td>
                                                 <td>{{ items.assetStatus }}</td>
                                                 <td class="d-none"><button class="btn btn-link btn-sm p-0" @click="modalParameter(i)">Click here</button></td>
                                             </tr>
@@ -232,12 +253,24 @@
                                                 <td>{{ val.parameterName }}</td>
                                                 <td>{{ val.description }}</td>
                                                 <td>{{ val.inputType }}</td>
-                                                <td>{{ val.normal }}</td>
-                                                <td>{{ val.abnormal }}</td>
+                                                <td>
+                                                    <div v-for="(items, i) in val.normal">
+                                                        {{ items }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div v-for="(items, i) in val.abnormal">
+                                                        {{ items }}
+                                                    </div>
+                                                </td>
                                                 <td>{{ val.max }}</td>
                                                 <td>{{ val.min }}</td>
                                                 <td>{{ val.uom }}</td>
-                                                <td>{{ val.option }}</td>
+                                                <td>
+                                                    <div v-for="(items, i) in val.option">
+                                                        {{ items }}
+                                                    </div>
+                                                </td>
                                                 <td>{{ val.showOn }}</td>
                                             </tr>
                                         </tbody>
@@ -255,7 +288,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalMoreDetailsTitle">More Details</h5>
+                    <h5 class="modal-title" id="modalMoreDetailsTitle">Description</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -263,16 +296,45 @@
                 <div class="modal-body">
                     <div class="form-group row">
                         <div class="col">
-                            <table class="table table-bordered">
-                                <tr v-for="(val, key) in descJson">
-                                    <td>
-                                        <b class="text-capitalize">{{val.key.replace(/([A-Z])/g, " $1")}}</b>
-                                    </td>
-                                    <td>
-                                        {{ val.value ? val.value : '-' }}
-                                    </td>
-                                </tr>
-                            </table>
+                            <div v-if="isString(index)">
+                                <table class="table table-bordered">
+                                    <tr v-for="(val, key) in descJson">
+                                        <td>
+                                            <b class="text-capitalize">{{val.key.replace(/([A-Z])/g, " $1")}}</b>
+                                        </td>
+                                        <td>
+                                            {{ val.value ? val.value : '-' }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <p>{{ descJson }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal maps -->
+    <div class="modal fade" id="modalMap" tabindex="-1" role="dialog" aria-labelledby="modalMapTitle" aria-hidden="true" style="z-index: 3000;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalMapTitle">Coordinat</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <h6 class="p1 text-center">{{ coordinat }}</h6>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div id="mapCoordinat" style="width: 400px !important; height: 300px !important;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -281,7 +343,7 @@
     </div>
 
     <!-- modal parameter -->
-    <div class="modal fade" id="modalParameter" tabindex="-1" role="dialog" aria-labelledby="parameterTitle" aria-hidden="true" style="z-index: 3000;">
+    <div class=" modal fade" id="modalParameter" tabindex="-1" role="dialog" aria-labelledby="parameterTitle" aria-hidden="true" style="z-index: 3000;">
         <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -354,6 +416,8 @@
             var data = ref([]);
             var descJson = ref([]);
             var parameter = ref([]);
+            var index = null;
+            var coordinat = ref("");
 
             function assetUpload() {
                 setTimeout(() => {
@@ -371,20 +435,59 @@
             function modalDetail(i) {
                 let modal = new coreui.Modal(document.getElementById('modalMoreDetails'), {});
                 modal.show();
-                this.descJson = JSON.parse(this.dataAsset[i].description);
+                if (IsJsonString(this.dataAsset[i].description)) {
+                    this.descJson = JSON.parse(this.dataAsset[i].description);
+                    this.index = i;
+                } else {
+                    this.descJson = this.dataAsset[i].description;
+                    this.index = i;
+                }
             }
 
-            function modalParameter(i) {
-                // let modal = new coreui.Modal(document.getElementById('modalParameter'), {});
-                // modal.show();
-                // this.parameter = this.dataAsset[i].parameter;
-                // this.parameter.i = i;
+            function mapCoordinat(params) {
+                this.coordinat = params;
+                let coordinat = params.split(",");
+                let lat = coordinat[0];
+                let long = coordinat[1];
+
+                this.myModal = new coreui.Modal(document.getElementById('modalMap'));
+                this.myModal.show();
+
+                $(document).ready(function() {
+                    mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
+                    const map = new mapboxgl.Map({
+                        container: 'mapCoordinat', // container ID
+                        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                        center: [long, lat], // starting position [lng, lat]
+                        zoom: 14, // starting zoom
+                    });
+                    const marker = new mapboxgl.Marker()
+                        .setLngLat([long, lat])
+                        .addTo(map);
+                })
+
+                console.log(params);
+            }
+
+            function isString(i) {
+                if (i != null) {
+                    return IsJsonString(this.dataAsset[i].description);
+                }
             }
 
             function btnImport() {
                 let formdata = new FormData();
                 let asset = this.dataAsset;
                 let parameter = this.parameter;
+                for (let i = 0; i < this.dataAsset.length; i++) {
+                    this.dataAsset[i].schWeekDays = (this.dataAsset[i].schWeekDays).join(",");
+                    this.dataAsset[i].schWeeks = (this.dataAsset[i].schWeeks).join(",");
+                }
+                for (let a = 0; a < this.parameter.length; a++) {
+                    this.parameter[a].abnormal = (this.parameter[a].abnormal).join(",");
+                    this.parameter[a].normal = (this.parameter[a].normal).join(",");
+                    this.parameter[a].option = (this.parameter[a].option).join(",");
+                }
                 asset.forEach((item, k) => {
                     formdata.append("dataAsset[]", JSON.stringify(this.dataAsset));
                 });
@@ -434,10 +537,13 @@
                 assetUpload,
                 btnImport,
                 modalDetail,
-                modalParameter,
                 descJson,
                 parameter,
-                reloadPage
+                reloadPage,
+                isString,
+                index,
+                mapCoordinat,
+                coordinat
             }
         },
     }).mount('#app');
@@ -456,6 +562,25 @@
                     if (rsp.status == 200) {
                         v.dataAsset = rsp.data.dataAsset;
                         v.parameter = rsp.data.parameter;
+                        let lengthAsset = v.dataAsset.length;
+                        for (let i = 0; i < lengthAsset; i++) {
+                            v.dataAsset[i].tagLocation = v.dataAsset[i].tagLocation.split(",");
+                            v.dataAsset[i].tag = v.dataAsset[i].tag.split(",");
+                            v.dataAsset[i].schWeekDays = v.dataAsset[i].schWeekDays.split(",");
+                            v.dataAsset[i].schWeeks = v.dataAsset[i].schWeeks.split(",");
+                        }
+                        let lengthParameter = v.parameter.length;
+                        for (let a = 0; a < lengthParameter; a++) {
+                            if (v.parameter[a].abnormal != "") {
+                                v.parameter[a].abnormal = v.parameter[a].abnormal.split(",");
+                            }
+                            if (v.parameter[a].normal != "") {
+                                v.parameter[a].normal = v.parameter[a].normal.split(",");
+                            }
+                            if (v.parameter[a].option != "") {
+                                v.parameter[a].option = v.parameter[a].option.split(",");
+                            }
+                        }
                         v.dataAsset.forEach((items, i) => {
                             v.dataAsset[i].descJson = false;
                             if (IsJsonString(items?.description)) {

@@ -1119,8 +1119,8 @@ class Asset extends BaseController
 
 				// tag
 				$tag = $dataAsset[$i]->tag;
-				$arrTag = explode(",", $tag);
-				foreach ($arrTag as $key => $val) {
+				// $arrTag = explode(",", $tag);
+				foreach ($tag as $key => $val) {
 					$dataTag = $tagModel->getByName($val);
 					if ($dataTag == NULL) {
 						$newTag = array(
@@ -1148,8 +1148,8 @@ class Asset extends BaseController
 				}
 				// tag location
 				$tagLocation = $dataAsset[$i]->tagLocation;
-				$arrTagLocation = explode(",", $tagLocation);
-				foreach ($arrTagLocation as $key => $val) {
+				// $arrTagLocation = explode(",", $tagLocation);
+				foreach ($tagLocation as $key => $val) {
 					$dataTagLocation = $tagLocationModel->getByName($val);
 					if ($dataTagLocation == NULL) {
 						$newTagLocation = array(

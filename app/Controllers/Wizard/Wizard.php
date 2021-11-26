@@ -223,8 +223,8 @@ class Wizard extends BaseController
                         $subject = strtoupper("Invoice - " . $dataInvoice->ref_number);
                         $message = "
                             <p style='font-size: 14px;'>Yth. " . $dataInvoice->contact->name . "</p>
-                            <p style='font-size: 14px;'>Berikut adalah tagihan untuk pembelian dengan nomor invoice <b>" . $dataInvoice->ref_number . "</b> sebesar <b>Rp. " . number_format($dataInvoice->amount_after_tax) . "</b></p>
-                            <p style='font-size: 14px;'>Silahkan <a href=" . base_url() . ">klik disini</a> untuk login ke aplikasi Logsheet Diigtal</p>
+                            <p style='font-size: 14px;'>Berikut adalah tagihan untuk pembelian dengan nomor invoice <b>" . $dataInvoice->ref_number . "</b> sebesar <b>Rp. " . number_format($dataInvoice->amount_after_tax) . "</b>.</p>
+                            <p style='font-size: 14px;'>Silahkan <a href=" . base_url() . ">klik disini</a> untuk login ke aplikasi Logsheet Digital.</p>
                             <p style='font-size: 14px;'>Terimakasih atas kerjasamanya.</p>
                             <p style='font-size: 14px;'>Nocola IOT Solution</p>
                             <img src='https://kledo-live-user.s3.ap-southeast-1.amazonaws.com/rizal.api.kledo.com/invoice-logo.png'>
