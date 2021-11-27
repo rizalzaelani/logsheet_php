@@ -1,6 +1,6 @@
 body {
   /* font-family: 'Karla', sans-serif; */
-  background-color: #dae1f0;
+  background-color: #f3f7fe;
   background-image: linear-gradient(45deg, #003399, #003399);
   background-size: 35% 100%;
   background-repeat: no-repeat;
@@ -30,7 +30,8 @@ main {
 .bd-wizard-card {
   width: 100%;
   /* border-radius: 23px; */
-  box-shadow: 0 2px 4px 0 rgba(208, 208, 208, 0.5);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%);
+  border: 0px;
   background-color: #ffffff;
   min-height: 597px;
   margin-top: auto;
@@ -59,10 +60,12 @@ main {
 .radio-card:checked + .card-packagenew {
   /* border: 2px solid #003399; */
   background-color: #003399;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .radio-card:checked + .card-packagenew p {
   /* color: #003399 !important; */
   color: #fff !important;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .card-package {
   /* box-shadow: 0 0 3px 3px rgb(0 0 0 / 8%) !important; */
@@ -88,6 +91,7 @@ main {
 }
 .card-input-element:checked + .card-package .card-header h5 {
   background-color: #003399;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   color: #fff;
 }
 .card-package .lite {
@@ -372,6 +376,10 @@ main {
 .card-footer-text {
   margin-bottom: 0;
   margin-top: 39px;
+}
+
+#btnFinish {
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 /*# sourceMappingURL=bd-wizard.css.map */

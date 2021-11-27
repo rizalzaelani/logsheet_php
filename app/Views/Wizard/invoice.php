@@ -8,7 +8,11 @@
     <title><?= $title; ?> | Logsheet Digital</title>
     <style>
         body {
-            background-color: #dae1f0 !important;
+            background-color: #f3f7fe !important;
+        }
+
+        .card {
+            border: 0px !important;
         }
     </style>
     <?php if (isset($css)) : ?>
@@ -30,22 +34,22 @@
                         </div>
                     </div>
                     <div class="card-body pl-0 my-2" style="border: 1px solid #f0f0f0 !important;">
-                        <div class="p-2 mb-2">
+                        <div class="px-4 py-2 mb-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div v-if="invoice[0].status_id == 1">
-                                        <h6 class="m-0 text-danger">Belum Dibayar</h6>
+                                        <h4 class="m-0 text-danger">Belum Dibayar</h4>
                                     </div>
                                     <div v-else>
-                                        <h6 class="m-0 text-success">Lunas</h6>
+                                        <h4 class="m-0 text-success">Lunas</h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div style="border-top: 1px solid #f0f0f0;"></div>
-                        <div class="row p-2">
+                        <div class="row px-4 py-2">
                             <div class="col">
-                                <p>Pelanggan</p>
+                                <p><b>Pelanggan</b></p>
                                 <h6 class="text-primary">{{ invoice[0].contact.name }}</h6>
                                 <div class="ml-1">
                                     <table>
@@ -78,26 +82,26 @@
                             </div>
                             <div class="col">
                                 <div class="mb-1">
-                                    <p>Nomor</p>
+                                    <p><b>Nomor</b></p>
                                     <h6 class="text-uppercase">{{ invoice[0].ref_number }}</h6>
                                 </div>
                                 <div>
-                                    <p>Description</p>
+                                    <p><b>Description</b></p>
                                     <h6>{{ invoice[0].memo }}</h6>
                                 </div>
                             </div>
                         </div>
-                        <div class="row p-2">
+                        <div class="row px-4 py-2">
                             <div class="col">
-                                <p>Tanggal Transaksi</p>
+                                <p><b>Tanggal Transaksi</b></p>
                                 <h6>{{ invoice[0].trans_date }}</h6>
                             </div>
                             <div class="col">
-                                <p>Tanggal Jatuh Tempo </p>
+                                <p><b>Tanggal Jatuh Tempo</b></p>
                                 <h6>{{ invoice[0].due_date }}</h6>
                             </div>
                         </div>
-                        <div class="row p-2">
+                        <div class="row px-4 py-2">
                             <div class="col">
                                 <div class="table-responsive">
                                     <table class="table table-striped">
@@ -121,7 +125,13 @@
                                                 <td>Package</td>
                                                 <td>{{ dataInvoice.data.items[0].discount_percent }}%</td>
                                                 <td>{{ dataInvoice.data.items[0].amount }}</td>
-                                                <td>{{ dataInvoice.data.items[0].item_tax.name }}</td>
+                                                <td v-if="(dataInvoice.data.items[0]).item_tax != null">
+                                                    {{ dataInvoice.data.items[0].item_tax.name }}
+                                                </td>
+                                                <td v-else>
+                                                    -
+                                                </td>
+                                                <!-- <td>{{ dataInvoice.data.items[0].item_tax.name }}</td> -->
                                                 <td>{{ dataInvoice.data.items[0].amount }}</td>
                                             </tr>
                                         </tbody>
@@ -129,7 +139,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row p-2">
+                        <div class="row px-4 py-2">
                             <div class="col-6">
 
                             </div>

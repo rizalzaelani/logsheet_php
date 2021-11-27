@@ -212,7 +212,7 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                         </div>
                         <p class="text-danger d-none" id="packageMessage">*Please choose one item first.</p>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-lg btn-primary btnWizard" id="btnPackage" data-step="next">Next</button>
+                            <button class="btn btn-primary btnWizard" id="btnPackage" data-step="next">Next</button>
                         </div>
                         <!-- <p class="card-footer-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip </p> -->
                     </section>
@@ -256,8 +256,8 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                         </div>
                         <p class="text-danger d-none" id="personalMessage">*All fields cannot be empty.</p>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-lg btn-primary btnWizard mr-3" data-step="previous">Previous</button>
-                            <button class="btn btn-lg btn-primary btnWizard" id="btnPersonalData" data-step="next">Next</button>
+                            <button class="btn btn-primary btnWizard mr-3" data-step="previous">Previous</button>
+                            <button class="btn btn-primary btnWizard" id="btnPersonalData" data-step="next">Next</button>
                         </div>
                     </section>
                     <h3>
@@ -284,8 +284,8 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                             </div>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-lg btn-primary mr-3 btnWizard" data-step="previous">Previous</button>
-                            <button class="btn btn-lg btn-primary btnWizard" id="btnReview" data-step="next">Next</button>
+                            <button class="btn btn-primary mr-3 btnWizard" data-step="previous">Previous</button>
+                            <button class="btn btn-primary btnWizard" id="btnReview" data-step="next">Next</button>
                         </div>
                     </section>
                     <h3>
@@ -314,7 +314,7 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                             </label>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-lg btn-primary btnWizard" id="btnFinish" disabled data-step="finish">Finish</button>
+                            <button class="btn btn-primary btnWizard" id="btnFinish" disabled data-step="finish">Finish</button>
                         </div>
                     </section>
                 </div>
