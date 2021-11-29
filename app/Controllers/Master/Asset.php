@@ -101,7 +101,7 @@ class Asset extends BaseController
 
 	public function add()
 	{
-		if (!checkRoleList("MASTER.ASSET.ADD.VIEW")) {
+		if (!checkRoleList("MASTER.ASSET.ADD")) {
 			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
 		}
 

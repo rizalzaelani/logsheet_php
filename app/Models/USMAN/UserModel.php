@@ -170,17 +170,45 @@ class UserModel extends Model
                     );
                 }
             } else {
-                return array(
-                    'error' => true,
-                    'message' => 'Unexpected HTTP status: ' . $response->getStatus() . ' ' . $response->getReasonPhrase(),
-                    'data' => $response->getBody()
-                );
+                if($response->getStatus() == 401){
+                    $clientAuth = $this->clientAuth(array(
+                        'appCode' => $sess->get("appCode"),
+                        'email' => $sess->get("email"),
+                        'password' => $sess->get("password")
+                    ));
+
+                    
+                    $dataCA = $clientAuth['data'];
+                    if ($clientAuth['error']) {
+                        return array(
+                            'error' => true,
+                            'status' => isset($dataCA->message) ? 400 : 500,
+                            'message' => $dataCA->message ?? $clientAuth['message'],
+                            'data' => $dataCA
+                        );
+                    } else {
+                        $sess->set("token", $dataCA->data->token);
+                        $resp->setCookie("clientToken", "active", 3600);
+                        
+                        return array(
+                            'error' => false,
+                            'message' => 'Success Refresh Token',
+                            'data' => $dataCA
+                        );
+                    }
+                } else {
+                    return array(
+                        'error' => true,
+                        'message' => 'Unexpected HTTP status: ' . $response->getStatus() . ' ' . $response->getReasonPhrase(),
+                        'data' => $response->getBody()
+                    );
+                }
             }
         } catch (HTTP_Request2_Exception $e) {
             return array(
                 'error' => true,
                 'message' => $e->getMessage(),
-                'data' => '[]'
+                'data' => []
             );
         }
     }

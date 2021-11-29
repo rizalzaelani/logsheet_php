@@ -204,7 +204,7 @@ class Location extends BaseController
 
     public function download()
     {
-        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT.SAMPLE")){
+        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
             return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
         }
 

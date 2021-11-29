@@ -28,6 +28,7 @@
         color: #d93025;
         font-size: 12px;
     }
+
     .font-weight-500 {
         font-weight: 500;
     }
@@ -273,7 +274,8 @@
                                         title: "Success registered new account",
                                         icon: 'success',
                                     }).then((sres) => {
-                                        window.location.href = "<?= base_url() ?>";
+                                        localStorage.setItem("userId", JSON.stringify(resData));
+                                        // window.location.href = "<?= base_url() ?>/wizard";
                                     })
                                 } else if (resData.status == 400) {
                                     Swal.fire({

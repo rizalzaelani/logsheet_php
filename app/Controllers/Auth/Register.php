@@ -78,7 +78,6 @@ class Register extends BaseController
             } else {
                 return $this->response->setJSON([
                     'status' => 200,
-                    'error' => true,
                     'message' => "Success Create App",
                     'data' => $data
                 ], 200);

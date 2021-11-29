@@ -63,6 +63,7 @@ class Login extends BaseController
                         ), isset($data->message) ? 400 : 500);
                     } else {
                         $dataArr = $data->data;
+                        $dataArr->password = $password;
 
                         $appSettingModel = new ApplicationSettingModel();
                         $appSetting = $appSettingModel->where("userId", $dataArr->adminId)->get()->getRowArray();

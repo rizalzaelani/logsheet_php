@@ -102,7 +102,7 @@
             </a>
         </li>
         <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/roles') ?>">
+            <a class="c-sidebar-nav-link" href="<?= base_url('/role') ?>">
                 <svg class="c-sidebar-nav-icon">
                     <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-lock-locked') ?>"></use>
                 </svg> Role

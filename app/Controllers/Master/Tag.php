@@ -164,7 +164,7 @@ class Tag extends BaseController
 
     public function download()
     {
-        if(!checkRoleList("MASTER.TAG.IMPORT.SAMPLE")){
+        if(!checkRoleList("MASTER.TAG.IMPORT")){
             return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
         }
 

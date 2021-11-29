@@ -175,8 +175,10 @@ $routes->get('/user/userList', 'UserRole/User::userList');
 $routes->get('/user/getUserById', 'UserRole/User::getUserById');
 
 $routes->get('/role', 'UserRole/Role::index');
+$routes->get('/role/detail', 'UserRole/Role::detail');
 $routes->get('/role/groupList', 'UserRole/Role::groupList');
 $routes->get('/role/roleList', 'UserRole/Role::roleList');
+$routes->post('/role/saveGroup', 'UserRole/Role::saveGroup');
 
 
 

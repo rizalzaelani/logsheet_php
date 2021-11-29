@@ -119,6 +119,19 @@ function IsJsonString(str) {
     return true;
 }
 
+const fireEvent = (element, event) => {
+    if (document.createEventObject) {
+        // dispatch for IE
+        let evt = document.createEventObject();
+        return element.fireEvent('on' + event, evt)
+    } else {
+        // dispatch for firefox + others
+        let evt = document.createEvent("HTMLEvents");
+        evt.initEvent(event, true, true); // event type,bubbling,cancelable
+        return !element.dispatchEvent(evt);
+    }
+}
+
 //Convert Table to Json
 function tableToJson(idTable) {
     var myRows = [];
