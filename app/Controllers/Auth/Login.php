@@ -15,12 +15,9 @@ class Login extends BaseController
 		if($session->has('userId')){
             return redirect()->to("Dashboard");
         }
-        $appCode = ['logsheet01','cems-pltu-s2p','toilet-checklist'];
         $data = array(
             'title' => 'Login Page | Logsheet Digital',
             'subtitle' => 'Logsheet Digital',
-            'appCode' => $appCode,
-            'appCodeSelected' => get_cookie("appCodeSelected") ?? (!empty($appCode) ? $appCode[0] : "")
         );
 
         return $this->template->render('Auth/login', $data);
@@ -32,11 +29,9 @@ class Login extends BaseController
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
         $captcha = $this->request->getPost('g-recaptcha-response');
-        $appCode = $this->request->getPost('appCode');
         $params = [
             'email' => $email,
             'password' => $password,
-            'appCode' => $appCode
         ];
 
         if(!$captcha){
@@ -81,7 +76,6 @@ class Login extends BaseController
 
                         $session->set((array) $dataArr);
                         $this->response->setCookie('clientToken', "active", 3600);
-                        $this->response->setCookie('appCodeSelected', $appCode, 60 * 60 * 24 * 365);
                         
                         return $this->response->setJSON(array(
                             'status' => 200,

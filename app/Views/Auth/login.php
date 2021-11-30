@@ -28,6 +28,7 @@
     .select2-container {
         width: unset !important;
     }
+
     .font-weight-500 {
         font-weight: 500;
     }
@@ -36,6 +37,7 @@
         .card {
             box-shadow: unset !important;
         }
+
         body {
             background-color: #fff !important;
         }
@@ -57,21 +59,6 @@
                             <form class="mt-3 mt-sm-5" action="<?= base_url() ?>/Login/auth" method="POST" ref="form" @submit.prevent="login">
                                 <h2>Sign In</h2>
                                 <p class="text-medium-emphasis text-muted">Sign In to continue to Losheet Application</p>
-                                <div class="input-group mt-3" :class="appCodeErr ? 'invalid-value' : ''">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <svg class="c-icon">
-                                                <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-bank') ?>"></use>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                    <select class="custom-select" name="appCode" v-model="appCode">
-                                        <?php foreach ($appCode as $row) : ?>
-                                            <option value="<?= $row; ?>"><?= $row; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
                                 <div class="input-group mt-3" :class="emailErr ? 'invalid-value' : ''">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -149,8 +136,6 @@
                 var loginBtn = ref('<i class="fas fa-sign-in-alt"></i> Sign In');
                 var showPassword = ref(false);
 
-                var appCode = ref('<?= $appCodeSelected ?>');
-                var appCodeErr = ref(null);
                 var email = ref('');
                 var emailErr = ref(null);
                 var password = ref('');
@@ -174,7 +159,14 @@
                                         icon: 'success',
                                         title: 'Signed in successfully'
                                     });
-                                    window.location.href = "<?= base_url('/Dashboard') ?>";
+
+                                    let urlParams = new URLSearchParams(window.location.search);
+                                    let returnUrl = urlParams.get('ReturnUrl');
+                                    if (returnUrl == null || returnUrl == "") {
+                                        window.location.href = "<?= site_url("Dashboard") ?>";
+                                    } else {
+                                        window.location.href = location.protocol + "//" + location.host + returnUrl;
+                                    }
                                 } else if (resData.status == 400) {
                                     Toast.fire({
                                         icon: 'warning',
@@ -210,22 +202,13 @@
                 }
 
                 Vue.onMounted(() => {
-                    let appCodeS2 = $('select[name=appCode]').select2({
-                        theme: 'coreui',
-                        placeholder: "Application Code"
-                    })
-
-                    appCodeS2.on("select2:selecting", (v) => {
-                        appCode.value = v.params.args.data.text;
-                    })
+                    //
                 });
 
                 return {
                     form,
                     loginBtn,
                     showPassword,
-                    appCode,
-                    appCodeErr,
                     email,
                     emailErr,
                     password,

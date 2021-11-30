@@ -173,6 +173,8 @@ $routes->post('/Schedule/checkAssetId', 'Setting/Schedule::checkAssetId');
 $routes->get('/user', 'UserRole/User::index');
 $routes->get('/user/userList', 'UserRole/User::userList');
 $routes->get('/user/getUserById', 'UserRole/User::getUserById');
+$routes->post('/user/saveUser', 'UserRole/User::saveUser');
+$routes->post('/user/deleteUser', 'UserRole/User::deleteUser');
 
 $routes->get('/role', 'UserRole/Role::index');
 $routes->get('/role/detail', 'UserRole/Role::detail');

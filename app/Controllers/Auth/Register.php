@@ -59,6 +59,8 @@ class Register extends BaseController
         $param['parameter[city]'] = $this->request->getVar('city');
         $param['parameter[postalCode]'] = $this->request->getVar('postalCode');
         $param['parameter[country]'] = $this->request->getVar('country');
+        $param['parameter[tag]'] = "";
+        $param['parameter[tagLocation]'] = "";
         
         $param['group'] = "Superadmin";
         $param['role'] = getenv("ROLELIST");
