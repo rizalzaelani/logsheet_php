@@ -90,10 +90,14 @@
         <div class="card card-main py-4">
             <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#reportingTab" role="tab" aria-controls="detail"><h5 class="mb-0">Reporting</h5></a>
+                    <a class="nav-link active" data-toggle="tab" href="#reportingTab" role="tab" aria-controls="detail">
+                        <h5 class="mb-0">Reporting</h5>
+                    </a>
                 </li>
                 <li class="nav-item" @click="resizeChart()">
-                    <a class="nav-link" data-toggle="tab" href="#trxSummaryTab" role="tab" aria-controls="parameter"><h5 class="mb-0">Summary</h5></a>
+                    <a class="nav-link" data-toggle="tab" href="#trxSummaryTab" role="tab" aria-controls="parameter">
+                        <h5 class="mb-0">Summary</h5>
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">

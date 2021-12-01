@@ -148,7 +148,12 @@ $routes->post('/ReportingAsset/datatable', 'Reporting/Asset::datatable');
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');
+
 $routes->get('/Report', 'Reporting/Report::index');
+$routes->add('/Report/transaction', 'Reporting/Report::getTransaction');
+$routes->add('/Report/finding', 'Reporting/Report::getFinding');
+$routes->add('/Report/schedule', 'Reporting/Report::getSchedule');
+$routes->add('/Report/download', 'Reporting/Report::download');
 
 $routes->add('/VersionApps', 'Setting/VersionApps::index');
 $routes->add('/VersionApps/datatable', 'Setting/VersionApps::datatable');
