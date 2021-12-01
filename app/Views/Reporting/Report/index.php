@@ -89,10 +89,10 @@
 					<div class="col-12">
 						<div class="py-4">
 							<button class="btn btn-sm btn-primary mr-1" @click="loadData()"><i class="fa fa-sync-alt"></i> Load Data</button>
-							<button :class="(dataTransaction != '' || dataFinding != '' || dataSchedule != '') ? 'btn btn-sm btn-success' : 'd-none'" @click="download()"><i class="fa fa-file-excel"></i> Download Data</button>
+							<button :class="(dataTransaction != '' || dataFinding != '' || dataSchedule != '') ? 'btn btn-sm btn-success fade-in' : 'd-none'" @click="download()"><i class="fa fa-file-excel"></i> Download Data</button>
 						</div>
 						<div class="table-responsive">
-							<table class="table table-hover display nowrap hide" id="dtTransaction">
+							<table class="table table-hover display nowrap hide fade-in" id="dtTransaction">
 								<thead class="bg-primary">
 									<tr>
 										<th>Asset</th>
@@ -110,7 +110,7 @@
 							</table>
 						</div>
 						<div class="table-responsive">
-							<table class="table table-hover display nowrap hide" id="dtFinding">
+							<table class="table table-hover display nowrap hide fade-in" id="dtFinding">
 								<thead class="bg-primary">
 									<tr>
 										<th>Asset</th>
@@ -130,7 +130,7 @@
 							</table>
 						</div>
 						<div class="table-responsive">
-							<table class="table table-hover display nowrap hide" id="dtSchedule">
+							<table class="table table-hover display nowrap hide fade-in" id="dtSchedule">
 								<thead class="bg-primary">
 									<tr>
 										<th>Asset</th>
@@ -182,10 +182,12 @@
 								<td>{{ item.tagLocationName }}</td>
 								<td>{{ item.parameterName }}</td>
 								<td v-if="item.inputType == 'select'">{{ item.normal }}</td>
-								<td v-else-if="item.inputType == 'input'">{{ item.min + ' - ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min != null && item.max != null">{{ item.min + ' - ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min == null && item.max == null"><i>(Empty)</i></td>
 								<td v-else></td>
 								<td v-if="item.inputType == 'select'">{{ item.abnormal }}</td>
-								<td v-else-if="item.inputType == 'input'">{{ 'x < ' + item.min + '; x > ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min != null && item.max != null">{{ 'x < ' + item.min + '; x > ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min == null && item.max == null"><i>(Empty)</i></td>
 								<td v-else></td>
 								<td>{{ item.uom }}</td>
 								<td>{{ item.value }}</td>
@@ -218,10 +220,12 @@
 								<td>{{ item.tagLocationName }}</td>
 								<td>{{ item.parameterName }}</td>
 								<td v-if="item.inputType == 'select'">{{ item.normal }}</td>
-								<td v-else-if="item.inputType == 'input'">{{ item.min + ' - ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min != null && item.max != null">{{ item.min + ' - ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min == null && item.max == null"><i>(Empty)</i></td>
 								<td v-else></td>
 								<td v-if="item.inputType == 'select'">{{ item.abnormal }}</td>
-								<td v-else-if="item.inputType == 'input'">{{ 'x < ' + item.min + '; x > ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min != null && item.max != null">{{ 'x < ' + item.min + '; x > ' + item.max }}</td>
+								<td v-else-if="item.inputType == 'input' && item.min == null && item.max == null"><i>(Empty)</i></td>
 								<td v-else></td>
 								<td>{{ item.uom }}</td>
 								<td>{{ item.value }}</td>
@@ -408,7 +412,10 @@
 										if (row.inputType === 'select') {
 											return data
 										} else if (row.inputType === 'input') {
-											return row.min + ' - ' + row.max
+											if (row.min != null && row.max != null) {
+												return row.min + ' - ' + row.max
+											}
+											return '<i>(Empty)</i>'
 										} else {
 											return ''
 										}
@@ -421,7 +428,10 @@
 										if (row.inputType === 'select') {
 											return data
 										} else if (row.inputType === 'input') {
-											return 'x < ' + row.min + '; x > ' + row.max
+											if (row.min != null && row.max != null) {
+												return 'x < ' + row.min + '; x > ' + row.max
+											}
+											return '<i>(Empty)</i>'
 										} else {
 											return ''
 										}
@@ -518,7 +528,10 @@
 										if (row.inputType === 'select') {
 											return data
 										} else if (row.inputType === 'input') {
-											return row.min + ' - ' + row.max
+											if (row.min != null && row.max != null) {
+												return row.min + ' - ' + row.max
+											}
+											return '<i>(Empty)</i>'
 										} else {
 											return ''
 										}
@@ -531,7 +544,10 @@
 										if (row.inputType === 'select') {
 											return data
 										} else if (row.inputType === 'input') {
-											return 'x < ' + row.min + '; x > ' + row.max
+											if (row.min != null && row.max != null) {
+												return 'x < ' + row.min + '; x > ' + row.max
+											}
+											return '<i>(Empty)</i>'
 										} else {
 											return ''
 										}
