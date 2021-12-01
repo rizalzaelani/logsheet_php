@@ -12,18 +12,6 @@
 		vertical-align: middle !important;
 		text-align: left !important;
 	}
-
-	/* .dataTables_scrollHead {
-		width: 100% !important;
-	}
-
-	.dataTables_scrollHeadInner {
-		width: 100% !important;
-	} */
-
-	/* .dataTable {
-		width: 100% !important;
-	} */
 </style>
 <?= $this->endSection(); ?>
 <?= $this->section('content') ?>
@@ -101,7 +89,7 @@
 					<div class="col-12">
 						<div class="py-4">
 							<button class="btn btn-sm btn-primary mr-1" @click="loadData()"><i class="fa fa-sync-alt"></i> Load Data</button>
-							<button class="btn btn-sm btn-success" @click="download()"><i class="fa fa-download"></i> Download Data</button>
+							<button :class="(dataTransaction != '' || dataFinding != '' || dataSchedule != '') ? 'btn btn-sm btn-success' : 'd-none'" @click="download()"><i class="fa fa-file-excel"></i> Download Data</button>
 						</div>
 						<div class="table-responsive">
 							<table class="table table-hover display nowrap hide" id="dtTransaction">
@@ -363,6 +351,7 @@
 							this.dataSchedule = ref("");
 						}
 					}
+
 					let formdata = new FormData();
 					formdata.append('userId', this.userId);
 					formdata.append('tagId', this.tagId);
@@ -370,6 +359,7 @@
 					formdata.append('search', "");
 					formdata.append('start', moment(v.start).format("YYYY-MM-DD"));
 					formdata.append('end', moment(v.end).format("YYYY-MM-DD"));
+
 					axios({
 						url: '<?= base_url('/Report/transaction/') ?>',
 						data: formdata,
@@ -379,6 +369,8 @@
 						let rsp = res.data;
 						this.dataTransaction = rsp;
 						if (this.dataTransaction.length < 1) {
+							this.table = ref("");
+							$('#dtTransaction').addClass('hide');
 							return swal.fire({
 								icon: 'error',
 								title: "There's No Data"
@@ -487,6 +479,8 @@
 						let rsp = res.data;
 						this.dataFinding = rsp;
 						if (this.dataFinding.length < 1) {
+							this.table = ref("");
+							$('#dtFinding').addClass('hide');
 							return swal.fire({
 								icon: 'error',
 								title: "There's No Data"
@@ -604,6 +598,8 @@
 						let rsp = res.data;
 						this.dataSchedule = rsp;
 						if (this.dataSchedule.length < 1) {
+							this.table = ref("");
+							$('#dtSchedule').addClass('hide');
 							return swal.fire({
 								icon: 'error',
 								title: "There's No Data"
