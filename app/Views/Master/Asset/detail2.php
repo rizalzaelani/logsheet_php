@@ -142,7 +142,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             <td><?= $key['description']; ?></td>
                                             <td style="max-width: 150px !important">
                                                 <?php if ($key['max'] != '') {
-                                                    echo $key['max'];
+                                                    echo $key['min'] . ' - ' . $key['max'];
                                                 } else if ($key['max'] == '' && $key['normal'] == '') {
                                                     echo '<i>-</i>';
                                                 } else {
@@ -152,7 +152,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             </td>
                                             <td style="max-width: 150px !important">
                                                 <?php if ($key['min'] != '') {
-                                                    echo $key['min'];
+                                                    echo 'x < ' . $key['min'] . '; x > ' . $key['max'];
                                                 } else if ($key['min'] == '' && $key['abnormal'] == '') {
                                                     echo '<i>-</i>';
                                                 } else {
@@ -1033,7 +1033,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </div>
             </div>
             <div class="table-responsive mt-2">
-                <table class="table table-bordered table-hover w-100 display" id="tableParameter">
+                <table class="table table-hover w-100 display nowrap" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
                             <th>Parameter</th>
@@ -1088,7 +1088,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
                             <td v-if="items.max != null">
-                                {{ items.max }}
+                                {{ items.min + ' - ' + items.max }}
                             </td>
                             <td v-else-if="items.normal != ''" style="max-width: 150px !important">
                                 {{ items.normal }}
@@ -1097,7 +1097,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <i>-</i>
                             </td>
                             <td v-if="items.min != null">
-                                {{ items.min }}
+                                {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
                             <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
