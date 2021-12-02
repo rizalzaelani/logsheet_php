@@ -6,6 +6,10 @@ use App\Controllers\BaseController;
 use App\Models\AssetTagLocationModel;
 use App\Models\TagLocationModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Entity\Style\Color;
 
 class Location extends BaseController
 {
@@ -281,6 +285,43 @@ class Location extends BaseController
             $tagLocationModel->insert($data);
         }
         echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
+        die();
+    }
+
+    public function exportExcel()
+    {
+        $tagLocationModel = new TagLocationModel();
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $userId = $this->session->get('adminId');
+        $data = $tagLocationModel->where('userId', $userId)->findAll();
+
+        $writer->setShouldUseInlineStrings(true);
+        $header = ["No", "Tag Location", "Latitude", "Longitude", "Description"];
+        $styleHeader = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::CENTER)
+            ->setBackgroundColor(COLOR::YELLOW)
+            ->build();
+        $styleBody = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::LEFT)
+            ->build();
+        $dataArr = [];
+
+        if (count($data)) {
+            foreach ($data as $key => $value) {
+                $arr = [$key + 1, $value['tagLocationName'], $value['latitude'], $value['longitude'], $value['description']];
+                array_push($dataArr, $arr);
+            }
+        }
+        $fileName = "Tag Location - " . date("d M Y") . '.xlsx';
+        $writer->openToBrowser($fileName);
+
+        $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
+        $writer->addRow($rowFromValues);
+        foreach ($dataArr as $key => $value) {
+            $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+            $writer->addRow($rowFromValues);
+        }
+        $writer->close();
         die();
     }
 }

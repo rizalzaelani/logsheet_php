@@ -6,6 +6,10 @@ use App\Controllers\BaseController;
 use App\Models\TagModel;
 use App\Models\AssetTagModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Entity\Style\Color;
 
 class Tag extends BaseController
 {
@@ -240,6 +244,43 @@ class Tag extends BaseController
             $tagModel->insert($data);
         }
         echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
+        die();
+    }
+
+    public function exportExcel()
+    {
+        $tagModel = new TagModel();
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $userId = $this->session->get('adminId');
+        $data = $tagModel->where('userId', $userId)->findAll();
+
+        $writer->setShouldUseInlineStrings(true);
+        $header = ["No", "Tag", "Description"];
+        $styleHeader = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::CENTER)
+            ->setBackgroundColor(COLOR::YELLOW)
+            ->build();
+        $styleBody = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::LEFT)
+            ->build();
+        $dataArr = [];
+
+        if (count($data)) {
+            foreach ($data as $key => $value) {
+                $arr = [$key + 1, $value['tagName'], $value['description']];
+                array_push($dataArr, $arr);
+            }
+        }
+        $fileName = "Tag - " . date("d M Y") . '.xlsx';
+        $writer->openToBrowser($fileName);
+
+        $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
+        $writer->addRow($rowFromValues);
+        foreach ($dataArr as $key => $value) {
+            $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+            $writer->addRow($rowFromValues);
+        }
+        $writer->close();
         die();
     }
 }

@@ -111,6 +111,8 @@ $routes->add('/Location/delete', 'Master\Location::delete');
 $routes->add('/Location/download', 'Master\Location::download');
 $routes->add('/Location/uploadFile', 'Master\Location::uploadFile');
 $routes->add('/Location/insertLocation', 'Master\Location::insertLocation');
+$routes->add('/Location/exportExcel', 'Master\Location::exportExcel');
+
 
 $routes->add('/Tag', 'Master/Tag::index');
 $routes->post('/Tag/datatable', 'Master/Tag::datatable');
@@ -121,6 +123,7 @@ $routes->post('/Tag/deleteTag', 'Master/Tag::deleteTag');
 $routes->add('/Tag/download', 'Master\Tag::download');
 $routes->add('/Tag/uploadFile', 'Master\Tag::uploadFile');
 $routes->add('/Tag/insertTag', 'Master\Tag::insertTag');
+$routes->add('/Tag/exportExcel', 'Master\Tag::exportExcel');
 
 $routes->add('/Notification', 'Setting/Notification::index');
 

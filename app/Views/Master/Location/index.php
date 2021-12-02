@@ -24,7 +24,7 @@
                             <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Tag Location</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
-                            <a class="dropdown-item" href="<?= base_url('/Location/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
+                            <a class="dropdown-item" target="_blank" href="<?= base_url('/Location/exportExcel'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
