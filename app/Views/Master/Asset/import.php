@@ -111,7 +111,7 @@
                                 <h6>1. Download file template asset</h6>
                                 <div class="pl-3">
                                     <p>Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your assets.</p>
-                                    <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleAsset'); ?>" target="_blank" class="btn btn-link" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                    <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleAsset'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
                                 </div>
                             </div>
                         </div>
@@ -145,136 +145,151 @@
                             </div>
                         </div>
                     </div>
-                    <div class="reviewData d-none">
-                        <div class="pb-2 pt-4">
-                            <h5>Review Data Uploaded</h5>
-                            <hr>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <h5>Asset</h5>
-                                    </div>
-                                    <div class="d-flex justify-content-end align-items-center">
-                                        <button class="btn-custom btn-custom-outline-danger mr-1" @click="reloadPage()"><i class="fa fa-times"></i> Cancel</button>
-                                        <button class="btn-custom btn-custom-primary" @click="btnImport()"><i class="fa fa-upload"></i> Import now</button>
-                                    </div>
-                                </div>
-                                <div class="w-100 table-responsive mt-2">
-                                    <table class="table table-hover" id="tableAsset">
-                                        <thead>
-                                            <tr style="background-color: #f2f4f8;">
-                                                <th scope="col">Asset</th>
-                                                <th scope="col">Tag Location</th>
-                                                <th scope="col">Tag</th>
-                                                <th scope="col">Schedule Type</th>
-                                                <th scope="col">Schedule WeekDays</th>
-                                                <th scope="col">Schedule Days</th>
-                                                <th scope="col">Schedule Weeks</th>
-                                                <th scope="col">RFID</th>
-                                                <th scope="col">Coordinat</th>
-                                                <th scope="col">Operation Status</th>
-                                                <th class="d-none" scope="col">Parameter</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr style="text-align: left;" v-for="(items, i) in dataAsset">
-                                                <td>
-                                                    <span>{{ items.assetName }}</span><br>
-                                                    <span class="text-muted mr-1">{{ items.assetNumber }}</span><i class="fa fa-eye text-info cursor-pointer" @click="modalDetail(i)"></i>
-                                                </td>
-                                                <td>
-                                                    <div v-for="(val, i) in items.tagLocation">
-                                                        <span class="badge badge-dark text-white p-1">{{ val }}</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div v-for="(val, i) in items.tag">
-                                                        <span class="badge badge-dark text-white p-1">{{ val }}</span>
-                                                    </div>
-                                                </td>
-                                                <td v-if="items.schManual == 'Automatic'">
-                                                    {{ items.schType }} <br>
-                                                    {{ items.schFrequency }}
-                                                </td>
-                                                <td v-else>
-                                                    {{ items.schManual }} <br>
-                                                    {{ items.schFrequency }}
-                                                </td>
-                                                <td>
-                                                    <div v-for="(val, i) in items.schWeekDays">
-                                                        {{ val }}
-                                                    </div>
-                                                </td>
-                                                <td>{{ items.schDays }}</td>
-                                                <td>
-                                                    <div v-for="(val, i) in items.schWeeks">
-                                                        {{ val }}
-                                                    </div>
-                                                </td>
-                                                <td>{{ items.rfid }}</td>
-                                                <td>
-                                                    <div v-if="items.coordinat != ''">
-                                                        <button class="btn btn-sm btn-link m-0 p-0" @click="mapCoordinat(items.coordinat)">Open Map</button>
-                                                    </div>
-                                                </td>
-                                                <td>{{ items.assetStatus }}</td>
-                                                <td class="d-none"><button class="btn btn-link btn-sm p-0" @click="modalParameter(i)">Click here</button></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                    <div class="reviewData hide">
+                        <div class="pb-2 pt-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>Review Data Uploaded</h5>
+                            </div>
+                            <div class="d-flex justify-content-end align-items-center">
+                                <button class="btn-custom btn-custom-outline-danger mr-1" @click="reloadPage()"><i class="fa fa-times"></i> Cancel</button>
+                                <button class="btn-custom btn-custom-primary" @click="btnImport()"><i class="fa fa-upload"></i> Import now</button>
                             </div>
                         </div>
-                        <div class="row pt-4">
-                            <div class="col">
-                                <div>
-                                    <h5>Parameter</h5>
+                        <div class="mt-2 d-flex flex-row justify-content-start align-items-left w-100">
+                            <ul class="nav nav-tabs w-100 d-flex flex-row align-items-left" role="tablist">
+                                <li class="nav-item pr-4">
+                                    <a class="nav-link active py-0 pl-0" data-toggle="tab" href="#asset" role="tab" aria-controls="asset" id="tabAsset">
+                                        <h5>Asset</h5>
+                                    </a>
+                                </li>
+                                <li class="nav-item pr-4">
+                                    <a class="nav-link py-0 pl-0" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="tabParameter">
+                                        <h5>Parameter</h5>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="asset" role="tabpanel" aria-labelledby="tabAsset">
+                                <div class="row pt-4">
+                                    <div class="col">
+                                        <div class="w-100 table-responsive">
+                                            <table class="table table-hover display nowrap" id="tableAsset">
+                                                <thead>
+                                                    <tr style="background-color: #f2f4f8;">
+                                                        <th scope="col">Asset</th>
+                                                        <th scope="col">Tag Location</th>
+                                                        <th scope="col">Tag</th>
+                                                        <th scope="col">Schedule</th>
+                                                        <th scope="col">RFID</th>
+                                                        <th scope="col">Coordinat</th>
+                                                        <th scope="col">Operation Status</th>
+                                                        <th class="d-none" scope="col">Parameter</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr style="text-align: left;" v-for="(items, i) in dataAsset">
+                                                        <td>
+                                                            <span>{{ items.assetName }}</span><br>
+                                                            <span class="text-muted mr-1">{{ items.assetNumber }}</span><i class="fa fa-eye text-info cursor-pointer" @click="modalDetail(i)"></i>
+                                                        </td>
+                                                        <td>
+                                                            <div v-for="(val, i) in items.tagLocation">
+                                                                <span class="badge badge-dark text-white p-1">{{ val }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div v-for="(val, i) in items.tag">
+                                                                <span class="badge badge-dark text-white p-1">{{ val }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td v-if="items.schManual == 'Manual'">
+                                                            Manual
+                                                        </td>
+                                                        <td v-else>
+                                                            <div v-if="items.schType == 'Daily'">
+                                                                {{ items.schType }}<br>
+                                                                ({{ items.schFrequency }})
+                                                            </div>
+                                                            <div v-else-if="items.schType == 'Weekly'">
+                                                                {{ items.schType }}<br>
+                                                                ({{ items.schWeekDays }})
+                                                            </div>
+                                                            <div v-else-if="items.schType == 'Monthly' && items.schDays == ''">
+                                                                {{ items.schType }}<br>
+                                                                ({{ items.schWeeks }})<br>
+                                                                ({{ items.schWeekDays }})
+                                                            </div>
+                                                            <div v-else-if="items.schType == 'Monthly' && items.schDays != ''">
+                                                                {{ items.schType }}<br>
+                                                                ({{ items.schDays }})
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ items.rfid }}</td>
+                                                        <td>
+                                                            <div v-if="items.coordinat != ''">
+                                                                <button class="btn btn-sm btn-link m-0 p-0" @click="mapCoordinat(items.coordinat)">Open Map</button>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ items.assetStatus }}</td>
+                                                        <td class="d-none"><button class="btn btn-link btn-sm p-0" @click="modalParameter(i)">Click here</button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="table-responsive w-100">
-                                    <table class="w-100 table table-hover">
-                                        <thead>
-                                            <tr style="background-color: #f2f4f8;">
-                                                <th>Parameter</th>
-                                                <th>Description</th>
-                                                <th>Input Type</th>
-                                                <th>Normal</th>
-                                                <th>Abnormal</th>
-                                                <th>Max</th>
-                                                <th>Min</th>
-                                                <th>Uom</th>
-                                                <th>Option</th>
-                                                <th>Show On</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(val, key) in parameter">
-                                                <td>{{ val.parameterName }}</td>
-                                                <td>{{ val.description }}</td>
-                                                <td>{{ val.inputType }}</td>
-                                                <td>
-                                                    <div v-for="(items, i) in val.normal">
-                                                        {{ items }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div v-for="(items, i) in val.abnormal">
-                                                        {{ items }}
-                                                    </div>
-                                                </td>
-                                                <td>{{ val.max }}</td>
-                                                <td>{{ val.min }}</td>
-                                                <td>{{ val.uom }}</td>
-                                                <td>
-                                                    <div v-for="(items, i) in val.option">
-                                                        {{ items }}
-                                                    </div>
-                                                </td>
-                                                <td>{{ val.showOn }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            </div>
+                            <div class="tab-pane fade" id="parameter" role="tabpanel" aria-labelledby="tabParameter">
+                                <div class="row pt-4">
+                                    <div class="col">
+                                        <div class="table-responsive w-100">
+                                            <table class="w-100 table table-hover diwplay nowrap">
+                                                <thead>
+                                                    <tr style="background-color: #f2f4f8;">
+                                                        <th>Parameter</th>
+                                                        <th>Description</th>
+                                                        <th>Input Type</th>
+                                                        <th>Normal</th>
+                                                        <th>Abnormal</th>
+                                                        <th>Uom</th>
+                                                        <th>Option</th>
+                                                        <th>Show On</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(val, key) in parameter">
+                                                        <td>{{ val.parameterName }}</td>
+                                                        <td>{{ val.description }}</td>
+                                                        <td>{{ val.inputType }}</td>
+                                                        <td>
+                                                            <div v-if="val.inputType == 'select' && val.normal != ''" v-for="(items, i) in val.normal">
+                                                                {{ items }}
+                                                            </div>
+                                                            <div v-else-if="val.inputType == 'input' && val.max != null && val.min != null">
+                                                                {{ val.min + ' - ' + val.max }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div v-if="val.inputType == 'select' && val.normal != ''" v-for="(items, i) in val.abnormal">
+                                                                {{ items }}
+                                                            </div>
+                                                            <div v-else-if="val.inputType == 'input' && val.max != null && val.min != null">
+                                                                {{ 'x < ' + val.min + '; x > ' + val.max }}
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ val.uom }}</td>
+                                                        <td>
+                                                            <div v-for="(items, i) in val.option">
+                                                                {{ items }}
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ val.showOn }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -403,7 +418,8 @@
 <script>
     const {
         ref,
-        reactive
+        reactive,
+        onMounted
     } = Vue;
     let v = Vue.createApp({
         el: '#app',
@@ -422,7 +438,7 @@
             function assetUpload() {
                 setTimeout(() => {
                     $('.uploadFile').addClass('d-none');
-                    $('.reviewData').removeClass('d-none');
+                    $('.reviewData').removeClass('hide');
                 }, 200);
                 //review
                 $('.reviewData').addClass('fade-in');
@@ -479,14 +495,16 @@
                 let formdata = new FormData();
                 let asset = this.dataAsset;
                 let parameter = this.parameter;
-                for (let i = 0; i < this.dataAsset.length; i++) {
-                    this.dataAsset[i].schWeekDays = (this.dataAsset[i].schWeekDays).join(",");
-                    this.dataAsset[i].schWeeks = (this.dataAsset[i].schWeeks).join(",");
-                }
                 for (let a = 0; a < this.parameter.length; a++) {
-                    this.parameter[a].abnormal = (this.parameter[a].abnormal).join(",");
-                    this.parameter[a].normal = (this.parameter[a].normal).join(",");
-                    this.parameter[a].option = (this.parameter[a].option).join(",");
+                    if (this.parameter[a].abnormal != "") {
+                        this.parameter[a].abnormal = (this.parameter[a].abnormal).join(",");
+                    }
+                    if (this.parameter[a].normal != "") {
+                        this.parameter[a].normal = (this.parameter[a].normal).join(",");
+                    }
+                    if (this.parameter[a].option != "") {
+                        this.parameter[a].option = (this.parameter[a].option).join(",");
+                    }
                 }
                 asset.forEach((item, k) => {
                     formdata.append("dataAsset[]", JSON.stringify(this.dataAsset));
@@ -566,8 +584,9 @@
                         for (let i = 0; i < lengthAsset; i++) {
                             v.dataAsset[i].tagLocation = v.dataAsset[i].tagLocation.split(",");
                             v.dataAsset[i].tag = v.dataAsset[i].tag.split(",");
-                            v.dataAsset[i].schWeekDays = v.dataAsset[i].schWeekDays.split(",");
-                            v.dataAsset[i].schWeeks = v.dataAsset[i].schWeeks.split(",");
+                            if (v.dataAsset[i].schWeekDays != "") {
+                                v.dataAsset[i].schWeekDays = v.dataAsset[i].schWeekDays.split(",").map((day) => day[0] + day[1]).join(',');
+                            }
                         }
                         let lengthParameter = v.parameter.length;
                         for (let a = 0; a < lengthParameter; a++) {

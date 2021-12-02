@@ -739,7 +739,7 @@ class Asset extends BaseController
 		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
 			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
 		}
-		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . '/download/SampleImportAsset.xlsx', null);
+		return $this->response->download($_SERVER['DOCUMENT_ROOT']  . env('baseDir') . 'download/SampleImportAsset.xlsx', null);
 	}
 
 	public function import()
@@ -860,55 +860,6 @@ class Asset extends BaseController
 							$dataAsset[$b]['description'] = json_encode($dataAsset[$b]['description']);
 						}
 					}
-					// foreach ($sheet->getRowIterator() as $row) {
-					// 	$assetNumber = "";
-					// 	$descSpecial = [];
-					// 	if ($rowDescription > 2) {
-					// 		$assetNumber = $row->getCellAtIndex(0)->getValue();
-					// 		if (strtolower($assetNumber) == 'all') {
-					// 			$descAll = [
-					// 				'key' => $row->getCellAtIndex(1)->getValue(),
-					// 				'value' => $row->getCellAtIndex(2)->getValue()
-					// 			];
-					// 			array_push($description, $descAll);
-					// 			foreach ($dataAsset as $key => $value) {
-					// 				if ($value['assetNumber'] != $assetNumber) {
-					// 					$dataAsset[$key]['description'] = $description;
-					// 				}
-					// 			}
-					// 		} else {
-					// 			$cekAssetNumber = array_filter($dataAsset, function ($val) use ($assetNumber) {
-					// 				return $val['assetNumber'] == $assetNumber;
-					// 			});
-					// 			if (!empty($cekAssetNumber)) {
-					// 				$descSpecial['assetNumber'] = $assetNumber;
-					// 				$descSpecial[] = [
-					// 					'key' => $row->getCellAtIndex(1)->getValue(),
-					// 					'value' => $row->getCellAtIndex(2)->getValue()
-					// 				];
-					// 				array_push($special, $descSpecial);
-					// 			}
-					// 		}
-					// 	}
-					// 	$rowDescription++;
-					// }
-
-					// for ($i = 0; $i < count($special); $i++) {
-					// 	foreach ($dataAsset as $key => $val) {
-					// 		$cekIsString = is_string($val['description']);
-					// 		if (!$cekIsString) {
-					// 			if ($special[$i]['assetNumber'] == $val['assetNumber']) {
-					// 				array_push($dataAsset[$key]['description'], $special[$i][0]);
-					// 			}
-					// 		}
-					// 	}
-					// }
-					// foreach ($dataAsset as $key => $value) {
-					// 	$cekIsString = is_string($value['description']);
-					// 	if (!$cekIsString) {
-					// 		$dataAsset[$key]['description'] = json_encode($dataAsset[$key]['description']);
-					// 	}
-					// }
 				}
 
 				$rowParameter = 1;
@@ -916,13 +867,10 @@ class Asset extends BaseController
 					foreach ($sheet->getRowIterator() as $row) {
 						if ($rowParameter > 1) {
 							$parameter[] = array(
-								// 'parameterId' => $this->uuid(),
+								// 'parameterId' => uuidv4(),
 								'sortId' => $row->getCellAtIndex(0)->getValue(),
 								'parameterName' => $row->getCellAtIndex(1)->getValue(),
 								'description' => $row->getCellAtIndex(2)->getValue(),
-
-								'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
-								'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
 
 								'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
 								'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
@@ -938,76 +886,6 @@ class Asset extends BaseController
 						$rowParameter++;
 					}
 				}
-				// $rowDescription = 1;
-				// $rowDesc = 2;
-				// if ($sheet->getName() == 'Asset') {
-				// 	foreach ($sheet->getRowIterator() as $index => $row) {
-				// 		if ($rowDescription > 1) {
-				// 			$desc = array(
-				// 				$row->getCellAtIndex(15)->getValue(),
-				// 				$row->getCellAtIndex(16)->getValue(),
-				// 				$row->getCellAtIndex(17)->getValue(),
-				// 				$row->getCellAtIndex(18)->getValue(),
-				// 				$row->getCellAtIndex(19)->getValue(),
-				// 			);
-				// 			break;
-				// 		}
-				// 		$rowDescription++;
-				// 	}
-				// 	$descJson = [];
-				// 	foreach ($sheet->getRowIterator() as $index => $row) {
-				// 		if ($rowDesc > 3) {
-				// 			$json['value'] = [
-				// 				array('key' => $desc[0], 'value' => $row->getCellAtIndex(15)->getValue()),
-				// 				array('key' => $desc[1], 'value' => $row->getCellAtIndex(16)->getValue()),
-				// 				array('key' => $desc[2], 'value' => $row->getCellAtIndex(17)->getValue()),
-				// 				array('key' => $desc[3], 'value' => $row->getCellAtIndex(18)->getValue()),
-				// 				array('key' => $desc[4], 'value' => $row->getCellAtIndex(19)->getValue()),
-				// 			];
-				// 			array_push($descJson, $json);
-				// 		}
-				// 		$rowDesc++;
-				// 	}
-				// 	$lengthAsset = count($dataAsset);
-				// 	for ($i = 0; $i < $lengthAsset; $i++) {
-				// 		$descAsset = $dataAsset[$i]['description'];
-				// 		if ($descAsset == "") {
-				// 			$dataAsset[$i]['description'] = json_encode($descJson[$i]['value']);
-				// 		}
-				// 	}
-				// }
-				// $rowParam = 1;
-				// for ($i = 0; $i < count($dataAsset); $i++) {
-				// 	if ($sheet->getIndex() == $i + 1) {
-				// 		$parameter = [];
-				// 		// var_dump("test");
-				// 		foreach ($sheet->getRowIterator() as $row) {
-				// 			if ($rowParam > 1) {
-				// 				$parameter[] = array(
-				// 					'parameterId' => $this->uuid(),
-				// 					'sortId' => $row->getCellAtIndex(0)->getValue(),
-				// 					'parameterName' => $row->getCellAtIndex(1)->getValue(),
-				// 					'description' => $row->getCellAtIndex(2)->getValue(),
-
-				// 					'maxNormal' => (($row->getCellAtIndex(3)->getValue()) ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(5)->getValue()),
-				// 					'minAbnormal' => (($row->getCellAtIndex(4)->getValue()) ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(6)->getValue()),
-
-				// 					'max' => $row->getCellAtIndex(3)->getValue() ? $row->getCellAtIndex(3)->getValue() : null,
-				// 					'min' => $row->getCellAtIndex(4)->getValue() ? $row->getCellAtIndex(4)->getValue() : null,
-				// 					'normal' => $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : "",
-				// 					'abnormal' => $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : "",
-				// 					'option' => $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : "",
-				// 					'uom' => $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() : "",
-
-				// 					'inputType' => $row->getCellAtIndex(9)->getValue(),
-				// 					'showOn' => $row->getCellAtIndex(10)->getValue(),
-				// 				);
-				// 			}
-				// 			$rowParam++;
-				// 		}
-				// 		$dataAsset[$i]['parameter'] = $parameter;
-				// 	}
-				// }
 			}
 			$reader->close();
 			$data['dataAsset'] = $dataAsset;
@@ -1025,21 +903,6 @@ class Asset extends BaseController
 			));
 		}
 		die();
-	}
-
-	function uuid()
-	{
-		return sprintf(
-			'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0x0fff) | 0x4000,
-			mt_rand(0, 0x3fff) | 0x8000,
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0xffff)
-		);
 	}
 
 	public function importAsset()
@@ -1065,7 +928,7 @@ class Asset extends BaseController
 			}
 			for ($i = 0; $i < $lengthAsset; $i++) {
 				$dataInsert = array(
-					'assetId' => $this->uuid(),
+					'assetId' => uuidv4(),
 					'userId' => $userId,
 					'assetName' => $dataAsset[$i]->assetName,
 					'assetNumber' => $dataAsset[$i]->assetNumber,
@@ -1073,24 +936,25 @@ class Asset extends BaseController
 					'schManual' => $dataAsset[$i]->schManual == "Automatic" ? 0 : 1,
 					'schType' => $dataAsset[$i]->schType,
 					'schFrequency' => $dataAsset[$i]->schFrequency,
+					'schWeekDays' => $dataAsset[$i]->schWeekDays,
 					'schWeeks' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schWeeks : '',
 					'schDays' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schDays : '',
 				);
 				// schWeekDays
-				$schWeekDays = explode(",", $dataAsset[$i]->schWeekDays);
-				$arrWeekDays = [];
-				foreach ($schWeekDays as $key => $val) {
-					array_push($arrWeekDays, substr($val, 0, 2));
-				}
-				$strWeekDays = implode(",", $arrWeekDays);
-				$dataInsert['schWeekDays'] = $strWeekDays;
+				// $schWeekDays = explode(",", $dataAsset[$i]->schWeekDays);
+				// $arrWeekDays = [];
+				// foreach ($schWeekDays as $key => $val) {
+				// 	array_push($arrWeekDays, substr($val, 0, 2));
+				// }
+				// $strWeekDays = implode(",", $arrWeekDays);
+				// $dataInsert['schWeekDays'] = $strWeekDays;
 
 				// asset status
 				$status = $dataAsset[$i]->assetStatus;
 				$dataStatus = $assetStatusModel->getByName($status);
 				if ($dataStatus == NULL) {
 					$newStatus = array(
-						'assetStatusId' => $this->uuid(),
+						'assetStatusId' => uuidv4(),
 						'userId' => $userId,
 						'assetStatusName' => $status,
 					);
@@ -1108,15 +972,10 @@ class Asset extends BaseController
 				}
 				foreach ($dataParameter as $key => $value) {
 					$arrParameter = (array) $value;
-					$dataParameter['parameterId'] = $this->uuid();
+					$dataParameter['parameterId'] = uuidv4();
 					$arrParameter['assetId'] = $dataInsert['assetId'];
 					$parameterModel->insert($arrParameter);
 				}
-				// $parameter = $dataAsset[$i]->parameter;
-				// foreach ($parameter as $key => $val) {
-				// 	$parameter[$key]->assetId = $dataInsert['assetId'];
-				// 	$parameterModel->insert($parameter[$key]);
-				// }
 
 				// tag
 				$tag = $dataAsset[$i]->tag;
@@ -1125,14 +984,14 @@ class Asset extends BaseController
 					$dataTag = $tagModel->getByName($val);
 					if ($dataTag == NULL) {
 						$newTag = array(
-							'tagId' => $this->uuid(),
+							'tagId' => uuidv4(),
 							'userId' => $userId,
 							'tagName' => $val,
 							'description' => ''
 						);
 						$tagModel->insert($newTag);
 						$insertNewAssetTag = array(
-							'assetTagId' => $this->uuid(),
+							'assetTagId' => uuidv4(),
 							'assetId' => $dataInsert['assetId'],
 							'tagId' => $newTag['tagId']
 						);
@@ -1140,7 +999,7 @@ class Asset extends BaseController
 					} else {
 						$tagId = $dataTag['tagId'];
 						$insertAssetTag = array(
-							'assetTagId' => $this->uuid(),
+							'assetTagId' => uuidv4(),
 							'assetId' => $dataInsert['assetId'],
 							'tagId' => $tagId
 						);
@@ -1154,7 +1013,7 @@ class Asset extends BaseController
 					$dataTagLocation = $tagLocationModel->getByName($val);
 					if ($dataTagLocation == NULL) {
 						$newTagLocation = array(
-							'tagLocationId' => $this->uuid(),
+							'tagLocationId' => uuidv4(),
 							'userId' => $userId,
 							'tagLocationName' => $val,
 							'latitude' => '',
@@ -1163,7 +1022,7 @@ class Asset extends BaseController
 						);
 						$tagLocationModel->insert($newTagLocation);
 						$insertNewAssetTagLocation = array(
-							'assetTagLocationId' => $this->uuid(),
+							'assetTagLocationId' => uuidv4(),
 							'assetId' => $dataInsert['assetId'],
 							'tagLocationId' => $newTagLocation['tagLocationId']
 						);
@@ -1171,7 +1030,7 @@ class Asset extends BaseController
 					} else {
 						$tagLocationId = $dataTagLocation['tagLocationId'];
 						$insertAssetTagLocation = array(
-							'assetTagLocationId' => $this->uuid(),
+							'assetTagLocationId' => uuidv4(),
 							'assetId' => $dataInsert['assetId'],
 							'tagLocationId' => $tagLocationId
 						);
@@ -1183,7 +1042,7 @@ class Asset extends BaseController
 				$rfid = $dataAsset[$i]->rfid;
 				if ($rfid != "") {
 					$dataRFID = array(
-						'assetTaggingId' => $this->uuid(),
+						'assetTaggingId' => uuidv4(),
 						'assetId' => $dataInsert['assetId'],
 						'assetTaggingValue' => $rfid,
 						'assetTaggingtype' => 'rfid'
@@ -1193,7 +1052,7 @@ class Asset extends BaseController
 				$coordinat = $dataAsset[$i]->coordinat;
 				if ($coordinat != "") {
 					$dataCoordinat = array(
-						'assetTaggingId' => $this->uuid(),
+						'assetTaggingId' => uuidv4(),
 						'assetId' => $dataInsert['assetId'],
 						'assetTaggingValue' => $coordinat,
 						'assetTaggingtype' => 'coordinat'
