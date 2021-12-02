@@ -265,7 +265,8 @@
 								<td>{{ item.tagName }}</td>
 								<td>{{ item.tagLocationName }}</td>
 								<td v-if="item.schManual == '1'">
-									Manual
+									Manual<br>
+									<span class="text-muted">({{ item.adviceDate }})</span>
 								</td>
 								<td v-else-if="item.schManual == '0' && item.schType === 'Daily'">
 									{{ item.schType }}<br>
@@ -624,6 +625,7 @@
 						v.table = $('#dtSchedule').DataTable({
 							dom: "t<'mt-2 d-flex justify-content-between align-items-center' <i><p>>",
 							scrollX: true,
+							scrollY: "400px",
 							ordering: false,
 							data: v.dataSchedule,
 							columns: [{
@@ -647,7 +649,7 @@
 									name: "schType",
 									render: function(data, type, row, meta) {
 										if (row.schManual == '1') {
-											return 'Manual'
+											return '<div>Manual<br><span class="text-muted">(' + row.adviceDate + ')</span></div>'
 										} else {
 											if (data === 'Daily') {
 												return '<div>' + data + '<br><span class="text-muted">(' + row.schFrequency + ')</span></div>'
