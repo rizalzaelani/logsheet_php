@@ -408,20 +408,33 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <div class="row">
                                         <div class="col">
                                             <div class="mb-3">
-                                                <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100" target="_blank"><i class="fa fa-file-excel"></i> Download Template</a>
-                                            </div>
-                                            <div>
-                                                <b><i>Ketentuan Upload File</i></b>
-                                                <ol>
-                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
-                                                </ol>
+                                                <h5>Follow these steps to import your parameter.</h5>
+                                                <hr>
+                                                <div class="mt-3">
+                                                    <h6>1. Download file template parameter</h6>
+                                                    <div class="pl-3">
+                                                        <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your parameter.</p>
+                                                        <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/download'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>2. Insert the tag data you have into template</h6>
+                                                    <div class="pl-3">
+                                                        <p>Using Excel or other spreadsheet software, enter the detailed tag location data into our template file. Make sure the data matches the header fields in the template.</p>
+                                                        <b>NOTE :</b>
+                                                        <p class="m-0">Do not change the column headers in the template. This is required for the import to work.
+                                                            A maximum of 30 parameter can be imported at one time.
+                                                            When importing, the application will only enter new data, no data is deleted or updated.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>3. Upload the updated template here</h6>
+                                                    <form action="post" enctype="multipart/form-data">
+                                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <form action="post" enctype="multipart/form-data">
-                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -1220,6 +1233,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 var tempPhoto = ref('');
                 var params = ref([]);
                 var importList = reactive({});
+                var tableImportParam = ref("");
                 var listNewParam = ref([]);
                 var submited = ref(false);
                 var descJsonValue = ref('');
@@ -3369,6 +3383,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     params,
                     importList,
                     listNewParam,
+                    tableImportParam,
                     // new tag & location
                     modalAddTag,
                     addNewTag,
@@ -3516,25 +3531,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $(id).prop('checked', true);
                 }
             }
-        })
-
-        $(document).ready(function() {
-            // let lengthTagging = v.assetTagging.length;
-            // console.log(lengthTagging);
-            // if (lengthTagging > 1) {
-            //     for (let i = 0; i < lengthTagging; i++) {
-            //         if (v.assetTagging[i].assetTaggingtype == 'rfid') {
-            //             console.log("rfid")
-            //         }
-            //     }
-            // }
-            // if (v.assetTagging.assetTaggingtype != '') {
-            //     if (v.assetTagging.assetTaggingtype == 'coordinat') {
-            //         v.valCoordinate = v.assetTagging.assetTaggingValue;
-            //     }
-            // } else {
-            //     v.assetTagging.assetTaggingtype = '';
-            // }
         })
 
         // On change tag, location, operation mode
@@ -3700,7 +3696,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         })
 
         var loadListImport = (importList) => {
-            var table = $('#tableImport').DataTable({
+            v.tableImportParam = $('#tableImport').DataTable({
                 drawCallback: function(settings) {
                     $('#all').removeClass('sorting_asc');
                     if ($('#select-all').prop('checked', true)) {
@@ -3758,37 +3754,37 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
                 data: importList,
                 columns: [{
-                        "data": "no"
+                        data: "no"
                     },
                     {
-                        "data": "parameterName"
+                        data: "parameterName"
                     },
                     {
-                        "data": "description"
+                        data: "description"
                     },
                     {
-                        "data": "maxNormal"
+                        data: "maxNormal"
                     },
                     {
-                        "data": "minAbnormal"
+                        data: "minAbnormal"
                     },
                     {
-                        "data": "uomOption"
+                        data: "uomOption"
                     },
                     {
-                        "data": "showOn"
+                        data: "showOn"
                     }
                 ],
-                "columnDefs": [{
-                    'targets': 0,
-                    'searchable': false,
-                    'orderable': false,
-                    'className': 'dt-body-center',
+                columnDefs: [{
+                    targets: 0,
+                    searchable: false,
+                    orderable: false,
+                    className: 'dt-body-center',
                     render: function(data) {
                         return `<input type="checkbox" name="parameterId" class="checkbox" id="id${data}" value="${data}">`;
                     }
                 }],
-                "order": [0, 'asc'],
+                order: [0, 'asc'],
             });
         }
 

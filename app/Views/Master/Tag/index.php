@@ -94,7 +94,7 @@
                                                 <div class="mt-3">
                                                     <h6>1. Download file template tag</h6>
                                                     <div class="pl-3">
-                                                        <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your tag location.</p>
+                                                        <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your tag.</p>
                                                         <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Tag/download'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
                                                     </div>
                                                 </div>
