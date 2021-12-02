@@ -53,7 +53,9 @@ class Location extends BaseController
         $column_search = array('tagLocationName', 'latitude', 'longitude', 'description', 'createdAt');
         $order = array('createdAt' => 'asc');
         $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
-        $where = [];
+        $where = [
+			'userId' => $this->session->get("adminId"),
+        ];
         $list = $DTModel->datatable($where);
         $output = array(
             "draw" => $request->getPost('draw'),
@@ -137,6 +139,7 @@ class Location extends BaseController
         if ($json->tagLocationName != '') {
             $data = array(
                 'tagLocationName' => $json->tagLocationName,
+			    'userId' => $this->session->get("adminId"),
                 'latitude' => $json->latitude,
                 'longitude' => $json->longitude,
                 'description' => $json->description
@@ -201,7 +204,7 @@ class Location extends BaseController
 
     public function download()
     {
-        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT.SAMPLE")){
+        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
             return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
@@ -253,33 +256,6 @@ class Location extends BaseController
         }
     }
 
-    function gen_uuid()
-    {
-        return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-
-            // 16 bits for "time_mid"
-            mt_rand(0, 0xffff),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            mt_rand(0, 0x0fff) | 0x4000,
-
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand(0, 0x3fff) | 0x8000,
-
-            // 48 bits for "node"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff)
-        );
-    }
-
     public function insertLocation()
     {
         if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
@@ -295,8 +271,8 @@ class Location extends BaseController
         $dataLocation = $json->dataLocation;
         $length = count($dataLocation);
         for ($i = 0; $i < $length; $i++) {
-            $uuid = $this->gen_uuid();
             $data = [
+                'tagLocationId' => null,
                 'tagLocationName'   => $dataLocation[$i]->locationName,
                 'latitude'   => $dataLocation[$i]->latitude,
                 'longitude'   => $dataLocation[$i]->longitude,

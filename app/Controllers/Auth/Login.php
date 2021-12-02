@@ -3,6 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
+use App\Models\ApplicationSettingModel;
 use App\Models\USMAN\UserModel;
 use Exception;
 
@@ -14,25 +15,23 @@ class Login extends BaseController
         if ($session->has('userId')) {
             return redirect()->to("Dashboard");
         }
-
         $data = array(
             'title' => 'Login Page | Logsheet Digital',
-            'subtitle' => 'Logsheet Digital'
+            'subtitle' => 'Logsheet Digital',
         );
 
         return $this->template->render('Auth/login', $data);
     }
+    
     public function auth()
     {
         $session = \Config\Services::session();
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
         $captcha = $this->request->getPost('g-recaptcha-response');
-        $appCode = 'logsheet01';
         $params = [
             'email' => $email,
             'password' => $password,
-            'appCode' => $appCode
         ];
 
         if (!$captcha) {
@@ -51,7 +50,7 @@ class Login extends BaseController
                     $userModel = new UserModel();
                     $dataRes = $userModel->clientAuth($params);
 
-                    $data = json_decode($dataRes['data']);
+                    $data = $dataRes['data'];
                     if ($dataRes['error']) {
                         return $this->response->setJSON(array(
                             'status' => isset($data->message) ? 400 : 500,
@@ -59,9 +58,25 @@ class Login extends BaseController
                         ), isset($data->message) ? 400 : 500);
                     } else {
                         $dataArr = $data->data;
-                        unset($dataArr->token);
-                        unset($dataArr->parameter);
+                        $dataArr->password = $password;
+
+                        $appSettingModel = new ApplicationSettingModel();
+                        $appSetting = $appSettingModel->where("userId", $dataArr->adminId)->get()->getRowArray();
+                        if(empty($appSetting)){
+                            $this->response->setCookie('appName', "", 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoLight', "", 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoDark', "", 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoIcon', "", 60 * 60 * 24 * 365);
+                        } else {
+                            $this->response->setCookie('appName', $appSetting["appName"], 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoLight', $appSetting["appLogoLight"], 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoDark', $appSetting["appLogoDark"], 60 * 60 * 24 * 365);
+                            $this->response->setCookie('appLogoIcon', $appSetting["appLogoIcon"], 60 * 60 * 24 * 365);
+                        }
+
                         $session->set((array) $dataArr);
+                        $this->response->setCookie('clientToken', "active", 3600);
+                        
                         return $this->response->setJSON(array(
                             'status' => 200,
                             'message' => 'Success Login'
@@ -87,6 +102,9 @@ class Login extends BaseController
     {
         $session = \Config\Services::session();
         $session->destroy();
+		$this->response->deleteCookie('clientToken');
+        delete_cookie("clientToken");
+
         return redirect()->to(base_url());
     }
 }

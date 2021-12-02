@@ -124,7 +124,8 @@ class Asset extends BaseController
 
 		$filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
 		$filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
-		$where = [
+		$where = [			
+			'userId' => $this->session->get("adminId"),
 			'deletedAt' => null,
 			// "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
 		];

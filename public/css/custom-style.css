@@ -78,6 +78,20 @@ a {
   color: inherit;
 }
 
+.font-weight-500 {
+  font-weight: 500;
+}
+
+.invalid-value {
+  border: 1px solid #e55353;
+  border-radius: 0.25rem;
+}
+
+.invalid-feedback-password {
+  color: #d93025;
+  font-size: 12px;
+}
+
 .c-sidebar.c-sidebar-light .c-sidebar-brand {
   background-color: inherit !important;
 }
@@ -616,7 +630,7 @@ ul.tl li .timestamp {
   height: 100%;
   width: 100%;
   top: 0;
-  z-index: 1030;
+  z-index: 1060;
 }
 
 .loadingio-spinner-double-ring {

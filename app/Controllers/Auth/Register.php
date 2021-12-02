@@ -4,6 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
 use App\Models\USMAN\AppsModel;
+use Exception;
 use HTTP_Request2;
 use HTTP_Request2_Exception;
 
@@ -26,7 +27,7 @@ class Register extends BaseController
             'noTelp' => 'required',
             'email' => 'required',
             'password' => 'required',
-            'street' => 'required',
+            'company' => 'required',
             'city' => 'required',
             'postalCode' => 'required',
             'country' => 'required',
@@ -40,28 +41,55 @@ class Register extends BaseController
                 'data' => []
             ], 400);
         }
+        
 
-        $data['fullname'] = $this->request->getVar('fullname');
-        $data['noTelp'] = $this->request->getVar('noTelp');
-        $data['email'] = $this->request->getVar('email');
-        $data['password'] = $this->request->getVar('password');
-        $data['street'] = $this->request->getVar('street');
-        $data['city'] = $this->request->getVar('city');
-        $data['postalCode'] = $this->request->getVar('postalCode');
-        $data['country'] = $this->request->getVar('country');
+        $param["name"] = $this->request->getVar('appName');
+        $param["code"] = str_replace(" ", "-", strtolower($param["name"]));
+        $param["description"] = "-";
 
-        $data["name"] = $this->request->getVar('country');
-        $data["code"] = str_replace(" ", "-", strtolower($data["name"]));
-        $data["description"] = "";
+        $param['email'] = $this->request->getVar('email');
+        $param['password'] = $this->request->getVar('password');
+        $param['confirm_password'] = $this->request->getVar('password');
+        $param['app_url'] = base_url("/");
+        $param['app_group'] = "logsheet";
 
-        $appModel = new AppsModel();
-        $res = $appModel->createApps($data);
+        $param['parameter[fullname]'] = $this->request->getVar('fullname');
+        $param['parameter[noTelp]'] = $this->request->getVar('noTelp');
+        $param['parameter[company]'] = $this->request->getVar('company');
+        $param['parameter[city]'] = $this->request->getVar('city');
+        $param['parameter[postalCode]'] = $this->request->getVar('postalCode');
+        $param['parameter[country]'] = $this->request->getVar('country');
+        $param['parameter[tag]'] = "";
+        $param['parameter[tagLocation]'] = "";
+        
+        $param['group'] = "Superadmin";
+        $param['role'] = getenv("ROLELIST");
+        $param['roleGroup[Superadmin]'] = getenv("ROLELIST");
 
-        return $this->response->setJSON([
-            'status' => 200,
-            'error' => true,
-            'message' => "Success Create App",
-            'data' => $res
-        ], 200);
+        try {
+            $appModel = new AppsModel();
+            $dataRes = $appModel->createApps($param);
+            
+            $data = $dataRes['data'];
+            if ($dataRes['error']) {
+                return $this->response->setJSON(array(
+                    'status' => isset($data->message) ? 400 : 500,
+                    'message' => $data->message ?? $dataRes['message'],
+                    'data' => $data
+                ), isset($data->message) ? 400 : 500);
+            } else {
+                return $this->response->setJSON([
+                    'status' => 200,
+                    'message' => "Success Create App",
+                    'data' => $data
+                ], 200);
+            }
+        } catch (Exception $e){
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => $e->getMessage(),
+                'data' => $e
+            ], 500);
+        }
     }
 }

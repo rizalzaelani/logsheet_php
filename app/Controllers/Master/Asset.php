@@ -83,6 +83,7 @@ class Asset extends BaseController
 		$filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
 		$filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
 		$where = [
+			'userId' => $this->session->get("adminId"),
 			'deletedAt' => null,
 			// "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
 		];
@@ -100,7 +101,7 @@ class Asset extends BaseController
 
 	public function add()
 	{
-		if (!checkRoleList("MASTER.ASSET.ADD.VIEW")) {
+		if (!checkRoleList("MASTER.ASSET.ADD")) {
 			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
@@ -159,7 +160,7 @@ class Asset extends BaseController
 			// asset
 			$dataAsset = array(
 				'assetId' => $assetId,
-				'userId' => '',
+				'userId' => $this->session->get("adminId"),
 				'assetStatusId' => $post['assetStatusId'],
 				'assetName' => $post['assetName'],
 				'assetNumber' => $post['assetNumber'],
@@ -400,7 +401,7 @@ class Asset extends BaseController
 				for ($i = 0; $i < $lengthNewTag; $i++) {
 					$dataNewTag = array(
 						'tagId' => json_decode($newTag[$i])->addTagId,
-						'userId' => '',
+						'userId' => $this->session->get("adminId"),
 						'tagName' => json_decode($newTag[$i])->addTagName,
 						'description' => json_decode($newTag[$i])->addTagDesc
 					);
@@ -415,7 +416,7 @@ class Asset extends BaseController
 				for ($i = 0; $i < $lengthNewTagLocation; $i++) {
 					$dataNewTagLocation = array(
 						'tagLocationId' => json_decode($newTagLocation[$i])->addLocationId,
-						'userId' => '',
+						'userId' => $this->session->get("adminId"),
 						'tagLocationName' => json_decode($newTagLocation[$i])->addLocationName,
 						'latitude' => json_decode($newTagLocation[$i])->addLocationLatitude,
 						'longitude' => json_decode($newTagLocation[$i])->addLocationLongitude,
@@ -1053,7 +1054,7 @@ class Asset extends BaseController
 		$parameterModel = new ParameterModel();
 		$asset = $this->request->getPost('dataAsset');
 		$parameter = $this->request->getPost('parameter');
-		$userId = '3f0857bf-0fab-11ec-95b6-5600026457d1';
+		$userId = $this->session->get("adminId");
 		$lengthAsset = count($asset);
 		try {
 			$dataAsset = "";

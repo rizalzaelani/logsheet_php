@@ -15,6 +15,8 @@
     <link href="<?= base_url(); ?>/css/style.css" rel="stylesheet">
     <link href="<?= base_url(); ?>/css/custom-style.css" rel="stylesheet">
     <link href="<?= base_url(); ?>/icons/coreui/css/all.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/vendors/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>/vendors/fontawesome/css/all.css" rel="stylesheet">
 </head>
 <style>
     .invalid-value {
@@ -26,18 +28,33 @@
         color: #d93025;
         font-size: 12px;
     }
+
+    .font-weight-500 {
+        font-weight: 500;
+    }
+
+    /* @media (max-width: 576px) {
+        .card {
+            box-shadow: unset !important;
+        }
+        body {
+            background-color: #fff !important;
+        }
+    } */
 </style>
 
 <body class="c-app flex-row align-items-center">
     <div class="container" id="app">
         <div class="row justify-content-center">
-            <div class="col-10">
+            <div class="col-sm-10">
                 <div class="card-group">
                     <div class="card card-main">
-                        <div class="card-body p-5">
+                        <div class="card-body p-4 p-sm-5">
                             <form v-on:submit.prevent="">
-                                <h2>Sign Up</h2>
-                                <p class="text-medium-emphasis text-muted">Register new account</p>
+                                <template v-if="formPos <= 2">
+                                    <h2>Sign Up</h2>
+                                    <p class="text-medium-emphasis text-muted">Register new account</p>
+                                </template>
                                 <div id="form1" :class="formPos == 1 ? '' : 'd-none'">
                                     <div class="form-group mb-0 mt-3">
                                         <label for="fullname">Full Name</label>
@@ -87,33 +104,19 @@
                                     </span>
                                 </div>
                                 <div id="form2" :class="formPos == 2 ? '' : 'd-none'">
-                                    <div class="d-flex justify-content-center col-form-label">
-                                        <div class="form-check form-check-inline mr-3">
-                                            <input class="form-check-input" id="radioAdmin" type="radio" value="admin" name="inline-radios" @change="adminClient = 1" :checked="adminClient == 1">
-                                            <label class="form-check-label" for="radioAdmin">Admin</label>
-                                        </div>
-                                        <div class="form-check form-check-inline mr-3">
-                                            <input class="form-check-input" id="radioClient" type="radio" value="client" name="inline-radios" @change="adminClient = 2" :checked="adminClient == 2">
-                                            <label class="form-check-label" for="radioClient">Client</label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" :class="adminClient == 1 ? '' : 'd-none'">
-                                        <label for="street">Application Name</label>
+                                    <div class="form-group">
+                                        <label for="appName">Application Name</label>
                                         <input class="form-control" id="appName" v-model="registerData.appName" type="text" placeholder="Enter App Name">
                                     </div>
-                                    <div class="form-group" :class="adminClient == 2 ? '' : 'd-none'">
-                                        <label for="street">Application Code</label>
-                                        <input class="form-control" id="appCode" v-model="registerData.appCode" type="text" placeholder="Enter App Code">
-                                    </div>
                                     <div class="form-group">
-                                        <label for="street">Street</label>
-                                        <input class="form-control" id="street" v-model="registerData.street" type="text" placeholder="Enter Street">
+                                        <label for="company">Company</label>
+                                        <input class="form-control" id="company" v-model="registerData.company" type="text" placeholder="Enter Copany Name">
                                     </div>
-                                    <span class="invalid-feedback-password" :class="errInput.street ? '' : 'd-none'">
+                                    <span class="invalid-feedback-password" :class="errInput.company ? '' : 'd-none'">
                                         <svg aria-hidden="true" fill="currentColor" focusable="false" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
                                         </svg>
-                                        {{ errInput.street }}
+                                        {{ errInput.company }}
                                     </span>
                                     <div class="row">
                                         <div class="form-group col-sm-8">
@@ -142,11 +145,40 @@
                                         {{ errInput.country }}
                                     </span>
                                 </div>
+                                <div id="preview" :class="formPos == 3 ? '' : 'd-none'">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th>App Name</th>
+                                            <th style="width: 5px">:</th>
+                                            <td>Logsheet Digital 01</td>
+                                        </tr>
+                                        <tr>
+                                            <th>App Code</th>
+                                            <th>:</th>
+                                            <td>logsheet-digital-01</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>:</th>
+                                            <td>admin@gmail.com</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Full Name</th>
+                                            <th>:</th>
+                                            <td>Andrianto</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Phone Number</th>
+                                            <th>:</th>
+                                            <td>+627368751834</td>
+                                        </tr>
+                                    </table>
+                                </div>
                                 <div class="d-flex justify-content-between mt-3">
-                                    <button type="button" class="btn btn-secondary text-center px-3" :class="formPos > 1 ? '' : 'd-none'" @click="formPos = 1">Back</button>
-                                    <a href="<?= site_url() ?>" type="button" class="btn btn-link text-info font-weight-500 text-decoration-none h6 mb-0" :class="formPos <= 1 ? '' : 'd-none'">Sign in instead</a>
-                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos <= 1 ? '' : 'd-none'" @click="validateForm(1)">Next</button>
-                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos > 1 ? '' : 'd-none'" @click="doRegister()">Submit</button>
+                                    <button type="button" class="btn btn-secondary text-center px-3" :class="formPos == 2 ? '' : 'd-none'" @click="formPos = 1">Back</button>
+                                    <a href="<?= site_url() ?>" type="button" class="btn btn-link text-info font-weight-500 text-decoration-none h6 mb-0" :class="formPos == 1 ? '' : 'd-none'">Sign in instead</a>
+                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos == 1 ? '' : 'd-none'" @click="validateForm(1)">Next</button>
+                                    <button type="button" class="btn btn-info text-center px-3" :class="formPos == 2 ? '' : 'd-none'" @click="doRegister()">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -166,6 +198,7 @@
     <script type="text/javascript" src="<?= base_url() ?>/vendors/vue/vue.global.js"></script>
     <script type="text/javascript" src="<?= base_url() ?>/vendors/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="<?= base_url() ?>/vendors/jquery-ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/vendors/sweetalert2/sweetalert2.all.min.js"></script>
     <script>
         const {
             ref,
@@ -177,7 +210,6 @@
                 var registerData = reactive([]);
                 var errInput = reactive([]);
                 var formPos = ref(1);
-                var adminClient = ref(1);
 
                 const validateForm = (formType) => {
                     if (registerData.fullname && registerData.noTelp && registerData.email && registerData.password && registerData.confirmPass) {
@@ -193,17 +225,17 @@
                             formPos.value = 2;
 
                             if (formType == 2) {
-                                if (registerData.street && registerData.city && registerData.postalCode && registerData.country) {
+                                if (registerData.company && registerData.city && registerData.postalCode && registerData.country) {
                                     return true;
                                 } else {
-                                    if (!registerData.street) errInput.street = 'Enter your street address';
+                                    if (!registerData.company) errInput.company = 'Enter your company name';
                                     if (!registerData.city) errInput.city = 'Enter your city';
                                     if (!registerData.postalCode) errInput.city = 'Enter your postalCode';
                                     if (!registerData.city && !registerData.postalCode) errInput.city = 'Enter your city & postalCode';
                                     if (!registerData.country) errInput.country = 'Enter your country';
                                 }
                             } else {
-                                errInput.street = '';
+                                errInput.company = '';
                                 errInput.city = '';
                                 errInput.country = '';
                             }
@@ -219,43 +251,56 @@
                 }
 
                 const doRegister = () => {
-                    if (registerData.fullname && registerData.noTelp && registerData.email && registerData.password && registerData.confirmPass && registerData.street && registerData.city && registerData.postalCode && registerData.country) {
+                    if (registerData.fullname && registerData.noTelp && registerData.email && registerData.password && registerData.confirmPass && registerData.company && registerData.city && registerData.postalCode && registerData.country) {
                         let formData = new FormData();
                         formData.append("fullname", registerData.fullname);
                         formData.append("noTelp", registerData.noTelp);
                         formData.append("email", registerData.email);
                         formData.append("password", registerData.password);
-                        formData.append("street", registerData.street);
+                        formData.append("appName", registerData.appName);
+                        formData.append("company", registerData.company);
                         formData.append("city", registerData.city);
                         formData.append("postalCode", registerData.postalCode);
                         formData.append("country", registerData.country);
 
-                        if(adminClient == 1){
-                            formData.append("appName", registerData.appName);
-                            formData.append("appCode", "");
-                        } else {
-                            formData.append("appName", "");
-                            formData.append("appCode", registerData.appCode);
-                        }
-
                         axios({
-                            url: "<?= base_url('register/doRegister') ?>",
-                            data: formData,
-                            method: 'POST'
-                        }).then((res) => {
-                            if (res.res.status == 200) {
+                                url: "<?= base_url('register/doRegister') ?>",
+                                data: formData,
+                                method: 'POST'
+                            }).then((res) => {
+                                let resData = res.data;
+                                if (resData.status == 200) {
+                                    Swal.fire({
+                                        title: "Success registered new account",
+                                        icon: 'success',
+                                    }).then((sres) => {
+                                        localStorage.setItem("userId", JSON.stringify(resData));
+                                        // window.location.href = "<?= base_url() ?>/wizard";
+                                    })
+                                } else if (resData.status == 400) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: resData.message
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: resData.status,
+                                        icon: resData.alertType ?? 'error',
+                                        text: resData.message
+                                    });
+                                }
+                            })
+                            .catch((rej) => {
+                                if (rej.throw) {
+                                    throw new Error(rej.message);
+                                }
                                 Swal.fire({
-                                    title: "Success registered new account",
-                                    icon: 'success',
-                                }).then((sres) => {
-                                    window.location.href = "<?= base_url() ?>";
-                                })
-                            } else {
-
-                            }
-                        })
+                                    icon: 'error',
+                                    title: 'Internal server error, please try again',
+                                    text: rej.message
+                                });
+                            });
                     } else {
-                        console.log("test")
                         validateForm(2);
                     }
                 }
@@ -268,7 +313,6 @@
                     registerData,
                     errInput,
                     formPos,
-                    adminClient,
 
                     validateForm,
                     doRegister

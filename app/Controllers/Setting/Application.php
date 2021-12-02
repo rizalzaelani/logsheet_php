@@ -17,8 +17,7 @@ class Application extends BaseController
         //     return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
         // }
 
-        $userIdApp = $_SESSION["userIdApp"] ?? "fcc9766a-9bda-4fd3-a755-a24130d2f58c";
-        // $userIdApp = $_SESSION["userIdApp"] ?? "";
+        $userIdApp = $this->session->get("adminId");
         // if($userIdApp == ""){
         //     return View('errors/customError', ['ErrorCode'=>400,'ErrorMessage'=>"Sorry, You don't have any registered appication, please Register New Logsheet App or Relogin First"]);
         // }
@@ -59,7 +58,7 @@ class Application extends BaseController
         $appSettingModel = new ApplicationSettingModel();
 
         $appSettingId = $this->request->getVar('appSettingId') ?? "";
-        $userId = $this->request->getVar('userId') ?? "65910438-b82d-4414-95cc-b3165527e08f";
+        $userId = $this->session->get("adminId");
         $appName = $this->request->getVar('appName');
         $appLogoLight = $this->request->getVar('appLogoLight');
         $appLogoDark = $this->request->getVar('appLogoDark');
@@ -75,6 +74,8 @@ class Application extends BaseController
         try {
             $data["userId"] = $userId;
             $data["appName"] = $appName;
+            
+            $this->response->setCookie('appName', $data["appName"], 60 * 60 * 24 * 365);
 
             if($appLogoLight != ""){
                 $appLogoLight = str_replace('data:image/png;base64,', '', $appLogoLight);
@@ -84,6 +85,8 @@ class Application extends BaseController
                 $fileName = "AppLogoL_" . uniqid() . '.png';
                 file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLL);
                 $data["appLogoLight"] = base_url() . "/" . $dirPath . $fileName;
+
+                $this->response->setCookie('appLogoLight', $data["appLogoLight"], 60 * 60 * 24 * 365);
             }
 
             if($appLogoDark != ""){
@@ -94,6 +97,8 @@ class Application extends BaseController
                 $fileName = "AppLogoD_" . uniqid() . '.png';
                 file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLD);
                 $data["appLogoDark"] = base_url() . "/" . $dirPath . $fileName;
+
+                $this->response->setCookie('appLogoDark', $data["appLogoDark"], 60 * 60 * 24 * 365);
             }
 
             if($appLogoIcon != ""){
@@ -104,6 +109,8 @@ class Application extends BaseController
                 $fileName = "AppLogoI_" . uniqid() . '.png';
                 file_put_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . $fileName, $dtAppLI);
                 $data["appLogoIcon"] = base_url() . "/" . $dirPath . $fileName;
+                
+                $this->response->setCookie('appLogoIcon', $data["appLogoIcon"], 60 * 60 * 24 * 365);
             }
 
             if (!empty($appSetting)) {
@@ -162,13 +169,13 @@ class Application extends BaseController
                 if ($val["isNew"] == true) {
                     array_push($dataInsert, array(
                         "assetStatusId" => null,
-                        "userId" => $_SESSION["userId"] ?? "65910438-b82d-4414-95cc-b3165527e08f",
+                        "userId" => $this->session->get("adminId"),
                         "assetStatusName" => $val["assetStatusName"]
                     ));
                 } else {
                     array_push($dataUpdate, array(
                         "assetStatusId" => $val["assetStatusId"],
-                        // "userId" => $_SESSION["userId"] ?? "65910438-b82d-4414-95cc-b3165527e08f",
+                        // "userId" => $this->session->get("adminId"),
                         "assetStatusName" => $val["assetStatusName"]
                     ));
                 }

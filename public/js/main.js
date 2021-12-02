@@ -18,7 +18,7 @@ const xhrThrowRequest = (res) => {
                 if (resData.status == 200) {
                     resolve(true);
                 } else if (resData.status == 500) {
-                    if (!isNullEmptyOrUndefined(resData.data) & typeof (resData.data) == "object") {
+                    if (!isNullEmptyOrUndefined(resData.data) && typeof (resData.data) == "object") {
                         let outAlert = `<ul class="list-group">`;
                         for (let r in resData.data) {
                             outAlert += `<li class="list-group-item list-group-item-warning">${resData.data[r]}</li>`;
@@ -117,6 +117,19 @@ function IsJsonString(str) {
         return false;
     }
     return true;
+}
+
+const fireEvent = (element, event) => {
+    if (document.createEventObject) {
+        // dispatch for IE
+        let evt = document.createEventObject();
+        return element.fireEvent('on' + event, evt)
+    } else {
+        // dispatch for firefox + others
+        let evt = document.createEvent("HTMLEvents");
+        evt.initEvent(event, true, true); // event type,bubbling,cancelable
+        return !element.dispatchEvent(evt);
+    }
 }
 
 //Convert Table to Json

@@ -142,7 +142,7 @@ class ScheduleTrx extends BaseController
 
             return $this->response->setJSON(array(
                 "status"    => 200,
-                "message"   => "Success Get Timeline",
+                "message"   => "Success Generate Schedule",
                 // "data"      => $dataInsertSch
                 "data"      => array(
                     "Success Add Schedule"      => $addScheduleM,

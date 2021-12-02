@@ -33,7 +33,7 @@ class Schedule extends BaseController
 
         $assetModel = new AssetModel();
 
-        $data["assetManualData"] = $assetModel->getAll(["schManual" => "1", "deletedAt IS NULL" => null]);
+        $data["assetManualData"] = $assetModel->getAll(['userId' => $this->session->get("adminId"), "schManual" => "1", "deletedAt IS NULL" => null]);
 
         return $this->template->render('Setting/Schedule/index.php', $data);
     }
@@ -52,6 +52,7 @@ class Schedule extends BaseController
         $year = $this->request->getVar('year') ?? date("Y");
 
         $where = [
+			"userId" => $this->session->get("adminId"),
             "MONTH(scheduleFrom)" => $month,
             "YEAR(scheduleFrom)" => $year,
             "schManual" => '1'
