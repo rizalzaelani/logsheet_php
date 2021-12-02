@@ -184,6 +184,7 @@ class Asset extends BaseController
 					for ($i = 0; $i < $lengthAddTag; $i++) {
 						$dataAddTag = array(
 							'tagId'			=> json_decode($post['tag'][$i])->addTagId,
+							'userId'		=> $this->session->get("adminId"),
 							'tagName'		=> json_decode($post['tag'][$i])->addTagName,
 							'description'	=> json_decode($post['tag'][$i])->addTagDesc,
 						);
@@ -197,6 +198,7 @@ class Asset extends BaseController
 					for ($i = 0; $i < $lengthAddLocation; $i++) {
 						$dataAddLocation = array(
 							'tagLocationId'		=> json_decode($post['location'][$i])->addLocationId,
+							'userId'			=> $this->session->get("adminId"),
 							'tagLocationName'	=> json_decode($post['location'][$i])->addLocationName,
 							'latitude'			=> json_decode($post['location'][$i])->addLocationLatitude,
 							'longitude'			=> json_decode($post['location'][$i])->addLocationLongitude,
@@ -917,7 +919,6 @@ class Asset extends BaseController
 		$parameterModel = new ParameterModel();
 		$asset = $this->request->getPost('dataAsset');
 		$parameter = $this->request->getPost('parameter');
-		$userId = $this->session->get("adminId");
 		$lengthAsset = count($asset);
 		try {
 			$dataAsset = "";
@@ -929,7 +930,7 @@ class Asset extends BaseController
 			for ($i = 0; $i < $lengthAsset; $i++) {
 				$dataInsert = array(
 					'assetId' => uuidv4(),
-					'userId' => $userId,
+					'userId' => $this->session->get("adminId"),
 					'assetName' => $dataAsset[$i]->assetName,
 					'assetNumber' => $dataAsset[$i]->assetNumber,
 					'description' => $dataAsset[$i]->description,
@@ -955,7 +956,7 @@ class Asset extends BaseController
 				if ($dataStatus == NULL) {
 					$newStatus = array(
 						'assetStatusId' => uuidv4(),
-						'userId' => $userId,
+						'userId' => $this->session->get("adminId"),
 						'assetStatusName' => $status,
 					);
 					$assetStatusModel->insert($newStatus);
@@ -985,7 +986,7 @@ class Asset extends BaseController
 					if ($dataTag == NULL) {
 						$newTag = array(
 							'tagId' => uuidv4(),
-							'userId' => $userId,
+							'userId' => $this->session->get("adminId"),
 							'tagName' => $val,
 							'description' => ''
 						);
@@ -1014,7 +1015,7 @@ class Asset extends BaseController
 					if ($dataTagLocation == NULL) {
 						$newTagLocation = array(
 							'tagLocationId' => uuidv4(),
-							'userId' => $userId,
+							'userId' => $this->session->get("adminId"),
 							'tagLocationName' => $val,
 							'latitude' => '',
 							'longitude' => '',
