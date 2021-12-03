@@ -171,4 +171,43 @@ class RoleGroupModel extends Model
             );
         }
     }
+
+    public function deleteGroup($param){
+        $sess = \Config\Services::session();
+        $request = new HTTP_Request2();
+
+        $request->setUrl(env('usmanURL') . 'api/group/delete_group');
+        $request->setMethod(HTTP_Request2::METHOD_POST);
+        $request->setConfig(array(
+            'follow_redirects' => TRUE
+        ));
+        $request->setHeader(array(
+            'X-Requested-With' => 'XMLHttpRequest',
+            'Authorization' => $sess->get("token")
+        ));
+        $request->addPostParameter($param);
+        
+        try {
+            $response = $request->send();
+            if ($response->getStatus() == 200) {
+                return array(
+                    'error' => false,
+                    'message' => 'Success Delete Group',
+                    'data' => json_decode($response->getBody())
+                );
+            } else {
+                return array(
+                    'error' => true,
+                    'message' => 'Unexpected HTTP status: ' . $response->getStatus() . ' ' . $response->getReasonPhrase(),
+                    'data' =>  json_decode($response->getBody())
+                );
+            }
+        } catch (HTTP_Request2_Exception $e) {
+            return array(
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => []
+            );
+        }
+    }
 }

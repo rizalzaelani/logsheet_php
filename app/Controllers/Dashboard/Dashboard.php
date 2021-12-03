@@ -13,7 +13,7 @@ class Dashboard extends BaseController
 	public function index()
 	{
 		if (!checkRoleList("DASHBOARD.VIEW")) {
-			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
 		$assetModel = new AssetModel();

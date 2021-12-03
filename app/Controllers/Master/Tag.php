@@ -12,7 +12,7 @@ class Tag extends BaseController
     public function index()
     {
         if(!checkRoleList("MASTER.TAG.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
         $data = array(
             'title' => 'Tag',
@@ -165,7 +165,7 @@ class Tag extends BaseController
     public function download()
     {
         if(!checkRoleList("MASTER.TAG.IMPORT")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
         return $this->response->download('../public/download/tag.xlsx', null);

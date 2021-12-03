@@ -27,7 +27,7 @@ body {
 }
 
 .c-app.c-dark-theme .c-sidebar-brand-full-dark {
-  display: inherit !important;
+  display: inherit;
 }
 
 .c-header,

@@ -13,15 +13,11 @@ class Application extends BaseController
 {
     public function index()
     {
-        // if(!checkRoleList("APPLICATION.VIEW")){
-        //     return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        // }
+        if(!checkRoleList("APPLICATION.VIEW")){
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
+        }
 
         $userIdApp = $this->session->get("adminId");
-        // if($userIdApp == ""){
-        //     return View('errors/customError', ['ErrorCode'=>400,'ErrorMessage'=>"Sorry, You don't have any registered appication, please Register New Logsheet App or Relogin First"]);
-        // }
-
         $appSettingModel = new ApplicationSettingModel();
         $assetStatusModel = new AssetStatusModel();
         $appSetting = $appSettingModel->where("userId", $userIdApp)->get()->getRowArray();

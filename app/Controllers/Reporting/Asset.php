@@ -15,7 +15,7 @@ class Asset extends BaseController
 	public function index()
 	{
         if(!checkRoleList("REPORT.ASSET.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$assetModel			= new AssetModel();
@@ -47,7 +47,7 @@ class Asset extends BaseController
 
 	public function detail(){
         if(!checkRoleList("REPORT.ASSET.DETAIL")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$assetModel = new AssetModel();

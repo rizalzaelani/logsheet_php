@@ -102,18 +102,15 @@
 							},
 							dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>',
 							columns: [{
-									data: "name",
-								}
-							],
+								data: "name",
+							}],
 							order: [0, 'asc'],
 							// columnDefs: [],
 							'createdRow': function(row, data) {
-								<?php //if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : 
-								?>
-								row.setAttribute("data-id", data.groupId);
-								row.classList.add("cursor-pointer");
-								<?php //endif; 
-								?>
+								<?php if (checkRoleList("ROLE.DETAIL.VIEW")) : ?>
+									row.setAttribute("data-id", data.groupId);
+									row.classList.add("cursor-pointer");
+								<?php endif; ?>
 							},
 						});
 					} catch (er) {
@@ -154,13 +151,11 @@
 					}
 				});
 
-				<?php //if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : 
-				?>
+				<?php if (checkRoleList("ROLE.DETAIL.VIEW")) : ?>
 				$(document).on('click', '#tableRole tbody tr', function() {
 					window.location.href = "<?= site_url('role/detail') ?>?groupId=" + $(this).attr("data-id");
 				});
-				<?php //endif; 
-				?>
+				<?php endif; ?>
 			});
 
 			return {

@@ -12,7 +12,7 @@ class Location extends BaseController
     public function index()
     {
         if(!checkRoleList("MASTER.TAGLOCATION.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
         $data = array(
@@ -71,7 +71,7 @@ class Location extends BaseController
     public function detail($tagLocationId)
     {
         if(!checkRoleList("MASTER.TAGLOCATION.DETAIL")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
         $model = new TagLocationModel();
@@ -100,7 +100,7 @@ class Location extends BaseController
     public function add()
     {
         if(!checkRoleList("MASTER.TAGLOCATION.ADD")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
         $model = new TagLocationModel();
@@ -205,7 +205,7 @@ class Location extends BaseController
     public function download()
     {
         if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
         return $this->response->download('../public/download/location.xlsx', null);

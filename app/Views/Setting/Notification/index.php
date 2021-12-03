@@ -21,7 +21,9 @@
                         <a href="javascript:;" class="dt-search" data-target="#tableEq"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="javascript:;" @click="showNotifModal()"><i class="fa fa-plus mr-2"></i> Add Notification</a>
+                            <?php if (checkRoleList("NOTIFICATION.ADD")) : ?>
+                                <a class="dropdown-item" href="javascript:;" @click="showNotifModal()"><i class="fa fa-plus mr-2"></i> Add Notification</a>
+                            <?php endif; ?>
                             <a class="dropdown-item" href="javascript:;" @click="showTrash = !showTrash"><i class="far fa-trash-alt mr-2"></i> {{ showTrash ? 'Hide Trash' : 'Show Trash' }}</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" @click="reloadTable()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
@@ -114,13 +116,15 @@
                 <div class="modal-footer d-flex" :class="notifForm.notificationId ? 'justify-content-between' : ''">
                     <div>
                         <button type="button" class="btn btn-outline-dark ml-2" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
-                        <button type="button" class="btn btn-success ml-2 " @click="saveNotif()"><i class="fa fa-save"></i> Save</button>
+
+                        <?php if (checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY")) : ?>
+                            <button type="button" class="btn btn-success ml-2 " @click="saveNotif()"><i class="fa fa-save"></i> Save</button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 <?= $this->endSection(); ?>
 
@@ -242,25 +246,25 @@
                                     render: function(data, type, row) {
                                         let outBtn = '';
                                         if (!row.deletedAt) {
-                                            outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.detailNotif('${data}')"><i class="fas fa-pencil-alt"></i></button>`;
-                                            outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.changeStatus('${data}', '${row.status == 'active' ? 'disable' : 'active'}')"><i class="fas fa-${row.status == 'active' ? 'pause' : 'play'}"></i></button>`;
+                                            outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.detailNotif('${data}')"><i class="fas fa-<?= (checkRoleList("NOTIFICATION.MODIFY") ? "pencil-alt" : "eye"); ?>"></i></button>`;
+
+                                            <?php if (checkRoleList("NOTIFICATION.ADD")) : ?>
+                                                outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.changeStatus('${data}', '${row.status == 'active' ? 'disable' : 'active'}')"><i class="fas fa-${row.status == 'active' ? 'pause' : 'play'}"></i></button>`;
+                                            <?php endif; ?>
                                         } else {
-                                            outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.restoreNotif('${data}')"><i class="fa fa-undo"></i></button>`;
+                                            <?php if (checkRoleList("NOTIFICATION.RESTORE")) : ?>
+                                                outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.restoreNotif('${data}')"><i class="fa fa-undo"></i></button>`;
+                                            <?php endif; ?>
+
                                         }
-                                        outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.deleteNotif('${data}')"><i class="fa fa-times"></i></button>`;
+                                        <?php if (checkRoleList("NOTIFICATION.DELETE")) : ?>
+                                            outBtn += `<button type="button" class="btn btn-link p-1" onclick="v.deleteNotif('${data}')"><i class="fa fa-times"></i></button>`;
+                                        <?php endif; ?>
 
                                         return outBtn;
                                     }
                                 },
                             ],
-                            'createdRow': function(row, data) {
-                                <?php //if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : 
-                                ?>
-                                // row.setAttribute("data-id", data.notificationId);
-                                // row.classList.add("cursor-pointer");
-                                <?php //endif; 
-                                ?>
-                            },
                         });
                     } catch (er) {
                         console.log(er)
@@ -269,24 +273,26 @@
                 })
             }
 
-            const showNotifModal = () => {
-                if (notifForm.notificationId) {
-                    notifForm.notificationId = "";
-                    notifForm.friendlyName = "";
-                    notifForm.type = "email";
-                    notifForm.email = "";
-                    notifForm.chatId = "";
-                    notifForm.noTelp = "";
-                    notifForm.trigger = [];
+            <?php if (checkRoleList("NOTIFICATION.ADD")) : ?>
+                const showNotifModal = () => {
+                    if (notifForm.notificationId) {
+                        notifForm.notificationId = "";
+                        notifForm.friendlyName = "";
+                        notifForm.type = "email";
+                        notifForm.email = "";
+                        notifForm.chatId = "";
+                        notifForm.noTelp = "";
+                        notifForm.trigger = [];
 
-                    notifFormErr.type = null;
-                    notifFormErr.friendlyName = null;
-                    notifFormErr.value = null;
-                    notifFormErr.trigger = null;
+                        notifFormErr.type = null;
+                        notifFormErr.friendlyName = null;
+                        notifFormErr.value = null;
+                        notifFormErr.trigger = null;
+                    }
+
+                    $("#notifModal").modal("show");
                 }
-
-                $("#notifModal").modal("show");
-            }
+            <?php endif; ?>
 
             const detailNotif = (notificationId) => {
                 let filtNotif = _.filter(notifData, (val) => val.notificationId == notificationId);
@@ -304,186 +310,202 @@
                     notifFormErr.value = null;
                     notifFormErr.trigger = null;
 
+                    <?php if (checkRoleList("NOTIFICATION.MODIFY")) { ?>
+                        $("#notifModal").find("input,select").attr("disabled", false);
+                    <?php } else { ?>
+                        $("#notifModal").find("input,select").attr("disabled", true);
+                    <?php } ?>
+
                     $("#notifModal").modal("show");
                 }
             }
 
-            const changeStatus = (notificationId, status) => {
-                let res = axios.post("<?= site_url("Notification/changeStatus") ?>", {
-                    notificationId: notificationId ?? "",
-                    status: status
-                }).then(res => {
-                    xhrThrowRequest(res)
-                        .then(() => {
-                            Toast.fire({
-                                title: 'Success Change Status!',
-                                icon: 'success'
+            <?php if (checkRoleList("NOTIFICATION.MODIFY.STATUS")) : ?>
+                const changeStatus = (notificationId, status) => {
+                    let res = axios.post("<?= site_url("Notification/changeStatus") ?>", {
+                        notificationId: notificationId ?? "",
+                        status: status
+                    }).then(res => {
+                        xhrThrowRequest(res)
+                            .then(() => {
+                                Toast.fire({
+                                    title: 'Success Change Status!',
+                                    icon: 'success'
+                                });
+
+                                table.draw();
+                            })
+                            .catch((rej) => {
+                                if (rej.throw) {
+                                    throw new Error(rej.message);
+                                }
                             });
-
-                            table.draw();
-                        })
-                        .catch((rej) => {
-                            if (rej.throw) {
-                                throw new Error(rej.message);
-                            }
-                        });
-                })
-            }
-
-            const setValTrigger = (val) => {
-                if (notifForm.trigger.includes(val)) {
-                    let iVT = notifForm.trigger.findIndex((i) => i == val);
-                    if (iVT != undefined && iVT >= 0) {
-                        notifForm.trigger.splice(iVT, 1);
-                    }
-                } else {
-                    notifForm.trigger.push(val);
+                    })
                 }
-            }
+            <?php endif; ?>
 
-            const saveNotif = () => {
-                if (notifForm.type && notifForm.friendlyName && notifForm.trigger.length > 0 && ((notifForm.type == "email" && notifForm.email) || (notifForm.type == "telegram" && notifForm.chatId) || (notifForm.type == "sms" && notifForm.noTelp))) {
-                    if (!validateEmail(notifForm.email) & notifForm.type == "email") {
-                        notifFormErr.email = "Email is not valid";
+            <?php if (checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY")) : ?>
+                const setValTrigger = (val) => {
+                    if (notifForm.trigger.includes(val)) {
+                        let iVT = notifForm.trigger.findIndex((i) => i == val);
+                        if (iVT != undefined && iVT >= 0) {
+                            notifForm.trigger.splice(iVT, 1);
+                        }
                     } else {
-                        let res = axios.post("<?= site_url("Notification/saveNotif") ?>", {
-                            notificationId: notifForm.notificationId ?? "",
-                            friendlyName: notifForm.friendlyName,
-                            type: notifForm.type,
-                            value: (notifForm.type == 'email' ? notifForm.email : (notifForm.type == 'telegram' ? notifForm.chatId : notifForm.noTelp)),
-                            trigger: (notifForm.trigger ?? []).join(","),
-                        }).then(res => {
-                            xhrThrowRequest(res)
-                                .then(() => {
-                                    Toast.fire({
-                                        title: 'Success Save Notification!',
-                                        icon: 'success'
-                                    });
-                                    $("#notifModal").modal("hide");
-
-                                    notifForm.type = "email";
-                                    notifForm.friendlyName = "";
-                                    notifForm.email = "";
-                                    notifForm.chatId = "";
-                                    notifForm.noTelp = "";
-                                    notifForm.trigger = [];
-
-                                    notifFormErr.type = null;
-                                    notifFormErr.friendlyName = null;
-                                    notifFormErr.value = null;
-                                    notifFormErr.trigger = null;
-
-                                    table.draw();
-                                })
-                                .catch((rej) => {
-                                    if (rej.throw) {
-                                        throw new Error(rej.message);
-                                    }
-                                });
-                        })
+                        notifForm.trigger.push(val);
                     }
-                } else {
-                    if (!notifForm.type) notifFormErr.type = "Name is required";
-                    if (!notifForm.friendlyName) notifFormErr.friendlyName = "Friendly Name is required";
-                    if (!notifForm.email && notifForm.type == "email") notifFormErr.value = "Email is required";
-                    if (!notifForm.chatId && notifForm.type == "telegram") notifFormErr.value = "Chat Id is required";
-                    if (!notifForm.noTelp && notifForm.type == "sms") notifFormErr.value = "Phone Number is required";
-                    if (notifForm.trigger.length <= 0) notifFormErr.trigger = "Trigger is required";
                 }
-            }
+            <?php endif; ?>
 
-            const deleteNotif = (notificationId) => {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: (showTrash.value ? "You won't be able to revert this!" : "You can be able to restore this!"),
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let res = axios.post("<?= site_url("Notification/deleteNotif") ?>", {
-                            notificationId: notificationId ?? "",
-                            hard: (showTrash.value ? 1 : 0)
-                        }).then(res => {
-                            xhrThrowRequest(res)
-                                .then(() => {
-                                    Toast.fire({
-                                        title: 'Success Delete Notification!',
-                                        icon: 'success'
+            <?php if (checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY")) : ?>
+                const saveNotif = () => {
+                    if (notifForm.type && notifForm.friendlyName && notifForm.trigger.length > 0 && ((notifForm.type == "email" && notifForm.email) || (notifForm.type == "telegram" && notifForm.chatId) || (notifForm.type == "sms" && notifForm.noTelp))) {
+                        if (!validateEmail(notifForm.email) & notifForm.type == "email") {
+                            notifFormErr.email = "Email is not valid";
+                        } else {
+                            let res = axios.post("<?= site_url("Notification/saveNotif") ?>", {
+                                notificationId: notifForm.notificationId ?? "",
+                                friendlyName: notifForm.friendlyName,
+                                type: notifForm.type,
+                                value: (notifForm.type == 'email' ? notifForm.email : (notifForm.type == 'telegram' ? notifForm.chatId : notifForm.noTelp)),
+                                trigger: (notifForm.trigger ?? []).join(","),
+                            }).then(res => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        Toast.fire({
+                                            title: 'Success Save Notification!',
+                                            icon: 'success'
+                                        });
+                                        $("#notifModal").modal("hide");
+
+                                        notifForm.type = "email";
+                                        notifForm.friendlyName = "";
+                                        notifForm.email = "";
+                                        notifForm.chatId = "";
+                                        notifForm.noTelp = "";
+                                        notifForm.trigger = [];
+
+                                        notifFormErr.type = null;
+                                        notifFormErr.friendlyName = null;
+                                        notifFormErr.value = null;
+                                        notifFormErr.trigger = null;
+
+                                        table.draw();
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
+                                        }
                                     });
-                                    $("#notifModal").modal("hide");
-
-                                    notifForm.type = "email";
-                                    notifForm.friendlyName = "";
-                                    notifForm.email = "";
-                                    notifForm.chatId = "";
-                                    notifForm.noTelp = "";
-                                    notifForm.trigger = [];
-
-                                    notifFormErr.type = null;
-                                    notifFormErr.friendlyName = null;
-                                    notifFormErr.value = null;
-                                    notifFormErr.trigger = null;
-
-                                    table.draw();
-                                })
-                                .catch((rej) => {
-                                    if (rej.throw) {
-                                        throw new Error(rej.message);
-                                    }
-                                });
-                        })
+                            })
+                        }
+                    } else {
+                        if (!notifForm.type) notifFormErr.type = "Name is required";
+                        if (!notifForm.friendlyName) notifFormErr.friendlyName = "Friendly Name is required";
+                        if (!notifForm.email && notifForm.type == "email") notifFormErr.value = "Email is required";
+                        if (!notifForm.chatId && notifForm.type == "telegram") notifFormErr.value = "Chat Id is required";
+                        if (!notifForm.noTelp && notifForm.type == "sms") notifFormErr.value = "Phone Number is required";
+                        if (notifForm.trigger.length <= 0) notifFormErr.trigger = "Trigger is required";
                     }
-                })
-            }
+                }
+            <?php endif; ?>
 
-            const restoreNotif = (notificationId) => {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You can update this data after restored!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, restore it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let res = axios.post("<?= site_url("Notification/restoreNotif") ?>", {
-                            notificationId: notificationId ?? ""
-                        }).then(res => {
-                            xhrThrowRequest(res)
-                                .then(() => {
-                                    Toast.fire({
-                                        title: 'Success Restore Notification!',
-                                        icon: 'success'
+            <?php if (checkRoleList("NOTIFICATION.DELETE")) : ?>
+                const deleteNotif = (notificationId) => {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: (showTrash.value ? "You won't be able to revert this!" : "You can be able to restore this!"),
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let res = axios.post("<?= site_url("Notification/deleteNotif") ?>", {
+                                notificationId: notificationId ?? "",
+                                hard: (showTrash.value ? 1 : 0)
+                            }).then(res => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        Toast.fire({
+                                            title: 'Success Delete Notification!',
+                                            icon: 'success'
+                                        });
+                                        $("#notifModal").modal("hide");
+
+                                        notifForm.type = "email";
+                                        notifForm.friendlyName = "";
+                                        notifForm.email = "";
+                                        notifForm.chatId = "";
+                                        notifForm.noTelp = "";
+                                        notifForm.trigger = [];
+
+                                        notifFormErr.type = null;
+                                        notifFormErr.friendlyName = null;
+                                        notifFormErr.value = null;
+                                        notifFormErr.trigger = null;
+
+                                        table.draw();
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
+                                        }
                                     });
-                                    $("#notifModal").modal("hide");
+                            })
+                        }
+                    })
+                }
+            <?php endif; ?>
 
-                                    notifForm.type = "email";
-                                    notifForm.friendlyName = "";
-                                    notifForm.email = "";
-                                    notifForm.chatId = "";
-                                    notifForm.noTelp = "";
-                                    notifForm.trigger = [];
+            <?php if (checkRoleList("NOTIFICATION.RESTORE")) : ?>
+                const restoreNotif = (notificationId) => {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You can update this data after restored!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, restore it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let res = axios.post("<?= site_url("Notification/restoreNotif") ?>", {
+                                notificationId: notificationId ?? ""
+                            }).then(res => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        Toast.fire({
+                                            title: 'Success Restore Notification!',
+                                            icon: 'success'
+                                        });
+                                        $("#notifModal").modal("hide");
 
-                                    notifFormErr.type = null;
-                                    notifFormErr.friendlyName = null;
-                                    notifFormErr.value = null;
-                                    notifFormErr.trigger = null;
+                                        notifForm.type = "email";
+                                        notifForm.friendlyName = "";
+                                        notifForm.email = "";
+                                        notifForm.chatId = "";
+                                        notifForm.noTelp = "";
+                                        notifForm.trigger = [];
 
-                                    table.draw();
-                                })
-                                .catch((rej) => {
-                                    if (rej.throw) {
-                                        throw new Error(rej.message);
-                                    }
-                                });
-                        })
-                    }
-                })
-            }
+                                        notifFormErr.type = null;
+                                        notifFormErr.friendlyName = null;
+                                        notifFormErr.value = null;
+                                        notifFormErr.trigger = null;
+
+                                        table.draw();
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
+                                        }
+                                    });
+                            })
+                        }
+                    })
+                }
+            <?php endif; ?>
 
             Vue.watch(
                 () => notifForm.type,
@@ -501,10 +523,6 @@
 
             Vue.onMounted(() => {
                 getData();
-
-                // $(document).on('click', '#tableNotification tbody tr', function() {
-                //     detailNotif($(this).attr("data-id"));
-                // });
             })
 
             return {
@@ -512,14 +530,15 @@
                 notifForm,
                 notifFormErr,
                 showTrash,
-                changeStatus,
                 detailNotif,
                 reloadTable,
-                setValTrigger,
-                saveNotif,
-                deleteNotif,
-                restoreNotif,
-                showNotifModal,
+
+                <?= (checkRoleList("NOTIFICATION.ADD") ? "showNotifModal," : "") ?>
+                <?= (checkRoleList("NOTIFICATION.MODIFY.STATUS") ? "changeStatus," : "") ?>
+                <?= (checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY") ? "saveNotif," : "") ?>
+                <?= (checkRoleList("NOTIFICATION.DELETE") ? "deleteNotif," : "") ?>
+                <?= (checkRoleList("NOTIFICATION.RESTORE") ? "restoreNotif," : "") ?>
+                <?= (checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY") ? "setValTrigger," : "") ?>
             }
         }
     }).mount("#app");

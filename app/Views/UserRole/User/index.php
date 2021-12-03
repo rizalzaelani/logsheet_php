@@ -20,47 +20,15 @@
 				<div class="d-flex justify-content-between mb-1">
 					<h4><?= $title ?></h4>
 					<h5 class="header-icon">
-						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<a href="javascript:;" class="dt-search" data-target="#tableUser"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
 							<a class="dropdown-item" href="javascript:;" @click="getUserList()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
-							<a class="dropdown-item" href="javascript:;" @click="showUserModal()"><i class="fa fa-user-plus mr-2"></i> Add User</a>
+							<?php if (checkRoleList("USER.ADD")) { ?>
+								<a class="dropdown-item" href="javascript:;" @click="showUserModal()"><i class="fa fa-user-plus mr-2"></i> Add User</a>
+							<?php } ?>
 						</div>
 					</h5>
-				</div>
-				<div class="row mt-2 collapse" id="filterDT">
-					<div class="col-4">
-						<div class="form-group" id="filterCompany">
-							<select class="form-control bg-transparent select2-multiple w-100 company" name="company" id="company" multiple="multiple">
-								<option value="all">All</option>
-								<option value="IPC">IPC</option>
-							</select>
-						</div>
-					</div>
-					<div class="col-4">
-						<fieldset class="form-group">
-							<div class="" id="filterArea">
-								<select class="form-control bg-transparent select2-multiple w-100 area" name="area" id="area" multiple="multiple">
-									<option value="all">All</option>
-									<option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
-									<option value="GEDUNG KAS">GEDUNG KAS</option>
-									<option value="GEDUNG MAINTENANCE">GEDUNG MAINTENANCE</option>
-									<option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
-								</select>
-							</div>
-						</fieldset>
-					</div>
-					<div class="col-4">
-						<div class="form-group" id="filterUnit">
-							<select class="form-control bg-transparent select2-multiple w-100 unit" name="unit" id="unit" multiple="multiple">
-								<option value="all">All</option>
-								<option value="CCTV">CCTV</option>
-								<option value="ROUTER">ROUTER</option>
-								<option value="IT">IT</option>
-							</select>
-						</div>
-					</div>
 				</div>
 				<!-- datatable -->
 				<div class="table-responsive">
@@ -153,10 +121,16 @@
 					</span>
 				</div>
 				<div class="modal-footer d-flex" :class="userForm.userId ? 'justify-content-between' : ''">
-					<button type="button" class="btn btn-danger" v-if="userForm.userId" @click="deleteUser(userForm.userId)"><i class="fa fa-trash"></i> Delete</button>
+					<?php if (checkRoleList("USER.DELETE")) { ?>
+						<button type="button" class="btn btn-danger" v-if="userForm.userId" @click="deleteUser(userForm.userId)"><i class="fa fa-trash"></i> Delete</button>
+					<?php } else { ?>
+						<div v-if="userForm.userId"></div>
+					<?php } ?>
 					<div>
 						<button type="button" class="btn btn-outline-dark ml-2" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
-						<button type="button" class="btn btn-success ml-2 " @click="saveUser()"><i class="fa fa-save"></i> Save</button>
+						<?php if (checkRoleList("USER.ADD,USER.MODIFY")) { ?>
+							<button type="button" class="btn btn-success ml-2 " @click="saveUser()"><i class="fa fa-save"></i> Save</button>
+						<?php } ?>
 					</div>
 				</div>
 			</div>
@@ -291,25 +265,27 @@
 					});
 			}
 
-			const showUserModal = () => {
-				if (userForm.userId) {
-					userForm.userId = "";
-					userForm.name = "";
-					userForm.email = "";
-					userForm.groupId = "";
-					userForm.password = "";
-					userForm.confirmPass = "";
-					userForm.tagId = [];
-					userForm.tagLocationId = [];
+			<?php if (checkRoleList("USER.ADD")) : ?>
+				const showUserModal = () => {
+					if (userForm.userId) {
+						userForm.userId = "";
+						userForm.name = "";
+						userForm.email = "";
+						userForm.groupId = "";
+						userForm.password = "";
+						userForm.confirmPass = "";
+						userForm.tagId = [];
+						userForm.tagLocationId = [];
 
-					userFormErr.name = null;
-					userFormErr.email = null;
-					userFormErr.groupId = null;
-					userFormErr.password = null;
+						userFormErr.name = null;
+						userFormErr.email = null;
+						userFormErr.groupId = null;
+						userFormErr.password = null;
+					}
+
+					$("#userModal").modal("show");
 				}
-
-				$("#userModal").modal("show");
-			}
+			<?php endif; ?>
 
 			const detailUser = (userId) => {
 				let filtUser = _.filter(userData, (val) => val.userId == userId);
@@ -328,117 +304,127 @@
 					userFormErr.email = null;
 					userFormErr.groupId = null;
 					userFormErr.password = null;
+					
+                    <?php if (checkRoleList("USER.MODIFY")) { ?>
+                        $("#userModal").find("input,select").attr("disabled", false);
+                    <?php } else { ?>
+                        $("#userModal").find("input,select").attr("disabled", true);
+                    <?php } ?>
 
 					$("#userModal").modal("show");
 				}
 			}
 
-			const saveUser = () => {
-				if (userForm.name && userForm.email && userForm.groupId && ((userForm.password && userForm.confirmPass) || userForm.userId)) {
-					if (userForm.password != userForm.confirmPass) {
-						userFormErr.password = 'Those passwords didn’t match. Try again.';
+			<?php if (checkRoleList("USER.ADD,USER.MODIFY")) : ?>
+				const saveUser = () => {
+					if (userForm.name && userForm.email && userForm.groupId && ((userForm.password && userForm.confirmPass) || userForm.userId)) {
+						if (userForm.password != userForm.confirmPass) {
+							userFormErr.password = 'Those passwords didn’t match. Try again.';
+						} else {
+							let res = axios.post("<?= site_url("user/saveUser") ?>", {
+								userId: userForm.userId ?? "",
+								name: userForm.name,
+								email: userForm.email,
+								password: userForm.password,
+								groupId: userForm.groupId,
+								tagId: (userForm.tagId ?? "").join(","),
+								tagLocationId: (userForm.tagLocationId ?? "").join(",")
+							}).then(res => {
+								xhrThrowRequest(res)
+									.then(() => {
+										Toast.fire({
+											title: 'Success Save User!',
+											icon: 'success'
+										});
+										$("#userModal").modal("hide");
+
+										userForm.userId = "";
+										userForm.name = "";
+										userForm.email = "";
+										userForm.groupId = "";
+										userForm.password = "";
+										userForm.confirmPass = "";
+										userForm.tagId = [];
+										userForm.tagLocationId = [];
+
+										$("select[name=tag]").val([]).trigger("change");
+										$("select[name=tagLocation]").val([]).trigger("change");
+
+										userFormErr.name = null;
+										userFormErr.email = null;
+										userFormErr.groupId = null;
+										userFormErr.password = null;
+
+										getUserList();
+									})
+									.catch((rej) => {
+										if (rej.throw) {
+											throw new Error(rej.message);
+										}
+									});
+							})
+						}
 					} else {
-						let res = axios.post("<?= site_url("user/saveUser") ?>", {
-							userId: userForm.userId ?? "",
-							name: userForm.name,
-							email: userForm.email,
-							password: userForm.password,
-							groupId: userForm.groupId,
-							tagId: (userForm.tagId ?? "").join(","),
-							tagLocationId: (userForm.tagLocationId ?? "").join(",")
-						}).then(res => {
-							xhrThrowRequest(res)
-								.then(() => {
-									Toast.fire({
-										title: 'Success Save User!',
-										icon: 'success'
-									});
-									$("#userModal").modal("hide");
-
-									userForm.userId = "";
-									userForm.name = "";
-									userForm.email = "";
-									userForm.groupId = "";
-									userForm.password = "";
-									userForm.confirmPass = "";
-									userForm.tagId = [];
-									userForm.tagLocationId = [];
-
-									$("select[name=tag]").val([]).trigger("change");
-									$("select[name=tagLocation]").val([]).trigger("change");
-
-									userFormErr.name = null;
-									userFormErr.email = null;
-									userFormErr.groupId = null;
-									userFormErr.password = null;
-
-									getUserList();
-								})
-								.catch((rej) => {
-									if (rej.throw) {
-										throw new Error(rej.message);
-									}
-								});
-						})
+						if (!userForm.name) userFormErr.name = "Name is required";
+						if (!userForm.email) userFormErr.email = "Email is required";
+						if (!userForm.groupId) userFormErr.groupId = "Please select the role";
+						if (!userForm.password) userFormErr.password = "Enter a password";
 					}
-				} else {
-					if (!userForm.name) userFormErr.name = "Name is required";
-					if (!userForm.email) userFormErr.email = "Email is required";
-					if (!userForm.groupId) userFormErr.groupId = "Please select the role";
-					if (!userForm.password) userFormErr.password = "Enter a password";
 				}
-			}
+			<?php endif; ?>
 
-			const deleteUser = (userId) => {
-				Swal.fire({
-					title: 'Are you sure?',
-					text: "You won't be able to revert this!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, delete it!'
-				}).then((result) => {
-					if (result.isConfirmed) {
-						let res = axios.post("<?= site_url("user/deleteUser") ?>", {
-							userId: userForm.userId ?? ""
-						}).then(res => {
-							xhrThrowRequest(res)
-								.then(() => {
-									Toast.fire({
-										title: 'Success Delete User!',
-										icon: 'success'
+			<?php if (checkRoleList("USER.DELETE")) : ?>
+				const deleteUser = (userId) => {
+					Swal.fire({
+						title: 'Are you sure?',
+						text: "You won't be able to revert this!",
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonColor: '#3085d6',
+						cancelButtonColor: '#d33',
+						confirmButtonText: 'Yes, delete it!'
+					}).then((result) => {
+						if (result.isConfirmed) {
+							let res = axios.post("<?= site_url("user/deleteUser") ?>", {
+								userId: userForm.userId ?? ""
+							}).then(res => {
+								xhrThrowRequest(res)
+									.then(() => {
+										Toast.fire({
+											title: 'Success Delete User!',
+											icon: 'success'
+										});
+										$("#userModal").modal("hide");
+
+										userForm.userId = "";
+										userForm.name = "";
+										userForm.email = "";
+										userForm.groupId = "";
+										userForm.password = "";
+										userForm.confirmPass = "";
+										userForm.tagId = [];
+										userForm.tagLocationId = [];
+
+										$("select[name=tag]").val([]).trigger("change");
+										$("select[name=tagLocation]").val([]).trigger("change");
+
+										userFormErr.name = null;
+										userFormErr.email = null;
+										userFormErr.groupId = null;
+										userFormErr.password = null;
+
+										getUserList();
+									})
+									.catch((rej) => {
+										if (rej.throw) {
+											throw new Error(rej.message);
+										}
 									});
-									$("#userModal").modal("hide");
-
-									userForm.userId = "";
-									userForm.name = "";
-									userForm.email = "";
-									userForm.groupId = "";
-									userForm.password = "";
-									userForm.confirmPass = "";
-									userForm.tagId = [];
-									userForm.tagLocationId = [];
-
-									$("select[name=tag]").val([]).trigger("change");
-									$("select[name=tagLocation]").val([]).trigger("change");
-
-									userFormErr.name = null;
-									userFormErr.email = null;
-									userFormErr.groupId = null;
-									userFormErr.password = null;
-
-									getUserList();
-								})
-								.catch((rej) => {
-									if (rej.throw) {
-										throw new Error(rej.message);
-									}
-								});
-						})
-					}
-				})
-			}
+							})
+						}
+					})
+				}
+			<?php endif; ?>
 
 			Vue.onMounted(() => {
 				getData();
@@ -452,14 +438,9 @@
 					}
 				});
 
-				<?php //if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : 
-				?>
 				$(document).on('click', '#tableUser tbody tr', function() {
 					detailUser($(this).attr("data-id"));
-					// window.location.href = "<?= site_url('user/detail') ?>?userId=" + $(this).attr("data-id");
 				});
-				<?php //endif; 
-				?>
 
 				let tagS2 = $("select[name=tag]").select2({
 					theme: 'coreui'
@@ -468,32 +449,16 @@
 					theme: 'coreui'
 				});
 
-				tagS2.on("select2:close", (v) => {
-					userForm.tagId = $("select[name=tag]").val();
-				})
+				<?php if (checkRoleList("USER.ADD,USER.MODIFY")) : ?>
+					tagS2.on("select2:close", (v) => {
+						userForm.tagId = $("select[name=tag]").val();
+					})
 
-				tagLocS2.on("select2:close", (v) => {
-					userForm.tagLocationId = $("select[name=tagLocation]").val();
-				})
+					tagLocS2.on("select2:close", (v) => {
+						userForm.tagLocationId = $("select[name=tagLocation]").val();
+					})
+				<?php endif; ?>
 			});
-
-			// Vue.watch(
-			// 	() => userForm.tagId,
-			// 	(state, prevState) => {
-			// 		tagS2 = $("select[name=tag]").select2({
-			// 			theme: 'coreui'
-			// 		});
-			// 	}
-			// )
-
-			// Vue.watch(
-			// 	() => userForm.tagId,
-			// 	(state, prevState) => {
-			// 		tagLocS2 = $("select[name=tagLocation]").select2({
-			// 			theme: 'coreui'
-			// 		});
-			// 	}
-			// )
 
 			return {
 				tagData,
@@ -503,9 +468,11 @@
 				userData,
 				userForm,
 				userFormErr,
-				saveUser,
-				showUserModal,
-				deleteUser
+				
+				<?= (checkRoleList("USER.ADD") ? "showUserModal," : ""); ?>
+				<?= (checkRoleList("USER.ADD,USER.MODIFY") ? "saveUser," : ""); ?>
+				<?= (checkRoleList("USER.DELETE") ? "deleteUser," : ""); ?>
+				<?= (checkRoleList("USER.MODIFY") ? "" : ""); ?>
 			}
 		}
 	}).mount("#app");

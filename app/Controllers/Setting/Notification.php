@@ -10,7 +10,7 @@ class Notification extends BaseController
     public function index()
     {
         if (!checkRoleList("NOTIFICATION.VIEW")) {
-            return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
         }
 
         $data = array(
@@ -24,16 +24,16 @@ class Notification extends BaseController
     {
         $request = \Config\Services::request();
 
-        // if(!checkRoleList("MASTER.TAG.VIEW")){
-        // 	echo json_encode(array(
-        // 		"draw" => $request->getPost('draw'),
-        // 		"recordsTotal" => 0,
-        // 		"recordsFiltered" => 0,
-        // 		"data" => [],
-        // 		'status' => 403,
-        // 		'message' => "You don't have access to this page"
-        // 	));
-        // }
+        if(!checkRoleList("NOTIFICATION.VIEW")){
+        	echo json_encode(array(
+        		"draw" => $request->getPost('draw'),
+        		"recordsTotal" => 0,
+        		"recordsFiltered" => 0,
+        		"data" => [],
+        		'status' => 403,
+        		'message' => "You don't have access to this page"
+        	));
+        }
 
         $table = "tblm_notification";
         $column_order = array('type', 'value', 'trigger', 'notificationId');
@@ -58,13 +58,13 @@ class Notification extends BaseController
 
     public function saveNotif()
     {
-        // if(!checkRoleList("MASTER.TAG.ADD")){
-        // 	return $this->response->setJSON([
-        // 		'status' => 403,
-        //         'message' => "Sorry, You don't have access",
-        // 		'data' => []
-        // 	], 403);
-        // }
+        if(!checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY")){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
 
         $isValid = $this->validate([
             "friendlyName" => "required",
@@ -93,8 +93,24 @@ class Notification extends BaseController
 
         $notifModel = new NotificationModel();
         if ($notifId != "") {
+            if(!checkRoleList("NOTIFICATION.MODIFY")){
+                return $this->response->setJSON([
+                    'status' => 403,
+                    'message' => "Sorry, You don't have access",
+                    'data' => []
+                ], 403);
+            }
+
             $notifModel->update($notifId, $dt);
         } else {
+            if(!checkRoleList("NOTIFICATION.ADD")){
+                return $this->response->setJSON([
+                    'status' => 403,
+                    'message' => "Sorry, You don't have access",
+                    'data' => []
+                ], 403);
+            }
+
             $dt["notificationId"] = null;
             $notifModel->insert($dt);
         }
@@ -108,13 +124,13 @@ class Notification extends BaseController
 
     public function changeStatus()
     {
-        // if(!checkRoleList("MASTER.TAG.DELETE")){
-        // 	return $this->response->setJSON([
-        // 		'status' => 403,
-        //         'message' => "Sorry, You don't have access",
-        // 		'data' => []
-        // 	], 403);
-        // }
+        if(!checkRoleList("NOTIFICATION.MODIFY.STATUS")){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
 
         $notifModel = new NotificationModel();
         $notificationId = $this->request->getVar("notificationId");
@@ -138,13 +154,13 @@ class Notification extends BaseController
 
     public function deleteNotif()
     {
-        // if(!checkRoleList("MASTER.TAG.DELETE")){
-        // 	return $this->response->setJSON([
-        // 		'status' => 403,
-        //         'message' => "Sorry, You don't have access",
-        // 		'data' => []
-        // 	], 403);
-        // }
+        if(!checkRoleList("NOTIFICATION.DELETE")){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
 
         $notifModel = new NotificationModel();
         $notificationId = $this->request->getVar("notificationId");
@@ -167,13 +183,13 @@ class Notification extends BaseController
 
     public function restoreNotif()
     {
-        // if(!checkRoleList("MASTER.TAG.DELETE")){
-        // 	return $this->response->setJSON([
-        // 		'status' => 403,
-        //         'message' => "Sorry, You don't have access",
-        // 		'data' => []
-        // 	], 403);
-        // }
+        if(!checkRoleList("NOTIFICATION.RESTORE")){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
 
         $notifModel = new NotificationModel();
         $notificationId = $this->request->getVar("notificationId");

@@ -94,10 +94,13 @@
                         <label for="role">Role</label>
                         <input class="form-control" id="role" type="text" placeholder="Role Name" v-model="groupData.name">
                     </div>
-                    <div class="d-block">
-                        <button type="button" class="btn btn-outline-primary mr-2" @click="SCAllRole(true)">Select All</button>
-                        <button type="button" class="btn btn-outline-primary mr-2" @click="SCAllRole(false)">Clear All</button>
-                    </div>
+
+                    <?php if (checkRoleList("ROLE.ADD,ROLE.MODIFY")) : ?>
+                        <div class="d-block">
+                            <button type="button" class="btn btn-outline-primary mr-2" @click="SCAllRole(true)">Select All</button>
+                            <button type="button" class="btn btn-outline-primary mr-2" @click="SCAllRole(false)">Clear All</button>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="w-100 mb-3">
                         <ul class="tree">
@@ -151,10 +154,16 @@
                             </template>
                         </ul>
                     </div>
-                    <div class="d-flex justify-content-start">
-                        <button type="button" class="btn btn-outline-dark mr-2" @click="window.location.href = '<?= site_url('role') ?>'"><i class="fa fa-times"></i> Cancel</button>
-                        <button type="button" class="btn btn-info mr-2" @click="saveRole()"><i class="fa fa-save"></i> Save</button>
-                    </div>
+
+                    <?php if (checkRoleList("ROLE.ADD,ROLE.MODIFY")) : ?>
+                        <div class="d-flex justify-content-start">
+                            <button type="button" class="btn btn-outline-dark mr-2" @click="window.location.href = '<?= site_url('role') ?>'"><i class="fa fa-times"></i> Cancel</button>
+                            <?php if (checkRoleList("ROLE.DELETE") && !empty($groupData ?? [])) : ?>
+                                <button type="button" class="btn btn-danger mr-2" @click="deleteRole()"><i class="fa fa-times"></i> Delete</button>
+                            <?php endif; ?>
+                            <button type="button" class="btn btn-info mr-2" @click="saveRole()"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -185,11 +194,13 @@
                 }).sortBy("group").value();
             }
 
-            const SCAllRole = (cond) => {
-                document.querySelectorAll(".tree input[type=checkbox]").forEach((v, k) => {
-                    v.checked = cond;
-                });
-            }
+            <?php if (checkRoleList("ROLE.ADD,ROLE.MODIFY")) : ?>
+                const SCAllRole = (cond) => {
+                    document.querySelectorAll(".tree input[type=checkbox]").forEach((v, k) => {
+                        v.checked = cond;
+                    });
+                }
+            <?php endif; ?>
 
             const getRoleChecked = () => {
                 let roleChecked = [];
@@ -199,32 +210,69 @@
                 return roleChecked;
             }
 
-            const saveRole = () => {
-                let roleChecked = getRoleChecked();
-                let response = axios.post("<?= base_url('role/saveGroup') ?>", {
-                    "groupId": groupData.groupId ?? "",
-                    "name": groupData.name,
-                    "roleId": roleChecked.join(",")
-                }).then((res) => {
-                    xhrThrowRequest(res)
-                        .then(() => {
-                            Swal.fire({
-                                title: res.data.message,
-                                icon: "success",
-                                timer: 3000
-                            }).then(() => {
-                                window.location.href = "<?= base_url("role") ?>";
+            <?php if (checkRoleList("ROLE.ADD,ROLE.MODIFY")) : ?>
+                const saveRole = () => {
+                    let roleChecked = getRoleChecked();
+                    let response = axios.post("<?= base_url('role/saveGroup') ?>", {
+                        "groupId": groupData.groupId ?? "",
+                        "name": groupData.name,
+                        "roleId": roleChecked.join(",")
+                    }).then((res) => {
+                        xhrThrowRequest(res)
+                            .then(() => {
+                                Swal.fire({
+                                    title: res.data.message,
+                                    icon: "success",
+                                    timer: 3000
+                                }).then(() => {
+                                    window.location.href = "<?= base_url("role") ?>";
+                                });
+                            })
+                            .catch((rej) => {
+                                if (rej.throw) {
+                                    throw new Error(rej.message);
+                                }
+                                $('#slideApprove').removeClass('unlocked');
+                                $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
                             });
-                        })
-                        .catch((rej) => {
-                            if (rej.throw) {
-                                throw new Error(rej.message);
-                            }
-                            $('#slideApprove').removeClass('unlocked');
-                            $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
-                        });
-                });
-            }
+                    });
+                }
+            <?php endif; ?>
+
+            <?php if (checkRoleList("ROLE.DELETE") && !empty($groupData ?? [])) : ?>
+                const deleteRole = () => {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let res = axios.post("<?= site_url("role/deleteGroup") ?>", {
+                                groupId: groupData.groupId ?? ""
+                            }).then(res => {
+                                xhrThrowRequest(res)
+                                    .then(() => {
+                                        Toast.fire({
+                                            title: 'Success Delete User!',
+                                            icon: 'success'
+                                        }).then(() => {
+                                            window.location.href = "<?= site_url("role") ?>";
+                                        });
+                                    })
+                                    .catch((rej) => {
+                                        if (rej.throw) {
+                                            throw new Error(rej.message);
+                                        }
+                                    });
+                            })
+                        }
+                    })
+                }
+            <?php endif; ?>
 
             Vue.onMounted(() => {
                 $(document).on('click', '.tree .collapse-tree', function(e) {
@@ -233,50 +281,53 @@
                     e.stopPropagation();
                 });
 
-                $(document).on('change', '.tree input[type=checkbox]', function(e) {
-                    if ($(this).attr("name") == "group[]") {
-                        $(this).siblings("ul").find("input[type=checkbox]").prop('checked', this.checked);
-                        if (this.checked) {
-                            $(this).siblings("ul").slideDown();
-                            $(this).siblings("ul").find("ul").slideDown();
+                <?php if (checkRoleList("ROLE.ADD,ROLE.MODIFY")) : ?>
+                    $(document).on('change', '.tree input[type=checkbox]', function(e) {
+                        if ($(this).attr("name") == "group[]") {
+                            $(this).siblings("ul").find("input[type=checkbox]").prop('checked', this.checked);
+                            if (this.checked) {
+                                $(this).siblings("ul").slideDown();
+                                $(this).siblings("ul").find("ul").slideDown();
 
-                            $(this).siblings("ul").find("i").addClass("down");
-                            $(this).siblings("span").find("i").addClass("down");
-                        } else {
-                            $(this).siblings("ul").slideUp();
-                            $(this).siblings("ul").find("ul").slideUp();
+                                $(this).siblings("ul").find("i").addClass("down");
+                                $(this).siblings("span").find("i").addClass("down");
+                            } else {
+                                $(this).siblings("ul").slideUp();
+                                $(this).siblings("ul").find("ul").slideUp();
 
-                            $(this).siblings("ul").find("i").removeClass("down");
-                            $(this).siblings("span").find("i").removeClass("down");
+                                $(this).siblings("ul").find("i").removeClass("down");
+                                $(this).siblings("span").find("i").removeClass("down");
+                            }
                         }
-                    }
 
-                    let listLi = $(this).parent().parent().children("li");
-                    let setCheckedParent = true;
-                    if (listLi.children("input[type=checkbox]").length != listLi.children("input[type=checkbox]:checked").length) {
-                        setCheckedParent = false;
-                    }
-                    $(this).parent().parent().parent().children("input[type=checkbox]").prop('checked', setCheckedParent)
-                    $(this).parent().parent().parent().parent().parent().children("input[type=checkbox]").prop('checked', setCheckedParent)
-                    e.stopPropagation();
-                });
+                        let listLi = $(this).parent().parent().children("li");
+                        let setCheckedParent = true;
+                        if (listLi.children("input[type=checkbox]").length != listLi.children("input[type=checkbox]:checked").length) {
+                            setCheckedParent = false;
+                        }
+                        $(this).parent().parent().parent().children("input[type=checkbox]").prop('checked', setCheckedParent)
+                        $(this).parent().parent().parent().parent().parent().children("input[type=checkbox]").prop('checked', setCheckedParent)
+                        e.stopPropagation();
+                    });
+                <?php endif; ?>
 
-                (groupData.roleId ?? "").split(",").forEach((v) => {
-                    let inputCheck = document.querySelector(".tree input[value='" + v + "']");
-                    if (inputCheck) {
-                        inputCheck.checked = true;
-                        fireEvent(inputCheck, 'change');
-                    }
-                })
+                    (groupData.roleId ?? "").split(",").forEach((v) => {
+                        let inputCheck = document.querySelector(".tree input[value='" + v + "']");
+                        if (inputCheck) {
+                            inputCheck.checked = true;
+                            fireEvent(inputCheck, 'change');
+                        }
+                    })
             })
 
             return {
                 groupData,
                 roleList,
                 groupRoleList,
-                SCAllRole,
                 getRoleChecked,
-                saveRole
+
+                <?= (checkRoleList("ROLE.ADD,ROLE.MODIFY") ? "SCAllRole,saveRole," : ""); ?>
+                <?= (checkRoleList("ROLE.DELETE") ? "deleteRole," : ""); ?>
             }
         }
     }).mount("#app")

@@ -10,7 +10,7 @@ class VersionApps extends BaseController
 	public function index()
 	{
         if(!checkRoleList("VERSIONAPPS.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$data = array(
@@ -121,7 +121,7 @@ class VersionApps extends BaseController
 	public function download($id)
 	{
         if(!checkRoleList("VERSIONAPPS.DOWNLOAD")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$versionAppsModel = new VersionAppsModel();
@@ -133,7 +133,7 @@ class VersionApps extends BaseController
 	public function edit()
 	{
         if(!checkRoleList("VERSIONAPPS.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$versionAppsModel = new VersionAppsModel();

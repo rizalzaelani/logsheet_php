@@ -14,7 +14,6 @@ use App\Models\ParameterModel;
 use CodeIgniter\API\ResponseTrait;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Exception;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class Asset extends BaseController
 {
@@ -29,7 +28,7 @@ class Asset extends BaseController
 	public function index()
 	{
 		if (!checkRoleList("MASTER.ASSET.VIEW")) {
-			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
 		$assetModel			= new AssetModel();
@@ -102,7 +101,7 @@ class Asset extends BaseController
 	public function add()
 	{
 		if (!checkRoleList("MASTER.ASSET.ADD")) {
-			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
 		$modelAsset = new AssetModel();
@@ -309,7 +308,7 @@ class Asset extends BaseController
 	public function detail($assetId)
 	{
 		if (!checkRoleList("MASTER.ASSET.DETAIL")) {
-			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
 		$model = new AssetModel();
@@ -639,7 +638,7 @@ class Asset extends BaseController
 	public function download()
 	{
 		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
-			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
 		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/sampleImportParameter.xlsx', null);
@@ -737,7 +736,7 @@ class Asset extends BaseController
 	public function downloadSampleAsset()
 	{
 		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
-			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . '/download/SampleImportAsset.xlsx', null);
 	}

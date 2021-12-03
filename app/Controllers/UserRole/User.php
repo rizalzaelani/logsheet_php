@@ -13,9 +13,9 @@ class User extends BaseController
 {
 	public function index()
 	{
-        // if(!checkRoleList("USER.VIEW")){
-        //     return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
-        // }
+        if(!checkRoleList("USER.VIEW")){
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
+        }
 
 		$data = array(
 			'title' => 'User Logsheet Digital',
@@ -57,6 +57,14 @@ class User extends BaseController
 
 	public function userList()
 	{
+        if(!checkRoleList("USER.VIEW")){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
+
 		try {
             $userModel = new UserModel();
             $clientToken = get_cookie("clientToken");
@@ -98,6 +106,14 @@ class User extends BaseController
 
     public function getUserById()
 	{
+        if(!checkRoleList("USER.VIEW")){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
+
 		try {
             $userModel = new UserModel();
             $clientToken = get_cookie("clientToken");
@@ -141,6 +157,15 @@ class User extends BaseController
 
     public function saveUser()
     {
+        $userId = $this->request->getVar("userId") ?? "";
+        if(($userId == "" && !checkRoleList("USER.ADD")) || ($userId != "" && !checkRoleList("USER.MODIFY"))){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
+
         $isValid = $this->validate([
             'name' => 'required',
             'email' => 'required',
@@ -155,14 +180,12 @@ class User extends BaseController
             ], 400);
         }
 
-        $userId = $this->request->getVar("userId") ?? "";
         $name = $this->request->getVar("name");
         $email = $this->request->getVar("email");
         $password = $this->request->getVar("password") ?? "";
         $tag = $this->request->getVar("tagId");
         $tagLocation = $this->request->getVar("tagLocationId");
         $groupId = $this->request->getVar("groupId");
-
         
         if ($userId == "" && $password == "") {
             return $this->response->setJson([
@@ -234,6 +257,14 @@ class User extends BaseController
     }
 
     public function deleteUser(){
+        if(!checkRoleList("USER.DELETE")){
+        	return $this->response->setJSON([
+        		'status' => 403,
+                'message' => "Sorry, You don't have access",
+        		'data' => []
+        	], 403);
+        }
+
         $isValid = $this->validate([
             'userId' => 'required',
         ]);

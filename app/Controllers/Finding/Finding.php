@@ -15,7 +15,7 @@ class Finding extends BaseController
 	public function index()
 	{
         if(!checkRoleList("FINDING.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$data = array(
@@ -29,7 +29,7 @@ class Finding extends BaseController
 	public function detailList()
 	{
         if(!checkRoleList("FINDING.DETAIL.LIST.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$scheduleTrxId = $this->request->getVar("scheduleTrxId") ?? "";
@@ -72,7 +72,7 @@ class Finding extends BaseController
 	public function detail()
 	{
         if(!checkRoleList("FINDING.DETAIL.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$data = array(
@@ -151,7 +151,7 @@ class Finding extends BaseController
 	public function issue()
 	{
         if(!checkRoleList("FINDING.OPEN")){
-            return View('errors/customError', ['ErrorCode'=>403,'ErrorMessage'=>"Sorry, You don't have access to this page"]);
+            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
 		$scheduleTrxModel = new ScheduleTrxModel();

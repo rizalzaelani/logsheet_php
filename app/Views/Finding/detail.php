@@ -266,8 +266,8 @@
                 timelineNotes,
                 moment,
                 _,
-                <?php (checkRoleList("FINDING.LOG.ADD") ? "updateFindingLog," : "") ?>
-                <?php (checkRoleList("FINDING.CLOSE") ? "closeFinding," : "") ?>
+                <?= (checkRoleList("FINDING.LOG.ADD") ? "updateFindingLog," : "") ?>
+                <?= (checkRoleList("FINDING.CLOSE") ? "closeFinding," : "") ?>
             };
         }
     }).mount("#app")

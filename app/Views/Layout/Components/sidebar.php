@@ -5,117 +5,172 @@
         <img class="c-sidebar-brand-minimized" src="<?= base_url('/img/logo-act-min.png') ?>" width="40" height="38" alt="">
     </div>
     <ul class="c-sidebar-nav ps ps--active-y">
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link active" href="<?= base_url('/Dashboard') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-speedometer') ?>"></use>
-                </svg> Dashboard
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Transaction') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-library-books') ?>"></use>
-                </svg> Transaction
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Finding') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-warning') ?>"></use>
-                </svg> Finding
-            </a>
-        </li>
-        <li class="c-sidebar-nav-title">REPORTING</li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/ReportingAsset') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-library-bookmark') ?>"></use>
-                </svg> Asset
-            </a>
-        </li>
+        <?php if (checkRoleList("DASHBOARD.VIEW")) : ?>
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link active" href="<?= base_url('/Dashboard') ?>">
+                    <svg class="c-sidebar-nav-icon">
+                        <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-speedometer') ?>"></use>
+                    </svg> Dashboard
+                </a>
+            </li>
+        <?php endif; ?>
 
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Report') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-report') ?>"></use>
-                </svg> Report
-            </a>
-        </li>
-        <li class="c-sidebar-nav-title">MASTER DATA</li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Asset'); ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-list-rich') ?>"></use>
-                </svg> Asset
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Location') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-location-pin') ?>"></use>
-                </svg> Location
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Tag') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-tags') ?>"></use>
-                </svg> Tag
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Schedule') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-calendar') ?>"></use>
-                </svg> Schedule
-            </a>
-        </li>
-        <li class="c-sidebar-nav-title">SETTING</li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Notification') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-bell-ring') ?>"></use>
-                </svg> Notification
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/Application') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-list-numbered') ?>"></use>
-                </svg> Application
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item d-none">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/VersionApps') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-paper-plane') ?>"></use>
-                </svg> Version Apps
-            </a>
-        </li>
-        <li class="c-sidebar-nav-title">USER & ROLE</li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/user') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-user') ?>"></use>
-                </svg> User
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/role') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-lock-locked') ?>"></use>
-                </svg> Role
-            </a>
-        </li>
-        <li class="c-sidebar-nav-title">LOG ACTIVTY</li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link" href="<?= base_url('/LogActivity') ?>">
-                <svg class="c-sidebar-nav-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/solid.svg#cis-history') ?>"></use>
-                </svg> Log Activity
-            </a>
-        </li>
+        <?php if (checkRoleList("TRX.VIEW")) : ?>
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link" href="<?= base_url('/Transaction') ?>">
+                    <svg class="c-sidebar-nav-icon">
+                        <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-library-books') ?>"></use>
+                    </svg> Transaction
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <?php if (checkRoleList("FINDING.VIEW")) : ?>
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link" href="<?= base_url('/Finding') ?>">
+                    <svg class="c-sidebar-nav-icon">
+                        <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-warning') ?>"></use>
+                    </svg> Finding
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <?php if (checkRoleList("REPORT.ASSET.VIEW,REPORT.RAWDATA.VIEW")) : ?>
+            <li class="c-sidebar-nav-title">REPORTING</li>
+
+            <?php if (checkRoleList("REPORT.ASSET.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/ReportingAsset') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-library-bookmark') ?>"></use>
+                        </svg> Asset
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (checkRoleList("REPORT.RAWDATA.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Report') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-report') ?>"></use>
+                        </svg> Report
+                    </a>
+                </li>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (checkRoleList("MASTER.ASSET.VIEW,MASTER.TAGLOCATION.VIEW,MASTER.TAG.VIEW")) : ?>
+            <li class="c-sidebar-nav-title">MASTER DATA</li>
+
+            <?php if (checkRoleList("MASTER.ASSET.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Asset'); ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-list-rich') ?>"></use>
+                        </svg> Asset
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (checkRoleList("MASTER.TAGLOCATION.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Location') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-location-pin') ?>"></use>
+                        </svg> Location
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (checkRoleList("MASTER.TAG.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Tag') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-tags') ?>"></use>
+                        </svg> Tag
+                    </a>
+                </li>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (checkRoleList("NOTIFICATION.VIEW,APPLICATION.VIEW,VERSIONAPPS.VIEW,SCHEDULE.VIEW")) : ?>
+            <li class="c-sidebar-nav-title">SETTING</li>
+
+            <?php if (checkRoleList("NOTIFICATION.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Notification') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-bell-ring') ?>"></use>
+                        </svg> Notification
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (checkRoleList("APPLICATION.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Application') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-list-numbered') ?>"></use>
+                        </svg> Application
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (checkRoleList("VERSIONAPPS.VIEW")) : ?>
+                <li class="c-sidebar-nav-item d-none">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/VersionApps') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-paper-plane') ?>"></use>
+                        </svg> Version Apps
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (checkRoleList("SCHEDULE.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Schedule') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-calendar') ?>"></use>
+                        </svg> Schedule
+                    </a>
+                </li>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (checkRoleList("USER.VIEW,ROLE.VIEW")) : ?>
+            <li class="c-sidebar-nav-title">USER & ROLE</li>
+
+            <?php if (checkRoleList("USER.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/user') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-user') ?>"></use>
+                        </svg> User
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (checkRoleList("ROLE.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/role') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-lock-locked') ?>"></use>
+                        </svg> Role
+                    </a>
+                </li>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (checkRoleList("LOGACTIVITY.VIEW")) : ?>
+            <li class="c-sidebar-nav-title">LOG ACTIVTY</li>
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link" href="<?= base_url('/LogActivity') ?>">
+                    <svg class="c-sidebar-nav-icon">
+                        <use xlink:href="<?= base_url('/icons/coreui/svg/solid.svg#cis-history') ?>"></use>
+                    </svg> Log Activity
+                </a>
+            </li>
+        <?php endif; ?>
 
         <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
             <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
