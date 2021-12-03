@@ -132,6 +132,12 @@ const fireEvent = (element, event) => {
     }
 }
 
+function validateEmail(email) 
+{
+    let re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+
 //Convert Table to Json
 function tableToJson(idTable) {
     var myRows = [];

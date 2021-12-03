@@ -118,6 +118,11 @@ $routes->add('/Tag/uploadFile', 'Master\Tag::uploadFile');
 $routes->add('/Tag/insertTag', 'Master\Tag::insertTag');
 
 $routes->add('/Notification', 'Setting/Notification::index');
+$routes->post('/Notification/datatable', 'Setting/Notification::datatable');
+$routes->post('/Notification/saveNotif', 'Setting/Notification::saveNotif');
+$routes->post('/Notification/deleteNotif', 'Setting/Notification::deleteNotif');
+$routes->post('/Notification/restoreNotif', 'Setting/Notification::restoreNotif');
+$routes->post('/Notification/changeStatus', 'Setting/Notification::changeStatus');
 
 $routes->get('/Transaction', 'Transaction/Transaction::index');
 $routes->get('/Transaction/detail', 'Transaction/Transaction::detail');

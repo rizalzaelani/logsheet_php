@@ -500,7 +500,7 @@
                         assetIdAM.push(valAM);
                     } else {
                         let inVOf = assetIdAM.findIndex((v) => v == valAM);
-                        if (inVOf != undefined) {
+                        if (inVOf != undefined && inVOf >= 0) {
                             assetIdAM.splice(inVOf, 1);
                         }
                     }
@@ -653,7 +653,7 @@
                             });
                         } else {
                             let itemIndex = adviceDateAM.findIndex(i => i.assetId == assetId);
-                            if (itemIndex != undefined) {
+                            if (itemIndex != undefined && itemIndex >= 0) {
                                 if (cekAD[0].date == date) {
                                     adviceDateAM.splice(itemIndex, 1);
                                 } else {

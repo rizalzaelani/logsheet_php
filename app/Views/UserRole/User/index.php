@@ -382,10 +382,10 @@
 						})
 					}
 				} else {
-					if (!userFormErr.name) userFormErr.name = "Name is required";
-					if (!userFormErr.email) userFormErr.email = "Email is required";
-					if (!userFormErr.groupId) userFormErr.groupId = "Please select the role";
-					if (!userFormErr.password) userFormErr.password = "Enter a password";
+					if (!userForm.name) userFormErr.name = "Name is required";
+					if (!userForm.email) userFormErr.email = "Email is required";
+					if (!userForm.groupId) userFormErr.groupId = "Please select the role";
+					if (!userForm.password) userFormErr.password = "Enter a password";
 				}
 			}
 
