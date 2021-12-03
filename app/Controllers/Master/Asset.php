@@ -260,7 +260,7 @@ class Asset extends BaseController
 					$file = $this->request->getFile('photo' . json_decode($post['parameter'][$i])->parameterId);
 					if ($file != '') {
 						$name = "IMG_" . $file->getRandomName();
-						$file->move('../public/assets/uploads/img', $name);
+						$file->move('upload/img', $name);
 						$dataParam = array(
 							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
 							'assetId' => $assetId,
@@ -567,7 +567,7 @@ class Asset extends BaseController
 					$file = $this->request->getFile('photo' . json_decode($post['parameter'][$i])->parameterId);
 					if ($file != '') {
 						$name = "IMG_" . $file->getRandomName();
-						$file->move('../public/assets/uploads/img', $name);
+						$file->move('upload/img', $name);
 						$dataParam = array(
 							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
 							'assetId' => $assetId,
@@ -649,9 +649,9 @@ class Asset extends BaseController
 		$file = $this->request->getFile('importParam');
 		if ($file) {
 			$newName = "doc" . time() . '.xlsx';
-			$file->move('../uploads/', $newName);
+			$file->move('upload/', $newName);
 			$reader = ReaderEntityFactory::createXLSXReader();
-			$reader->open('../uploads/' . $newName);
+			$reader->open('upload/' . $newName);
 			$dataImport = [];
 			foreach ($reader->getSheetIterator() as $sheet) {
 				$numrow = 1;
@@ -686,7 +686,7 @@ class Asset extends BaseController
 				}
 			}
 			if ($dataImport) {
-				unlink('../uploads/' . $newName);
+				unlink('upload/' . $newName);
 				return $this->response->setJSON(array('status' => 'success', 'message' => '', 'data' => $dataImport));
 			} else {
 				return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Not Found!'));
@@ -738,7 +738,8 @@ class Asset extends BaseController
 		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
-		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . '/download/SampleImportAsset.xlsx', null);
+		
+		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . '/download/SampleImportAsset.xlsx', null);
 	}
 
 	public function import()
@@ -769,9 +770,9 @@ class Asset extends BaseController
 		$file = $this->request->getFile('importAsset');
 		if ($file) {
 			$name = 'docAsset' . time() . '.xlsx';
-			$file->move('../uploads/', $name);
+			$file->move('upload/', $name);
 			$reader = ReaderEntityFactory::createXLSXReader();
-			$reader->open('../uploads/' . $name);
+			$reader->open('upload/' . $name);
 			$dataAsset = [];
 			$parameter = [];
 			$desc = [];
@@ -1011,7 +1012,7 @@ class Asset extends BaseController
 			$reader->close();
 			$data['dataAsset'] = $dataAsset;
 			$data['parameter'] = $parameter;
-			unlink('../uploads/' . $name);
+			unlink('upload/' . $name);
 			return $this->response->setJSON(array(
 				'status' => 200,
 				'message' => 'Success Reading Data.',
