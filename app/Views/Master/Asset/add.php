@@ -2,6 +2,17 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+<style>
+    table>thead>tr>th {
+        vertical-align: middle !important;
+        text-align: left;
+    }
+
+    table>tbody>tr>td {
+        vertical-align: middle !important;
+        text-align: left;
+    }
+</style>
 <?= $this->endSection(); ?>
 <?= $this->section('content') ?>
 <?php
@@ -873,50 +884,50 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     <thead class="bg-primary">
 
                         <tr>
-                            <th class="text-center">Parameter</th>
-                            <th class="text-center">Description</th>
-                            <th class="text-center">Normal</th>
-                            <th class="text-center">Abnormal</th>
-                            <th class="text-center">UoM</th>
-                            <th class="text-center">Show On</th>
-                            <th class="text-center"><i>Status</i></th>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                            <th>Normal</th>
+                            <th>Abnormal</th>
+                            <th>UoM</th>
+                            <th>Show On</th>
+                            <th><i>Status</i></th>
                             <th width="10%" class="text-center" style="border-top-right-radius: 5px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(items, i) in params" :key="i">
-                            <td class="text-center">{{ items.parameterName}}</td>
-                            <td class="text-center">{{ items.description}}</td>
-                            <td class="text-center" v-if="items.max != null && items.max != ''">
+                            <td>{{ items.parameterName}}</td>
+                            <td>{{ items.description}}</td>
+                            <td v-if="items.max != null && items.max != ''">
                                 {{ items.min + ' - ' + items.max }}
                             </td>
-                            <td class="text-center" v-else-if="items.normal != ''">
+                            <td v-else-if="items.normal != ''">
                                 {{ items.normal }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>(Empty)</i>
                             </td>
-                            <td class="text-center" v-if="items.min != null && items.min != ''">
+                            <td v-if="items.min != null && items.min != ''">
                                 {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
-                            <td class="text-center" v-else-if="items.abnormal != ''">
+                            <td v-else-if="items.abnormal != ''">
                                 {{ items.abnormal }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>(Empty)</i>
                             </td>
-                            <td class="text-center" v-if="items.uom != ''">
+                            <td v-if="items.uom != ''">
                                 {{ items.uom }}
                             </td>
-                            <td class="text-center" v-else-if="items.option != ''">
+                            <td v-else-if="items.option != ''">
                                 {{ items.option }}
                             </td>
-                            <td class="text-center" v-else>
+                            <td v-else>
                                 <i>(Empty)</i>
                             </td>
-                            <td class="text-center">{{ items.showOn}}</td>
-                            <td class="text-center"><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
-                            <td class="text-center">
+                            <td>{{ items.showOn}}</td>
+                            <td><i class="text-success"><span class="badge badge-success text-white">New!</span></i></td>
+                            <td>
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i); checkModalAdd = false"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>

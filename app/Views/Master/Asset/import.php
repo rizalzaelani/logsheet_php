@@ -114,12 +114,14 @@
                                         <option value="" selected disabled>Select Category Industry</option>
                                         <option value="K3">K3</option>
                                         <option value="Bengkel">Bengkel</option>
-                                        <option value="K3">K3</option>
+                                        <option value="Toilet">Toilet</option>
                                     </select>
                                 </div>
                                 <div class="pl-3">
                                     <p>Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your assets.</p>
-                                    <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleAsset'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                    <a :class="category == 'K3' ? 'btn btn-link p-0' : 'd-none'" data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleAsset'); ?>" target="_blank" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel K3</a>
+                                    <a :class="category == 'Bengkel' ? 'btn btn-link p-0' : 'd-none'" data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleAsset'); ?>" target="_blank" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel Bengkel</a>
+                                    <a :class="category == 'Toilet' ? 'btn btn-link p-0' : 'd-none'" data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleAsset'); ?>" target="_blank" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel Toilet</a>
                                 </div>
                             </div>
                         </div>
