@@ -1090,6 +1090,7 @@ $sess = $session->get('adminId');
                 <table class="table table-hover w-100 display nowrap" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
+                            <!-- <th>No</th> -->
                             <th>Parameter</th>
                             <th>Description</th>
                             <th>Normal</th>
@@ -1175,17 +1176,66 @@ $sess = $session->get('adminId');
                             <td v-else>
                                 <i class="text-warning"><span class="badge badge-warning text-white">Updated</span></i>
                             </td>
-                            <!-- <td class="text-center" v-if="isEqualParam(i)">
-                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
-                            </td>
-                            <td class="text-center" v-else>
-                                <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
-                            </td> -->
                             <td style="min-width: 90px !important">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
+                        <!-- <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
+                                <template v-for="(val, key) in valGP">
+                                    <template v-if="key == 0 & keyGP != val.parameterName">
+                                        <tr>
+                                            <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
+                                            <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
+                                        </tr>
+                                    </template>
+                                    <tr>
+                                        <template v-if="key == 0 & keyGP == val.parameterName">
+                                            <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td>
+                                        </template>
+                                        <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : valparameterName) }}</td>
+                                        <td>{{ val.description }}</td>
+                                        <template v-if="!val.option">
+                                            <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
+                                            <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
+                                            <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" :val.uom }}</td>
+                                        </template>
+                                        <template v-else>
+                                            <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
+                                            <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                            <td :class="!val.option ? 'font-italic text-center' : ''">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                        </template>
+                                        <template v-if="val.uom != ''">
+                                            <td>
+                                                {{ val.uom }}
+                                            </td>
+                                        </template>
+                                        <template  v-else-if="val.option != ''">
+                                            <td>
+                                                {{ val.option }}
+                                            </td>
+                                        </template>
+                                        <template  v-else>
+                                            <td>
+                                            </td>
+                                        </template>
+                                        <template v-if="val.status == 'old'">
+                                            <td>
+                                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
+                                            </td>
+                                        </template>
+                                        <template v-else>
+                                            <td>
+                                                <i class="text-warning"><span class="badge badge-warning text-white">Updated</span><i>
+                                            </td>
+                                        </template>
+                                        <td style="min-width: 90px !important">
+                                            <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i);checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><iclass="fa fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </template>
+                        </template> -->
                     </tbody>
                 </table>
             </div>
@@ -1274,6 +1324,9 @@ $sess = $session->get('adminId');
                     inputType: '',
                     showOn: '',
                     deletePhoto: false
+                });
+                const parameterGroupData = _.groupBy(parameter, function(val) {
+                    return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
                 });
                 var tempPhoto = ref('');
                 var params = ref([]);
@@ -3408,7 +3461,8 @@ $sess = $session->get('adminId');
                     moreDetailAsset,
                     btnCancelModalParam,
                     btnSaveSorting,
-                    isEqualParam
+                    isEqualParam,
+                    parameterGroupData
                 }
             },
             computed: {

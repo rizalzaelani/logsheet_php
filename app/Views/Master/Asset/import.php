@@ -109,6 +109,14 @@
                         <div class="row mt-2">
                             <div class="col">
                                 <h6>1. Download file template asset</h6>
+                                <div class="pl-3 mb-3">
+                                    <select class="form-control" name="category" id="category">
+                                        <option value="" selected disabled>Select Category Industry</option>
+                                        <option value="K3">K3</option>
+                                        <option value="Bengkel">Bengkel</option>
+                                        <option value="K3">K3</option>
+                                    </select>
+                                </div>
                                 <div class="pl-3">
                                     <p>Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your assets.</p>
                                     <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleAsset'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
@@ -434,6 +442,7 @@
             var parameter = ref([]);
             var index = null;
             var coordinat = ref("");
+            var category = ref("");
 
             function assetUpload() {
                 setTimeout(() => {
@@ -547,6 +556,16 @@
                 window.location.reload();
             }
 
+            onMounted(() => {
+                $('#category').select2({
+                    theme: 'coreui',
+                    placeholder: 'Select Category Industry'
+                })
+                $('#category').on('change', function(){
+                    v.category = $(this).val();
+                })
+            })
+
             return {
                 asset,
                 dataAsset,
@@ -561,7 +580,8 @@
                 isString,
                 index,
                 mapCoordinat,
-                coordinat
+                coordinat,
+                category
             }
         },
     }).mount('#app');
