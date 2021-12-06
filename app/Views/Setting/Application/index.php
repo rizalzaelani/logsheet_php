@@ -482,7 +482,7 @@
 
                 uuidv4,
                 imgSrcSource,
-                
+
                 <?= (checkRoleList("APPLICATION.MODIFY") ? "saveSetting,createCropper,doCrop,cancelCrop," : "") ?>
                 <?= (checkRoleList("APPLICATION.ASSETSTATUS.MODIFY") ? "saveAssetStatus,addAssetStatus," : "") ?>
                 <?= (checkRoleList("APPLICATION.ASSETSTATUS.DELETE") ? "deleteAssetStatus," : "") ?>

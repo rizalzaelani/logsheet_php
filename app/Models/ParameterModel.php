@@ -10,7 +10,7 @@ class ParameterModel extends Model
     protected $table                = 'tblm_parameter';
     protected $primaryKey           = 'parameterId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['parameterId', 'assetId', 'sortId', 'parameterName', 'photo', 'description', 'uom', 'min', 'max', 'normal', 'abnormal', 'option', 'inputType', 'showOn'];
+    protected $allowedFields        = ['parameterId', 'assetId', 'sortId', 'parameterName', 'photo1', 'photo2', 'photo3', 'description', 'uom', 'min', 'max', 'normal', 'abnormal', 'option', 'inputType', 'showOn'];
     protected $createdField         = 'createdAt';
     protected $updatedField         = 'updatedAt';
     protected $deletedField         = 'deletedAt';
@@ -21,9 +21,10 @@ class ParameterModel extends Model
         return $this->builder('vw_parameter')->where('parameterId', $parameterId)->get()->getRowArray();
     }
 
-    public function getAll(array $where = null){
+    public function getAll(array $where = null)
+    {
         $query = $this->builder("vw_parameter");
-        if($where != null){
+        if ($where != null) {
             $query = $query->where($where);
         }
 

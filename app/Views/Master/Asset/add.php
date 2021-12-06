@@ -142,107 +142,110 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         </div>
                         <div class="modal-body">
                             <div class="container">
-                                <form method="post" enctype="multipart/form-data">
-                                    <div class="row mb-3">
-                                        <label class="col-3" for="parameterName">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Parameter name for asset that you have.</div>"></i></label>
-                                        <div class="col-9 p-0">
-                                            <input type="text" class="form-control parameterName" name="parameterName" id="parameterName" placeholder="Parameter Name" v-model="param.parameterName">
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                <div class="row mb-3">
+                                    <label class="col-3" for="parameterName">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Parameter name for asset that you have.</div>"></i></label>
+                                    <div class="col-9 p-0">
+                                        <input type="text" class="form-control parameterName" name="parameterName" id="parameterName" placeholder="Parameter Name" v-model="param.parameterName">
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div class="row mb-3">
-                                        <label class="col-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
-                                        <div class="col-9 p-0">
-                                            <select class="form-control type" name="type" placeholder="Select Type">
-                                                <option value="" selected disabled>Select Type</option>
-                                                <option value="input">Input</option>
-                                                <option value="select">Select</option>
-                                                <option value="checkbox">Checkbox</option>
-                                                <option value="textarea">Free Text</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
+                                    <div class="col-9 p-0">
+                                        <select class="form-control type" name="type" placeholder="Select Type">
+                                            <option value="" selected disabled>Select Type</option>
+                                            <option value="input">Input</option>
+                                            <option value="select">Select</option>
+                                            <option value="checkbox">Checkbox</option>
+                                            <option value="textarea">Free Text</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
-                                        <label class="col-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
-                                        <div class="col-9 p-0">
-                                            <input type="number" class="form-control min" name="min" placeholder="Min Value" v-model="param.min">
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
+                                    <label class="col-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
+                                    <div class="col-9 p-0">
+                                        <input type="number" class="form-control min" name="min" placeholder="Min Value" v-model="param.min">
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
-                                        <label class="col-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
-                                        <div class="col-9 p-0">
-                                            <input type="number" class="form-control max" name="max" placeholder="Max Value" v-model="param.max">
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
+                                    <label class="col-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
+                                    <div class="col-9 p-0">
+                                        <input type="number" class="form-control max" name="max" placeholder="Max Value" v-model="param.max">
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
-                                        <label class="col-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
-                                        <div class="col-9 p-0">
-                                            <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple></select>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
+                                    <label class="col-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
+                                    <div class="col-9 p-0">
+                                        <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple></select>
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
-                                        <label class="col-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
-                                        <div class="col-9 p-0">
-                                            <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple></select>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
+                                    <label class="col-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
+                                    <div class="col-9 p-0">
+                                        <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple></select>
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div :class="((param.inputType == 'input') || (param.inputType == 'select') ? 'row mb-3' : 'd-none')">
-                                        <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
-                                        <div class="col-9 p-0">
-                                            <input type="text" class="form-control uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div :class="((param.inputType == 'input') || (param.inputType == 'select') ? 'row mb-3' : 'd-none')">
+                                    <label class="col-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
+                                    <div class="col-9 p-0">
+                                        <input type="text" class="form-control uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div :class="((param.inputType == 'select') || (param.inputType == 'checkbox') ? 'row mb-3' : 'd-none')">
-                                        <label class="col-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
-                                        <div class="col-9 p-0">
-                                            <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div :class="((param.inputType == 'select') || (param.inputType == 'checkbox') ? 'row mb-3' : 'd-none')">
+                                    <label class="col-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
+                                    <div class="col-9 p-0">
+                                        <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div class="row mb-3">
-                                        <label class="col-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
-                                        <div class="col-9 p-0">
-                                            <select class="form-control showOn" name="showOn" id="showOn" multiple>
-                                                <option value="Running">Running</option>
-                                                <option value="Standby">Standby</option>
-                                                <option value="Repair">Repair</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Field cannot be empty.
-                                            </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
+                                    <div class="col-9 p-0">
+                                        <select class="form-control showOn" name="showOn" id="showOn" multiple>
+                                            <option value="Running">Running</option>
+                                            <option value="Standby">Standby</option>
+                                            <option value="Repair">Repair</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Field cannot be empty.
                                         </div>
                                     </div>
-                                    <div class="row mb-3">
-                                        <label class="col-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
-                                        <textarea class="form-control col-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
+                                    <textarea class="form-control col-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
+                                    <!-- <input type="file" class="p-0 col-9 photo" name="photo" @change="photo" accept="image/png, image/jpeg, image/gif"> -->
+                                    <div class="col-9 p-0">
+                                        <input type="file" class="filepond  w-100" name="photoParam" id="photoParam" @change="photo" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="3" />
                                     </div>
-                                    <div class="row mb-3">
-                                        <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
-                                        <input type="file" class="p-0 col-9 photo" name="photo" @change="photo" accept="image/png, image/jpeg, image/gif">
-                                    </div>
-                                </form>
+
+                                    <!-- <input type=" file" class="filepond p-0 col-9 w-100" name="filepond" id="photoParam" accept="image/png, image/jpeg, image/gif"> -->
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -1023,6 +1026,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 showOn: '',
             });
             var params = ref([]);
+            var filepondParam = ref("");
+            var paramPhoto = ref("");
+            var files = ref("");
+            var url = ref("");
             var importList = reactive({});
             var listNewParam = ref([]);
             var moreDetailAsset = ref(false);
@@ -1049,9 +1056,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function photo(event) {
-                this.param.photo = event.target.files[0];
-                let photo = URL.createObjectURL(event.target.files[0])
-                console.log(photo);
+                // this.param.photo = event.target.files[0];
+                // let photo = URL.createObjectURL(event.target.files[0])
+                // console.log(photo);
+                console.log(event.target.files)
             }
 
             function importParameter() {
@@ -1104,8 +1112,34 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             function addParameter() {
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
+
+                FilePond.destroy(document.querySelector('#photoParam'));
+                this.paramPhoto = ref("");
+
+                $('#photoParam').filepond('removeFiles');
+
                 $('#normal').find('option').remove();
                 $('#abnormal').find('option').remove();
+                filepondParam = {
+                    acceptedFileTypes: ['image/png', 'image/jpeg'],
+                    allowFilePoster: true,
+                    allowImagePreview: true,
+                    imagePreviewMaxHeight: 200,
+                    allowImageCrop: true,
+                    allowMultiple: false,
+                    credits: false,
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                };
+                let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                pond.on('addfile', (error, file) => {
+                    v.paramPhoto = file.file
+                })
+                pond.on('removefile', (error, file) => {
+                    v.paramPhoto = ref("");
+                })
             }
 
             function addTempParameter() {
@@ -1288,7 +1322,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     if (this.param.showOn == '') {
                         $('.showOn').addClass('is-invalid');
                     }
-
+                    $('#photoParam').filepond('removeFiles');
+                    this.param.photo = this.paramPhoto;
                     this.params.push(this.param);
                     this.param = reactive({
                         parameterId: uuidv4(),
@@ -1305,10 +1340,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         inputType: '',
                         showOn: '',
                     })
+
+                    $('#photoParam').filepond('removeFiles');
+
                     $('.type').val('').trigger("change");
                     $('#showOn').val('').trigger('change');
                     $('#normal').val('').trigger("change");
                     $('#abnormal').val('').trigger('change');
+
                     const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
@@ -1333,9 +1372,46 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function editTempParameter(index) {
+                this.paramPhoto = ref("");
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
                 let data = this.params[index];
+                if (data.photo != "") {
+                    FilePond.destroy(document.querySelector('#photoParam'));
+                    let url = URL.createObjectURL(data.photo)
+                    const inputElement = document.querySelector('#photoParam');
+                    var photoEdit = {
+                        acceptedFileTypes: ['image/png', 'image/jpeg'],
+                        allowFilePoster: true,
+                        allowImagePreview: true,
+                        imagePreviewMaxHeight: 200,
+                        allowImageCrop: true,
+                        allowMultiple: false,
+                        credits: false,
+                        styleLoadIndicatorPosition: 'center bottom',
+                        styleProgressIndicatorPosition: 'right bottom',
+                        styleButtonRemoveItemPosition: 'left bottom',
+                        styleButtonProcessItemPosition: 'right bottom',
+                        files: [{
+                            source: url,
+                            options: {
+                                type: 'local',
+                                file: data.photo,
+                                metadata: {
+                                    poster: ''
+                                }
+                            }
+                        }]
+                    };
+                    let pond = FilePond.create(inputElement, photoEdit);
+                    pond.on('addfile', (error, file) => {
+                        v.paramPhoto = file.file;
+                    })
+                    pond.on('removefile', (error, file) => {
+                        v.paramPhoto = ref("");
+                    })
+                }
+
                 this.param.parameterId = data.parameterId;
                 this.param.sortId = null;
                 this.param.parameterName = data.parameterName;
@@ -1368,12 +1444,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     showOn: this.param.showOn,
                     i: index,
                 })
-                if (this.param.photo != "") {
-                    $('#previewImg').show();
-                    $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
-                } else if (this.param.photo == "" || this.param.photo == null) {
-                    $('#previewImg').hide();
-                }
                 if (v.param.inputType != '') {
                     $('.type').val(v.param.inputType).trigger("change");
                 }
@@ -1591,7 +1661,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         parameterId: this.param.parameterId,
                         sortId: this.param.sortId,
                         parameterName: this.param.parameterName,
-                        photo: this.param.photo,
+                        photo: this.paramPhoto,
                         description: this.param.description,
                         uom: this.param.uom,
                         min: this.param.min,
@@ -1618,6 +1688,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.param.inputType = '';
                     this.param.showOn = '';
                     this.param.i = null;
+
                     const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
@@ -2252,6 +2323,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             };
 
             onMounted(() => {
+                FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
                 $('#assetName').focus();
                 let dataAssetName = assetData.assetName;
                 let dataAssetNumber = assetData.assetNumber;
@@ -2278,6 +2350,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         }
                     }
                 })
+
+                let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                pond.on('addfile', (error, file) => {
+                    v.paramPhoto = file.file
+                });
+                pond.on('removefile', (error, file) => {
+                    v.paramPhoto = ref("");
+                })
+
 
             });
             return {
@@ -2323,6 +2404,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 addTagLocation,
                 save,
                 submited,
+                filepondParam,
+                paramPhoto,
+                files,
+                url
             };
         },
         computed: {

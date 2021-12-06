@@ -156,6 +156,34 @@ class Asset extends BaseController
 
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
+		// if (file_exists('../uploads/Asset/' . 'file' . $this->session->get('adminId'))) {
+		// 	foreach ($post['parameter'] as $key => $value) {
+		// 		$file = $this->request->getFile('photo' . json_decode($post['parameter'][$key])->parameterId);
+		// 		$name = "";
+		// 		if ($file != "") {
+		// 			$name = $file->getRandomName();
+		// 			$image = \Config\Services::image()
+		// 				->withFile($file)
+		// 				->resize(140,140, true, 'heigth')
+		// 				->save('../uploads/Asset/file' . $this->session->get('adminId') . '/' . $name);
+		// 		}
+		// 	}
+		// }else{
+		// 	mkdir('../uploads/Asset/' . 'file' . $this->session->get('adminId'));
+		// 	foreach ($post['parameter'] as $key => $value) {
+		// 		$file = $this->request->getFile('photo' . json_decode($post['parameter'][$key])->parameterId);
+		// 		$name = "";
+		// 		if ($file != "") {
+		// 			$name = $file->getRandomName();
+		// 			$image = \Config\Services::image()
+		// 				->withFile($file)
+		// 				->resize(140,140, true, 'heigth')
+		// 				->save('../uploads/Asset/file' . $this->session->get('adminId') . '/' . $name);
+		// 		}
+		// 	}
+		// }
+		// die();
+
 		if (isset($post['assetId'])) {
 			// asset
 			$dataAsset = array(
@@ -258,18 +286,43 @@ class Asset extends BaseController
 
 			// asset parameter
 			$lengthParam = count($post['parameter']);
+			$dirPath = 'upload/Asset';
 			if ($post['parameter'][0] != '') {
 				for ($i = 0; $i < $lengthParam; $i++) {
 					$file = $this->request->getFile('photo' . json_decode($post['parameter'][$i])->parameterId);
 					if ($file != '') {
-						$name = "IMG_" . $file->getRandomName();
-						$file->move('../public/assets/uploads/img', $name);
+						$name1 = "";
+						$name2 = "";
+						$name3 = "";
+						if (!is_dir($dirPath)) {
+							mkdir($dirPath);
+						}
+						$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
+						if (!is_dir($dirPhoto)) {
+							mkdir($dirPhoto);
+						}
+						$name1 = 'paramPhotoH_' . $file->getRandomName();
+						$image1 = \Config\Services::image()
+							->withFile($file)
+							->save($dirPhoto . '/' . $name1);
+						$name2 = 'paramPhotoM_' . $file->getRandomName();
+						$image2 = \Config\Services::image()
+							->withFile($file)
+							->resize(480,480, true, 'heigth')
+							->save($dirPhoto . '/' . $name2);
+						$name3 = 'paramPhotoL_' . $file->getRandomName();
+						$image3 = \Config\Services::image()
+							->withFile($file)
+							->resize(144,144, true, 'heigth')
+							->save($dirPhoto . '/' . $name3);
 						$dataParam = array(
 							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
 							'assetId' => $assetId,
 							'sortId' => $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo' => $name,
+							'photo1' => base_url() . '/' . $dirPhoto . '/' .$name1,
+							'photo2' => base_url() . '/' . $dirPhoto . '/' .$name2,
+							'photo3' => base_url() . '/' . $dirPhoto . '/' .$name3,
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
@@ -287,7 +340,9 @@ class Asset extends BaseController
 							'assetId' => $assetId,
 							'sortId' => $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo' => '',
+							'photo1' => '',
+							'photo2' => '',
+							'photo3' => '',
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
@@ -541,25 +596,92 @@ class Asset extends BaseController
 			}
 
 			//edited parameter
+			$dirPath = 'upload/Asset';
 			if ($post['editedParameter'][0] != "") {
 				$lengthEditedParameter = count($post['editedParameter']);
 				for ($i = 0; $i < $lengthEditedParameter; $i++) {
-					$dataEdited = json_decode($post['editedParameter'][$i]);
-					$data = array(
-						'parameterId'		=> $dataEdited->parameterId,
-						'sortId'			=> $dataEdited->sortId,
-						'parameterName'		=> $dataEdited->parameterName,
-						'description'		=> $dataEdited->description,
-						'uom'				=> $dataEdited->uom,
-						'min'				=> $dataEdited->min,
-						'max'				=> $dataEdited->max,
-						'normal'			=> $dataEdited->normal,
-						'abnormal'			=> $dataEdited->abnormal,
-						'option'			=> $dataEdited->option,
-						'inputType'			=> $dataEdited->inputType,
-						'showOn'			=> $dataEdited->showOn,
-					);
-					$parameterModel->update($dataEdited->parameterId, $data);
+					$file = $this->request->getFile('photo' . json_decode($post['editedParameter'][$i])->parameterId);
+					if ($file != '') {
+						$name1 = "";
+						$name2 = "";
+						$name3 = "";
+						if (!is_dir($dirPath)) {
+							mkdir($dirPath);
+						}
+						$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
+						if (!is_dir($dirPhoto)) {
+							mkdir($dirPhoto);
+						}
+						$name1 = 'paramPhotoH_' . $file->getRandomName();
+						$image1 = \Config\Services::image()
+							->withFile($file)
+							->save($dirPhoto . '/' . $name1);
+						$name2 = 'paramPhotoM_' . $file->getRandomName();
+						$image2 = \Config\Services::image()
+							->withFile($file)
+							->resize(480,480, true, 'heigth')
+							->save($dirPhoto . '/' . $name2);
+						$name3 = 'paramPhotoL_' . $file->getRandomName();
+						$image3 = \Config\Services::image()
+							->withFile($file)
+							->resize(144,144, true, 'heigth')
+							->save($dirPhoto . '/' . $name3);
+						$dataEdited = json_decode($post['editedParameter'][$i]);
+						$data = array(
+							'parameterId'		=> $dataEdited->parameterId,
+							'sortId'			=> $dataEdited->sortId,
+							'parameterName'		=> $dataEdited->parameterName,
+							'photo1' 			=> base_url() . '/' . $dirPhoto . '/' .$name1,
+							'photo2' 			=> base_url() . '/' . $dirPhoto . '/' .$name2,
+							'photo3' 			=> base_url() . '/' . $dirPhoto . '/' .$name3,
+							'description'		=> $dataEdited->description,
+							'uom'				=> $dataEdited->uom,
+							'min'				=> $dataEdited->min,
+							'max'				=> $dataEdited->max,
+							'normal'			=> $dataEdited->normal,
+							'abnormal'			=> $dataEdited->abnormal,
+							'option'			=> $dataEdited->option,
+							'inputType'			=> $dataEdited->inputType,
+							'showOn'			=> $dataEdited->showOn,
+						);
+						$parameterModel->update($dataEdited->parameterId, $data);
+						if ($dataEdited->photo1 != '' && $dataEdited->photo1 != '' && $dataEdited->photo1 != '') {                               
+							$path1 = str_replace(base_url() . '/', "" ,$dataEdited->photo1);
+							$path2 = str_replace(base_url() . '/', "" ,$dataEdited->photo2);
+							$path3 = str_replace(base_url() . '/', "" ,$dataEdited->photo3);
+							unlink($path1);
+							unlink($path2);
+							unlink($path3);
+						}
+					}else{
+						$dataEdited = json_decode($post['editedParameter'][$i]);
+						$data = array(
+							'parameterId'		=> $dataEdited->parameterId,
+							'sortId'			=> $dataEdited->sortId,
+							'parameterName'		=> $dataEdited->parameterName,
+							'photo1'			=> $dataEdited->deletePhoto == true ? '' : $dataEdited->photo1,
+							'photo2'			=> $dataEdited->deletePhoto == true ? '' : $dataEdited->photo2,
+							'photo3'			=> $dataEdited->deletePhoto == true ? '' : $dataEdited->photo3,
+							'description'		=> $dataEdited->description,
+							'uom'				=> $dataEdited->uom,
+							'min'				=> $dataEdited->min,
+							'max'				=> $dataEdited->max,
+							'normal'			=> $dataEdited->normal,
+							'abnormal'			=> $dataEdited->abnormal,
+							'option'			=> $dataEdited->option,
+							'inputType'			=> $dataEdited->inputType,
+							'showOn'			=> $dataEdited->showOn,
+						);
+						$parameterModel->update($dataEdited->parameterId, $data);
+						if ($dataEdited->deletePhoto) {
+							$path1 = str_replace(base_url() . '/', "" ,$dataEdited->photo1);
+							$path2 = str_replace(base_url() . '/', "" ,$dataEdited->photo2);
+							$path3 = str_replace(base_url() . '/', "" ,$dataEdited->photo3);
+							unlink($path1);
+							unlink($path2);
+							unlink($path3);
+						}
+					}
 				}
 			}
 
@@ -569,14 +691,38 @@ class Asset extends BaseController
 				for ($i = 0; $i < $lengthParam; $i++) {
 					$file = $this->request->getFile('photo' . json_decode($post['parameter'][$i])->parameterId);
 					if ($file != '') {
-						$name = "IMG_" . $file->getRandomName();
-						$file->move('../public/assets/uploads/img', $name);
+						$name1 = "";
+						$name2 = "";
+						$name3 = "";
+						if (!is_dir($dirPath)) {
+							mkdir($dirPath);
+						}
+						$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
+						if (!is_dir($dirPhoto)) {
+							mkdir($dirPhoto);
+						}
+						$name1 = 'paramPhotoH_' . $file->getRandomName();
+						$image1 = \Config\Services::image()
+							->withFile($file)
+							->save($dirPhoto . '/' . $name1);
+						$name2 = 'paramPhotoM_' . $file->getRandomName();
+						$image2 = \Config\Services::image()
+							->withFile($file)
+							->resize(480,480, true, 'heigth')
+							->save($dirPhoto . '/' . $name2);
+						$name3 = 'paramPhotoL_' . $file->getRandomName();
+						$image3 = \Config\Services::image()
+							->withFile($file)
+							->resize(144,144, true, 'heigth')
+							->save($dirPhoto . '/' . $name3);
 						$dataParam = array(
 							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
 							'assetId' => $assetId,
 							'sortId' => (json_decode($post['parameter'][$i])->sortId) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->sortId,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo' => $name,
+							'photo1' => base_url() . '/' . $dirPhoto . '/' .$name1,
+							'photo2' => base_url() . '/' . $dirPhoto . '/' .$name2,
+							'photo3' => base_url() . '/' . $dirPhoto . '/' .$name3,
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
@@ -595,7 +741,9 @@ class Asset extends BaseController
 							'assetId' => $assetId,
 							'sortId' => (json_decode($post['parameter'][$i])->sortId) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->sortId,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo' => '',
+							'photo1' => '',
+							'photo2' => '',
+							'photo3' => '',
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
