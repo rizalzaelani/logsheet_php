@@ -328,6 +328,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             <th>Abnormal</th>
                                             <!-- <th>input type</th> -->
                                             <th>UoM</th>
+                                            <th>Option</th>
                                             <th>show On</th>
                                         </tr>
                                     </thead>
@@ -886,8 +887,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <tr v-for="(items, i) in params" :key="i">
                             <td class="text-center">{{ items.parameterName}}</td>
                             <td class="text-center">{{ items.description}}</td>
-                            <td class="text-center" v-if="items.max != null">
-                                {{ items.max }}
+                            <td class="text-center" v-if="items.max != null && items.max != ''">
+                                {{ items.min + ' - ' + items.max }}
                             </td>
                             <td class="text-center" v-else-if="items.normal != ''">
                                 {{ items.normal }}
@@ -895,8 +896,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td class="text-center" v-else>
                                 <i>(Empty)</i>
                             </td>
-                            <td class="text-center" v-if="items.min != null">
-                                {{ items.min }}
+                            <td class="text-center" v-if="items.min != null && items.min != ''">
+                                {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
                             <td class="text-center" v-else-if="items.abnormal != ''">
                                 {{ items.abnormal }}
@@ -2829,30 +2830,54 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             serverSide: false,
             scrollX: false,
             paging: false,
+            ordering: false,
             dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
             data: importList,
             columns: [{
-                    data: "no"
-                },
-                {
-                    data: "parameterName"
-                },
-                {
-                    data: "description"
-                },
-                {
-                    data: "maxNormal"
-                },
-                {
-                    data: "minAbnormal"
-                },
-                {
-                    data: "uomOption"
-                },
-                {
-                    data: "showOn"
-                }
-            ],
+                        data: "no"
+                    },
+                    {
+                        data: "parameterName"
+                    },
+                    {
+                        data: "description"
+                    },
+                    {
+                        data: "max",
+                        render: function(type, data, row, meta){
+                            if (row.max != '') {
+                                if (row.flipMax && row.flipMin) {
+                                    return '<div>'+row.min + ' - ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                }
+                                return row.min + ' - ' + row.max
+                            }else{
+                                return row.normal
+                            }
+                        }
+                    },
+                    {
+                        data: "min",
+                        render: function(type, data, row, meta){
+                            if (row.min != '') {
+                                if (row.flipMax && row.flipMin) {
+                                    return '<div>x < ' + row.min + '; x > ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                }
+                                return 'x < ' + row.min + '; x > ' + row.max
+                            }else{
+                                return row.abnormal
+                            }
+                        }
+                    },
+                    {
+                        data: "uom"
+                    },
+                    {
+                        data: "option"
+                    },
+                    {
+                        data: "showOn"
+                    }
+                ],
             columnDefs: [{
                 targets: 0,
                 searchable: false,

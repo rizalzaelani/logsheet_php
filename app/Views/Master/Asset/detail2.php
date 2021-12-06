@@ -289,7 +289,7 @@ $sess = $session->get('adminId');
                                 <h5 :class="checkModalAdd == true ? 'modal-title' : 'd-none'" id="titleModalAdd">Add Parameter</h5>
                                 <h5 :class="checkModalAdd == true ? 'd-none': 'modal-title'" id="titleModalEdit">Edit Parameter</h5>
                             </div>
-                            <div :class="checkModalAdd == true || param.photo1 == '' || this.param.deletePhoto == true ? 'modal-body' : 'modal-body pt-0'">
+                            <div :class="checkModalAdd == true || param.photo1 == '' || param.photo1 == null || this.param.deletePhoto == true ? 'modal-body' : 'modal-body pt-0'">
                                 <div style="display: none !important;" class="row mb-3" id="previewImg">
                                     <div class="col p-0 d-flex justify-content-center align-items-center" style="height:150px; background-color: #f2f4f8" id="preview"></div>
                                 </div>
@@ -486,6 +486,7 @@ $sess = $session->get('adminId');
                                                 <th>Abnormal</th>
                                                 <!-- <th>input type</th> -->
                                                 <th>UoM</th>
+                                                <th>Option</th>
                                                 <th>show On</th>
                                             </tr>
                                         </thead>
@@ -1105,8 +1106,8 @@ $sess = $session->get('adminId');
                         <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null">
-                                {{ items.max }}
+                            <td v-if="items.max != null && items.max != ''">
+                                {{ items.min + ' - ' + items.max }}
                             </td>
                             <td v-else-if="items.normal != ''" style="max-height: 150px !important;">
                                 {{ items.normal }}
@@ -1114,8 +1115,8 @@ $sess = $session->get('adminId');
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null">
-                                {{ items.min }}
+                            <td v-if="items.min != null && items.min != ''">
+                                {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
                             <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
@@ -1589,7 +1590,7 @@ $sess = $session->get('adminId');
                         $('#deletePhoto').prop('checked', false);
                     }
 
-                    if (this.param.photo1 != "" && !this.param.deletePhoto) {
+                    if (this.param.photo1 != "" && !this.param.deletePhoto && this.param.photo1 != null) {
                         $('#previewImg').show();
                         $('#preview').append("<img class='img-thumbnail' id='imgParam' style='height:150px; cursor: pointer' src='" + this.param.photo1 + "' alt=''  onclick='modalPreviewImg()' data-toggle='tooltip' title='click to preview this image'>");
                     } else if (this.param.photo1 == "" || this.param.photo1 == null || this.param.deletePhoto) {
@@ -3769,6 +3770,7 @@ $sess = $session->get('adminId');
         })
 
         var loadListImport = (importList) => {
+            console.log(importList);
             v.tableImportParam = $('#tableImport').DataTable({
                 drawCallback: function(settings) {
                     $('#all').removeClass('sorting_asc');
@@ -3824,6 +3826,7 @@ $sess = $session->get('adminId');
                 serverSide: false,
                 scrollX: false,
                 paging: false,
+                ordering: false,
                 dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
                 data: importList,
                 columns: [{
@@ -3836,13 +3839,36 @@ $sess = $session->get('adminId');
                         data: "description"
                     },
                     {
-                        data: "maxNormal"
+                        data: "max",
+                        render: function(type, data, row, meta){
+                            if (row.max != '') {
+                                if (row.flipMax && row.flipMin) {
+                                    return '<div>'+row.min + ' - ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                }
+                                return row.min + ' - ' + row.max
+                            }else{
+                                return row.normal
+                            }
+                        }
                     },
                     {
-                        data: "minAbnormal"
+                        data: "min",
+                        render: function(type, data, row, meta){
+                            if (row.min != '') {
+                                if (row.flipMax && row.flipMin) {
+                                    return '<div>x < ' + row.min + '; x > ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                }
+                                return 'x < ' + row.min + '; x > ' + row.max
+                            }else{
+                                return row.abnormal
+                            }
+                        }
                     },
                     {
-                        data: "uomOption"
+                        data: "uom"
+                    },
+                    {
+                        data: "option"
                     },
                     {
                         data: "showOn"
