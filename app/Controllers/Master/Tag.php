@@ -6,6 +6,10 @@ use App\Controllers\BaseController;
 use App\Models\TagModel;
 use App\Models\AssetTagModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Entity\Style\Color;
 
 class Tag extends BaseController
 {
@@ -34,17 +38,17 @@ class Tag extends BaseController
 
     public function datatable()
     {
-		$request = \Config\Services::request();
+        $request = \Config\Services::request();
 
-        if(!checkRoleList("MASTER.TAG.VIEW")){
-			echo json_encode(array(
-				"draw" => $request->getPost('draw'),
-				"recordsTotal" => 0,
-				"recordsFiltered" => 0,
-				"data" => [],
-				'status' => 403,
-				'message' => "You don't have access to this page"
-			));
+        if (!checkRoleList("MASTER.TAG.VIEW")) {
+            echo json_encode(array(
+                "draw" => $request->getPost('draw'),
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => [],
+                'status' => 403,
+                'message' => "You don't have access to this page"
+            ));
         }
 
         $table = "tblm_tag";
@@ -53,7 +57,7 @@ class Tag extends BaseController
         $order = array('createdAt' => 'asc');
         $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
         $where = [
-			'userId' => $this->session->get("adminId"),
+            'userId' => $this->session->get("adminId"),
         ];
         $list = $DTModel->datatable($where);
         $output = array(
@@ -69,12 +73,12 @@ class Tag extends BaseController
 
     public function add()
     {
-        if(!checkRoleList("MASTER.TAG.ADD")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAG.ADD")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $model = new TagModel();
@@ -96,12 +100,12 @@ class Tag extends BaseController
 
     public function edit()
     {
-        if(!checkRoleList("MASTER.TAG.VIEW")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAG.VIEW")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $model = new TagModel();
@@ -114,12 +118,12 @@ class Tag extends BaseController
 
     public function update()
     {
-        if(!checkRoleList("MASTER.TAG.UPDATE")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAG.UPDATE")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $model = new TagModel();
@@ -128,11 +132,12 @@ class Tag extends BaseController
         if ($json->tagName != '' && $json->description != '') {
             $data = array(
                 'tagName' => $json->tagName,
+                'userId' => $this->session->get("adminId"),
                 'description' => $json->description,
             );
             $model->update($tagId, $data);
             echo json_encode(array('status' => 'success', 'message' => 'You have successfully update data.', 'data' => $data));
-        }else{
+        } else {
             echo json_encode(array('status' => 'failed', 'message' => 'All fields cannot be empty.', 'data' => $json));
         }
         die();
@@ -140,12 +145,12 @@ class Tag extends BaseController
 
     public function deleteTag()
     {
-        if(!checkRoleList("MASTER.TAG.DELETE")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAG.DELETE")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $modelAssetTag = new AssetTagModel();
@@ -168,16 +173,17 @@ class Tag extends BaseController
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
-        return $this->response->download('../public/download/tag.xlsx', null);
+        // return $this->response->download('../public/download/tag.xlsx', null);
+        return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/tag.xlsx', null);
     }
     public function uploadFile()
     {
-        if(!checkRoleList("MASTER.TAG.IMPORT")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAG.IMPORT")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $file = $this->request->getFile('fileImportTag');
@@ -216,12 +222,12 @@ class Tag extends BaseController
 
     public function insertTag()
     {
-        if(!checkRoleList("MASTER.TAG.IMPORT")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAG.IMPORT")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $tagModel = new TagModel();
@@ -231,12 +237,50 @@ class Tag extends BaseController
         for ($i = 0; $i < $length; $i++) {
             $data = [
                 'tagId' => null,
+                'userId' => $this->session->get("adminId"),
                 'tagName'   => $dataTag[$i]->tagName,
                 'description'   => $dataTag[$i]->description,
             ];
             $tagModel->insert($data);
         }
         echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
+        die();
+    }
+
+    public function exportExcel()
+    {
+        $tagModel = new TagModel();
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $userId = $this->session->get('adminId');
+        $data = $tagModel->where('userId', $userId)->findAll();
+
+        $writer->setShouldUseInlineStrings(true);
+        $header = ["No", "Tag", "Description"];
+        $styleHeader = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::CENTER)
+            ->setBackgroundColor(COLOR::YELLOW)
+            ->build();
+        $styleBody = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::LEFT)
+            ->build();
+        $dataArr = [];
+
+        if (count($data)) {
+            foreach ($data as $key => $value) {
+                $arr = [$key + 1, $value['tagName'], $value['description']];
+                array_push($dataArr, $arr);
+            }
+        }
+        $fileName = "Tag - " . date("d M Y") . '.xlsx';
+        $writer->openToBrowser($fileName);
+
+        $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
+        $writer->addRow($rowFromValues);
+        foreach ($dataArr as $key => $value) {
+            $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+            $writer->addRow($rowFromValues);
+        }
+        $writer->close();
         die();
     }
 }

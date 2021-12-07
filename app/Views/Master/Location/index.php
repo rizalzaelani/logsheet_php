@@ -21,10 +21,10 @@
                         <a href="javascript:;" class="dt-search" data-target="#tableLocation"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Location</a>
+                            <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Tag Location</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
-                            <a class="dropdown-item" href="<?= base_url('/Location/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
+                            <a class="dropdown-item" target="_blank" href="<?= base_url('/Location/exportExcel'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
@@ -91,20 +91,34 @@
                                     <div class="row">
                                         <div class="col">
                                             <div class="mb-3">
-                                                <a href="<?= base_url('/Location/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
-                                            </div>
-                                            <div>
-                                                <b><i>Ketentuan Upload File</i></b>
-                                                <ol>
-                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
-                                                </ol>
+                                                <h5>Follow these steps to import your tag location.</h5>
+                                                <hr>
+                                                <div class="mt-3">
+                                                    <h6>1. Download file template tag location</h6>
+                                                    <div class="pl-3">
+                                                        <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your tag location.</p>
+                                                        <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Location/download'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>2. Insert the tag location data you have into template</h6>
+                                                    <div class="pl-3">
+                                                        <p>Using Excel or other spreadsheet software, enter the detailed tag location data into our template file. Make sure the data matches the header fields in the template.</p>
+                                                        <b>NOTE :</b>
+                                                        <p class="m-0">Do not change the column headers in the template. This is required for the import to work.
+                                                            A maximum of 30 tag location can be imported at one time.
+                                                            When importing, the application will only enter new data, no data is deleted or updated.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>3. Upload the updated template here</h6>
+                                                    <form action="post" enctype="multipart/form-data">
+                                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="fileImportLocation" id="fileImportLocation" />
+                                                    </form>
+                                                </div>
+                                                <!-- <a href="<?= base_url('/Location/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a> -->
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <form action="post" enctype="multipart/form-data">
-                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="fileImportLocation" id="fileImportLocation" />
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -117,7 +131,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="titleModalAdd">List Parameter</h5>
+                                <h5 class="modal-title" id="titleModalAdd">List Tag Location</h5>
                             </div>
                             <div class="modal-body">
                                 <div class="container">
@@ -158,11 +172,12 @@
             var modalLocation = ref('');
             var table = ref(null);
             var dataLocation = ref('');
+            var tableImport = ref("");
 
             getData = () => {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        this.table = await $('#tableLocation').DataTable({
+                        table = await $('#tableLocation').DataTable({
                             drawCallback: function(settings) {
                                 $(document).ready(function() {
                                     $('[data-toggle="tooltip"]').tooltip();
@@ -214,45 +229,46 @@
 
             };
             handleAdd = () => {
-                    this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
-                    this.modalLocation.show();
-                },
-                uploadFile = () => {
-                    this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
-                    this.modalLocation.show();
-                },
-                insertLocation = () => {
-                    axios.post("<?= base_url('Location/insertLocation'); ?>", {
-                        dataLocation: importList,
-                        tagLocationId: uuidv4()
-                    }).then(res => {
-                        console.log(res);
-                        if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire(
-                                'Success!',
-                                'You have successfully add Location.',
-                                'success'
-                            ).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            })
-                        }
-                    })
-                }
+                this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
+                this.modalLocation.show();
+            };
+            uploadFile = () => {
+                this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
+                this.modalLocation.show();
+            };
+            insertLocation = () => {
+                axios.post("<?= base_url('Location/insertLocation'); ?>", {
+                    dataLocation: importList,
+                    tagLocationId: uuidv4()
+                }).then(res => {
+                    console.log(res);
+                    if (res.data.status == 'success') {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-success',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire(
+                            'Success!',
+                            'You have successfully add Location.',
+                            'success'
+                        ).then(okay => {
+                            if (okay) {
+                                swal.fire({
+                                    title: 'Please Wait!',
+                                    text: 'Redirecting page..',
+                                    onOpen: function() {
+                                        swal.showLoading()
+                                    }
+                                })
+                                // location.reload();
+                                window.location.href = "<?= site_url('Location') ?>";
+                            }
+                        })
+                    }
+                })
+            }
             onMounted(() => {
                 getData();
                 let search = $(".dt-search-input input[data-target='#tableLocation']");
@@ -275,13 +291,15 @@
                 dataLocation,
                 getData,
                 uploadFile,
-                dataLocation
+                dataLocation,
+                tableImport,
+                insertLocation
             }
         },
     }).mount('#app');
 
     $(document).ready(function() {
-        FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+        FilePond.registerPlugin(FilePondPluginFileValidateType);
         let pond = $('#fileImportLocation').filepond({
             acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
             allowMultiple: false,
@@ -322,33 +340,28 @@
     })
 
     var loadListImport = (importList) => {
-        var table = $('#tableImport').DataTable({
-            "processing": false,
-            "serverSide": false,
-            "scrollX": false,
-            "paging": false,
-            "dom": `<"d-flex justify-content-between align-items-center"<i><f>>t`,
-            "data": importList,
-            "columns": [{
-                    "data": "locationName"
+        if (v.tableImport != "") {
+            v.tableImport.clear().destroy()
+        }
+        v.tableImport = $('#tableImport').DataTable({
+            ordering: false,
+            paging: true,
+            dom: `<"d-flex justify-content-between align-items-center"<i><f>>tp`,
+            data: importList,
+            columns: [{
+                    data: "locationName"
                 },
-                // {
-                //     "data": "latitude"
-                // },
-                // {
-                //     "data": "longitude"
-                // },
                 {
-                    "data": "description"
+                    data: "description"
                 },
             ],
-            "columnDefs": [{
-                'targets': 0,
-                'searchable': false,
-                'orderable': false,
-                'className': 'dt-body-center',
+            columnDefs: [{
+                targets: 0,
+                searchable: false,
+                orderable: false,
+                className: 'dt-body-center',
             }],
-            "order": [0, 'asc'],
+            order: [0, 'asc'],
         });
     }
 </script>

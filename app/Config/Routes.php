@@ -40,6 +40,11 @@ $routes->get('/login/testMail', 'Auth/Login::testMail');
 $routes->get('/register', 'Auth/Register::index');
 $routes->post('/register/doRegister', 'Auth/Register::doRegister');
 
+$routes->get('/Wizard', 'Wizard/Wizard::index');
+$routes->post('/Wizard/getInvoice', 'Wizard/Wizard::getInvoice');
+$routes->add('/Wizard/Invoice/(:any)', 'Wizard\Wizard::invoice/$1');
+$routes->post('/Wizard/Invoice/download', 'Wizard/Wizard::download');
+
 $routes->get('/Dashboard', 'Dashboard/Dashboard::index');
 // $routes->get('/Dashboard', 'Dashboard/Dashboard::index');
 $routes->get('/Company', 'Master/Company::index');
@@ -74,7 +79,7 @@ $routes->post('/Asset/insertExcel', 'Master/Asset::insertExcel');
 $routes->post('/Asset/importexcel', 'Master/Asset::importexcel');
 $routes->post('/Asset/update', 'Master\Asset::update');
 $routes->add('/Asset/delete', 'Master\Asset::delete');
-$routes->get('/Asset/download', 'Master/Asset::download');
+$routes->get('/Asset/downloadSampleParameter', 'Master/Asset::downloadSampleParameter');
 $routes->get('/Asset/downloadSampleAsset', 'Master/Asset::downloadSampleAsset');
 $routes->get('/Asset/detailData', 'Master/Asset::detailData');
 $routes->get('/Asset/detailData/(:any)', 'Master/Asset::detailData/$1');
@@ -85,7 +90,7 @@ $routes->post('/Asset/updateTagLocation', 'Master\Asset::updateTagLocation');
 $routes->post('/Asset/addTagLocation', 'Master\Asset::addTagLocation');
 $routes->post('/Asset/updateOperation', 'Master\Asset::updateOperation');
 $routes->post('/Asset/updateTagging', 'Master\Asset::updateTagging');
-$routes->add('/Asset/uploadFile', 'Master\Asset::uploadFile');
+$routes->add('/Asset/getDataImportParameter', 'Master\Asset::getDataImportParameter');
 $routes->post('Asset/insertParameter', 'Master\Asset::insertParameter');
 $routes->post('/Asset/addParameter', 'Master/Asset::addParameter');
 $routes->post('/Asset/editParameter', 'Master/Asset::editParameter');
@@ -107,6 +112,8 @@ $routes->add('/Location/delete', 'Master\Location::delete');
 $routes->add('/Location/download', 'Master\Location::download');
 $routes->add('/Location/uploadFile', 'Master\Location::uploadFile');
 $routes->add('/Location/insertLocation', 'Master\Location::insertLocation');
+$routes->add('/Location/exportExcel', 'Master\Location::exportExcel');
+
 
 $routes->add('/Tag', 'Master/Tag::index');
 $routes->post('/Tag/datatable', 'Master/Tag::datatable');
@@ -117,6 +124,7 @@ $routes->post('/Tag/deleteTag', 'Master/Tag::deleteTag');
 $routes->add('/Tag/download', 'Master\Tag::download');
 $routes->add('/Tag/uploadFile', 'Master\Tag::uploadFile');
 $routes->add('/Tag/insertTag', 'Master\Tag::insertTag');
+$routes->add('/Tag/exportExcel', 'Master\Tag::exportExcel');
 
 $routes->add('/Notification', 'Setting/Notification::index');
 $routes->post('/Notification/datatable', 'Setting/Notification::datatable');
@@ -151,7 +159,12 @@ $routes->get('/ReportingAsset/getRecordByParam', 'Reporting/Asset::getRecordByPa
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');
+
 $routes->get('/Report', 'Reporting/Report::index');
+$routes->add('/Report/transaction', 'Reporting/Report::getTransaction');
+$routes->add('/Report/finding', 'Reporting/Report::getFinding');
+$routes->add('/Report/schedule', 'Reporting/Report::getSchedule');
+$routes->add('/Report/download', 'Reporting/Report::download');
 
 $routes->add('/VersionApps', 'Setting/VersionApps::index');
 $routes->add('/VersionApps/datatable', 'Setting/VersionApps::datatable');

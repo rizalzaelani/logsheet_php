@@ -24,7 +24,7 @@
                             <a class="dropdown-item cursor-pointer" @click="handleAdd()"><i class="fa fa-plus mr-2"></i> Add Tag</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
-                            <a class="dropdown-item" href="<?= base_url('/Tag/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
+                            <a class="dropdown-item" target="_blank" href="<?= base_url('/Tag/exportExcel'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
@@ -89,20 +89,34 @@
                                     <div class="row">
                                         <div class="col">
                                             <div class="mb-3">
-                                                <a href="<?= base_url('/Tag/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a>
-                                            </div>
-                                            <div>
-                                                <b><i>Ketentuan Upload File</i></b>
-                                                <ol>
-                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
-                                                </ol>
+                                                <h5>Follow these steps to import your tag.</h5>
+                                                <hr>
+                                                <div class="mt-3">
+                                                    <h6>1. Download file template tag</h6>
+                                                    <div class="pl-3">
+                                                        <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your tag.</p>
+                                                        <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Tag/download'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>2. Insert the tag data you have into template</h6>
+                                                    <div class="pl-3">
+                                                        <p>Using Excel or other spreadsheet software, enter the detailed tag location data into our template file. Make sure the data matches the header fields in the template.</p>
+                                                        <b>NOTE :</b>
+                                                        <p class="m-0">Do not change the column headers in the template. This is required for the import to work.
+                                                            A maximum of 30 tag can be imported at one time.
+                                                            When importing, the application will only enter new data, no data is deleted or updated.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>3. Upload the updated template here</h6>
+                                                    <form action="post" enctype="multipart/form-data">
+                                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="fileImportTag" id="fileImportTag" />
+                                                    </form>
+                                                </div>
+                                                <!-- <a href="<?= base_url('/Tag/download'); ?>" class="btn btn-success w-100"><i class="fa fa-file-excel"></i> Download Template</a> -->
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <form action="post" enctype="multipart/form-data">
-                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="fileImportTag" id="fileImportTag" />
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -158,6 +172,7 @@
             var tagName = ref('');
             var description = ref('');
             var tagId = ref(null);
+            var tableImport = ref("");
 
             function getData() {
                 return new Promise(async (resolve, reject) => {
@@ -197,14 +212,13 @@
                             ],
                             order: [0, 'asc'],
                             columnDefs: [{
-                                    targets: 2,
-                                    data: "tagId",
-                                    render: function(data, type, row, meta) {
-                                        return `<div class='d-flex justify-content-start align-items-center'><button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editTag(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
+                                targets: 2,
+                                data: "tagId",
+                                render: function(data, type, row, meta) {
+                                    return `<div class='d-flex justify-content-start align-items-center'><button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editTag(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
                                         <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteTag(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
-                                    },
                                 },
-                            ]
+                            }, ]
                         });
                     } catch (er) {
                         console.log(er)
@@ -410,7 +424,8 @@
                 update,
                 uploadFile,
                 insertTag,
-                btnCancel
+                btnCancel,
+                tableImport
             }
         },
     }).mount('#app');
@@ -507,7 +522,7 @@
     }
 
     $(document).ready(function() {
-        FilePond.registerPlugin(FilePondPluginImageCrop, FilePondPluginImagePreview, FilePondPluginImageEdit, FilePondPluginFileValidateType);
+        FilePond.registerPlugin(FilePondPluginFileValidateType);
         let pond = $('#fileImportTag').filepond({
             acceptedFileTypes: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xlsx',
             allowMultiple: false,
@@ -523,7 +538,7 @@
                             importList = rsp.data;
                             if (importList.length > 0) {
                                 loadListImport(importList);
-                                $('#immportTagModal').modal('hide');
+                                $('#importTagModal').modal('hide');
                                 this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
                                 this.myModal.show();
                                 $('#fileImportTag').filepond('removeFiles');
@@ -548,27 +563,28 @@
     })
 
     var loadListImport = (importList) => {
-        var table = $('#tableImport').DataTable({
-            "processing": false,
-            "serverSide": false,
-            "scrollX": false,
-            "paging": false,
-            "dom": `<"d-flex justify-content-between align-items-center"<i><f>>t`,
-            "data": importList,
-            "columns": [{
-                    "data": "tagName"
+        if (v.tableImport != "") {
+            v.tableImport.clear().destroy()
+        }
+        v.tableImport = $('#tableImport').DataTable({
+            ordering: false,
+            paging: true,
+            dom: `<"d-flex justify-content-between align-items-center"<i><f>>tp`,
+            data: importList,
+            columns: [{
+                    data: "tagName"
                 },
                 {
-                    "data": "description"
+                    data: "description"
                 },
             ],
-            "columnDefs": [{
-                'targets': 0,
-                'searchable': false,
-                'orderable': false,
-                'className': 'dt-body-center',
+            columnDefs: [{
+                targets: 0,
+                searchable: false,
+                orderable: false,
+                className: 'dt-body-center',
             }],
-            "order": [0, 'asc'],
+            order: [0, 'asc'],
         });
     }
 </script>

@@ -6,6 +6,10 @@ use App\Controllers\BaseController;
 use App\Models\AssetTagLocationModel;
 use App\Models\TagLocationModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Entity\Style\Color;
 
 class Location extends BaseController
 {
@@ -16,7 +20,7 @@ class Location extends BaseController
         }
 
         $data = array(
-            'title' => 'Location',
+            'title' => 'Tag Location',
             'subtitle' => 'List Location',
         );
         $data["breadcrumbs"] = [
@@ -25,8 +29,8 @@ class Location extends BaseController
                 "link"    => "Dashboard"
             ],
             [
-                "title"    => "Location",
-                "link"    => "Location"
+                "title"    => "Tag Location",
+                "link"    => "Tag Location"
             ],
         ];
 
@@ -35,17 +39,17 @@ class Location extends BaseController
 
     public function datatable()
     {
-		$request = \Config\Services::request();
+        $request = \Config\Services::request();
 
-        if(!checkRoleList("MASTER.TAGLOCATION.VIEW")){
-			echo json_encode(array(
-				"draw" => $request->getPost('draw'),
-				"recordsTotal" => 0,
-				"recordsFiltered" => 0,
-				"data" => [],
-				'status' => 403,
-				'message' => "You don't have access to this page"
-			));
+        if (!checkRoleList("MASTER.TAGLOCATION.VIEW")) {
+            echo json_encode(array(
+                "draw" => $request->getPost('draw'),
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => [],
+                'status' => 403,
+                'message' => "You don't have access to this page"
+            ));
         }
 
         $table = "tblm_tagLocation";
@@ -54,7 +58,7 @@ class Location extends BaseController
         $order = array('createdAt' => 'asc');
         $DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
         $where = [
-			'userId' => $this->session->get("adminId"),
+            'userId' => $this->session->get("adminId"),
         ];
         $list = $DTModel->datatable($where);
         $output = array(
@@ -113,7 +117,7 @@ class Location extends BaseController
                 "link"    => "Dashboard"
             ],
             [
-                "title"    => "Location",
+                "title"    => "Tag Location",
                 "link"    => "Location"
             ],
             [
@@ -126,12 +130,12 @@ class Location extends BaseController
 
     public function addTagLocation()
     {
-        if(!checkRoleList("MASTER.TAGLOCATION.ADD")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAGLOCATION.ADD")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $model = new TagLocationModel();
@@ -139,7 +143,7 @@ class Location extends BaseController
         if ($json->tagLocationName != '') {
             $data = array(
                 'tagLocationName' => $json->tagLocationName,
-			    'userId' => $this->session->get("adminId"),
+                'userId' => $this->session->get("adminId"),
                 'latitude' => $json->latitude,
                 'longitude' => $json->longitude,
                 'description' => $json->description
@@ -154,19 +158,19 @@ class Location extends BaseController
 
     public function update()
     {
-        if(!checkRoleList("MASTER.TAGLOCATION.UPDATE")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAGLOCATION.UPDATE")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
-
         $model = new TagLocationModel();
         $json = $this->request->getJSON();
         $id = $json->tagLocationId;
         if (isset($json)) {
             $data = array(
+                'userId' => $this->session->get('adminId'),
                 'tagLocationName' => $json->tagLocationName,
                 'latitude' => $json->latitude,
                 'longitude' => $json->longitude,
@@ -180,12 +184,12 @@ class Location extends BaseController
 
     public function delete()
     {
-        if(!checkRoleList("MASTER.TAGLOCATION.DELETE")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAGLOCATION.DELETE")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $locationModel = new TagLocationModel();
@@ -208,16 +212,16 @@ class Location extends BaseController
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
-        return $this->response->download('../public/download/location.xlsx', null);
+        return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/location.xlsx', null);
     }
     public function uploadFile()
     {
-        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAGLOCATION.IMPORT")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
 
         $file = $this->request->getFile('fileImportLocation');
@@ -258,14 +262,13 @@ class Location extends BaseController
 
     public function insertLocation()
     {
-        if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
-			return $this->response->setJSON([
-				'status' => 403,
+        if (!checkRoleList("MASTER.TAGLOCATION.IMPORT")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-				'data' => []
-			], 403);
+                'data' => []
+            ], 403);
         }
-
         $tagLocationModel = new TagLocationModel();
         $json = $this->request->getJSON();
         $dataLocation = $json->dataLocation;
@@ -273,6 +276,7 @@ class Location extends BaseController
         for ($i = 0; $i < $length; $i++) {
             $data = [
                 'tagLocationId' => null,
+                'userId' => $this->session->get('adminId'),
                 'tagLocationName'   => $dataLocation[$i]->locationName,
                 'latitude'   => $dataLocation[$i]->latitude,
                 'longitude'   => $dataLocation[$i]->longitude,
@@ -281,6 +285,43 @@ class Location extends BaseController
             $tagLocationModel->insert($data);
         }
         echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
+        die();
+    }
+
+    public function exportExcel()
+    {
+        $tagLocationModel = new TagLocationModel();
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $userId = $this->session->get('adminId');
+        $data = $tagLocationModel->where('userId', $userId)->findAll();
+
+        $writer->setShouldUseInlineStrings(true);
+        $header = ["No", "Tag Location", "Latitude", "Longitude", "Description"];
+        $styleHeader = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::CENTER)
+            ->setBackgroundColor(COLOR::YELLOW)
+            ->build();
+        $styleBody = (new StyleBuilder())
+            ->setCellAlignment(CellAlignment::LEFT)
+            ->build();
+        $dataArr = [];
+
+        if (count($data)) {
+            foreach ($data as $key => $value) {
+                $arr = [$key + 1, $value['tagLocationName'], $value['latitude'], $value['longitude'], $value['description']];
+                array_push($dataArr, $arr);
+            }
+        }
+        $fileName = "Tag Location - " . date("d M Y") . '.xlsx';
+        $writer->openToBrowser($fileName);
+
+        $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
+        $writer->addRow($rowFromValues);
+        foreach ($dataArr as $key => $value) {
+            $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+            $writer->addRow($rowFromValues);
+        }
+        $writer->close();
         die();
     }
 }

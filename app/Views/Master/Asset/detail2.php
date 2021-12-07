@@ -12,6 +12,17 @@
         vertical-align: middle !important;
         text-align: left;
     }
+    .modal-fs {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .modal-fs .modal-content {
+        min-height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
 </style>
 <?= $this->endSection(); ?>
 
@@ -24,6 +35,8 @@ $assetTaggingType = array('rfid', 'coordinat', 'uhf');
 $schFreq = array('1', '2', '3', '4', '6', '8', '12', '24');
 $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => 'Wednesday', 'Th' => 'Thursday', 'Fr' => 'Friday', 'Sa' => 'Saturday');
 $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'Last');
+$session = \Config\Services::session();
+$sess = $session->get('adminId');
 ?>
 <div class="row" id="app">
     <div class="col-12">
@@ -141,22 +154,22 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             <td><?= $key['parameterName']; ?></td>
                                             <td><?= $key['description']; ?></td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['max'] != '') {
-                                                    echo $key['max'];
-                                                } else if ($key['max'] == '' && $key['normal'] == '') {
-                                                    echo '<i>-</i>';
-                                                } else {
+                                                <?php if ($key['max'] != '' && $key['max'] != '' && $key['max'] != '0') {
+                                                    echo $key['min'] . ' - ' . $key['max'];
+                                                } else if ($key['normal'] != '') {
                                                     echo $key['normal'];
+                                                } else {
+                                                    echo '<i>-</i>';
                                                 }
                                                 ?>
                                             </td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['min'] != '') {
-                                                    echo $key['min'];
-                                                } else if ($key['min'] == '' && $key['abnormal'] == '') {
-                                                    echo '<i>-</i>';
-                                                } else {
+                                                <?php if ($key['min'] != '' && $key['min'] != '' && $key['min'] != '0') {
+                                                    echo 'x < ' . $key['min'] . '; x > ' . $key['max'];
+                                                } else if ($key['abnormal'] != '') {
                                                     echo $key['abnormal'];
+                                                } else {
+                                                    echo '<i>-</i>';
                                                 }
                                                 ?>
                                             </td>
@@ -164,10 +177,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 <?php
                                                 if ($key['uom'] != '') {
                                                     echo $key['uom'];
-                                                } else if ($key['uom'] == '' && $key['option'] == '') {
-                                                    echo '<i>-</i>';
-                                                } else {
+                                                } else if ($key['option'] != '') {
                                                     echo $key['option'];
+                                                } else {
+                                                    echo '<i>-</i>';
                                                 }
                                                 ?>
                                             </td>
@@ -276,7 +289,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <h5 :class="checkModalAdd == true ? 'modal-title' : 'd-none'" id="titleModalAdd">Add Parameter</h5>
                                 <h5 :class="checkModalAdd == true ? 'd-none': 'modal-title'" id="titleModalEdit">Edit Parameter</h5>
                             </div>
-                            <div class="modal-body">
+                            <div :class="checkModalAdd == true || param.photo1 == '' || param.photo1 == null || this.param.deletePhoto == true ? 'modal-body' : 'modal-body pt-0'">
+                                <div style="display: none !important;" class="row mb-3" id="previewImg">
+                                    <div class="col p-0 d-flex justify-content-center align-items-center" style="height:150px; background-color: #f2f4f8" id="preview"></div>
+                                </div>
                                 <div class="container">
                                     <div class="form-group">
                                         <form method="post" enctype="multipart/form-data">
@@ -372,12 +388,22 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                             <div class="row mb-3">
                                                 <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
                                                 <div class="col-9 p-0">
-                                                    <input type="file" ref="file" class="photo w-100" name="photo" @change="photo()" accept="image/png, image/jpeg, image/gif">
+                                                    <input type="file" class="filepond mt-2 mb-2 w-100" name="photoParam" id="photoParam" />
                                                 </div>
                                             </div>
-                                            <div style="display: none !important;" class="row mb-3" id="previewImg">
-                                                <div class="col-sm-3"></div>
-                                                <div class="col-sm-9 p-0" id="preview"></div>
+                                            <div :class="checkModalAdd == false && param.photo1 != '' ? 'row mb-3' : 'd-none'">
+                                                <div class="col-sm-3">
+
+                                                </div>
+                                                <div class="col-sm-9 p-0">
+                                                    <div class="d-flex justify-content-start align-items-center">
+                                                        <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-danger m-0">
+                                                            <input type="checkbox" id="deletePhoto" name="deletePhoto" class="c-switch-input" @change="deletePhoto = $event.target.checked">
+                                                            <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                                        </label>
+                                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="if parameter photo exist, you can turn on witch button to delete the photo"></i></label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -408,20 +434,33 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <div class="row">
                                         <div class="col">
                                             <div class="mb-3">
-                                                <a href="<?= base_url('/Asset/download'); ?>" class="btn btn-success w-100" target="_blank"><i class="fa fa-file-excel"></i> Download Template</a>
-                                            </div>
-                                            <div>
-                                                <b><i>Ketentuan Upload File</i></b>
-                                                <ol>
-                                                    <li>File harus ber ekstensi .xls, .xlsx</li>
-                                                </ol>
+                                                <h5>Follow these steps to import your parameter.</h5>
+                                                <hr>
+                                                <div class="mt-3">
+                                                    <h6>1. Download file template parameter</h6>
+                                                    <div class="pl-3">
+                                                        <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your parameter.</p>
+                                                        <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleParameter'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>2. Insert the tag data you have into template</h6>
+                                                    <div class="pl-3">
+                                                        <p>Using Excel or other spreadsheet software, enter the detailed tag location data into our template file. Make sure the data matches the header fields in the template.</p>
+                                                        <b>NOTE :</b>
+                                                        <p class="m-0">Do not change the column headers in the template. This is required for the import to work.
+                                                            A maximum of 30 parameter can be imported at one time.
+                                                            When importing, the application will only enter new data, no data is deleted or updated.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <h6>3. Upload the updated template here</h6>
+                                                    <form action="post" enctype="multipart/form-data">
+                                                        <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <form action="post" enctype="multipart/form-data">
-                                            <input type="file" class="filepond mt-2 mb-2 w-100" name="importParam" id="fileImportParam" />
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -450,6 +489,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 <th>Abnormal</th>
                                                 <!-- <th>input type</th> -->
                                                 <th>UoM</th>
+                                                <th>Option</th>
                                                 <th>show On</th>
                                             </tr>
                                         </thead>
@@ -536,6 +576,24 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
                                 <button type="button" class="btn btn-success" @click="addTagLocation()"><i class="fa fa-plus"></i> Add Tag Location</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- modal preview location -->
+                <div class="modal fade" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true"  >
+                    <div class="modal-dialog modal-fs" role="document">
+                        <div class="modal-content">
+                            <div class="d-flex justify-content-end p-3">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true" class="text-white">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="fullPreview" class="d-flex justify-content-center aliign-items-center">
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1033,9 +1091,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 </div>
             </div>
             <div class="table-responsive mt-2">
-                <table class="table table-bordered table-hover w-100 display" id="tableParameter">
+                <table class="table table-hover w-100 display nowrap" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
+                            <!-- <th>No</th> -->
                             <th>Parameter</th>
                             <th>Description</th>
                             <th>Normal</th>
@@ -1050,8 +1109,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null">
-                                {{ items.max }}
+                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
+                                {{ items.min + ' - ' + items.max }}
                             </td>
                             <td v-else-if="items.normal != ''" style="max-height: 150px !important;">
                                 {{ items.normal }}
@@ -1059,8 +1118,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null">
-                                {{ items.min }}
+                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
+                                {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
                             <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
@@ -1087,8 +1146,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <tr v-for="(items, i) in parameter" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null">
-                                {{ items.max }}
+                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
+                                {{ items.min + ' - ' + items.max }}
                             </td>
                             <td v-else-if="items.normal != ''" style="max-width: 150px !important">
                                 {{ items.normal }}
@@ -1096,8 +1155,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null">
-                                {{ items.min }}
+                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
+                                {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
                             <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
                                 {{ items.abnormal }}
@@ -1121,17 +1180,66 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             <td v-else>
                                 <i class="text-warning"><span class="badge badge-warning text-white">Updated</span></i>
                             </td>
-                            <!-- <td class="text-center" v-if="isEqualParam(i)">
-                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
-                            </td>
-                            <td class="text-center" v-else>
-                                <i class="text-success"><span class="badge badge-warning text-white">Updated</span></i>
-                            </td> -->
                             <td style="min-width: 90px !important">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
+                        <!-- <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
+                                <template v-for="(val, key) in valGP">
+                                    <template v-if="key == 0 & keyGP != val.parameterName">
+                                        <tr>
+                                            <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
+                                            <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
+                                        </tr>
+                                    </template>
+                                    <tr>
+                                        <template v-if="key == 0 & keyGP == val.parameterName">
+                                            <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td>
+                                        </template>
+                                        <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : valparameterName) }}</td>
+                                        <td>{{ val.description }}</td>
+                                        <template v-if="!val.option">
+                                            <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
+                                            <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
+                                            <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" :val.uom }}</td>
+                                        </template>
+                                        <template v-else>
+                                            <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
+                                            <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                            <td :class="!val.option ? 'font-italic text-center' : ''">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                        </template>
+                                        <template v-if="val.uom != ''">
+                                            <td>
+                                                {{ val.uom }}
+                                            </td>
+                                        </template>
+                                        <template  v-else-if="val.option != ''">
+                                            <td>
+                                                {{ val.option }}
+                                            </td>
+                                        </template>
+                                        <template  v-else>
+                                            <td>
+                                            </td>
+                                        </template>
+                                        <template v-if="val.status == 'old'">
+                                            <td>
+                                                <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
+                                            </td>
+                                        </template>
+                                        <template v-else>
+                                            <td>
+                                                <i class="text-warning"><span class="badge badge-warning text-white">Updated</span><i>
+                                            </td>
+                                        </template>
+                                        <td style="min-width: 90px !important">
+                                            <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i);checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><iclass="fa fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </template>
+                        </template> -->
                     </tbody>
                 </table>
             </div>
@@ -1207,6 +1315,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     sortId: null,
                     parameterName: '',
                     photo: '',
+                    photo1: '',
+                    photo2: '',
+                    photo3: '',
                     description: '',
                     uom: '',
                     min: null,
@@ -1215,11 +1326,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     abnormal: '',
                     option: '',
                     inputType: '',
-                    showOn: ''
+                    showOn: '',
+                    deletePhoto: false
+                });
+                const parameterGroupData = _.groupBy(parameter, function(val) {
+                    return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
                 });
                 var tempPhoto = ref('');
                 var params = ref([]);
+                var paramPhoto = ref("");
+                var deletePhoto = ref(false);
+                var pathParamPhoto = ref("../uploads/Asset/file"+"<?= $sess ?>"+"/");
                 var importList = reactive({});
+                var tableImportParam = ref("");
                 var listNewParam = ref([]);
                 var submited = ref(false);
                 var descJsonValue = ref('');
@@ -1376,6 +1495,479 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         })
                         this.myModal.hide();
                     }
+                };
+
+                function editExistParameter(index) {
+                    this.deletePhoto = ref(false);
+                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                    this.myModal.show();
+
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
+                    $('#imgParam').remove();
+
+                    this.paramPhoto = ref("");
+                    $('#photoParam').filepond('removeFiles');
+                    FilePond.destroy(document.querySelector('#photoParam'));
+                    if (this.parameter[index].photo != '' && this.parameter[index].photo != undefined) {
+                        let url = URL.createObjectURL(this.parameter[index].photo)
+                        const inputElement = document.querySelector('#photoParam');
+                        var photoEdit = {
+                            acceptedFileTypes: ['image/png', 'image/jpeg'],
+                            allowFilePoster: true,
+                            allowImagePreview: true,
+                            imagePreviewMaxHeight: 200,
+                            allowImageCrop: true,
+                            allowMultiple: false,
+                            credits: false,
+                            styleLoadIndicatorPosition: 'center bottom',
+                            styleProgressIndicatorPosition: 'right bottom',
+                            styleButtonRemoveItemPosition: 'left bottom',
+                            styleButtonProcessItemPosition: 'right bottom',
+                            files: [{
+                                source: url,
+                                options: {
+                                    type: 'local',
+                                    file: this.parameter[index].photo,
+                                    metadata: {
+                                        poster: ''
+                                    }
+                                }
+                            }]
+                        };
+                        let pond = FilePond.create(inputElement, photoEdit);
+                        pond.on('addfile', (error, file) => {
+                            v.paramPhoto = file.file;
+                        })
+                        pond.on('removefile', (error, file) => {
+                            v.paramPhoto = ref("");
+                        })
+                    }else{
+                        var filepondParam = {
+                            acceptedFileTypes: ['image/png', 'image/jpeg'],
+                            allowFilePoster: true,
+                            allowImagePreview: true,
+                            imagePreviewMaxHeight: 200,
+                            allowImageCrop: true,
+                            allowMultiple: false,
+                            credits: false,
+                            styleLoadIndicatorPosition: 'center bottom',
+                            styleProgressIndicatorPosition: 'right bottom',
+                            styleButtonRemoveItemPosition: 'left bottom',
+                            styleButtonProcessItemPosition: 'right bottom',
+                        };
+
+                        let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                        pond.on('addfile', (error, file) => {
+                            v.paramPhoto = file.file;
+                        })
+                        pond.on('removefile', (error, file) => {
+                            v.paramPhoto = ref("");
+                        })
+                    }
+                    
+
+                    this.param.parameterId = this.parameter[index].parameterId;
+                    this.param.sortId = this.parameter[index].sortId;
+                    this.param.parameterName = this.parameter[index].parameterName;
+                    this.param.photo = this.parameter[index].photo;
+                    this.param.photo1 = this.parameter[index].photo1;
+                    this.param.photo2 = this.parameter[index].photo2;
+                    this.param.photo3 = this.parameter[index].photo3;
+                    this.param.description = this.parameter[index].description;
+                    if (this.parameter[index].uom != "") {
+                        this.param.uom = this.parameter[index].uom;
+                    } else {
+                        this.param.uom = "";
+                    }
+                    this.param.min = this.parameter[index].min;
+                    this.param.max = this.parameter[index].max;
+                    this.param.normal = this.parameter[index].normal;
+                    this.param.abnormal = this.parameter[index].abnormal;
+                    this.param.option = this.parameter[index].option;
+                    this.param.inputType = this.parameter[index].inputType;
+                    this.param.showOn = this.parameter[index].showOn;
+                    this.param.i = index;
+                    this.param.deletePhoto = this.parameter[index].deletePhoto;
+                    if (!this.param.deletePhoto) {
+                        $('#deletePhoto').prop('checked', false);
+                    }
+
+                    if (this.param.photo1 != "" && !this.param.deletePhoto && this.param.photo1 != null) {
+                        $('#previewImg').show();
+                        $('#preview').append("<img class='img-thumbnail' id='imgParam' style='height:150px; cursor: pointer' src='" + this.param.photo1 + "' alt=''  onclick='modalPreviewImg()' data-toggle='tooltip' title='click to preview this image'>");
+                    } else if (this.param.photo1 == "" || this.param.photo1 == null || this.param.deletePhoto) {
+                        $('#previewImg').hide();
+                    }
+
+                    if (v.param.inputType != '') {
+                        $('.type').val(v.param.inputType).trigger("change");
+                    }
+
+                    if (v.param.normal != '' || v.param.abnormal != '') {
+                        $lengthNormal = v.param.normal.split(",").length;
+                        $lengthAbnormal = v.param.abnormal.split(",").length;
+                        if ($lengthNormal > 0) {
+                            var dataNormal = v.param.normal.split(",");
+                            for (let index = 0; index < dataNormal.length; index++) {
+                                $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
+                            }
+                        }
+                        if ($lengthAbnormal > 0) {
+                            var dataAbnormal = v.param.abnormal.split(",");
+                            for (let index = 0; index < dataAbnormal.length; index++) {
+                                $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
+                            }
+                        }
+                    }
+                    if (this.param.showOn != '') {
+                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                    }
+                }
+
+                function updateExistParameter() {
+                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                    let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
+                    let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
+                    let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
+                    let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
+                            icon: 'error'
+                        })
+
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+
+                        //remove invalid class
+                        // input type
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min != "" || this.param.min != null) {
+                                $('.min').removeClass('is-invalid');
+                            }
+                            if (this.param.max != "" || this.param.max != null) {
+                                $('.max').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "" || this.param.uom != null) {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal != "") {
+                                $('#normal').removeClass('is-invalid');
+                            }
+                            if (this.param.abnormal != "") {
+                                $('#abnormal').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "") {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        //end remove invalid class
+
+                        //add invalid class
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min == "" || this.param.min == null) {
+                                $('.min').addClass('is-invalid');
+                            }
+                            if (this.param.max == "" || this.param.max == null) {
+                                $('.max').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "" || this.param.uom == null) {
+                                $('.uom').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal == "") {
+                                $('#normal').addClass('is-invalid');
+                            }
+                            if (this.param.abnormal == "") {
+                                $('#abnormal').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "") {
+                                $('.uom').addClass('is-invalid');
+                            }
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    } else {
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+
+                        //remove invalid class
+                        // input type
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min != "" || this.param.min != null) {
+                                $('.min').removeClass('is-invalid');
+                            }
+                            if (this.param.max != "" || this.param.max != null) {
+                                $('.max').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "" || this.param.uom != null) {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal != "") {
+                                $('#normal').removeClass('is-invalid');
+                            }
+                            if (this.param.abnormal != "") {
+                                $('#abnormal').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "") {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        //end remove invalid class
+
+                        //add invalid class
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min == "" || this.param.min == null) {
+                                $('.min').addClass('is-invalid');
+                            }
+                            if (this.param.max == "" || this.param.max == null) {
+                                $('.max').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "" || this.param.uom == null) {
+                                $('.uom').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal == "") {
+                                $('#normal').addClass('is-invalid');
+                            }
+                            if (this.param.abnormal == "") {
+                                $('#abnormal').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "") {
+                                $('.uom').addClass('is-invalid');
+                            }
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                        
+                        index = this.param.i;
+                        this.parameter[index] = {
+                            parameterId: this.param.parameterId,
+                            sortId: this.param.sortId,
+                            parameterName: this.param.parameterName,
+                            photo: this.paramPhoto,
+                            photo1: this.param.photo1,
+                            photo2: this.param.photo2,
+                            photo3: this.param.photo3,
+                            description: this.param.description,
+                            uom: this.param.uom,
+                            min: this.param.min,
+                            max: this.param.max,
+                            normal: this.param.normal,
+                            abnormal: this.param.abnormal,
+                            option: this.param.option,
+                            inputType: this.param.inputType,
+                            showOn: this.param.showOn,
+                            i: index,
+                            deletePhoto: this.deletePhoto 
+                        }
+                        let lengthEdited = this.editedParameter.length;
+
+                        let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                        let edited = _.omit(this.parameter[index], ['i']);
+
+                        let check = _.isEqual(compare, edited);
+                        // const {
+                        //     assetId,
+                        //     createdAt,
+                        //     deletedAt,
+                        //     updatedAt,
+                        //     ...newParam
+                        // } = this.compareParameter[index];
+                        // const {
+                        //     i,
+                        //     photo,
+                        //     ...newEdited
+                        // } = this.parameter[index];
+                        // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
+
+                        this.myModal.hide();
+                        this.deletePhoto = ref(false);
+
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Successfully Modify Parameter'
+                        })
+                        if (check) {
+                            for (let i = 0; i < lengthEdited; i++) {
+                                // console.log(this.editedParameter[i].parameterId);
+                                let idEditedParam = this.editedParameter[i].parameterId
+                                if (idEditedParam == this.parameter[index].parameterId) {
+                                    this.parameter[index].status = 'old';
+                                    return this.editedParameter.splice(i, 1);
+                                }
+                            }
+                            this.parameter[index].status = 'old';
+                        } else {
+                            setTimeout(() => {
+                                for (let i = 0; i < lengthEdited; i++) {
+                                    // console.log(this.editedParameter[i].parameterId);
+                                    let idEditedParam = this.editedParameter[i].parameterId
+                                    if (idEditedParam == this.parameter[index].parameterId) {
+                                        return this.editedParameter.splice(i, 1);
+                                    }
+                                }
+                            }, 2000);
+                            this.editedParameter.push(this.parameter[index]);
+                            this.parameter[index].status = 'updated';
+                        }
+                    }
+                }
+
+                function addParameter() {
+                    this.paramPhoto = ref("");
+                    FilePond.destroy(document.querySelector('#photoParam'));
+                    FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
+                    filepondParam = {
+                        acceptedFileTypes: ['image/png', 'image/jpeg'],
+                        allowFilePoster: true,
+                        allowImagePreview: true,
+                        imagePreviewMaxHeight: 200,
+                        allowImageCrop: true,
+                        allowMultiple: false,
+                        credits: false,
+                        styleLoadIndicatorPosition: 'center bottom',
+                        styleProgressIndicatorPosition: 'right bottom',
+                        styleButtonRemoveItemPosition: 'left bottom',
+                        styleButtonProcessItemPosition: 'right bottom',
+                    };
+                    
+                    let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                    pond.on('addfile', (error, file) => {
+                        v.paramPhoto = file.file
+                    })
+                    pond.on('removefile', (error, file) => {
+                        v.paramPhoto = ref("");
+                    })
+
+                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                    this.myModal.show();
+
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
+
+                    this.param.parameterId = uuidv4();
+                    this.param.sortId = $('#tableParameter tbody tr').length + 1,
+                    this.param.parameterName = '';
+                    this.param.photo = '';
+                    this.param.photo1 = '';
+                    this.param.photo2 = '';
+                    this.param.photo3 = '';
+                    this.param.description = '';
+                    this.param.uom = '';
+                    this.param.min = null;
+                    this.param.max = null;
+                    this.param.normal = '';
+                    this.param.abnormal = '';
+                    this.param.option = '';
+                    this.param.inputType = '';
+                    this.param.showOn = '';
+                    this.param.i = null;
+                    this.param.deletePhoto = false;
+
+                    $('#addParameterModal').modal('hide');
+                    $('#previewImg').hide();
+
+                    $('.type').val('').trigger("change");
+                    $('#showOn').val('').trigger('change');
+                    $('#normal').val('').trigger('change');
+                    $('#abnormal').val('').trigger('change');
+
+                    $('#imgParam').remove();
+                    $('.optNormal').remove();
+                    $('.optAbnormal').remove();
+
+                    $('.parameter').removeClass('is-invalid');
+                    $('.type').removeClass('is-invalid');
+                    $('.showOn').removeClass('is-invalid');
                 };
 
                 function addTempParameter() {
@@ -1559,12 +2151,16 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             $('.showOn').addClass('is-invalid');
                         }
 
+                        this.param.photo = this.paramPhoto;
                         this.params.push(this.param);
                         this.param = reactive({
                             parameterId: uuidv4(),
                             sortId: $('#tableParameter tbody tr').length + 2,
                             parameterName: '',
                             photo: '',
+                            photo1: '',
+                            photo2: '',
+                            photo3: '',
                             description: '',
                             uom: '',
                             min: null,
@@ -1575,8 +2171,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             inputType: '',
                             showOn: '',
                         })
+                        $('#photoParam').filepond('removeFiles');
                         $('.type').val('').trigger("change");
                         $('#showOn').val('').trigger('change');
+
+                        this.paramPhoto = ref("");
+
                         const Toast = Swal.mixin({
                             toast: true,
                             position: 'top-end',
@@ -1601,13 +2201,54 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 };
 
                 function editTempParameter(index) {
+                    this.paramPhoto = ref("");
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     this.myModal.show();
                     let data = this.params[index];
+
+                    if (data.photo != "") {
+                        FilePond.destroy(document.querySelector('#photoParam'));
+                        let url = URL.createObjectURL(data.photo)
+                        const inputElement = document.querySelector('#photoParam');
+                        var photoEdit = {
+                            acceptedFileTypes: ['image/png', 'image/jpeg'],
+                            allowFilePoster: true,
+                            allowImagePreview: true,
+                            imagePreviewMaxHeight: 200,
+                            allowImageCrop: true,
+                            allowMultiple: false,
+                            credits: false,
+                            styleLoadIndicatorPosition: 'center bottom',
+                            styleProgressIndicatorPosition: 'right bottom',
+                            styleButtonRemoveItemPosition: 'left bottom',
+                            styleButtonProcessItemPosition: 'right bottom',
+                            files: [{
+                                source: url,
+                                options: {
+                                    type: 'local',
+                                    file: data.photo,
+                                    metadata: {
+                                        poster: ''
+                                    }
+                                }
+                            }]
+                        };
+                        let pond = FilePond.create(inputElement, photoEdit);
+                        pond.on('addfile', (error, file) => {
+                            v.paramPhoto = file.file;
+                        })
+                        pond.on('removefile', (error, file) => {
+                            v.paramPhoto = ref("");
+                        })
+                    }
+
                     this.param.parameterId = data.parameterId;
                     this.param.sortId = data.sortId;
                     this.param.parameterName = data.parameterName;
                     this.param.photo = data.photo;
+                    this.param.photo1 = data.photo1;
+                    this.param.photo2 = data.photo2;
+                    this.param.photo3 = data.photo3;
                     this.param.description = data.description;
                     this.param.uom = data.uom;
                     this.param.min = data.min;
@@ -1624,6 +2265,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         sortId: this.param.sortId,
                         parameterName: this.param.parameterName,
                         photo: this.param.photo,
+                        photo1: this.param.photo1,
+                        photo2: this.param.photo2,
+                        photo3: this.param.photo3,
                         description: this.param.description,
                         uom: this.param.uom,
                         min: this.param.min,
@@ -1635,22 +2279,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         showOn: this.param.showOn,
                         i: index,
                     })
-                    if (this.param.photo != "") {
-                        $('#previewImg').show();
-                        $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
-                    } else if (this.param.photo == "" || this.param.photo == null) {
-                        $('#previewImg').hide();
-                    }
+
                     if (v.param.inputType != '') {
                         $('.type').val(v.param.inputType).trigger("change");
                     }
                     if (this.param.showOn != '') {
                         $('#showOn').val(this.param.showOn.split(",")).trigger('change');
                     }
+
                     let normal = v.param.normal.split(",");
                     let abnormal = v.param.abnormal.split(",");
+
                     $('#normal').find('option').remove();
                     $('#abnormal').find('option').remove();
+
                     if (normal.length) {
                         // $('#normal').val(normal).trigger("change");
                         for (let i = 0; i < normal.length; i++) {
@@ -1858,7 +2500,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             parameterId: this.param.parameterId,
                             sortId: this.param.sortId,
                             parameterName: this.param.parameterName,
-                            photo: this.param.photo,
+                            photo: this.paramPhoto,
+                            photo1: this.param.photo1,
+                            photo2: this.param.photo2,
+                            photo3: this.param.photo3,
                             description: this.param.description,
                             uom: this.param.uom,
                             min: this.param.min,
@@ -2339,6 +2984,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             let editedParam = this.editedParameter;
                             editedParam.forEach((item, k) => {
                                 formdata.append('editedParameter[]', JSON.stringify(item))
+                                formdata.append('photo' + item['parameterId'], this.editedParameter[k]['photo']);
                             })
                         } else {
                             formdata.append('editedParameter[]', "");
@@ -2361,6 +3007,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         } else {
                             formdata.append('location', '');
                         }
+
                         axios({
                             url: "<?= base_url('Asset/saveSetting'); ?>",
                             data: formdata,
@@ -2460,364 +3107,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                 function photo() {
                     let fileUploaded = this.$refs.file.files[0];
-                    this.param.photo = fileUploaded;
-                    // this.param.photo = event.target.files[0];
+                    this.param.photo3 = fileUploaded;
+                    // this.param.photo3 = event.target.files[0];
                 };
-
-                function addParameter() {
-                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
-                    this.myModal.show();
-
-                    $('#normal').find('option').remove();
-                    $('#abnormal').find('option').remove();
-                    this.param.parameterId = uuidv4();
-                    this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                        this.param.parameterName = '';
-                    this.param.photo = '';
-                    this.param.description = '';
-                    this.param.uom = '';
-                    this.param.min = null;
-                    this.param.max = null;
-                    this.param.normal = '';
-                    this.param.abnormal = '';
-                    this.param.option = '';
-                    this.param.inputType = '';
-                    this.param.showOn = '';
-                    this.param.i = null;
-                    $('#addParameterModal').modal('hide');
-                    $('#previewImg').hide();
-
-                    $('.type').val('').trigger("change");
-                    $('#showOn').val('').trigger('change');
-                    $('#normal').val('').trigger('change');
-                    $('#abnormal').val('').trigger('change');
-
-                    $('#imgParam').remove();
-                    $('.optNormal').remove();
-                    $('.optAbnormal').remove();
-
-                    $('.parameter').removeClass('is-invalid');
-                    $('.type').removeClass('is-invalid');
-                    $('.showOn').removeClass('is-invalid');
-                };
-
-                function editExistParameter(index) {
-                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
-                    $('#normal').find('option').remove();
-                    $('#abnormal').find('option').remove();
-                    this.myModal.show();
-                    this.param.parameterId = this.parameter[index].parameterId;
-                    this.param.sortId = this.parameter[index].sortId;
-                    this.param.parameterName = this.parameter[index].parameterName;
-                    this.param.photo = this.parameter[index].photo;
-                    this.param.description = this.parameter[index].description;
-                    if (this.parameter[index].uom != "") {
-                        this.param.uom = this.parameter[index].uom;
-                    } else {
-                        this.param.uom = "";
-                    }
-                    this.param.min = this.parameter[index].min;
-                    this.param.max = this.parameter[index].max;
-                    this.param.normal = this.parameter[index].normal;
-                    this.param.abnormal = this.parameter[index].abnormal;
-                    this.param.option = this.parameter[index].option;
-                    this.param.inputType = this.parameter[index].inputType;
-                    this.param.showOn = this.parameter[index].showOn;
-                    this.param.i = index;
-                    // if (this.param.photo != "") {
-                    //     $('#previewImg').show();
-                    //     $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
-                    // } else if (this.param.photo == "" || this.param.photo == null) {
-                    //     $('#previewImg').hide();
-                    // }
-                    if (v.param.inputType != '') {
-                        $('.type').val(v.param.inputType).trigger("change");
-                    }
-                    if (v.param.normal != '' || v.param.abnormal != '') {
-                        $lengthNormal = v.param.normal.split(",").length;
-                        $lengthAbnormal = v.param.abnormal.split(",").length;
-                        if ($lengthNormal > 0) {
-                            var dataNormal = v.param.normal.split(",");
-                            for (let index = 0; index < dataNormal.length; index++) {
-                                $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
-                            }
-                        }
-                        if ($lengthAbnormal > 0) {
-                            var dataAbnormal = v.param.abnormal.split(",");
-                            for (let index = 0; index < dataAbnormal.length; index++) {
-                                $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
-                            }
-                        }
-                    }
-                    if (this.param.showOn != '') {
-                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
-                    }
-                }
-
-                function updateExistParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
-                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
-                    let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
-                    let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
-                    let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
-                    let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
-                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: "Invalid value!",
-                            icon: 'error'
-                        })
-
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
-
-                        //remove invalid class
-                        // input type
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
-                                $('.min').removeClass('is-invalid');
-                            }
-                            if (this.param.max != "" || this.param.max != null) {
-                                $('.max').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "" || this.param.uom != null) {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal != "") {
-                                $('#normal').removeClass('is-invalid');
-                            }
-                            if (this.param.abnormal != "") {
-                                $('#abnormal').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "") {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        //end remove invalid class
-
-                        //add invalid class
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
-                                $('.min').addClass('is-invalid');
-                            }
-                            if (this.param.max == "" || this.param.max == null) {
-                                $('.max').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "" || this.param.uom == null) {
-                                $('.uom').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal == "") {
-                                $('#normal').addClass('is-invalid');
-                            }
-                            if (this.param.abnormal == "") {
-                                $('#abnormal').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "") {
-                                $('.uom').addClass('is-invalid');
-                            }
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-                    } else {
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
-
-                        //remove invalid class
-                        // input type
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
-                                $('.min').removeClass('is-invalid');
-                            }
-                            if (this.param.max != "" || this.param.max != null) {
-                                $('.max').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "" || this.param.uom != null) {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal != "") {
-                                $('#normal').removeClass('is-invalid');
-                            }
-                            if (this.param.abnormal != "") {
-                                $('#abnormal').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "") {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        //end remove invalid class
-
-                        //add invalid class
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
-                                $('.min').addClass('is-invalid');
-                            }
-                            if (this.param.max == "" || this.param.max == null) {
-                                $('.max').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "" || this.param.uom == null) {
-                                $('.uom').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal == "") {
-                                $('#normal').addClass('is-invalid');
-                            }
-                            if (this.param.abnormal == "") {
-                                $('#abnormal').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "") {
-                                $('.uom').addClass('is-invalid');
-                            }
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-
-                        index = this.param.i;
-                        this.parameter[index] = {
-                            parameterId: this.param.parameterId,
-                            sortId: this.param.sortId,
-                            parameterName: this.param.parameterName,
-                            photo: this.param.photo,
-                            description: this.param.description,
-                            uom: this.param.uom,
-                            min: this.param.min,
-                            max: this.param.max,
-                            normal: this.param.normal,
-                            abnormal: this.param.abnormal,
-                            option: this.param.option,
-                            inputType: this.param.inputType,
-                            showOn: this.param.showOn,
-                            i: index,
-                        }
-                        let lengthEdited = this.editedParameter.length;
-                        const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
-                        const {
-                            assetId,
-                            createdAt,
-                            deletedAt,
-                            updatedAt,
-                            ...newParam
-                        } = this.compareParameter[index];
-                        const {
-                            i,
-                            ...newEdited
-                        } = this.parameter[index];
-                        let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
-                        this.myModal.hide();
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            iconColor: 'white',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
-                            customClass: {
-                                popup: 'colored-toast'
-                            },
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        })
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Successfully Modify Parameter'
-                        })
-                        if (checkIsEqual) {
-                            for (let i = 0; i < lengthEdited; i++) {
-                                // console.log(this.editedParameter[i].parameterId);
-                                let idEditedParam = this.editedParameter[i].parameterId
-                                if (idEditedParam == this.parameter[index].parameterId) {
-                                    this.parameter[index].status = 'old';
-                                    return this.editedParameter.splice(i, 1);
-                                }
-                            }
-                            this.parameter[index].status = 'old';
-                        } else {
-                            setTimeout(() => {
-                                for (let i = 0; i < lengthEdited; i++) {
-                                    // console.log(this.editedParameter[i].parameterId);
-                                    let idEditedParam = this.editedParameter[i].parameterId
-                                    if (idEditedParam == this.parameter[index].parameterId) {
-                                        return this.editedParameter.splice(i, 1);
-                                    }
-                                }
-                            }, 2000);
-                            this.editedParameter.push(this.parameter[index]);
-                            this.parameter[index].status = 'updated';
-                        }
-                    }
-                }
 
                 function removeExistParameter(index) {
                     const swalWithBootstrapButtons = Swal.mixin({
@@ -2866,218 +3158,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                 };
 
-                function editParameter($parameterId) {
-                    $('#btnAddParam').hide();
-                    $('#titleModalAdd').hide();
-                    $('#btnUpdateParam').hide();
-                    $('#btnUpdateParameter').show();
-                    $('#titleModalEdit').show();
-                    $('#normal').find('option').remove();
-                    $('#abnormal').find('option').remove();
-                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
-                    this.myModal.show();
-                    axios.post("<?= base_url('Asset/editParameter'); ?>", {
-                        parameterId: $parameterId
-                    }).then(res => {
-                        if (res.data.data != '') {
-                            let dt = res.data.data[0];
-                            this.param.parameterId = $parameterId,
-                                this.param.sortId = dt.sortId,
-                                this.param.parameterName = dt.parameterName;
-                            this.param.photo = dt.photo;
-                            this.param.description = dt.description;
-                            this.param.uom = dt.uom;
-                            this.param.min = dt.min;
-                            this.param.max = dt.max;
-                            this.param.normal = dt.normal;
-                            this.param.abnormal = dt.abnormal;
-                            this.param.option = dt.option;
-                            this.param.inputType = dt.inputType;
-                            this.param.showOn = dt.showOn;
-                        }
-                    }).then(y => {
-                        if (this.param.photo != "") {
-                            $('#previewImg').show();
-                            $('#preview').append("<img id='imgParam' src='/assets/uploads/img/" + this.param.photo + "' alt='' width='40%' onclick='window.open(this.src)' style='cursor: pointer' data-toggle='tooltip' title='click to preview this image'>");
-                        } else if (this.param.photo == "" || this.param.photo == null) {
-                            $('#previewImg').hide();
-                        }
-                        if (v.param.inputType != '') {
-                            $('.type').val(v.param.inputType).trigger("change");
-                        }
-                        if (v.param.normal != '' || v.param.abnormal != '') {
-                            $lengthNormal = v.param.normal.split(",").length;
-                            $lengthAbnormal = v.param.abnormal.split(",").length;
-                            if ($lengthNormal > 0) {
-                                var dataNormal = v.param.normal.split(",");
-                                for (let index = 0; index < dataNormal.length; index++) {
-                                    $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
-                                }
-                            }
-                            if ($lengthAbnormal > 0) {
-                                var dataAbnormal = v.param.abnormal.split(",");
-                                for (let index = 0; index < dataAbnormal.length; index++) {
-                                    $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
-                                }
-                            }
-                        }
-                        if (this.param.showOn != '') {
-                            $('#showOn').val(this.param.showOn.split(",")).trigger('change');
-                        }
-                    })
-                };
-
-                function updateParameter() {
-                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: "Invalid value!",
-                            icon: 'error'
-                        })
-
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-                    } else {
-                        let photo = document.querySelector('#photo');
-                        let formdata = new FormData();
-                        formdata.append('parameterId', this.param.parameterId);
-                        formdata.append('assetId', this.assetData.assetId);
-                        formdata.append('sortId', this.param.sortId);
-                        formdata.append('parameterName', this.param.parameterName);
-                        formdata.append('photo', this.param.photo);
-                        formdata.append('description', this.param.description);
-                        formdata.append('uom', this.param.uom);
-                        formdata.append('min', this.param.min);
-                        formdata.append('max', this.param.max);
-                        formdata.append('normal', this.param.normal.toString());
-                        formdata.append('abnormal', this.param.abnormal.toString());
-                        formdata.append('option', this.param.option);
-                        formdata.append('inputType', this.param.inputType);
-                        formdata.append('showOn', this.param.showOn.toString());
-                        axios({
-                            url: '<?= base_url('Asset/updateParameter'); ?>',
-                            method: 'POST',
-                            data: formdata,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        }).then(res => {
-                            if (res.data.status == 'success') {
-                                this.myModal.hide();
-                                const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-success mr-1',
-                                        cancelButton: 'btn btn-danger'
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: res.data.message,
-                                    icon: 'success'
-                                }).then(okay => {
-                                    if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Reoading page..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
-                                        location.reload();
-                                    }
-                                })
-                            } else if (res.data.status == 'failed') {
-                                const swalWithBootstrapButtons = swal.mixin({
-                                    customClass: {
-                                        confirmButton: 'btn btn-danger',
-                                    },
-                                    buttonsStyling: false
-                                })
-                                swalWithBootstrapButtons.fire({
-                                    title: 'Failed!',
-                                    text: res.data.message,
-                                    icon: 'error'
-                                })
-                            }
-                        })
-                    }
-                };
-
-                function deleteParameter($parameterId) {
-                    const swalWithBootstrapButtons = Swal.mixin({
-                        customClass: {
-                            confirmButton: 'btn btn-success',
-                            cancelButton: 'btn btn-danger ml-1'
-                        },
-                        buttonsStyling: false
-                    })
-                    swalWithBootstrapButtons.fire({
-                        title: 'Delete this data?',
-                        text: "You will delete this data!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        cancelButtonText: "<i class='fa fa-times'></i> Cancel",
-                        confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
-                        reverseButtons: false
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            axios.post("<?= base_url('Asset/deleteParameter'); ?>", {
-                                parameterId: $parameterId
-                            }).then(res => {
-                                if (res.data.status == 'success') {
-                                    swalWithBootstrapButtons.fire({
-                                        title: 'Success!',
-                                        text: 'You have successfully deleted this data.',
-                                        icon: 'success',
-                                        allowOutsideClick: false
-                                    }).then(okay => {
-                                        if (okay) {
-                                            swal.fire({
-                                                title: 'Please Wait!',
-                                                text: 'Reloading page..',
-                                                onOpen: function() {
-                                                    swal.showLoading()
-                                                }
-                                            })
-                                            location.reload();
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    })
-                };
-
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                        this.param.parameterName = '';
+                    this.param.parameterName = '';
                     this.param.photo = '';
+                    this.param.photo3 = '';
                     this.param.description = '';
                     this.param.uom = '';
                     this.param.min = null;
@@ -3088,6 +3174,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.param.inputType = '';
                     this.param.showOn = '';
                     this.param.i = null;
+
                     $('#addParameterModal').modal('hide');
                     $('#previewImg').hide();
 
@@ -3222,27 +3309,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     }
                 }
 
-                function coordinate() {
-                    // v.assetTagging.assetTaggingValue = ref('')
-                    // v.assetTagging.assetTaggingtype = 'coordinat';
-                    // v.valRfid = ref('');
-                    // v.valUhf = ref('');
-                }
-
-                function rfid() {
-                    // v.assetTagging.assetTaggingValue = ref('');
-                    // v.assetTagging.assetTaggingtype = 'rfid';
-                    // v.valCoordinate = ref('');
-                    // v.valUhf = ref('');
-                }
-
-                function uhf() {
-                    // v.assetTagging.assetTaggingValue = ref('');
-                    // v.assetTagging.assetTaggingtype = 'uhf';
-                    // v.valRfid = ref('');
-                    // v.valCoordinate = ref('');
-                }
-
                 function isEqualParam(index, id) {
                     const isEqual = (...objects) => objects.every(obj => JSON.stringify(obj) === JSON.stringify(objects[0]));
                     const {
@@ -3268,11 +3334,16 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 }
 
                 onMounted(() => {
+                    FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
                     if (assetData.schMonthlyWeekDays != "" && assetData.schType == "Monthly" && assetData.schWeeks != "") {
                         $('#monthlyOnDays').val(assetData.schMonthlyWeekDays.split(",")).trigger("change");
                     }
                     for (let i = 0; i < parameter.length; i++) {
                         parameter[i].status = 'old';
+                        parameter[i].photo = '';
+                        parameter[i].deletePhoto = false;
+                        compareParameter[i].deletePhoto = false;
+                        compareParameter[i].photo = '';
                     }
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
@@ -3346,9 +3417,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     valRfid,
                     valCoordinate,
                     valUhf,
-                    rfid,
-                    coordinate,
-                    uhf,
                     //end tagging
                     setSch,
                     schFreq,
@@ -3365,10 +3433,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     locations,
                     //end tag & location
                     param,
+                    paramPhoto,
                     tempPhoto,
                     params,
                     importList,
                     listNewParam,
+                    tableImportParam,
+                    pathParamPhoto,
+                    deletePhoto,
                     // new tag & location
                     modalAddTag,
                     addNewTag,
@@ -3386,9 +3458,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     editExistParameter,
                     updateExistParameter,
                     removeExistParameter,
-                    editParameter,
-                    updateParameter,
-                    deleteParameter,
                     importParameter,
                     insertParam,
                     addDescJson,
@@ -3396,7 +3465,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     moreDetailAsset,
                     btnCancelModalParam,
                     btnSaveSorting,
-                    isEqualParam
+                    isEqualParam,
+                    parameterGroupData
                 }
             },
             computed: {
@@ -3460,6 +3530,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         }).mount('#app');
 
 
+        function modalPreviewImg() {
+            $('#fullImg').remove();
+            this.myModal = new coreui.Modal(document.getElementById('modalPreviewImg'), {});
+            this.myModal.show();
+            $('#fullPreview').append("<img id='fullImg' src='" + v.param.photo1 + "' alt='img'>");
+        }
+
         $(function() {
             $('tbody').sortable({
                 cursor: "move",
@@ -3516,25 +3593,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $(id).prop('checked', true);
                 }
             }
-        })
-
-        $(document).ready(function() {
-            // let lengthTagging = v.assetTagging.length;
-            // console.log(lengthTagging);
-            // if (lengthTagging > 1) {
-            //     for (let i = 0; i < lengthTagging; i++) {
-            //         if (v.assetTagging[i].assetTaggingtype == 'rfid') {
-            //             console.log("rfid")
-            //         }
-            //     }
-            // }
-            // if (v.assetTagging.assetTaggingtype != '') {
-            //     if (v.assetTagging.assetTaggingtype == 'coordinat') {
-            //         v.valCoordinate = v.assetTagging.assetTaggingValue;
-            //     }
-            // } else {
-            //     v.assetTagging.assetTaggingtype = '';
-            // }
         })
 
         // On change tag, location, operation mode
@@ -3653,6 +3711,21 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 styleButtonProcessItemPosition: 'right bottom',
             });
         })
+        // $(document).ready(function() {
+        //     FilePond.registerPlugin(FilePondPluginFileValidateType);
+        //     let pond = $('#photoParam').filepond({
+        //         acceptedFileTypes: ['image/png', 'image/jpeg'],
+        //         allowImagePreview: true,
+        //         imagePreviewMaxHeight: 200,
+        //         allowImageCrop: true,
+        //         allowMultiple: false,
+        //         credits: false,
+        //         styleLoadIndicatorPosition: 'center bottom',
+        //         styleProgressIndicatorPosition: 'right bottom',
+        //         styleButtonRemoveItemPosition: 'left bottom',
+        //         styleButtonProcessItemPosition: 'right bottom',
+        //     });
+        // })
 
         // import parameter
         $(document).ready(function() {
@@ -3664,7 +3737,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 credits: false,
                 server: {
                     process: {
-                        url: "<?= base_url('Asset/uploadFile'); ?>",
+                        url: "<?= base_url('Asset/getDataImportParameter'); ?>",
                         method: 'post',
                         onload: (res) => {
                             var rsp = JSON.parse(res);
@@ -3700,7 +3773,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         })
 
         var loadListImport = (importList) => {
-            var table = $('#tableImport').DataTable({
+            v.tableImportParam = $('#tableImport').DataTable({
                 drawCallback: function(settings) {
                     $('#all').removeClass('sorting_asc');
                     if ($('#select-all').prop('checked', true)) {
@@ -3755,40 +3828,64 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 serverSide: false,
                 scrollX: false,
                 paging: false,
+                ordering: false,
                 dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
                 data: importList,
                 columns: [{
-                        "data": "no"
+                        data: "no"
                     },
                     {
-                        "data": "parameterName"
+                        data: "parameterName"
                     },
                     {
-                        "data": "description"
+                        data: "description"
                     },
                     {
-                        "data": "maxNormal"
+                        data: "max",
+                        render: function(type, data, row, meta){
+                            if (row.max != '') {
+                                if (row.flipMax && row.flipMin) {
+                                    return '<div>'+row.min + ' - ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                }
+                                return row.min + ' - ' + row.max
+                            }else{
+                                return row.normal
+                            }
+                        }
                     },
                     {
-                        "data": "minAbnormal"
+                        data: "min",
+                        render: function(type, data, row, meta){
+                            if (row.min != '') {
+                                if (row.flipMax && row.flipMin) {
+                                    return '<div>x < ' + row.min + '; x > ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                }
+                                return 'x < ' + row.min + '; x > ' + row.max
+                            }else{
+                                return row.abnormal
+                            }
+                        }
                     },
                     {
-                        "data": "uomOption"
+                        data: "uom"
                     },
                     {
-                        "data": "showOn"
+                        data: "option"
+                    },
+                    {
+                        data: "showOn"
                     }
                 ],
-                "columnDefs": [{
-                    'targets': 0,
-                    'searchable': false,
-                    'orderable': false,
-                    'className': 'dt-body-center',
+                columnDefs: [{
+                    targets: 0,
+                    searchable: false,
+                    orderable: false,
+                    className: 'dt-body-center',
                     render: function(data) {
                         return `<input type="checkbox" name="parameterId" class="checkbox" id="id${data}" value="${data}">`;
                     }
                 }],
-                "order": [0, 'asc'],
+                order: [0, 'asc'],
             });
         }
 
@@ -4183,4 +4280,4 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             v.assetData.assetStatusName = text;
         })
     </script>
-    <?= $this->endSection(); ?>
+    <?= $this->endSection(); ?>;
