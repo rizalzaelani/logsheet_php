@@ -492,8 +492,6 @@
                         .setLngLat([long, lat])
                         .addTo(map);
                 })
-
-                console.log(params);
             }
 
             function isString(i) {

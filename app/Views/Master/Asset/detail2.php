@@ -1094,7 +1094,7 @@ $sess = $session->get('adminId');
                 <table class="table table-hover w-100 display nowrap" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
-                            <!-- <th>No</th> -->
+                            <th>#</th>
                             <th>Parameter</th>
                             <th>Description</th>
                             <th>Normal</th>
@@ -1106,7 +1106,7 @@ $sess = $session->get('adminId');
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(items, i) in params" :key="i">
+                        <!-- <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
                             <td v-if="items.max != null && items.max != '' && items.max != '0'">
@@ -1184,30 +1184,82 @@ $sess = $session->get('adminId');
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
-                        </tr>
-                        <!-- <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
+                        </tr> -->
+                        <!-- <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
+                                <template v-for="(val, key) in valGP">
+                                    <template v-if="key == 0 & keyGP != val.parameterName">
+                                            <tr>
+                                                <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
+                                                <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">#</td>
+                                                <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
+                                            </tr>
+                                    </template>
+                                        <tr>
+                                            <template v-if="key == 0 && keyGP == val.parameterName">
+                                                <td class="text-center">{{ iGP + 1 }}</td>
+                                                <td class="text-center">#</td>
+                                            </template>
+                                            <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
+                                            <td>{{ val.description }}</td>
+                                            <template v-if="!val.option">
+                                                <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
+                                                <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
+                                                <td style="max-width: 160px !important;" v-if="!val.option" :class="!val.uom ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.uom ? "(Empty)" :val.uom }}</td>
+                                            </template>
+                                            <template v-else>
+                                                <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
+                                                <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                                <td style="max-width: 160px !important;" :class="!val.option ? 'font-italic text-center' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                            </template>
+                                            <template v-if="val.uom != ''">
+                                                <td>
+                                                    {{ val.uom }}
+                                                </td>
+                                            </template>
+                                            <template  v-else-if="val.option != ''">
+                                                <td style="max-width: 160px !important;">
+                                                    {{ val.option }}
+                                                </td>
+                                            </template>
+                                            <template  v-else>
+                                                <td>
+                                                </td>
+                                            </template>
+                                            <td>
+                                                <i class="text-success"><span class="badge badge-success text-white"><i>New!</i></span></i>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key); checkModalAdd = false"><i class="fa fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key)"><i class="fa fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                </template>
+                            </template> -->
+                        <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
                                 <template v-for="(val, key) in valGP">
                                     <template v-if="key == 0 & keyGP != val.parameterName">
                                         <tr>
-                                            <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
+                                            <!-- <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td> -->
+                                            <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">#</td>
                                             <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
                                         </tr>
                                     </template>
                                     <tr>
                                         <template v-if="key == 0 & keyGP == val.parameterName">
-                                            <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td>
+                                            <!-- <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td> -->
+                                            <td style="vertical-align: text-top !important;">#</td>
                                         </template>
-                                        <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : valparameterName) }}</td>
+                                        <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
                                         <td>{{ val.description }}</td>
                                         <template v-if="!val.option">
                                             <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
                                             <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
-                                            <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" :val.uom }}</td>
+                                            <td style="max-width: 160px !important;" v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" :val.uom }}</td>
                                         </template>
                                         <template v-else>
                                             <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
                                             <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
-                                            <td :class="!val.option ? 'font-italic text-center' : ''">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                            <td style="max-width: 160px !important;" :class="!val.option ? 'font-italic text-center' : ''">{{ !val.option ? "(Empty)" :val.option }}</td>
                                         </template>
                                         <template v-if="val.uom != ''">
                                             <td>
@@ -1215,7 +1267,7 @@ $sess = $session->get('adminId');
                                             </td>
                                         </template>
                                         <template  v-else-if="val.option != ''">
-                                            <td>
+                                            <td style="max-width: 160px !important;">
                                                 {{ val.option }}
                                             </td>
                                         </template>
@@ -1228,26 +1280,27 @@ $sess = $session->get('adminId');
                                                 <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
                                             </td>
                                         </template>
-                                        <template v-else>
+                                        <template v-else-if="val.status == 'updated'">
                                             <td>
                                                 <i class="text-warning"><span class="badge badge-warning text-white">Updated</span><i>
                                             </td>
                                         </template>
+                                        <template v-else>
+                                            <td>
+                                                <i class="text-success"><span class="badge badge-success text-white"><i>New!</i></span><i>
+                                            </td>
+                                        </template>
                                         <td style="min-width: 90px !important">
-                                            <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i);checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><iclass="fa fa-trash"></i></button>
+                                            <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(keyGP, key);checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(keyGP, key)"><i class="fa fa-trash"></i></button>
                                         </td>
                                     </tr>
                                 </template>
-                        </template> -->
+                        </template>
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <!-- <div class="card card-main" id="btnSaveSetting" style="display: none;">
-            <button class="btn btn-outline-primary text-center w-100" id="btnSaveSetting" @click="btnSaveSetting()"><i class="fa fa-save"></i> Save Changes</button>
-        </div> -->
         <div :class="((checkTabSetting == true) || (checkTabParameter == true && parameter.length > 0) ? 'btn-fab' : 'd-none')" aria-label="fab">
             <div>
                 <button type="button" id="btnSaveSetting" @click="checkTabSetting == true ? btnSaveSetting() : btnSaveSorting()" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="top" title="Save Changes">
@@ -1329,9 +1382,10 @@ $sess = $session->get('adminId');
                     showOn: '',
                     deletePhoto: false
                 });
-                const parameterGroupData = _.groupBy(parameter, function(val) {
-                    return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                });
+                var tempParameterGroupData = ref("");
+                var allParameter = [];
+                var parameterGroupData = ref("");
+                
                 var tempPhoto = ref('');
                 var params = ref([]);
                 var paramPhoto = ref("");
@@ -1497,7 +1551,7 @@ $sess = $session->get('adminId');
                     }
                 };
 
-                function editExistParameter(index) {
+                function editExistParameter(keyGP, key) {
                     this.deletePhoto = ref(false);
                     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                     this.myModal.show();
@@ -1509,7 +1563,7 @@ $sess = $session->get('adminId');
                     this.paramPhoto = ref("");
                     $('#photoParam').filepond('removeFiles');
                     FilePond.destroy(document.querySelector('#photoParam'));
-                    if (this.parameter[index].photo != '' && this.parameter[index].photo != undefined) {
+                    if (this.parameterGroupData[keyGP][key].photo != '' && this.parameterGroupData[keyGP][key].photo != undefined) {
                         let url = URL.createObjectURL(this.parameter[index].photo)
                         const inputElement = document.querySelector('#photoParam');
                         var photoEdit = {
@@ -1528,7 +1582,7 @@ $sess = $session->get('adminId');
                                 source: url,
                                 options: {
                                     type: 'local',
-                                    file: this.parameter[index].photo,
+                                    file: this.parameterGroupData[keyGP][key].photo,
                                     metadata: {
                                         poster: ''
                                     }
@@ -1566,29 +1620,30 @@ $sess = $session->get('adminId');
                         })
                     }
                     
-
-                    this.param.parameterId = this.parameter[index].parameterId;
-                    this.param.sortId = this.parameter[index].sortId;
-                    this.param.parameterName = this.parameter[index].parameterName;
-                    this.param.photo = this.parameter[index].photo;
-                    this.param.photo1 = this.parameter[index].photo1;
-                    this.param.photo2 = this.parameter[index].photo2;
-                    this.param.photo3 = this.parameter[index].photo3;
-                    this.param.description = this.parameter[index].description;
-                    if (this.parameter[index].uom != "") {
-                        this.param.uom = this.parameter[index].uom;
+                    let data = this.parameterGroupData[keyGP][key];
+                    this.param.parameterId = data.parameterId;
+                    this.param.sortId = data.sortId;
+                    this.param.parameterName = data.parameterName;
+                    this.param.photo = data.photo;
+                    this.param.photo1 = data.photo1;
+                    this.param.photo2 = data.photo2;
+                    this.param.photo3 = data.photo3;
+                    this.param.description = data.description;
+                    if (data.uom != "") {
+                        this.param.uom = data.uom;
                     } else {
                         this.param.uom = "";
                     }
-                    this.param.min = this.parameter[index].min;
-                    this.param.max = this.parameter[index].max;
-                    this.param.normal = this.parameter[index].normal;
-                    this.param.abnormal = this.parameter[index].abnormal;
-                    this.param.option = this.parameter[index].option;
-                    this.param.inputType = this.parameter[index].inputType;
-                    this.param.showOn = this.parameter[index].showOn;
-                    this.param.i = index;
-                    this.param.deletePhoto = this.parameter[index].deletePhoto;
+                    this.param.max = data.max;
+                    this.param.min = data.min;
+                    this.param.normal = data.normal;
+                    this.param.abnormal = data.abnormal;
+                    this.param.option = data.option;
+                    this.param.inputType = data.inputType;
+                    this.param.showOn = data.showOn;
+                    this.param.keyGP = keyGP;
+                    this.param.key = key;
+                    this.param.deletePhoto = data.deletePhoto;
                     if (!this.param.deletePhoto) {
                         $('#deletePhoto').prop('checked', false);
                     }
@@ -1624,6 +1679,133 @@ $sess = $session->get('adminId');
                         $('#showOn').val(this.param.showOn.split(",")).trigger('change');
                     }
                 }
+                // function editExistParameter(index) {
+                //     this.deletePhoto = ref(false);
+                //     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                //     this.myModal.show();
+
+                //     $('#normal').find('option').remove();
+                //     $('#abnormal').find('option').remove();
+                //     $('#imgParam').remove();
+
+                //     this.paramPhoto = ref("");
+                //     $('#photoParam').filepond('removeFiles');
+                //     FilePond.destroy(document.querySelector('#photoParam'));
+                //     if (this.parameter[index].photo != '' && this.parameter[index].photo != undefined) {
+                //         let url = URL.createObjectURL(this.parameter[index].photo)
+                //         const inputElement = document.querySelector('#photoParam');
+                //         var photoEdit = {
+                //             acceptedFileTypes: ['image/png', 'image/jpeg'],
+                //             allowFilePoster: true,
+                //             allowImagePreview: true,
+                //             imagePreviewMaxHeight: 200,
+                //             allowImageCrop: true,
+                //             allowMultiple: false,
+                //             credits: false,
+                //             styleLoadIndicatorPosition: 'center bottom',
+                //             styleProgressIndicatorPosition: 'right bottom',
+                //             styleButtonRemoveItemPosition: 'left bottom',
+                //             styleButtonProcessItemPosition: 'right bottom',
+                //             files: [{
+                //                 source: url,
+                //                 options: {
+                //                     type: 'local',
+                //                     file: this.parameter[index].photo,
+                //                     metadata: {
+                //                         poster: ''
+                //                     }
+                //                 }
+                //             }]
+                //         };
+                //         let pond = FilePond.create(inputElement, photoEdit);
+                //         pond.on('addfile', (error, file) => {
+                //             v.paramPhoto = file.file;
+                //         })
+                //         pond.on('removefile', (error, file) => {
+                //             v.paramPhoto = ref("");
+                //         })
+                //     }else{
+                //         var filepondParam = {
+                //             acceptedFileTypes: ['image/png', 'image/jpeg'],
+                //             allowFilePoster: true,
+                //             allowImagePreview: true,
+                //             imagePreviewMaxHeight: 200,
+                //             allowImageCrop: true,
+                //             allowMultiple: false,
+                //             credits: false,
+                //             styleLoadIndicatorPosition: 'center bottom',
+                //             styleProgressIndicatorPosition: 'right bottom',
+                //             styleButtonRemoveItemPosition: 'left bottom',
+                //             styleButtonProcessItemPosition: 'right bottom',
+                //         };
+
+                //         let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                //         pond.on('addfile', (error, file) => {
+                //             v.paramPhoto = file.file;
+                //         })
+                //         pond.on('removefile', (error, file) => {
+                //             v.paramPhoto = ref("");
+                //         })
+                //     }
+                    
+
+                //     this.param.parameterId = this.parameter[index].parameterId;
+                //     this.param.sortId = this.parameter[index].sortId;
+                //     this.param.parameterName = this.parameter[index].parameterName;
+                //     this.param.photo = this.parameter[index].photo;
+                //     this.param.photo1 = this.parameter[index].photo1;
+                //     this.param.photo2 = this.parameter[index].photo2;
+                //     this.param.photo3 = this.parameter[index].photo3;
+                //     this.param.description = this.parameter[index].description;
+                //     if (this.parameter[index].uom != "") {
+                //         this.param.uom = this.parameter[index].uom;
+                //     } else {
+                //         this.param.uom = "";
+                //     }
+                //     this.param.min = this.parameter[index].min;
+                //     this.param.max = this.parameter[index].max;
+                //     this.param.normal = this.parameter[index].normal;
+                //     this.param.abnormal = this.parameter[index].abnormal;
+                //     this.param.option = this.parameter[index].option;
+                //     this.param.inputType = this.parameter[index].inputType;
+                //     this.param.showOn = this.parameter[index].showOn;
+                //     this.param.i = index;
+                //     this.param.deletePhoto = this.parameter[index].deletePhoto;
+                //     if (!this.param.deletePhoto) {
+                //         $('#deletePhoto').prop('checked', false);
+                //     }
+
+                //     if (this.param.photo1 != "" && !this.param.deletePhoto && this.param.photo1 != null) {
+                //         $('#previewImg').show();
+                //         $('#preview').append("<img class='img-thumbnail' id='imgParam' style='height:150px; cursor: pointer' src='" + this.param.photo1 + "' alt=''  onclick='modalPreviewImg()' data-toggle='tooltip' title='click to preview this image'>");
+                //     } else if (this.param.photo1 == "" || this.param.photo1 == null || this.param.deletePhoto) {
+                //         $('#previewImg').hide();
+                //     }
+
+                //     if (v.param.inputType != '') {
+                //         $('.type').val(v.param.inputType).trigger("change");
+                //     }
+
+                //     if (v.param.normal != '' || v.param.abnormal != '') {
+                //         $lengthNormal = v.param.normal.split(",").length;
+                //         $lengthAbnormal = v.param.abnormal.split(",").length;
+                //         if ($lengthNormal > 0) {
+                //             var dataNormal = v.param.normal.split(",");
+                //             for (let index = 0; index < dataNormal.length; index++) {
+                //                 $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
+                //             }
+                //         }
+                //         if ($lengthAbnormal > 0) {
+                //             var dataAbnormal = v.param.abnormal.split(",");
+                //             for (let index = 0; index < dataAbnormal.length; index++) {
+                //                 $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
+                //             }
+                //         }
+                //     }
+                //     if (this.param.showOn != '') {
+                //         $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                //     }
+                // }
 
                 function updateExistParameter() {
                     let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
@@ -1813,33 +1995,81 @@ $sess = $session->get('adminId');
                             $('.showOn').addClass('is-invalid');
                         }
                         
-                        index = this.param.i;
-                        this.parameter[index] = {
-                            parameterId: this.param.parameterId,
-                            sortId: this.param.sortId,
-                            parameterName: this.param.parameterName,
-                            photo: this.paramPhoto,
-                            photo1: this.param.photo1,
-                            photo2: this.param.photo2,
-                            photo3: this.param.photo3,
-                            description: this.param.description,
-                            uom: this.param.uom,
-                            min: this.param.min,
-                            max: this.param.max,
-                            normal: this.param.normal,
-                            abnormal: this.param.abnormal,
-                            option: this.param.option,
-                            inputType: this.param.inputType,
-                            showOn: this.param.showOn,
-                            i: index,
-                            deletePhoto: this.deletePhoto 
-                        }
-                        let lengthEdited = this.editedParameter.length;
+                        // index = this.param.i;
+                        let keyGP = this.param.keyGP;
+                        let key = this.param.key;
+                        // this.parameterGroupData[keyGP][key] = {
+                        //     parameterId: this.param.parameterId,
+                        //     sortId: this.param.sortId,
+                        //     parameterName: this.param.parameterName,
+                        //     photo: this.paramPhoto,
+                        //     photo1: this.param.photo1,
+                        //     photo2: this.param.photo2,
+                        //     photo3: this.param.photo3,
+                        //     description: this.param.description,
+                        //     uom: this.param.uom,
+                        //     min: this.param.min,
+                        //     max: this.param.max,
+                        //     normal: this.param.normal,
+                        //     abnormal: this.param.abnormal,
+                        //     option: this.param.option,
+                        //     inputType: this.param.inputType,
+                        //     showOn: this.param.showOn,
+                        //     keyGP: keyGP,
+                        //     key: key,
+                        //     deletePhoto: this.deletePhoto 
+                        // }
 
-                        let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
-                        let edited = _.omit(this.parameter[index], ['i']);
+                        let compare = "";
+                        let edited = _.omit(this.param, ['keyGP', 'key', 'status', 'i']);
+                        
+                        this.compareParameter.forEach((el, i) => {
+                            if (el.parameterId === this.param.parameterId) {
+                                compare = _.omit(el, ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                            }
+                        });
 
                         let check = _.isEqual(compare, edited);
+                        console.log(check);
+                        let lengthEdited = this.editedParameter.length;
+                        if (check) {
+                            for (let i = 0; i < lengthEdited; i++) {
+                                // console.log(this.editedParameter[i].parameterId);
+                                let isEditedParam = this.editedParameter[i].parameterId
+                                if (isEditedParam == this.param.parameterId) {
+                                    this.param.status = 'old';
+                                    return this.editedParameter.splice(i, 1);
+                                }
+                            }
+                            this.param.status = 'old';
+                        } else {
+                            setTimeout(() => {
+                                for (let i = 0; i < lengthEdited; i++) {
+                                    // console.log(this.editedParameter[i].parameterId);
+                                    let isEditedParam = this.editedParameter[i].parameterId
+                                    if (isEditedParam == this.param.parameterId) {
+                                        return this.editedParameter.splice(i, 1);
+                                    }
+                                }
+                            }, 2000);
+                            this.param.status = 'updated';
+                            this.editedParameter.push(this.param);
+                        }
+
+                        this.allParameter[0].forEach((el, i) => {
+                            if (el.parameterId === this.param.parameterId) {
+                                this.allParameter[0][i] = this.param
+                            }
+                        });
+
+                        console.log(allParameter[0]);
+                        this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
+                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        });
+
+                        // let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                        // let edited = _.omit(this.parameter[index], ['i']);
+
                         // const {
                         //     assetId,
                         //     createdAt,
@@ -1876,31 +2106,284 @@ $sess = $session->get('adminId');
                             icon: 'success',
                             title: 'Successfully Modify Parameter'
                         })
-                        if (check) {
-                            for (let i = 0; i < lengthEdited; i++) {
-                                // console.log(this.editedParameter[i].parameterId);
-                                let idEditedParam = this.editedParameter[i].parameterId
-                                if (idEditedParam == this.parameter[index].parameterId) {
-                                    this.parameter[index].status = 'old';
-                                    return this.editedParameter.splice(i, 1);
-                                }
-                            }
-                            this.parameter[index].status = 'old';
-                        } else {
-                            setTimeout(() => {
-                                for (let i = 0; i < lengthEdited; i++) {
-                                    // console.log(this.editedParameter[i].parameterId);
-                                    let idEditedParam = this.editedParameter[i].parameterId
-                                    if (idEditedParam == this.parameter[index].parameterId) {
-                                        return this.editedParameter.splice(i, 1);
-                                    }
-                                }
-                            }, 2000);
-                            this.editedParameter.push(this.parameter[index]);
-                            this.parameter[index].status = 'updated';
-                        }
                     }
                 }
+                // function updateExistParameter() {
+                //     let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                //     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                //     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
+                //     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
+                //     let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
+                //     let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
+                //     if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
+                //         const swalWithBootstrapButtons = swal.mixin({
+                //             customClass: {
+                //                 confirmButton: 'btn btn-danger',
+                //             },
+                //             buttonsStyling: false
+                //         })
+                //         swalWithBootstrapButtons.fire({
+                //             title: 'Failed!',
+                //             text: "Invalid value!",
+                //             icon: 'error'
+                //         })
+
+                //         if (this.param.parameterName != '') {
+                //             $('.parameter').removeClass('is-invalid');
+                //         }
+                //         if (this.param.inputType != '') {
+                //             $('.type').removeClass('is-invalid');
+                //         }
+
+                //         //remove invalid class
+                //         // input type
+                //         if (this.param.inputType == 'input') {
+                //             if (this.param.min != "" || this.param.min != null) {
+                //                 $('.min').removeClass('is-invalid');
+                //             }
+                //             if (this.param.max != "" || this.param.max != null) {
+                //                 $('.max').removeClass('is-invalid');
+                //             }
+                //             if (this.param.uom != "" || this.param.uom != null) {
+                //                 $('.uom').removeClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'select') {
+                //             if (this.param.normal != "") {
+                //                 $('#normal').removeClass('is-invalid');
+                //             }
+                //             if (this.param.abnormal != "") {
+                //                 $('#abnormal').removeClass('is-invalid');
+                //             }
+                //             if (this.param.uom != "") {
+                //                 $('.uom').removeClass('is-invalid');
+                //             }
+                //             if (this.param.option != "") {
+                //                 $('#option').removeClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'checkbox') {
+                //             if (this.param.option != "") {
+                //                 $('#option').removeClass('is-invalid');
+                //             }
+                //         }
+
+                //         if (this.param.showOn != '') {
+                //             $('.showOn').removeClass('is-invalid');
+                //         }
+
+                //         //end remove invalid class
+
+                //         //add invalid class
+                //         if (this.param.parameterName == '') {
+                //             $('.parameter').addClass('is-invalid');
+                //         }
+                //         if (this.param.inputType == '') {
+                //             $('.type').addClass('is-invalid');
+                //         }
+                //         if (this.param.inputType == 'input') {
+                //             if (this.param.min == "" || this.param.min == null) {
+                //                 $('.min').addClass('is-invalid');
+                //             }
+                //             if (this.param.max == "" || this.param.max == null) {
+                //                 $('.max').addClass('is-invalid');
+                //             }
+                //             if (this.param.uom == "" || this.param.uom == null) {
+                //                 $('.uom').addClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'select') {
+                //             if (this.param.normal == "") {
+                //                 $('#normal').addClass('is-invalid');
+                //             }
+                //             if (this.param.abnormal == "") {
+                //                 $('#abnormal').addClass('is-invalid');
+                //             }
+                //             if (this.param.uom == "") {
+                //                 $('.uom').addClass('is-invalid');
+                //             }
+                //             if (this.param.option == "") {
+                //                 $('#option').addClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'checkbox') {
+                //             if (this.param.option == "") {
+                //                 $('#option').addClass('is-invalid');
+                //             }
+                //         }
+
+                //         if (this.param.showOn == '') {
+                //             $('.showOn').addClass('is-invalid');
+                //         }
+                //     } else {
+                //         if (this.param.parameterName != '') {
+                //             $('.parameter').removeClass('is-invalid');
+                //         }
+                //         if (this.param.inputType != '') {
+                //             $('.type').removeClass('is-invalid');
+                //         }
+
+                //         //remove invalid class
+                //         // input type
+                //         if (this.param.inputType == 'input') {
+                //             if (this.param.min != "" || this.param.min != null) {
+                //                 $('.min').removeClass('is-invalid');
+                //             }
+                //             if (this.param.max != "" || this.param.max != null) {
+                //                 $('.max').removeClass('is-invalid');
+                //             }
+                //             if (this.param.uom != "" || this.param.uom != null) {
+                //                 $('.uom').removeClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'select') {
+                //             if (this.param.normal != "") {
+                //                 $('#normal').removeClass('is-invalid');
+                //             }
+                //             if (this.param.abnormal != "") {
+                //                 $('#abnormal').removeClass('is-invalid');
+                //             }
+                //             if (this.param.uom != "") {
+                //                 $('.uom').removeClass('is-invalid');
+                //             }
+                //             if (this.param.option != "") {
+                //                 $('#option').removeClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'checkbox') {
+                //             if (this.param.option != "") {
+                //                 $('#option').removeClass('is-invalid');
+                //             }
+                //         }
+
+                //         if (this.param.showOn != '') {
+                //             $('.showOn').removeClass('is-invalid');
+                //         }
+
+                //         //end remove invalid class
+
+                //         //add invalid class
+                //         if (this.param.parameterName == '') {
+                //             $('.parameter').addClass('is-invalid');
+                //         }
+                //         if (this.param.inputType == '') {
+                //             $('.type').addClass('is-invalid');
+                //         }
+                //         if (this.param.inputType == 'input') {
+                //             if (this.param.min == "" || this.param.min == null) {
+                //                 $('.min').addClass('is-invalid');
+                //             }
+                //             if (this.param.max == "" || this.param.max == null) {
+                //                 $('.max').addClass('is-invalid');
+                //             }
+                //             if (this.param.uom == "" || this.param.uom == null) {
+                //                 $('.uom').addClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'select') {
+                //             if (this.param.normal == "") {
+                //                 $('#normal').addClass('is-invalid');
+                //             }
+                //             if (this.param.abnormal == "") {
+                //                 $('#abnormal').addClass('is-invalid');
+                //             }
+                //             if (this.param.uom == "") {
+                //                 $('.uom').addClass('is-invalid');
+                //             }
+                //             if (this.param.option == "") {
+                //                 $('#option').addClass('is-invalid');
+                //             }
+                //         } else if (this.param.inputType == 'checkbox') {
+                //             if (this.param.option == "") {
+                //                 $('#option').addClass('is-invalid');
+                //             }
+                //         }
+
+                //         if (this.param.showOn == '') {
+                //             $('.showOn').addClass('is-invalid');
+                //         }
+                        
+                //         index = this.param.i;
+                //         this.parameter[index] = {
+                //             parameterId: this.param.parameterId,
+                //             sortId: this.param.sortId,
+                //             parameterName: this.param.parameterName,
+                //             photo: this.paramPhoto,
+                //             photo1: this.param.photo1,
+                //             photo2: this.param.photo2,
+                //             photo3: this.param.photo3,
+                //             description: this.param.description,
+                //             uom: this.param.uom,
+                //             min: this.param.min,
+                //             max: this.param.max,
+                //             normal: this.param.normal,
+                //             abnormal: this.param.abnormal,
+                //             option: this.param.option,
+                //             inputType: this.param.inputType,
+                //             showOn: this.param.showOn,
+                //             i: index,
+                //             deletePhoto: this.deletePhoto 
+                //         }
+                //         let lengthEdited = this.editedParameter.length;
+
+                //         let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                //         let edited = _.omit(this.parameter[index], ['i']);
+
+                //         let check = _.isEqual(compare, edited);
+                //         // const {
+                //         //     assetId,
+                //         //     createdAt,
+                //         //     deletedAt,
+                //         //     updatedAt,
+                //         //     ...newParam
+                //         // } = this.compareParameter[index];
+                //         // const {
+                //         //     i,
+                //         //     photo,
+                //         //     ...newEdited
+                //         // } = this.parameter[index];
+                //         // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
+
+                //         this.myModal.hide();
+                //         this.deletePhoto = ref(false);
+
+                //         const Toast = Swal.mixin({
+                //             toast: true,
+                //             position: 'top-end',
+                //             iconColor: 'white',
+                //             showConfirmButton: false,
+                //             timer: 2000,
+                //             timerProgressBar: true,
+                //             customClass: {
+                //                 popup: 'colored-toast'
+                //             },
+                //             didOpen: (toast) => {
+                //                 toast.addEventListener('mouseenter', Swal.stopTimer)
+                //                 toast.addEventListener('mouseleave', Swal.resumeTimer)
+                //             }
+                //         })
+                //         Toast.fire({
+                //             icon: 'success',
+                //             title: 'Successfully Modify Parameter'
+                //         })
+                //         if (check) {
+                //             for (let i = 0; i < lengthEdited; i++) {
+                //                 // console.log(this.editedParameter[i].parameterId);
+                //                 let idEditedParam = this.editedParameter[i].parameterId
+                //                 if (idEditedParam == this.parameter[index].parameterId) {
+                //                     this.parameter[index].status = 'old';
+                //                     return this.editedParameter.splice(i, 1);
+                //                 }
+                //             }
+                //             this.parameter[index].status = 'old';
+                //         } else {
+                //             setTimeout(() => {
+                //                 for (let i = 0; i < lengthEdited; i++) {
+                //                     // console.log(this.editedParameter[i].parameterId);
+                //                     let idEditedParam = this.editedParameter[i].parameterId
+                //                     if (idEditedParam == this.parameter[index].parameterId) {
+                //                         return this.editedParameter.splice(i, 1);
+                //                     }
+                //                 }
+                //             }, 2000);
+                //             this.editedParameter.push(this.parameter[index]);
+                //             this.parameter[index].status = 'updated';
+                //         }
+                //     }
+                // }
 
                 function addParameter() {
                     this.paramPhoto = ref("");
@@ -2153,6 +2636,7 @@ $sess = $session->get('adminId');
 
                         this.param.photo = this.paramPhoto;
                         this.params.push(this.param);
+                        this.allParameter[0].push(this.param);
                         this.param = reactive({
                             parameterId: uuidv4(),
                             sortId: $('#tableParameter tbody tr').length + 2,
@@ -2171,6 +2655,13 @@ $sess = $session->get('adminId');
                             inputType: '',
                             showOn: '',
                         })
+                        this.tempParameterGroupData = _.groupBy(this.params, function(val) {
+                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        });
+                        this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
+                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        });
+                        
                         $('#photoParam').filepond('removeFiles');
                         $('.type').val('').trigger("change");
                         $('#showOn').val('').trigger('change');
@@ -3345,6 +3836,15 @@ $sess = $session->get('adminId');
                         compareParameter[i].deletePhoto = false;
                         compareParameter[i].photo = '';
                     }
+                    if (parameter.length) {
+                        allParameter.push(parameter)
+                    }
+                    if (allParameter.length) {
+                        // parameterGroupData.value = "yes";
+                        parameterGroupData.value = _.groupBy(allParameter[0], function(val) {
+                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        });
+                    }
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
                     let dataAssetDesc = assetData.description;
@@ -3466,7 +3966,9 @@ $sess = $session->get('adminId');
                     btnCancelModalParam,
                     btnSaveSorting,
                     isEqualParam,
-                    parameterGroupData
+                    parameterGroupData,
+                    tempParameterGroupData,
+                    allParameter
                 }
             },
             computed: {
