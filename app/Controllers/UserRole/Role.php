@@ -114,7 +114,6 @@ class Role extends BaseController
             } else {
                 return $this->response->setJSON([
                     'status' => 200,
-                    'error' => true,
                     'message' => "Success Get Group List",
                     'data' => $data->data ?? []
                 ], 200);

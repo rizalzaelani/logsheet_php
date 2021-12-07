@@ -769,7 +769,7 @@
                         singleDate: false,
                         inline: true,
                         format: 'DD MMM YYYY',
-                        minDate: moment(),
+                        // minDate: moment(),
                         onSelect: function(start, end) {
                             let str = '';
                             str += start ? start.format('DD MMM YYYY') + ' - ' : '';

@@ -29,4 +29,10 @@ class AssetModel extends Model
 
         return $query->get()->getResultArray();
     }
+
+    public function getRecordTrendParam($parameterId, $dateFrom, $dateTo)
+    {
+        $query = $this->db->query("call sp_trendParameter('$parameterId','$dateFrom','$dateTo')");
+        return $query->getResultArray();
+    }
 }

@@ -2,6 +2,35 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+
+<style>
+    .modal-xl {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        padding: 0.5rem !important;
+    }
+
+    @media (min-width: 992px) {
+
+        .modal-xl,
+        .modal-xl .modal-dialog {
+            max-width: 100% !important;
+        }
+    }
+
+    @media (min-width: 576px) {
+
+        .modal-xl,
+        .modal-xl .modal-dialog {
+            max-width: 100% !important;
+        }
+    }
+</style>
+
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -90,10 +119,14 @@
         <div class="card card-main py-4">
             <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#reportingTab" role="tab" aria-controls="detail"><h5 class="mb-0">Reporting</h5></a>
+                    <a class="nav-link active" data-toggle="tab" href="#reportingTab" role="tab" aria-controls="detail">
+                        <h5 class="mb-0">Reporting</h5>
+                    </a>
                 </li>
                 <li class="nav-item" @click="resizeChart()">
-                    <a class="nav-link" data-toggle="tab" href="#trxSummaryTab" role="tab" aria-controls="parameter"><h5 class="mb-0">Summary</h5></a>
+                    <a class="nav-link" data-toggle="tab" href="#trxSummaryTab" role="tab" aria-controls="parameter">
+                        <h5 class="mb-0">Summary</h5>
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -103,11 +136,13 @@
                             <thead>
                                 <tr>
                                     <th class="text-center" rowspan="2" style="vertical-align: middle;">No.</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;"><input type="checkbox" name="checkAll" @click="checkAll($event.target.checked)" :checked="parameterIdSelect.length == parameterData.length" /></th>
                                     <th class="text-center" rowspan="2" style="vertical-align: middle;">Parameter</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Trend</th>
                                     <th class="text-center" rowspan="2" style="vertical-align: middle;">Description</th>
-                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Min / Abnormal</th>
-                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Max / Normal</th>
-                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">UoM / Option</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Normal</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">Abnormal</th>
+                                    <th class="text-center" rowspan="2" style="vertical-align: middle;">UoM</th>
                                     <template v-for="(val, key) in scheduleGroupData">
                                         <template v-if="checkTrxBySch(val[0].scheduleTrxId).length > 0">
                                             <th style="width: 115px;" class="text-center" :colspan="val.length"><a :href="'<?= base_url("Transaction/detail") ?>?scheduleTrxId=' + val[0].scheduleTrxId" target="_blank">{{ val[0].schType == "Monthly" ? moment(val[0].scheduleFrom).format('MMMM YYYY') : (val[0].schType == "Weekly" ? "Week " + moment(val[0].scheduleFrom).week() + " " + moment(val[0].scheduleFrom).format('YYYY') : moment(val[0].scheduleFrom).format('DD-MM-YYYY') ) }}</a></th>
@@ -143,7 +178,15 @@
                                             <template v-if="key == 0 & keyGP == val.parameterName">
                                                 <td class="text-center">{{ iGP + 1 }}</td>
                                             </template>
+                                            <td class="text-center">
+                                                <input type="checkbox" :value="val.parameterId" class="check-param-trend" @change="checkParameterId(val.parameterId)" :checked="parameterIdSelect.includes(val.parameterId)" />
+                                            </td>
                                             <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
+                                            <td>
+                                                <div class="chart-wrapper cursor-pointer" data-toggle="tooltip" title="Click To Open Trend">
+                                                    <div :id="'miniTrend-' + val.parameterId" style="width: 100px;height: 30px;" @click="showTrend(val.parameterId)"></div>
+                                                </div>
+                                            </td>
                                             <td class="text-center">{{ val.description }}</td>
 
                                             <template v-if="!val.option">
@@ -190,6 +233,36 @@
             </div>
         </div>
     </div>
+
+    <div class="btn-fab" aria-label="fab" :class="parameterIdSelect.length > 0 ? '' : 'd-none'">
+        <button type="button" class="btn btn-main btn-success has-tooltip" @click="showTrend()" data-toggle="tooltip" data-placement="top" title="Show Trending"><i class="fa fa-chart-line"></i></button>
+    </div>
+
+    <div class="modal modal-xl fade" id="modalTrend" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Trending Parameter</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div id="trendDateRange" style="cursor: pointer; padding: 5px 10px; border: none; width: 100%">
+                            <i class="fa fa-calendar"></i>&nbsp;
+                            <span></span> <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
+                    <div id="canvasTrendM" style="height: 400px;" class="chart"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary font-weight-500" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> Close</button>
+                    <button type="button" class="btn btn-outline-primary font-weight-500" onclick="modalMailTrend()"><i class="fab fa-telegram-plane"></i> Send Mail</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 </div>
 <?= $this->endSection(); ?>
 
@@ -202,6 +275,9 @@
             const start = moment("<?= $dateFrom ?>");
             const end = moment("<?= $dateTo ?>");
 
+            let startTrend = start;
+            let endTrend = end;
+
             const assetData = <?= json_encode($assetData) ?>;
             const parameterData = <?= json_encode($parameterData) ?>;
             const scheduleData = <?= json_encode($scheduleData) ?>;
@@ -212,6 +288,8 @@
             const parameterGroupData = _.groupBy(parameterData, function(val) {
                 return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
             });
+
+            const parameterIdSelect = Vue.reactive([]);
 
             if (IsJsonString(assetData?.description)) {
                 assetData.descriptionJson = JSON.parse(assetData.description);
@@ -224,6 +302,37 @@
                 $('#daterange').on('apply.daterangepicker', function(ev, picker) {
                     window.location.href = "<?= base_url("ReportingAsset/detail") ?>?assetId=" + assetData.assetId + "&dateFrom=" + startIn.format("YYYY-MM-DD") + "&dateTo=" + endIn.format("YYYY-MM-DD");
                 });
+            }
+
+            const cbTrend = (startIn, endIn) => {
+                startTrend = startIn;
+                endTrend = endIn;
+
+                $('#trendDateRange span').html(startIn.format('D MMM YYYY') + ' - ' + endIn.format('D MMM YYYY'));
+                $('#trendDateRange').on('apply.daterangepicker', function(ev, picker) {
+
+                    console.log(startTrend, endTrend)
+
+                    showTrend("", startIn, endIn)
+                });
+            }
+
+            const checkAll = (checked) => {
+                if (checked) {
+                    parameterIdSelect.splice(0, parameterIdSelect.length);
+                    parameterIdSelect.push(...(_.map(parameterData, (val) => val.parameterId)));
+                } else {
+                    parameterIdSelect.splice(0, parameterIdSelect.length);
+                }
+            }
+
+            const checkParameterId = (parameterId) => {
+                if (parameterIdSelect.includes(parameterId)) {
+                    let indexP = parameterIdSelect.indexOf(parameterId);
+                    if (indexP >= 0) parameterIdSelect.splice(indexP, 1);
+                } else {
+                    parameterIdSelect.push(parameterId);
+                }
             }
 
             const checkTrxBySch = (scheduleTrxId) => {
@@ -557,6 +666,325 @@
                 }
             }
 
+            // Trending
+            const showTrend = (parameterId, startTrend, endTrend) => {
+                if (!parameterId) parameterId = parameterIdSelect.join(",")
+                if (parameterId) {
+                    parameterIdSelect.splice(0, parameterIdSelect.length);
+                    parameterIdSelect.push(parameterId);
+                    $('#modalTrend').modal('show');
+
+                    startTrend = startTrend ?? start;
+                    endTrend = endTrend ?? end;
+                    let res = axios.get("<?= site_url("ReportingAsset/getRecordByParam") ?>?parameterId=" + parameterId + "&dateFrom=" + startTrend.format("YYYY-MM-DD") + "&dateTo=" + endTrend.format("YYYY-MM-DD"))
+                        .then(res => {
+                            xhrThrowRequest(res)
+                                .then(() => {
+                                    let dataTrend = res.data.data;
+
+                                    let label = [];
+                                    let dataSet = [];
+
+                                    let paramArr = parameterId.split(",").filter((val) => val);
+                                    if (paramArr.length > 1) {
+                                        paramArr.forEach((vParam) => {
+                                            let filtParam = _.filter(parameterData, (val) => val.parameterId == vParam);
+                                            if (filtParam.length > 0) {
+                                                let filtRecordTrend = _.filter(dataTrend, (val) => val.parameterId == vParam);
+
+                                                let dataLine = [];
+                                                _.sortBy(filtRecordTrend, "scheduleFrom").forEach((val, key) => {
+                                                    dataLine.push(val.value != null & val.value != '' ? parseFloat(val.value) : null);
+                                                });
+
+                                                dataSet.push({
+                                                    name: filtParam[0].parameterName,
+                                                    lineStyle: {
+                                                        width: 3
+                                                    },
+                                                    type: 'line',
+                                                    smooth: true,
+                                                    symbolSize: 4,
+                                                    showAllSymbol: true,
+                                                    symbolKeepAspect: true,
+                                                    data: dataLine
+                                                });
+                                            }
+                                        });
+
+                                        let groupTimestamp = _.groupBy(_.sortBy(dataTrend, "scheduleFrom"), function(v) {
+                                            return moment(v.scheduleFrom).format("DD-MM-YYYY HH:mm");
+                                        });
+
+                                        _.forEach(groupTimestamp, (val, key) => {
+                                            label.push(key);
+                                        })
+
+                                        setTimeout(() => {
+                                            createTrendChart("Multiple Parameter", label, dataSet);
+                                        }, 500)
+                                    } else if (paramArr.length == 1) {
+                                        let filtParam = _.filter(parameterData, (val) => val.parameterId == paramArr[0]);
+                                        if (filtParam.length > 0) {
+                                            dataSet = [{
+                                                name: filtParam[0].parameterName,
+                                                lineStyle: {
+                                                    color: '#2f7ed8',
+                                                    width: 3
+                                                },
+                                                itemStyle: {
+                                                    color: '#2f7ed8'
+                                                },
+                                                markArea: {
+                                                    label: {
+                                                        show: false,
+                                                    },
+                                                    data: [
+                                                        [{
+                                                            name: 'Deviasi',
+                                                            x: '10%',
+                                                            yAxis: filtParam[0].max
+                                                        }, {
+                                                            name: 'Deviasi',
+                                                            x: '90%',
+                                                            yAxis: filtParam[0].min
+                                                        }]
+                                                    ]
+                                                },
+                                                markLine: {
+                                                    symbol: 'circle',
+                                                    lineStyle: {
+                                                        color: '#f00',
+                                                        type: 'solid',
+                                                        width: 3
+                                                    },
+                                                    data: []
+                                                },
+                                                type: 'line',
+                                                smooth: true,
+                                                symbolSize: 4,
+                                                showAllSymbol: true,
+                                                symbolKeepAspect: true,
+                                                data: []
+                                            }];
+
+                                            if (!filtParam[0].min && !filtParam[0].max) {
+                                                dataSet[0].markArea = null;
+                                                dataSet[0].markLine = null;
+                                            } else {
+                                                if (filtParam[0].max) {
+                                                    dataSet[0].markLine.data.push([{
+                                                            name: 'Max : ' + filtParam[0].max,
+                                                            x: '10%',
+                                                            yAxis: filtParam[0].max
+                                                        },
+                                                        {
+                                                            name: 'Max',
+                                                            x: '90%',
+                                                            yAxis: filtParam[0].max
+                                                        }
+                                                    ]);
+                                                } else if (filtParam[0].min) {
+                                                    dataSet[0].data.push([{
+                                                        name: 'Min : ' + filtParam[0].min ?? "-",
+                                                        x: '10%',
+                                                        yAxis: filtParam[0].min
+                                                    }, {
+                                                        name: 'Min',
+                                                        x: '90%',
+                                                        yAxis: filtParam[0].min
+                                                    }])
+                                                }
+                                            }
+
+                                            _.sortBy(dataTrend, "scheduleFrom").forEach((val, key) => {
+                                                label.push(moment(val.scheduleFrom).format("DD-MM-YYYY HH:mm"));
+                                                if (val.value == null) {
+                                                    dataSet[0].data.push(null);
+                                                } else {
+                                                    dataSet[0].data.push(parseFloat(val.value));
+                                                }
+                                            });
+
+                                            setTimeout(() => {
+                                                createTrendChart(filtParam[0].parameterName, label, dataSet, filtParam[0].min, filtParam[0].max);
+                                            }, 500)
+                                        }
+                                    } else {
+                                        Swal.fire({
+                                            title: "Warning",
+                                            text: "Please select parameter first or click on trend column",
+                                            icon: "warning",
+                                        });
+                                    }
+                                })
+                                .catch((rej) => {
+                                    if (rej.throw) {
+                                        throw new Error(rej.message);
+                                    }
+                                });
+                        });
+                } else {
+                    $('#modalTrend').modal('hide'); // show bootstrap modal\
+                    Swal.fire({
+                        title: "Warning",
+                        text: "Please select parameter first or click on trend column",
+                        icon: "warning",
+                    });
+                }
+            }
+
+            const createTrendChart = (title, label, dataSet, min, max) => {
+                let optionChart = {
+                    title: {
+                        text: title,
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross'
+                        }
+                    },
+                    legend: {
+                        show: false,
+                    },
+                    toolbox: {
+                        right: '9%',
+                        feature: {
+                            dataZoom: {},
+                            saveAsImage: {
+                                title: "Save As Image"
+                            },
+                            dataView: {
+                                title: "View Data",
+                                lang: ['Data Chart', 'Back', 'Refresh'],
+                                readOnly: true,
+                                buttonColor: '#f0f0f0',
+                                buttonTextColor: '#2e2e2e',
+                            },
+                        }
+                    },
+                    dataZoom: [{
+                            type: 'slider',
+                            show: true,
+                            startValue: 0,
+                            endValue: 150
+                        },
+                        {
+                            type: 'inside',
+                            orient: 'vertical',
+                            show: true,
+                            zoomOnMouseWheel: true,
+                            moveOnMouseMove: true
+                        }
+                    ],
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: label
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            margin: 20,
+                            formatter: '{value}'
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisPointer: {
+                            snap: true
+                        }
+                    },
+                    series: dataSet
+                };
+
+                if (min) optionChart.yAxis.min = (value) => {
+                    return (min < value.min ? min : value.min)
+                };
+                if (max) optionChart.yAxis.max = (value) => {
+                    return (max < value.max ? max : value.max)
+                };
+
+                let chartTrend = echarts.init(document.getElementById("canvasTrendM"));
+                if (optionChart && typeof optionChart === "object") {
+                    chartTrend.setOption(optionChart, true);
+                }
+
+                window.addEventListener('resize', function(event) {
+                    if (chartTrend) {
+                        chartTrend.resize();
+                    }
+                }, true);
+            }
+
+            const showMiniTrend = () => {
+                let optionChart = {
+                    title: {
+                        show: false,
+                    },
+                    grid: {
+                        width: '100px',
+                        height: '30px',
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                    },
+                    tooltip: {
+                        show: false
+                    },
+                    legend: {
+                        show: false
+                    },
+                    toolbox: {
+                        show: false
+                    },
+                    xAxis: {
+                        show: false,
+                        type: 'category',
+                        boundaryGap: false
+                    },
+                    yAxis: {
+                        show: false,
+                        type: 'value',
+                        axisLine: {
+                            show: false
+                        },
+                        axisPointer: {
+                            snap: false
+                        }
+                    },
+                    series: [{
+                        name: 'record',
+                        lineStyle: {
+                            color: '#2f7ed8',
+                            width: 2
+                        },
+                        itemStyle: {
+                            color: '#2f7ed8'
+                        },
+                        type: 'line',
+                        smooth: true,
+                        symbolSize: 0,
+                        symbol: 'circle',
+                        hoverAnimation: false,
+                        data: null
+                    }]
+                };
+
+                parameterData.forEach((vp) => {
+                    let dataSet = _.chain(trxData).sortBy('createdAt').filter((val) => val.parameterId == vp.parameterId).map((val) => val.value).value();
+                    optionChart.series[0].data = dataSet;
+                    optionChart.xAxis.data = dataSet;
+                    let chartMiniTrend = echarts.init(document.getElementById("miniTrend-" + vp.parameterId));
+                    if (optionChart && typeof optionChart === "object") {
+                        chartMiniTrend.setOption(optionChart, true);
+                    }
+                })
+            }
+
             const resizeChart = () => {
                 if (trxSummaryChart) {
                     trxSummaryChart.resize();
@@ -578,7 +1006,23 @@
                 }, cb);
 
                 cb(start, end);
+
+                $('#trendDateRange').daterangepicker({
+                    startDate: startTrend,
+                    endDate: endTrend,
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    }
+                }, cbTrend);
+                $('#trendDateRange span').html(startTrend.format('D MMM YYYY') + ' - ' + endTrend.format('D MMM YYYY'));
+
                 generateTrxSummaryChart();
+                showMiniTrend();
 
                 window.addEventListener('resize', function(event) {
                     resizeChart();
@@ -594,12 +1038,16 @@
                 scheduleData,
                 scheduleGroupData,
                 trxData,
+                checkAll,
+                checkParameterId,
+                parameterIdSelect,
                 checkTrxBySch,
                 alertSwal,
                 checkAbnormal,
                 moment,
                 tableToExcel,
                 CapitalizeEachWords,
+                showTrend,
                 resizeChart,
             };
         }

@@ -14,9 +14,9 @@ class Asset extends BaseController
 {
 	public function index()
 	{
-        if(!checkRoleList("REPORT.ASSET.VIEW")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("REPORT.ASSET.VIEW")) {
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$assetModel			= new AssetModel();
 		$tagModel			= new TagModel();
@@ -29,7 +29,7 @@ class Asset extends BaseController
 		$data['asset']			= $asset;
 		$data['tag']			= $tag;
 		$data['tagLocation']	= $tagLocation;
-		
+
 		$data['title'] = 'Reporting Asset';
 		$data['subtitle'] = 'List Equipment';
 		$data["breadcrumbs"] = [
@@ -45,10 +45,11 @@ class Asset extends BaseController
 		return $this->template->render('Reporting/Asset/index.php', $data);
 	}
 
-	public function detail(){
-        if(!checkRoleList("REPORT.ASSET.DETAIL")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+	public function detail()
+	{
+		if (!checkRoleList("REPORT.ASSET.DETAIL")) {
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$assetModel = new AssetModel();
 		$parameterModel = new ParameterModel();
@@ -60,10 +61,10 @@ class Asset extends BaseController
 		$assetId = $this->request->getVar("assetId") ?? "";
 		$dateFrom = $this->request->getVar("dateFrom") ?? date("Y-m-d", strtotime("-6 days"));
 		$dateTo = $this->request->getVar("dateTo") ?? date("Y-m-d 00:00:00");
-		
+
 		$checkAsset = $assetModel->getById($assetId);
-		if(empty($checkAsset)){
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		if (empty($checkAsset)) {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 		}
 
 		$data['assetData'] = $checkAsset;
@@ -71,7 +72,7 @@ class Asset extends BaseController
 		$data['scheduleData'] = $scheduleTrxModel->getAll(["assetId" => $assetId, "scheduleFrom >=" => $dateFrom, "scheduleFrom <" => date("Y-m-d 00:00:00", strtotime($dateTo . " +1 days"))]);
 
 		$scheduleTrxIdArr = [];
-		if(!empty($data['scheduleData'])){
+		if (!empty($data['scheduleData'])) {
 			$scheduleTrxIdArr = array_column($data['scheduleData'], 'scheduleTrxId');
 			$data["schId"] = $scheduleTrxIdArr;
 			$data["trxData"] = $trxModel->getBySchIdIn($scheduleTrxIdArr);
@@ -105,7 +106,7 @@ class Asset extends BaseController
 	{
 		$request = \Config\Services::request();
 
-        if(!checkRoleList("REPORT.ASSET.VIEW")){
+		if (!checkRoleList("REPORT.ASSET.VIEW")) {
 			echo json_encode(array(
 				"draw" => $request->getPost('draw'),
 				"recordsTotal" => 0,
@@ -114,7 +115,7 @@ class Asset extends BaseController
 				'status' => 403,
 				'message' => "You don't have access to this page"
 			));
-        }
+		}
 
 		$table = 'vw_asset';
 		$column_order = array('assetId', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'description', 'schType', 'createdAt');
@@ -124,7 +125,7 @@ class Asset extends BaseController
 
 		$filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
 		$filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
-		$where = [			
+		$where = [
 			'userId' => $this->session->get("adminId"),
 			'deletedAt' => null,
 			// "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
@@ -139,5 +140,41 @@ class Asset extends BaseController
 			'message' => 'success'
 		);
 		echo json_encode($output);
+	}
+
+	public function getRecordByParam()
+	{
+		// if (!checkRoleList("REPORT.ASSET.TREND.VIEW")) {
+		// 	return $this->response->setJSON([
+		// 		'status' => 403,
+		// 		'message' => "Sorry, You don't have access",
+		// 		'data' => []
+		// 	], 403);
+		// }
+
+		$isValid = $this->validate([
+			'parameterId' => 'required'
+		]);
+
+		if (!$isValid) {
+			return $this->response->setJson([
+				'status' => 400,
+				'message' => "Data is Not Valid",
+				'data' => $this->validator->getErrors()
+			], 400);
+		}
+
+		$parameterId = $this->request->getVar("parameterId") ?? "";
+		$dateFrom = $this->request->getVar("dateFrom") ?? date("Y-m-d");
+		$dateTo = $this->request->getVar("dateTo") ?? date("Y-m-d");
+
+		$assetModel = new AssetModel();
+		$data = $assetModel->getRecordTrendParam($parameterId, $dateFrom, $dateTo);
+
+		return $this->response->setJSON([
+			'status' => 200,
+			'message' => "Success Get Record Trend Parameter",
+			'data' => $data
+		], 200);
 	}
 }

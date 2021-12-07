@@ -93,7 +93,7 @@ class Schedule extends BaseController
 
         $schModel = new ScheduleTrxModel();
 
-        $getLastAssetId = $schModel->getAll(["assetId IN ('" . implode("','", array_column($dataAssetAM, "assetId")) . "')" => null, "scheduleTo >=" => $start], "scheduleTo", "desc");
+        $getLastAssetId = $schModel->getAll(["assetId IN ('" . implode("','", array_column($dataAssetAM, "assetId")) . "')" => null, "scheduleTo >=" => $start ], "scheduleTo", "desc");
         if (!empty($getLastAssetId)) {
             $assetName = implode(", ", array_unique(array_column($getLastAssetId, "assetName")));
 

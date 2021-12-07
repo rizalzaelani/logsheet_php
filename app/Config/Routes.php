@@ -35,6 +35,7 @@ $routes->get('/', 'Auth/Login::index');
 $routes->get('/Login', 'Auth/Login::index');
 $routes->post('/Login/auth', 'Auth/Login::auth');
 $routes->get('/logout', 'Auth/Login::logout');
+$routes->get('/login/testMail', 'Auth/Login::testMail');
 
 $routes->get('/register', 'Auth/Register::index');
 $routes->post('/register/doRegister', 'Auth/Register::doRegister');
@@ -145,6 +146,8 @@ $routes->get('/ReportingAsset', 'Reporting/Asset::index');
 $routes->get('/ReportingAsset/detail', 'Reporting/Asset::detail');
 $routes->add('/ReportingAsset/tableDetail', 'Reporting/Asset::tableDetail');
 $routes->post('/ReportingAsset/datatable', 'Reporting/Asset::datatable');
+$routes->get('/ReportingAsset/getRecordByParam', 'Reporting/Asset::getRecordByParam');
+
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');

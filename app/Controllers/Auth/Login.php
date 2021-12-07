@@ -107,4 +107,30 @@ class Login extends BaseController
 
         return redirect()->to(base_url());
     }
+
+    public function testMail()
+    {
+        try {
+            $message = "Please activate the account " . anchor('role', 'Activate Now', '');
+            $email = \Config\Services::email();
+
+            $email->setFrom('andri@nocola.co.id', 'Andrianto');
+            $email->setTo("zaelanirizal.rz@gmail.com");
+            $email->setSubject('Test Logsheet Mail');
+            $email->setMessage($message); //your message here
+            $email->setMailType("html");
+
+            // $email->setCC('another@emailHere'); //CC
+            // $email->setBCC('thirdEmail@emialHere'); // and BCC
+            // $filename = '/img/yourPhoto.jpg'; //you can use the App patch 
+            // $email->attach($filename);
+
+            $email->send();
+            $email->printDebugger(['headers']);
+
+            echo "success";
+        } catch (Exception $e) {
+            print_r($e);
+        }
+    }
 }
