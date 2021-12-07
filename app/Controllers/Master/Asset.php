@@ -786,7 +786,7 @@ class Asset extends BaseController
 		die();
 	}
 
-	public function download()
+	public function downloadSampleParameter()
 	{
 		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
 			return View('errors/customError', ['ErrorCode' => 403, 'ErrorMessage' => "Sorry, You don't have access to this page"]);
@@ -795,7 +795,7 @@ class Asset extends BaseController
 		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/sampleImportParameter.xlsx', null);
 	}
 
-	public function uploadFile()
+	public function getDataImportParameter()
 	{
 		$file = $this->request->getFile('importParam');
 		if ($file) {
@@ -878,8 +878,6 @@ class Asset extends BaseController
 			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
 		}
 	}
-
-
 
 	public function downloadSampleAsset()
 	{

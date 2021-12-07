@@ -154,22 +154,22 @@ $sess = $session->get('adminId');
                                             <td><?= $key['parameterName']; ?></td>
                                             <td><?= $key['description']; ?></td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['max'] != '') {
+                                                <?php if ($key['max'] != '' && $key['max'] != '' && $key['max'] != '0') {
                                                     echo $key['min'] . ' - ' . $key['max'];
-                                                } else if ($key['max'] == '' && $key['normal'] == '') {
-                                                    echo '<i>-</i>';
-                                                } else {
+                                                } else if ($key['normal'] != '') {
                                                     echo $key['normal'];
+                                                } else {
+                                                    echo '<i>-</i>';
                                                 }
                                                 ?>
                                             </td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['min'] != '') {
+                                                <?php if ($key['min'] != '' && $key['min'] != '' && $key['min'] != '0') {
                                                     echo 'x < ' . $key['min'] . '; x > ' . $key['max'];
-                                                } else if ($key['min'] == '' && $key['abnormal'] == '') {
-                                                    echo '<i>-</i>';
-                                                } else {
+                                                } else if ($key['abnormal'] != '') {
                                                     echo $key['abnormal'];
+                                                } else {
+                                                    echo '<i>-</i>';
                                                 }
                                                 ?>
                                             </td>
@@ -177,10 +177,10 @@ $sess = $session->get('adminId');
                                                 <?php
                                                 if ($key['uom'] != '') {
                                                     echo $key['uom'];
-                                                } else if ($key['uom'] == '' && $key['option'] == '') {
-                                                    echo '<i>-</i>';
-                                                } else {
+                                                } else if ($key['option'] != '') {
                                                     echo $key['option'];
+                                                } else {
+                                                    echo '<i>-</i>';
                                                 }
                                                 ?>
                                             </td>
@@ -392,13 +392,16 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div :class="checkModalAdd == false && param.photo1 != '' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="if parameter photo exist, you can turn on witch button to delete the photo"></i></label>
+                                                <div class="col-sm-3">
+
+                                                </div>
                                                 <div class="col-sm-9 p-0">
                                                     <div class="d-flex justify-content-start align-items-center">
-                                                        <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-success m-0">
+                                                        <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-danger m-0">
                                                             <input type="checkbox" id="deletePhoto" name="deletePhoto" class="c-switch-input" @change="deletePhoto = $event.target.checked">
-                                                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                                            <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                                         </label>
+                                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="if parameter photo exist, you can turn on witch button to delete the photo"></i></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -437,7 +440,7 @@ $sess = $session->get('adminId');
                                                     <h6>1. Download file template parameter</h6>
                                                     <div class="pl-3">
                                                         <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your parameter.</p>
-                                                        <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/download'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                                        <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleParameter'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
                                                     </div>
                                                 </div>
                                                 <div class="mt-3">
@@ -1106,7 +1109,7 @@ $sess = $session->get('adminId');
                         <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null && items.max != ''">
+                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
                                 {{ items.min + ' - ' + items.max }}
                             </td>
                             <td v-else-if="items.normal != ''" style="max-height: 150px !important;">
@@ -1115,7 +1118,7 @@ $sess = $session->get('adminId');
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null && items.min != ''">
+                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
                                 {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
                             <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
@@ -1143,7 +1146,7 @@ $sess = $session->get('adminId');
                         <tr v-for="(items, i) in parameter" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null">
+                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
                                 {{ items.min + ' - ' + items.max }}
                             </td>
                             <td v-else-if="items.normal != ''" style="max-width: 150px !important">
@@ -1152,7 +1155,7 @@ $sess = $session->get('adminId');
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null">
+                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
                                 {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
                             <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
@@ -3734,7 +3737,7 @@ $sess = $session->get('adminId');
                 credits: false,
                 server: {
                     process: {
-                        url: "<?= base_url('Asset/uploadFile'); ?>",
+                        url: "<?= base_url('Asset/getDataImportParameter'); ?>",
                         method: 'post',
                         onload: (res) => {
                             var rsp = JSON.parse(res);
@@ -3770,7 +3773,6 @@ $sess = $session->get('adminId');
         })
 
         var loadListImport = (importList) => {
-            console.log(importList);
             v.tableImportParam = $('#tableImport').DataTable({
                 drawCallback: function(settings) {
                     $('#all').removeClass('sorting_asc');

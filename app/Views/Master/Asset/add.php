@@ -289,7 +289,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                                 <h6>1. Download file template parameter</h6>
                                                 <div class="pl-3">
                                                     <p class="mb-0">Start by downloading the Excel template file by clicking the button below. This file has the required header fields to import the details of your parameter.</p>
-                                                    <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/download'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
+                                                    <a data-toggle="tooltip" data-placement="top" title="Download Template" href="<?= base_url('/Asset/downloadSampleParameter'); ?>" target="_blank" class="btn btn-link p-0" style="text-decoration: none;"><i class="fa fa-file-excel"></i> Download Template Excel</a>
                                                 </div>
                                             </div>
                                             <div class="mt-3">
@@ -884,6 +884,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     <thead class="bg-primary">
 
                         <tr>
+                            <th>No</th>
                             <th>Parameter</th>
                             <th>Description</th>
                             <th>Normal</th>
@@ -895,7 +896,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(items, i) in params" :key="i">
+                        <!-- <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
                             <td v-if="items.max != null && items.max != ''">
@@ -931,7 +932,55 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(i); checkModalAdd = false"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
-                        </tr>
+                        </tr> -->
+                            <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
+                                <template v-for="(val, key) in valGP">
+                                    <template v-if="key == 0 & keyGP != val.parameterName">
+                                            <tr>
+                                                <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
+                                                <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
+                                            </tr>
+                                    </template>
+                                        <tr>
+                                            <template v-if="key == 0 && keyGP == val.parameterName">
+                                                <td class="text-center">{{ iGP + 1 }}</td>
+                                            </template>
+                                            <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
+                                            <td>{{ val.description }}</td>
+                                            <template v-if="!val.option">
+                                                <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
+                                                <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
+                                                <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.uom ? "(Empty)" :val.uom }}</td>
+                                            </template>
+                                            <template v-else>
+                                                <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
+                                                <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                                <td :class="!val.option ? 'font-italic text-center' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                            </template>
+                                            <template v-if="val.uom != ''">
+                                                <td>
+                                                    {{ val.uom }}
+                                                </td>
+                                            </template>
+                                            <template  v-else-if="val.option != ''">
+                                                <td>
+                                                    {{ val.option }}
+                                                </td>
+                                            </template>
+                                            <template  v-else>
+                                                <td>
+                                                </td>
+                                            </template>
+                                            <td>
+                                                <i class="text-success"><span class="badge badge-success text-white"><i>New!</i></span></i>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key); checkModalAdd = false"><i class="fa fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key)"><i class="fa fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                </template>
+                            </template>
                     </tbody>
                 </table>
             </div>
@@ -1024,7 +1073,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             var myModal = ref('');
             var param = reactive({
                 parameterId: uuidv4(),
-                sortId: null,
+                sortId: $('#tableParameter tbody tr').length + 1,
                 parameterName: '',
                 photo: '',
                 description: '',
@@ -1048,6 +1097,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             var descJson = reactive(assetData.descriptionJson);
             var descJsonValue = ref('');
             var submited = ref(false);
+
+            var tempParameterGroupData = ref("");
 
             const addDescJson = async (e) => {
                 let checkKey = _.filter(descJson, {
@@ -1113,6 +1164,9 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         title: 'Successfully Added Parameter'
                     })
                     $('#tableImport').DataTable().destroy();
+                    this.tempParameterGroupData = _.groupBy(this.params, function(val) {
+                        return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                    });
                 } else {
                     swal.fire({
                         icon: 'error',
@@ -1335,8 +1389,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.showOn').addClass('is-invalid');
                     }
                     $('#photoParam').filepond('removeFiles');
+
                     this.param.photo = this.paramPhoto;
+                    this.param.sortId = this.params.length + 1;
                     this.params.push(this.param);
+                    this.tempParameterGroupData = _.groupBy(this.params, function(val) {
+                        return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                    });
                     this.param = reactive({
                         parameterId: uuidv4(),
                         sortId: null,
@@ -1383,13 +1442,109 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 }
             }
 
-            function editTempParameter(index) {
+            // function editTempParameter(index) {
+            //     this.paramPhoto = ref("");
+            //     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+            //     this.myModal.show();
+            //     let data = this.params[index];
+            //     if (data.photo != "") {
+            //         FilePond.destroy(document.querySelector('#photoParam'));
+            //         let url = URL.createObjectURL(data.photo)
+            //         const inputElement = document.querySelector('#photoParam');
+            //         var photoEdit = {
+            //             acceptedFileTypes: ['image/png', 'image/jpeg'],
+            //             allowFilePoster: true,
+            //             allowImagePreview: true,
+            //             imagePreviewMaxHeight: 200,
+            //             allowImageCrop: true,
+            //             allowMultiple: false,
+            //             credits: false,
+            //             styleLoadIndicatorPosition: 'center bottom',
+            //             styleProgressIndicatorPosition: 'right bottom',
+            //             styleButtonRemoveItemPosition: 'left bottom',
+            //             styleButtonProcessItemPosition: 'right bottom',
+            //             files: [{
+            //                 source: url,
+            //                 options: {
+            //                     type: 'local',
+            //                     file: data.photo,
+            //                     metadata: {
+            //                         poster: ''
+            //                     }
+            //                 }
+            //             }]
+            //         };
+            //         let pond = FilePond.create(inputElement, photoEdit);
+            //         pond.on('addfile', (error, file) => {
+            //             v.paramPhoto = file.file;
+            //         })
+            //         pond.on('removefile', (error, file) => {
+            //             v.paramPhoto = ref("");
+            //         })
+            //     }
+
+            //     this.param.parameterId = data.parameterId;
+            //     this.param.sortId = null;
+            //     this.param.parameterName = data.parameterName;
+            //     this.param.photo = data.photo;
+            //     this.param.description = data.description;
+            //     this.param.uom = data.uom;
+            //     this.param.min = data.min;
+            //     this.param.max = data.max;
+            //     this.param.normal = data.normal;
+            //     this.param.abnormal = data.abnormal;
+            //     this.param.option = data.option;
+            //     this.param.inputType = data.inputType;
+            //     this.param.showOn = data.showOn;
+            //     this.param.i = index;
+
+            //     index = this.param.i;
+            //     this.params[index] = reactive({
+            //         parameterId: this.param.parameterId,
+            //         sortId: this.param.sortId,
+            //         parameterName: this.param.parameterName,
+            //         photo: this.param.photo,
+            //         description: this.param.description,
+            //         uom: this.param.uom,
+            //         min: this.param.min,
+            //         max: this.param.max,
+            //         normal: this.param.normal,
+            //         abnormal: this.param.abnormal,
+            //         option: this.param.option,
+            //         inputType: this.param.inputType,
+            //         showOn: this.param.showOn,
+            //         i: index,
+            //     })
+            //     if (v.param.inputType != '') {
+            //         $('.type').val(v.param.inputType).trigger("change");
+            //     }
+            //     if (this.param.showOn != '') {
+            //         $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+            //     }
+            //     let normal = v.param.normal.split(",");
+            //     let abnormal = v.param.abnormal.split(",");
+            //     $('#normal').find('option').remove();
+            //     $('#abnormal').find('option').remove();
+            //     if (normal.length) {
+            //         // $('#normal').val(normal).trigger("change");
+            //         for (let i = 0; i < normal.length; i++) {
+            //             $('#normal').append(`<option class="normal` + normal[i] + `" value="` + normal[i] + `" selected>` + normal[i] + `</option>`);
+            //         }
+            //     }
+            //     if (abnormal.length) {
+            //         // $('#abnormal').val(abnormal).trigger('change');
+            //         for (let i = 0; i < abnormal.length; i++) {
+            //             $('#abnormal').append(`<option class="abnormal` + abnormal[i] + `" value="` + abnormal[i] + `" selected>` + abnormal[i] + `</option>`);
+            //         }
+            //     }
+            // }
+            function editTempParameter(keyGP, key) {
                 this.paramPhoto = ref("");
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
-                let data = this.params[index];
+                let data = this.tempParameterGroupData[keyGP][key];
+                FilePond.destroy(document.querySelector('#photoParam'));
                 if (data.photo != "") {
-                    FilePond.destroy(document.querySelector('#photoParam'));
                     let url = URL.createObjectURL(data.photo)
                     const inputElement = document.querySelector('#photoParam');
                     var photoEdit = {
@@ -1422,10 +1577,32 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     pond.on('removefile', (error, file) => {
                         v.paramPhoto = ref("");
                     })
+                }else{
+                    const inputElement = document.querySelector('#photoParam');
+                    var photoEdit2 = {
+                        acceptedFileTypes: ['image/png', 'image/jpeg'],
+                        allowFilePoster: true,
+                        allowImagePreview: true,
+                        imagePreviewMaxHeight: 200,
+                        allowImageCrop: true,
+                        allowMultiple: false,
+                        credits: false,
+                        styleLoadIndicatorPosition: 'center bottom',
+                        styleProgressIndicatorPosition: 'right bottom',
+                        styleButtonRemoveItemPosition: 'left bottom',
+                        styleButtonProcessItemPosition: 'right bottom'
+                    };
+                    let pond = FilePond.create(inputElement, photoEdit2);
+                    pond.on('addfile', (error, file) => {
+                        v.paramPhoto = file.file;
+                    })
+                    pond.on('removefile', (error, file) => {
+                        v.paramPhoto = ref("");
+                    })
                 }
 
                 this.param.parameterId = data.parameterId;
-                this.param.sortId = null;
+                this.param.sortId = data.sortId;
                 this.param.parameterName = data.parameterName;
                 this.param.photo = data.photo;
                 this.param.description = data.description;
@@ -1437,10 +1614,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 this.param.option = data.option;
                 this.param.inputType = data.inputType;
                 this.param.showOn = data.showOn;
-                this.param.i = index;
+                this.param.keyGP = keyGP;
+                this.param.key = key;
 
-                index = this.param.i;
-                this.params[index] = reactive({
+                // index = this.param.i;
+                this.tempParameterGroupData[keyGP][key] = reactive({
                     parameterId: this.param.parameterId,
                     sortId: this.param.sortId,
                     parameterName: this.param.parameterName,
@@ -1454,7 +1632,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     option: this.param.option,
                     inputType: this.param.inputType,
                     showOn: this.param.showOn,
-                    i: index,
+                    keyGP: keyGP,
+                    key: key,
                 })
                 if (v.param.inputType != '') {
                     $('.type').val(v.param.inputType).trigger("change");
@@ -1668,24 +1847,52 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.showOn').addClass('is-invalid');
                     }
 
-                    index = this.param.i;
-                    this.params[index] = reactive({
-                        parameterId: this.param.parameterId,
-                        sortId: this.param.sortId,
-                        parameterName: this.param.parameterName,
-                        photo: this.paramPhoto,
-                        description: this.param.description,
-                        uom: this.param.uom,
-                        min: this.param.min,
-                        max: this.param.max,
-                        normal: this.param.normal,
-                        abnormal: this.param.abnormal,
-                        option: this.param.option,
-                        inputType: this.param.inputType,
-                        showOn: this.param.showOn,
-                        i: index,
-                    })
+                    let keyGP = this.param.keyGP;
+                    let key = this.param.key;
+                    // this.tempParameterGroupData[keyGP][key] = reactive({
+                    //     parameterId: this.param.parameterId,
+                    //     sortId: this.param.sortId,
+                    //     parameterName: this.param.parameterName,
+                    //     photo: this.paramPhoto,
+                    //     description: this.param.description,
+                    //     uom: this.param.uom,
+                    //     min: this.param.min,
+                    //     max: this.param.max,
+                    //     normal: this.param.normal,
+                    //     abnormal: this.param.abnormal,
+                    //     option: this.param.option,
+                    //     inputType: this.param.inputType,
+                    //     showOn: this.param.showOn,
+                    //     keyGP: keyGP,
+                    //     key: key,
+                    // })
+                    this.params.forEach((el, i) => {
+                        if (el.parameterId === this.param.parameterId) {
+                            this.params[i] = reactive({
+                                parameterId: this.param.parameterId,
+                                sortId: this.param.sortId,
+                                parameterName: this.param.parameterName,
+                                photo: this.paramPhoto,
+                                description: this.param.description,
+                                uom: this.param.uom,
+                                min: this.param.min,
+                                max: this.param.max,
+                                normal: this.param.normal,
+                                abnormal: this.param.abnormal,
+                                option: this.param.option,
+                                inputType: this.param.inputType,
+                                showOn: this.param.showOn,
+                                keyGP: keyGP,
+                                key: key,
+                            })
+                        }
+                    });
+                    this.tempParameterGroupData = _.groupBy(this.params, function(val) {
+                        return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                    });
+
                     this.myModal.hide();
+
                     this.param.parameterId = uuidv4();
                     this.param.sortId = null;
                     this.param.parameterName = '';
@@ -1699,7 +1906,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     this.param.option = '';
                     this.param.inputType = '';
                     this.param.showOn = '';
-                    this.param.i = null;
+                    this.param.keyGP = null;
+                    this.param.key = null;
 
                     const Toast = Swal.mixin({
                         toast: true,
@@ -1734,8 +1942,304 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     $('.showOn').removeClass('is-invalid');
                 }
             }
+            // function updateTempParameter() {
+            //     let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+            //     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+            //     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
+            //     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
+            //     let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
+            //     let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
+            //     if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
+            //         const swalWithBootstrapButtons = swal.mixin({
+            //             customClass: {
+            //                 confirmButton: 'btn btn-danger',
+            //             },
+            //             buttonsStyling: false
+            //         })
+            //         swalWithBootstrapButtons.fire({
+            //             title: 'Failed!',
+            //             text: "Invalid value!",
+            //             icon: 'error'
+            //         })
 
-            function removeTempParameter(index) {
+            //         if (this.param.parameterName != '') {
+            //             $('.parameter').removeClass('is-invalid');
+            //         }
+            //         if (this.param.inputType != '') {
+            //             $('.type').removeClass('is-invalid');
+            //         }
+
+            //         //remove invalid class
+            //         // input type
+            //         if (this.param.inputType == 'input') {
+            //             if (this.param.min != "" || this.param.min != null) {
+            //                 $('.min').removeClass('is-invalid');
+            //             }
+            //             if (this.param.max != "" || this.param.max != null) {
+            //                 $('.max').removeClass('is-invalid');
+            //             }
+            //             if (this.param.uom != "" || this.param.uom != null) {
+            //                 $('.uom').removeClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'select') {
+            //             if (this.param.normal != "") {
+            //                 $('#normal').removeClass('is-invalid');
+            //             }
+            //             if (this.param.abnormal != "") {
+            //                 $('#abnormal').removeClass('is-invalid');
+            //             }
+            //             if (this.param.uom != "") {
+            //                 $('.uom').removeClass('is-invalid');
+            //             }
+            //             if (this.param.option != "") {
+            //                 $('#option').removeClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'checkbox') {
+            //             if (this.param.option != "") {
+            //                 $('#option').removeClass('is-invalid');
+            //             }
+            //         }
+
+            //         if (this.param.showOn != '') {
+            //             $('.showOn').removeClass('is-invalid');
+            //         }
+
+            //         //end remove invalid class
+
+            //         //add invalid class
+            //         if (this.param.parameterName == '') {
+            //             $('.parameter').addClass('is-invalid');
+            //         }
+            //         if (this.param.inputType == '') {
+            //             $('.type').addClass('is-invalid');
+            //         }
+            //         if (this.param.inputType == 'input') {
+            //             if (this.param.min == "" || this.param.min == null) {
+            //                 $('.min').addClass('is-invalid');
+            //             }
+            //             if (this.param.max == "" || this.param.max == null) {
+            //                 $('.max').addClass('is-invalid');
+            //             }
+            //             if (this.param.uom == "" || this.param.uom == null) {
+            //                 $('.uom').addClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'select') {
+            //             if (this.param.normal == "") {
+            //                 $('#normal').addClass('is-invalid');
+            //             }
+            //             if (this.param.abnormal == "") {
+            //                 $('#abnormal').addClass('is-invalid');
+            //             }
+            //             if (this.param.uom == "") {
+            //                 $('.uom').addClass('is-invalid');
+            //             }
+            //             if (this.param.option == "") {
+            //                 $('#option').addClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'checkbox') {
+            //             if (this.param.option == "") {
+            //                 $('#option').addClass('is-invalid');
+            //             }
+            //         }
+
+            //         if (this.param.showOn == '') {
+            //             $('.showOn').addClass('is-invalid');
+            //         }
+            //     } else {
+            //         if (this.param.parameterName != '') {
+            //             $('.parameter').removeClass('is-invalid');
+            //         }
+            //         if (this.param.inputType != '') {
+            //             $('.type').removeClass('is-invalid');
+            //         }
+
+            //         //remove invalid class
+            //         // input type
+            //         if (this.param.inputType == 'input') {
+            //             if (this.param.min != "" || this.param.min != null) {
+            //                 $('.min').removeClass('is-invalid');
+            //             }
+            //             if (this.param.max != "" || this.param.max != null) {
+            //                 $('.max').removeClass('is-invalid');
+            //             }
+            //             if (this.param.uom != "" || this.param.uom != null) {
+            //                 $('.uom').removeClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'select') {
+            //             if (this.param.normal != "") {
+            //                 $('#normal').removeClass('is-invalid');
+            //             }
+            //             if (this.param.abnormal != "") {
+            //                 $('#abnormal').removeClass('is-invalid');
+            //             }
+            //             if (this.param.uom != "") {
+            //                 $('.uom').removeClass('is-invalid');
+            //             }
+            //             if (this.param.option != "") {
+            //                 $('#option').removeClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'checkbox') {
+            //             if (this.param.option != "") {
+            //                 $('#option').removeClass('is-invalid');
+            //             }
+            //         }
+
+            //         if (this.param.showOn != '') {
+            //             $('.showOn').removeClass('is-invalid');
+            //         }
+
+            //         //end remove invalid class
+
+            //         //add invalid class
+            //         if (this.param.parameterName == '') {
+            //             $('.parameter').addClass('is-invalid');
+            //         }
+            //         if (this.param.inputType == '') {
+            //             $('.type').addClass('is-invalid');
+            //         }
+            //         if (this.param.inputType == 'input') {
+            //             if (this.param.min == "" || this.param.min == null) {
+            //                 $('.min').addClass('is-invalid');
+            //             }
+            //             if (this.param.max == "" || this.param.max == null) {
+            //                 $('.max').addClass('is-invalid');
+            //             }
+            //             if (this.param.uom == "" || this.param.uom == null) {
+            //                 $('.uom').addClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'select') {
+            //             if (this.param.normal == "") {
+            //                 $('#normal').addClass('is-invalid');
+            //             }
+            //             if (this.param.abnormal == "") {
+            //                 $('#abnormal').addClass('is-invalid');
+            //             }
+            //             if (this.param.uom == "") {
+            //                 $('.uom').addClass('is-invalid');
+            //             }
+            //             if (this.param.option == "") {
+            //                 $('#option').addClass('is-invalid');
+            //             }
+            //         } else if (this.param.inputType == 'checkbox') {
+            //             if (this.param.option == "") {
+            //                 $('#option').addClass('is-invalid');
+            //             }
+            //         }
+
+            //         if (this.param.showOn == '') {
+            //             $('.showOn').addClass('is-invalid');
+            //         }
+
+            //         index = this.param.i;
+            //         this.params[index] = reactive({
+            //             parameterId: this.param.parameterId,
+            //             sortId: this.param.sortId,
+            //             parameterName: this.param.parameterName,
+            //             photo: this.paramPhoto,
+            //             description: this.param.description,
+            //             uom: this.param.uom,
+            //             min: this.param.min,
+            //             max: this.param.max,
+            //             normal: this.param.normal,
+            //             abnormal: this.param.abnormal,
+            //             option: this.param.option,
+            //             inputType: this.param.inputType,
+            //             showOn: this.param.showOn,
+            //             i: index,
+            //         })
+            //         this.myModal.hide();
+            //         this.param.parameterId = uuidv4();
+            //         this.param.sortId = null;
+            //         this.param.parameterName = '';
+            //         this.param.photo = '';
+            //         this.param.description = '';
+            //         this.param.uom = '';
+            //         this.param.min = null;
+            //         this.param.max = null;
+            //         this.param.normal = '';
+            //         this.param.abnormal = '';
+            //         this.param.option = '';
+            //         this.param.inputType = '';
+            //         this.param.showOn = '';
+            //         this.param.i = null;
+
+            //         const Toast = Swal.mixin({
+            //             toast: true,
+            //             position: 'top-end',
+            //             iconColor: 'white',
+            //             showConfirmButton: false,
+            //             timer: 2000,
+            //             timerProgressBar: true,
+            //             customClass: {
+            //                 popup: 'colored-toast'
+            //             },
+            //             didOpen: (toast) => {
+            //                 toast.addEventListener('mouseenter', Swal.stopTimer)
+            //                 toast.addEventListener('mouseleave', Swal.resumeTimer)
+            //             }
+            //         })
+            //         Toast.fire({
+            //             icon: 'success',
+            //             title: 'Successfully Modify Parameter'
+            //         })
+
+            //         $('#previewImg').hide();
+            //         $('#imgParam').remove();
+            //         $('.type').val('').trigger("change");
+            //         $('#showOn').val('').trigger('change');
+            //         $('#normal').val('').trigger('change');
+            //         $('#abnormal').val('').trigger('change');
+            //         $('.optNormal').remove();
+            //         $('.optAbnormal').remove();
+            //         $('.parameter').removeClass('is-invalid');
+            //         $('.type').removeClass('is-invalid');
+            //         $('.showOn').removeClass('is-invalid');
+            //     }
+            // }
+
+            // function removeTempParameter(index) {
+            //     const swalWithBootstrapButtons = Swal.mixin({
+            //         customClass: {
+            //             confirmButton: 'btn btn-success',
+            //             cancelButton: 'btn btn-danger ml-1'
+            //         },
+            //         buttonsStyling: false
+            //     })
+            //     swalWithBootstrapButtons.fire({
+            //         title: 'Delete this data?',
+            //         text: "You will delete this data!",
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         cancelButtonText: "<i class='fa fa-times'></i> Cancel",
+            //         confirmButtonText: "<i class='fa fa-check'></i> Yes, delete!",
+            //         reverseButtons: false
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             const Toast = Swal.mixin({
+            //                 toast: true,
+            //                 position: 'top-end',
+            //                 iconColor: 'white',
+            //                 showConfirmButton: false,
+            //                 timer: 2000,
+            //                 timerProgressBar: true,
+            //                 customClass: {
+            //                     popup: 'colored-toast'
+            //                 },
+            //                 didOpen: (toast) => {
+            //                     toast.addEventListener('mouseenter', Swal.stopTimer)
+            //                     toast.addEventListener('mouseleave', Swal.resumeTimer)
+            //                 }
+            //             })
+            //             Toast.fire({
+            //                 icon: 'success',
+            //                 title: 'Successfully Deleted Parameter'
+            //             })
+            //             this.params.splice(index, 1)
+            //         }
+            //     })
+
+            // }
+            function removeTempParameter(keyGP, key) {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -1772,7 +2276,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             icon: 'success',
                             title: 'Successfully Deleted Parameter'
                         })
-                        this.params.splice(index, 1)
+                        let data = this.tempParameterGroupData[keyGP][key];
+                        this.params.forEach((el, i) => {
+                            if (el.parameterId === data.parameterId) {
+                                this.params.splice(i, 1)
+                            }
+                        });
+                        this.tempParameterGroupData = _.groupBy(this.params, function(val) {
+                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        });
                     }
                 })
 
@@ -2253,7 +2765,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                     // parameter
                     if (this.params.length > 0) {
-                        let param = this.params;
+                        // let param = this.params;
+                        let param = _.flatMap(this.tempParameterGroupData);
                         param.forEach((item, k) => {
                             formdata.append('parameter[]', JSON.stringify(item));
                             // formdata.append('photo[]', item['photo']);
@@ -2419,7 +2932,8 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 filepondParam,
                 paramPhoto,
                 files,
-                url
+                url,
+                tempParameterGroupData
             };
         },
         computed: {
@@ -2912,13 +3426,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             credits: false,
             server: {
                 process: {
-                    url: "<?= base_url('Asset/uploadFile'); ?>",
+                    url: "<?= base_url('Asset/getDataImportParameter'); ?>",
                     method: 'post',
                     onload: (res) => {
                         var rsp = JSON.parse(res);
                         if (rsp.status == "success") {
                             v.importList = rsp.data;
                             if (v.importList.length > 0) {
+                                $('#tableImport').DataTable().destroy();
                                 loadListImport(v.importList);
                                 $('#importParameterModal').modal('hide');
                                 this.myModal = new coreui.Modal(document.getElementById('listImport'), {});
