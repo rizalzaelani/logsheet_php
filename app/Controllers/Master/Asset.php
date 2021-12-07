@@ -292,9 +292,9 @@ class Asset extends BaseController
 							'assetId' => $assetId,
 							'sortId' => $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo1' => base_url() . env('baseDir') . $dirPhoto . '/' .$name1,
-							'photo2' => base_url() . env('baseDir') . $dirPhoto . '/' .$name2,
-							'photo3' => base_url() . env('baseDir') . $dirPhoto . '/' .$name3,
+							'photo1' => base_url() . '/' . $dirPhoto . '/' .$name1,
+							'photo2' => base_url() . '/' . $dirPhoto . '/' .$name2,
+							'photo3' => base_url() . '/' . $dirPhoto . '/' .$name3,
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
@@ -603,9 +603,9 @@ class Asset extends BaseController
 							'parameterId'		=> $dataEdited->parameterId,
 							'sortId'			=> $dataEdited->sortId,
 							'parameterName'		=> $dataEdited->parameterName,
-							'photo1' => base_url() . env('baseDir') . $dirPhoto . '/' .$name1,
-							'photo2' => base_url() . env('baseDir') . $dirPhoto . '/' .$name2,
-							'photo3' => base_url() . env('baseDir') . $dirPhoto . '/' .$name3,
+							'photo1' 			=> base_url() . '/' . $dirPhoto . '/' .$name1,
+							'photo2' 			=> base_url() . '/' . $dirPhoto . '/' .$name2,
+							'photo3' 			=> base_url() . '/' . $dirPhoto . '/' .$name3,
 							'description'		=> $dataEdited->description,
 							'uom'				=> $dataEdited->uom,
 							'min'				=> $dataEdited->min,
@@ -618,9 +618,9 @@ class Asset extends BaseController
 						);
 						$parameterModel->update($dataEdited->parameterId, $data);
 						if ($dataEdited->photo1 != '' && $dataEdited->photo1 != '' && $dataEdited->photo1 != '') {                               
-							$path1 = str_replace(base_url() . env('baseDir'), "" ,$dataEdited->photo1);
-							$path2 = str_replace(base_url() . env('baseDir'), "" ,$dataEdited->photo2);
-							$path3 = str_replace(base_url() . env('baseDir'), "" ,$dataEdited->photo3);
+							$path1 = str_replace(base_url() . '/', "" ,$dataEdited->photo1);
+							$path2 = str_replace(base_url() . '/', "" ,$dataEdited->photo2);
+							$path3 = str_replace(base_url() . '/', "" ,$dataEdited->photo3);
 							unlink($path1);
 							unlink($path2);
 							unlink($path3);
@@ -646,9 +646,9 @@ class Asset extends BaseController
 						);
 						$parameterModel->update($dataEdited->parameterId, $data);
 						if ($dataEdited->deletePhoto) {
-							$path1 = str_replace(base_url() . env('baseDir'), "" ,$dataEdited->photo1);
-							$path2 = str_replace(base_url() . env('baseDir'), "" ,$dataEdited->photo2);
-							$path3 = str_replace(base_url() . env('baseDir'), "" ,$dataEdited->photo3);
+							$path1 = str_replace(base_url() . '/', "" ,$dataEdited->photo1);
+							$path2 = str_replace(base_url() . '/', "" ,$dataEdited->photo2);
+							$path3 = str_replace(base_url() . '/', "" ,$dataEdited->photo3);
 							unlink($path1);
 							unlink($path2);
 							unlink($path3);
@@ -692,9 +692,9 @@ class Asset extends BaseController
 							'assetId' => $assetId,
 							'sortId' => (json_decode($post['parameter'][$i])->sortId) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->sortId,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo1' => base_url() . env('baseDir') . $dirPhoto . '/' .$name1,
-							'photo2' => base_url() . env('baseDir') . $dirPhoto . '/' .$name2,
-							'photo3' => base_url() . env('baseDir') . $dirPhoto . '/' .$name3,
+							'photo1' => base_url() . '/' . $dirPhoto . '/' .$name1,
+							'photo2' => base_url() . '/' . $dirPhoto . '/' .$name2,
+							'photo3' => base_url() . '/' . $dirPhoto . '/' .$name3,
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
