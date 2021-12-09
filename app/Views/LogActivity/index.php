@@ -22,7 +22,7 @@
 						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
-							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+							<a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>
 					</h5>
 				</div>
@@ -59,26 +59,13 @@
 <!-- Custom Script Js -->
 
 <script>
-	let v = new Vue({
-		el: '#app',
-		data: () => ({
-			data: null,
-			table: null
-		}),
-		mounted() {
-			this.getData();
+	let v = Vue.createApp({
+		setup() {
+			var myModal = Vue.ref(null);
+			var table = Vue.ref(null);
 
-			let search = $(".dt-search-input input[data-target='#tableLogActivity']");
-			search.unbind().bind("keypress", function(e) {
-				if (e.which == 13 || e.keyCode == 13) {
-					let searchData = search.val();
-					table.search(searchData).draw();
-				}
-			});
-		},
-		methods: {
-			getData() {
-				table = $('#tableLogActivity').DataTable({
+			const getData = () => {
+				table.value = $('#tableLogActivity').DataTable({
 					scrollY: "calc(100vh - 272px)",
 					language: {
 						lengthMenu: "Showing _MENU_ ",
@@ -88,7 +75,22 @@
 					dom: '<"float-left"B><"">t<"dt-fixed-bottom mt-2"<"d-sm-flex justify-content-between"<"d-flex justify-content-center justify-content-sm-start mb-3 mb-sm-0 ptd-4"<"d-flex align-items-center"l><"d-flex align-items-center"i>><pr>>>'
 				});
 			}
-		}
-	})
+
+			Vue.onMounted(() => {
+				getData();
+
+				let search = $(".dt-search-input input[data-target='#tableLogActivity']");
+				search.unbind().bind("keypress", function(e) {
+					if (e.which == 13 || e.keyCode == 13) {
+						let searchData = search.val();
+						table.value.search(searchData).draw();
+					}
+				});
+			});
+			return {
+				table
+			}
+		},
+	}).mount('#app');
 </script>
 <?= $this->endSection(); ?>

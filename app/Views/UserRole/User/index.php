@@ -327,8 +327,8 @@
 								email: userForm.email,
 								password: userForm.password,
 								groupId: userForm.groupId,
-								tagId: (userForm.tagId ?? "").join(","),
-								tagLocationId: (userForm.tagLocationId ?? "").join(",")
+								tagId: (userForm.tagId ?? []).join(","),
+								tagLocationId: (userForm.tagLocationId ?? []).join(",")
 							}).then(res => {
 								xhrThrowRequest(res)
 									.then(() => {

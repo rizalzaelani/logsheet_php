@@ -22,7 +22,10 @@
 						<a href="javascript:;" class="dt-search" data-target="#tableRole"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
-							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+							<a class="dropdown-item" href="javascript:;" onclick="reloadTable()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+							<?php if (checkRoleList("ROLE.ADD")) { ?>
+								<a class="dropdown-item" href="<?= site_url("role/detail") ?>"><i class="cil cil-lock-locked mr-2"></i> Add Role</a>
+							<?php } ?>
 						</div>
 					</h5>
 				</div>
@@ -85,6 +88,10 @@
 		setup() {
 			const table = null;
 			var roleData = Vue.reactive([]);
+
+			const reloadTable = () => {
+				table.draw();
+			}
 
 			const getData = () => {
 				return new Promise(async (resolve, reject) => {
@@ -152,14 +159,14 @@
 				});
 
 				<?php if (checkRoleList("ROLE.DETAIL.VIEW")) : ?>
-				$(document).on('click', '#tableRole tbody tr', function() {
-					window.location.href = "<?= site_url('role/detail') ?>?groupId=" + $(this).attr("data-id");
-				});
+					$(document).on('click', '#tableRole tbody tr', function() {
+						window.location.href = "<?= site_url('role/detail') ?>?groupId=" + $(this).attr("data-id");
+					});
 				<?php endif; ?>
 			});
 
 			return {
-				table,
+				reloadTable,
 				getData,
 				roleData
 			}

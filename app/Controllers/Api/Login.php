@@ -16,7 +16,6 @@ class Login extends ResourceController
         $isValid = $this->validate([
             'email' => 'required',
             'password' => 'required',
-            'appCode' => 'required|min_length[3]',
         ]);
 
         if (!$isValid) {
@@ -30,7 +29,6 @@ class Login extends ResourceController
 
         $param["email"] = $this->request->getVar("email");
         $param["password"] = $this->request->getVar("password");
-        $param["appCode"] = $this->request->getVar("appCode");
         
         $userModel = new UserModel();
         $dataRes = $userModel->clientAuth($param);

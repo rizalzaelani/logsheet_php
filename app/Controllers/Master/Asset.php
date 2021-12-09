@@ -79,13 +79,17 @@ class Asset extends BaseController
 		$order = array('createdAt' => 'desc');
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 
-		$filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
-		$filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
 		$where = [
 			'userId' => $this->session->get("adminId"),
-			'deletedAt' => null,
-			// "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
+			'deletedAt' => null
 		];
+
+		$filtTag = $_POST["columns"][1]["search"]["value"] ?? '';
+		$filtLoc = $_POST["columns"][2]["search"]["value"] ?? '';
+		
+		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagName)"] = null;
+		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationName)"] = null;
+
 		$list = $DTModel->datatable($where);
 		$output = array(
 			"draw" => $request->getPost('draw'),

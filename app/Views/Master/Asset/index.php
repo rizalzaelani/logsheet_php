@@ -31,36 +31,24 @@
 							<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
 							<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="javascript:;" @click="draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+							<a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>
 					</h5>
 				</div>
 				<div class="row mt-2 collapse" id="filterDT">
-					<div class="col-4">
-						<div class="form-group" id="filterCompany">
-							<select class="form-control bg-transparent select2-multiple w-100 asset" name="asset" id="asset" multiple="multiple">
+					<div class="col-6">
+						<div class="form-group">
+							<select class="form-control bg-transparent select2-multiple w-100 location" name="location" id="filtDTLoc" multiple="multiple">
 								<option value="all">All</option>
-								<?php foreach ($asset as $key) : ?>
+								<?php foreach ($tagLocation as $key) : ?>
 									<option value="<?= $key; ?>"><?= $key; ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
-					<div class="col-4">
-						<fieldset class="form-group">
-							<div class="" id="filterArea">
-								<select class="form-control bg-transparent select2-multiple w-100 location" name="location" id="location" multiple="multiple">
-									<option value="all">All</option>
-									<?php foreach ($tagLocation as $key) : ?>
-										<option value="<?= $key; ?>"><?= $key; ?></option>
-									<?php endforeach; ?>
-								</select>
-							</div>
-						</fieldset>
-					</div>
-					<div class="col-4">
-						<div class="form-group" id="filterUnit">
-							<select class="form-control bg-transparent select2-multiple w-100 tag" name="tag" id="tag" multiple="multiple">
+					<div class="col-6">
+						<div class="form-group">
+							<select class="form-control bg-transparent select2-multiple w-100 tag" name="tag" id="filtDTTag" multiple="multiple">
 								<option value="all">All</option>
 								<?php foreach ($tag as $key) : ?>
 									<option value="<?= $key; ?>"><?= $key; ?></option>
@@ -154,25 +142,16 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-	const {
-		onMounted,
-		ref,
-		reactive
-	} = Vue;
 	let v = Vue.createApp({
 		el: '#app',
 		setup() {
-			var myModal = ref(null);
-			var table = ref(null);
+			var myModal = Vue.ref(null);
+			var table = Vue.ref(null);
 
-			function draw() {
-				return $('#tableEq').DataTable().draw();
-			}
-
-			function GetData() {
+			const getData = () => {
 				return new Promise(async (resolve, reject) => {
 					try {
-						this.table = await $('#tableEq').DataTable({
+						table.value = await $('#tableEq').DataTable({
 							drawCallback: function(settings) {
 								$(document).ready(function() {
 									$('[data-toggle="tooltip"]').tooltip();
@@ -214,25 +193,23 @@
 								},
 							],
 							order: [0, 'asc'],
-							columnDefs: [
-								{
-									targets: [1, 2],
-									width: '27.5%',
-									render: function(data) {
-										if (data != '-') {
-											// unique = Array.from(new Set(data));
-											var dt = Array.from(new Set(data.split(',')));
-											var list_dt = '';
-											$.each(dt, function(key, value) {
-												list_dt += '<span class="badge badge-dark mr-1 mb-1 badge-size">' + value + '</span>';
-											})
-											return '<div style="max-height: 56px !important; overflow-y: scroll;">' + list_dt + '</div>';
-										} else {
-											return data;
-										}
+							columnDefs: [{
+								targets: [1, 2],
+								width: '27.5%',
+								render: function(data) {
+									if (data != '-') {
+										// unique = Array.from(new Set(data));
+										var dt = Array.from(new Set(data.split(',')));
+										var list_dt = '';
+										$.each(dt, function(key, value) {
+											list_dt += '<span class="badge badge-dark mr-1 mb-1 badge-size">' + value + '</span>';
+										})
+										return '<div style="max-height: 56px !important; overflow-y: scroll;">' + list_dt + '</div>';
+									} else {
+										return data;
 									}
 								}
-							],
+							}],
 							'createdRow': function(row, data) {
 								row.setAttribute("data-id", data.assetId);
 								row.classList.add("cursor-pointer");
@@ -248,12 +225,12 @@
 				})
 			};
 
-			function handleAdd() {
+			const handleAdd = () => {
 				this.myModal = new coreui.Modal(document.getElementById('exampleModalScrollable'), {});
 				this.myModal.show();
 			};
 
-			function add() {
+			const add = () => {
 				if (this.company != null && this.area != null && this.unit != null && this.equipment != null) {
 					axios.post("<?= base_url('Asset/add'); ?>", {
 							adminequip_id: this.adminequip_id,
@@ -308,87 +285,38 @@
 					})
 				}
 			};
-			onMounted(() => {
-				GetData()
+
+			Vue.onMounted(() => {
+				getData()
+				
 				let search = $(".dt-search-input input[data-target='#tableEq']");
 				search.unbind().bind("keypress", function(e) {
 					if (e.which == 13 || e.keyCode == 13) {
 						let searchData = search.val();
-						v.table.search(searchData).draw();
+						table.value.search(searchData).draw();
 					}
 				});
 
 				$(document).on('click', '#tableEq tbody tr', function() {
 					window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
 				});
+
+				$('#filtDTTag,#filtDTLoc').on('change', function() {
+					let valTag = $('#filtDTTag').val() ?? '';
+					let valLoc = $('#filtDTLoc').val() ?? '';
+
+					table.value.columns(1).search(valTag).columns(2).search(valLoc).draw();
+				});
 			});
+
 			return {
 				myModal,
 				table,
-				draw,
-				GetData,
+				getData,
 				handleAdd,
 				add
 			}
 		},
 	}).mount('#app');
-
-	$('#filter').click(function() {
-		let filt = document.querySelector('#filter');
-		let contain = (filt.classList.contains('collapsed'));
-		if (!(contain)) {
-			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 349px)");
-		} else if (contain) {
-			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
-		}
-		// let select = document.querySelector('.select2-container ');
-	})
-
-	$('#asset').on('change', function() {
-		let valArea = $('#location').val() ?? '';
-		let valUnit = $('#tag').val() ?? '';
-		let filter = v.table.columns(1).search($(this).val());
-		if (valArea != '' && valUnit != '') {
-			filter.columns(2).search(valArea).columns(3).search(valUnit);
-		}
-		filter.draw();
-	})
-
-	$('#location').on('change', function() {
-		let valCompany = $('#asset').val() ?? '';
-		let valUnit = $('#tag').val() ?? '';
-		var value = $(this).val();
-		let filter = v.table.columns(2).search(value);
-		if (valCompany != '' && valUnit != '') {
-			filter.columns(1).search(valCompany).columns(3).search(valUnit);
-		}
-		filter.draw();
-	})
-
-	$('#tag').on('change', function() {
-		let valCompany = $('#asset').val() ?? '';
-		let valArea = $('#location').val();
-		let filter = v.table.columns(3).search($(this).val());
-		if (valCompany != '' && valArea != '') {
-			filter.columns(1).search(valCompany).columns(2).search(valArea);
-		}
-		filter.draw();
-	})
-
-	$('#asset').select2({
-		theme: 'coreui',
-		placeholder: "Select Asset",
-		allowClear: true
-	})
-	$('#tag').select2({
-		theme: 'coreui',
-		placeholder: "Select Tag",
-		allowClear: true
-	})
-	$('#location').select2({
-		theme: 'coreui',
-		placeholder: "Select Location",
-		allowClear: true
-	})
 </script>
 <?= $this->endSection(); ?>

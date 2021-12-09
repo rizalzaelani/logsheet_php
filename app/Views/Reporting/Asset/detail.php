@@ -256,7 +256,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary font-weight-500" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> Close</button>
-                    <button type="button" class="btn btn-outline-primary font-weight-500" onclick="modalMailTrend()"><i class="fab fa-telegram-plane"></i> Send Mail</button>
+                    <!-- <button type="button" class="btn btn-outline-primary font-weight-500" onclick="modalMailTrend()"><i class="fab fa-telegram-plane"></i> Send Mail</button> -->
                 </div>
             </div>
             <!-- /.modal-content -->

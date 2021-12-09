@@ -204,3 +204,26 @@ function hideShowLoader() {
 }
 
 // end loader
+
+$(() => {
+	$('#btnFiltDT').click(function() {
+		let filt = document.querySelector('#btnFiltDT');
+		let contain = (filt.classList.contains('collapsed'));
+		if (!(contain)) {
+			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 349px)");
+		} else if (contain) {
+			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
+		}
+	})
+    
+    $('#filtDTTag').select2({
+        theme: 'coreui',
+        placeholder: "Select Tag",
+        allowClear: true
+    })
+    $('#filtDTLoc').select2({
+        theme: 'coreui',
+        placeholder: "Select Location",
+        allowClear: true
+    })
+});

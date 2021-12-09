@@ -26,7 +26,7 @@
                             <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
                             <a class="dropdown-item" target="_blank" href="<?= base_url('/Tag/exportExcel'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+                            <a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
                     </h5>
                 </div>
@@ -177,7 +177,7 @@
             function getData() {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        this.table = await $('#tableTag').DataTable({
+                        table.value = await $('#tableTag').DataTable({
                             processing: true,
                             serverSide: true,
                             responsive: true,
@@ -406,7 +406,7 @@
                 search.unbind().bind("keypress", function(e) {
                     if (e.which == 13 || e.keyCode == 13) {
                         let searchData = search.val();
-                        v.table.search(searchData).draw();
+                        table.value.search(searchData).draw();
                     }
                 });
             });

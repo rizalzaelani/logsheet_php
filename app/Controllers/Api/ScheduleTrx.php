@@ -13,7 +13,7 @@ class ScheduleTrx extends ResourceController
 
     public function __construct()
     {
-        helper(['JWTAuth']);
+        helper(['JWTAuth','main']);
         $this->scheduleTrxModel = new ScheduleTrxModel();
     }
 
@@ -22,13 +22,17 @@ class ScheduleTrx extends ResourceController
             $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
             $encodedToken = getJWTFromRequest($authHeader);
             $jwtData = getJWTData($encodedToken);
-        
+            
             $dateTime = new DateTime();
+            
+            $cusDate = $this->request->getVar("date") ?? "";
+            if(validateDate($cusDate, 'Y-m-d')) $dateTime = $dateTime->createFromFormat("Y-m-d", $cusDate);
+
             $year = $dateTime->format("Y");
             $month = $dateTime->format("n");
             $weekOfYear = $dateTime->format("W");
 
-            $whereSch = "((((schType = 'Daily' AND DATE(scheduleFrom) = '". $dateTime->format("Y-m-d") ."') OR (schType = 'Weekly' AND WEEKOFYEAR(scheduleFrom) = ". $weekOfYear ." AND YEAR(scheduleFrom) = " . $year . ") OR (schType = 'Monthly' AND MONTH(scheduleFrom) = ". $month ." AND YEAR(scheduleFrom) = " . $year . ")) AND schManual = '0') OR (CAST(scheduleFrom as DATE) <= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND CAST(scheduleTo as DATE) >= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND schManual = '1'))";
+            $whereSch = "((((schType = 'Daily' AND DATE(scheduleFrom) = '". $dateTime->format("Y-m-d") ."') OR (schType = 'Weekly' AND WEEKOFYEAR(scheduleFrom) = WEEKOFYEAR($weekOfYear) AND YEAR(scheduleFrom) = " . $year . ") OR (schType = 'Monthly' AND MONTH(scheduleFrom) = ". $month ." AND YEAR(scheduleFrom) = " . $year . ")) AND schManual = '0') OR (CAST(scheduleFrom as DATE) <= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND CAST(scheduleTo as DATE) >= CAST('" . $dateTime->format("Y-m-d") . "' as DATE) AND schManual = '1'))";
 
             $where["userId"] = $jwtData->adminId;
             $where[$whereSch] = null;
