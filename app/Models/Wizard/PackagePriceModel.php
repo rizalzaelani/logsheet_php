@@ -16,9 +16,9 @@ class PackagePriceModel extends Model
     {
         return $this->findAll();
     }
-    public function getById($where)
+    public function getById(array $where)
     {
-        return $this->where('packageId', $where)->findAll();
+        return $this->where($where)->findAll();
     }
 
     public function getByIdPrice($packagePriceId)

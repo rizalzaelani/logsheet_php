@@ -203,8 +203,17 @@ $routes->get('/role/groupList', 'UserRole/Role::groupList');
 $routes->get('/role/roleList', 'UserRole/Role::roleList');
 $routes->post('/role/saveGroup', 'UserRole/Role::saveGroup');
 
+$routes->get('/Subscription', 'Customers/Subscription::index');
+$routes->add('/Subscription/datatable', 'Customers/Subscription::datatable');
+$routes->post('/Subscription/update', 'Customers/Subscription::update');
+$routes->post('/Subscription/cancelUp', 'Customers/Subscription::cancelUp');
 
+$routes->get('/upgrade', 'Customers/Subscription::upgrade');
+$routes->post('/invoiceUpgrade', 'Customers/Subscription::invoiceUpgrade');
+$routes->get('/payment', 'Customers/Subscription::payment');
 
+$routes->get('/renew', 'Customers/Subscription::renew');
+$routes->post('/invoiceRenew', 'Customers/Subscription::invoiceRenew');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

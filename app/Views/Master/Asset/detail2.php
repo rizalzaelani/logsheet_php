@@ -21,7 +21,7 @@
 
     .modal-fs .modal-content {
         min-height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5) !important;
+        background-color: rgba(0, 0, 0, 0.8) !important;
     }
 </style>
 <?= $this->endSection(); ?>
@@ -1094,7 +1094,7 @@ $sess = $session->get('adminId');
                 <table class="table table-hover w-100 display nowrap" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
-                            <th>#</th>
+                            <!-- <th>#</th> -->
                             <th>Parameter</th>
                             <th>Description</th>
                             <th>Normal</th>
@@ -1106,7 +1106,7 @@ $sess = $session->get('adminId');
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr v-for="(items, i) in params" :key="i">
+                        <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
                             <td v-if="items.max != null && items.max != '' && items.max != '0'">
@@ -1184,7 +1184,7 @@ $sess = $session->get('adminId');
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
-                        </tr> -->
+                        </tr>
                         <!-- <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
                                 <template v-for="(val, key) in valGP">
                                     <template v-if="key == 0 & keyGP != val.parameterName">
@@ -1235,18 +1235,18 @@ $sess = $session->get('adminId');
                                         </tr>
                                 </template>
                             </template> -->
-                        <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
+                        <!-- <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
                                 <template v-for="(val, key) in valGP">
                                     <template v-if="key == 0 & keyGP != val.parameterName">
                                         <tr>
-                                            <!-- <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td> -->
+                                            <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
                                             <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">#</td>
                                             <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
                                         </tr>
                                     </template>
                                     <tr>
                                         <template v-if="key == 0 & keyGP == val.parameterName">
-                                            <!-- <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td> -->
+                                            <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td>
                                             <td style="vertical-align: text-top !important;">#</td>
                                         </template>
                                         <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
@@ -1296,7 +1296,7 @@ $sess = $session->get('adminId');
                                         </td>
                                     </tr>
                                 </template>
-                        </template>
+                        </template> -->
                     </tbody>
                 </table>
             </div>
@@ -1551,135 +1551,7 @@ $sess = $session->get('adminId');
                     }
                 };
 
-                function editExistParameter(keyGP, key) {
-                    this.deletePhoto = ref(false);
-                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
-                    this.myModal.show();
-
-                    $('#normal').find('option').remove();
-                    $('#abnormal').find('option').remove();
-                    $('#imgParam').remove();
-
-                    this.paramPhoto = ref("");
-                    $('#photoParam').filepond('removeFiles');
-                    FilePond.destroy(document.querySelector('#photoParam'));
-                    if (this.parameterGroupData[keyGP][key].photo != '' && this.parameterGroupData[keyGP][key].photo != undefined) {
-                        let url = URL.createObjectURL(this.parameter[index].photo)
-                        const inputElement = document.querySelector('#photoParam');
-                        var photoEdit = {
-                            acceptedFileTypes: ['image/png', 'image/jpeg'],
-                            allowFilePoster: true,
-                            allowImagePreview: true,
-                            imagePreviewMaxHeight: 200,
-                            allowImageCrop: true,
-                            allowMultiple: false,
-                            credits: false,
-                            styleLoadIndicatorPosition: 'center bottom',
-                            styleProgressIndicatorPosition: 'right bottom',
-                            styleButtonRemoveItemPosition: 'left bottom',
-                            styleButtonProcessItemPosition: 'right bottom',
-                            files: [{
-                                source: url,
-                                options: {
-                                    type: 'local',
-                                    file: this.parameterGroupData[keyGP][key].photo,
-                                    metadata: {
-                                        poster: ''
-                                    }
-                                }
-                            }]
-                        };
-                        let pond = FilePond.create(inputElement, photoEdit);
-                        pond.on('addfile', (error, file) => {
-                            v.paramPhoto = file.file;
-                        })
-                        pond.on('removefile', (error, file) => {
-                            v.paramPhoto = ref("");
-                        })
-                    }else{
-                        var filepondParam = {
-                            acceptedFileTypes: ['image/png', 'image/jpeg'],
-                            allowFilePoster: true,
-                            allowImagePreview: true,
-                            imagePreviewMaxHeight: 200,
-                            allowImageCrop: true,
-                            allowMultiple: false,
-                            credits: false,
-                            styleLoadIndicatorPosition: 'center bottom',
-                            styleProgressIndicatorPosition: 'right bottom',
-                            styleButtonRemoveItemPosition: 'left bottom',
-                            styleButtonProcessItemPosition: 'right bottom',
-                        };
-
-                        let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
-                        pond.on('addfile', (error, file) => {
-                            v.paramPhoto = file.file;
-                        })
-                        pond.on('removefile', (error, file) => {
-                            v.paramPhoto = ref("");
-                        })
-                    }
-                    
-                    let data = this.parameterGroupData[keyGP][key];
-                    this.param.parameterId = data.parameterId;
-                    this.param.sortId = data.sortId;
-                    this.param.parameterName = data.parameterName;
-                    this.param.photo = data.photo;
-                    this.param.photo1 = data.photo1;
-                    this.param.photo2 = data.photo2;
-                    this.param.photo3 = data.photo3;
-                    this.param.description = data.description;
-                    if (data.uom != "") {
-                        this.param.uom = data.uom;
-                    } else {
-                        this.param.uom = "";
-                    }
-                    this.param.max = data.max;
-                    this.param.min = data.min;
-                    this.param.normal = data.normal;
-                    this.param.abnormal = data.abnormal;
-                    this.param.option = data.option;
-                    this.param.inputType = data.inputType;
-                    this.param.showOn = data.showOn;
-                    this.param.keyGP = keyGP;
-                    this.param.key = key;
-                    this.param.deletePhoto = data.deletePhoto;
-                    if (!this.param.deletePhoto) {
-                        $('#deletePhoto').prop('checked', false);
-                    }
-
-                    if (this.param.photo1 != "" && !this.param.deletePhoto && this.param.photo1 != null) {
-                        $('#previewImg').show();
-                        $('#preview').append("<img class='img-thumbnail' id='imgParam' style='height:150px; cursor: pointer' src='" + this.param.photo1 + "' alt=''  onclick='modalPreviewImg()' data-toggle='tooltip' title='click to preview this image'>");
-                    } else if (this.param.photo1 == "" || this.param.photo1 == null || this.param.deletePhoto) {
-                        $('#previewImg').hide();
-                    }
-
-                    if (v.param.inputType != '') {
-                        $('.type').val(v.param.inputType).trigger("change");
-                    }
-
-                    if (v.param.normal != '' || v.param.abnormal != '') {
-                        $lengthNormal = v.param.normal.split(",").length;
-                        $lengthAbnormal = v.param.abnormal.split(",").length;
-                        if ($lengthNormal > 0) {
-                            var dataNormal = v.param.normal.split(",");
-                            for (let index = 0; index < dataNormal.length; index++) {
-                                $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
-                            }
-                        }
-                        if ($lengthAbnormal > 0) {
-                            var dataAbnormal = v.param.abnormal.split(",");
-                            for (let index = 0; index < dataAbnormal.length; index++) {
-                                $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
-                            }
-                        }
-                    }
-                    if (this.param.showOn != '') {
-                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
-                    }
-                }
-                // function editExistParameter(index) {
+                // function editExistParameter(keyGP, key) {
                 //     this.deletePhoto = ref(false);
                 //     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 //     this.myModal.show();
@@ -1691,7 +1563,7 @@ $sess = $session->get('adminId');
                 //     this.paramPhoto = ref("");
                 //     $('#photoParam').filepond('removeFiles');
                 //     FilePond.destroy(document.querySelector('#photoParam'));
-                //     if (this.parameter[index].photo != '' && this.parameter[index].photo != undefined) {
+                //     if (this.parameterGroupData[keyGP][key].photo != '' && this.parameterGroupData[keyGP][key].photo != undefined) {
                 //         let url = URL.createObjectURL(this.parameter[index].photo)
                 //         const inputElement = document.querySelector('#photoParam');
                 //         var photoEdit = {
@@ -1710,7 +1582,7 @@ $sess = $session->get('adminId');
                 //                 source: url,
                 //                 options: {
                 //                     type: 'local',
-                //                     file: this.parameter[index].photo,
+                //                     file: this.parameterGroupData[keyGP][key].photo,
                 //                     metadata: {
                 //                         poster: ''
                 //                     }
@@ -1748,29 +1620,59 @@ $sess = $session->get('adminId');
                 //         })
                 //     }
                     
-
-                //     this.param.parameterId = this.parameter[index].parameterId;
-                //     this.param.sortId = this.parameter[index].sortId;
-                //     this.param.parameterName = this.parameter[index].parameterName;
-                //     this.param.photo = this.parameter[index].photo;
-                //     this.param.photo1 = this.parameter[index].photo1;
-                //     this.param.photo2 = this.parameter[index].photo2;
-                //     this.param.photo3 = this.parameter[index].photo3;
-                //     this.param.description = this.parameter[index].description;
-                //     if (this.parameter[index].uom != "") {
-                //         this.param.uom = this.parameter[index].uom;
-                //     } else {
-                //         this.param.uom = "";
-                //     }
-                //     this.param.min = this.parameter[index].min;
-                //     this.param.max = this.parameter[index].max;
-                //     this.param.normal = this.parameter[index].normal;
-                //     this.param.abnormal = this.parameter[index].abnormal;
-                //     this.param.option = this.parameter[index].option;
-                //     this.param.inputType = this.parameter[index].inputType;
-                //     this.param.showOn = this.parameter[index].showOn;
-                //     this.param.i = index;
-                //     this.param.deletePhoto = this.parameter[index].deletePhoto;
+                //     let data = this.parameterGroupData[keyGP][key];
+                //     // this.param = {
+                //     //     parameterId: this.parameterGroupData[keyGP][key].parameterId,
+                //     //     sortId: this.parameterGroupData[keyGP][key].sortId,
+                //     //     parameterName: this.parameterGroupData[keyGP][key].parameterName,
+                //     //     photo: this.parameterGroupData[keyGP][key].photo,
+                //     //     photo1: this.parameterGroupData[keyGP][key].photo1,
+                //     //     photo2: this.parameterGroupData[keyGP][key].photo2,
+                //     //     photo3: this.parameterGroupData[keyGP][key].photo3,
+                //     //     description: this.parameterGroupData[keyGP][key].description,
+                //     //     max: this.parameterGroupData[keyGP][key].max,
+                //     //     min: this.parameterGroupData[keyGP][key].min,
+                //     //     normal: this.parameterGroupData[keyGP][key].normal,
+                //     //     abnormal: this.parameterGroupData[keyGP][key].abnormal,
+                //     //     option: this.parameterGroupData[keyGP][key].option,
+                //     //     inputType: this.parameterGroupData[keyGP][key].inputType,
+                //     //     showOn: this.parameterGroupData[keyGP][key].showOn,
+                //     //     deletePhoto: this.parameterGroupData[keyGP][key].deletePhoto,
+                //     //     keyGP: this.parameterGroupData[keyGP][key].parameterName.includes("#") ? this.parameterGroupData[keyGP][key].parameterName.split("#")[0] + "#" : this.parameterGroupData[keyGP][key].parameterName,
+                //     //     key: key
+                //     // }
+                //     // if (data.uom != "") {
+                //     //     this.param.uom = this.parameterGroupData[keyGP][key].uom;
+                //     // } else {
+                //     //     this.param.uom = "";
+                //     // }
+                //     this.allParameter[0].forEach((el, i)=> {
+                //         if (el.parameterId == data.parameterId) {
+                //             this.param.parameterId = el.parameterId;
+                //             this.param.sortId = el.sortId;
+                //             this.param.parameterName = el.parameterName;
+                //             this.param.photo = el.photo;
+                //             this.param.photo1 = el.photo1;
+                //             this.param.photo2 = el.photo2;
+                //             this.param.photo3 = el.photo3;
+                //             this.param.description = el.description;
+                //             if (data.uom != "") {
+                //                 this.param.uom = el.uom;
+                //             } else {
+                //                 this.param.uom = "";
+                //             }
+                //             this.param.max = el.max;
+                //             this.param.min = el.min;
+                //             this.param.normal = el.normal;
+                //             this.param.abnormal = el.abnormal;
+                //             this.param.option = el.option;
+                //             this.param.inputType = el.inputType;
+                //             this.param.showOn = el.showOn;
+                //             this.param.deletePhoto = el.deletePhoto;
+                //             this.param.keyGP = el.parameterName.includes("#") ? el.parameterName.split("#")[0] + "#" : el.parameterName;
+                //         }
+                //     });
+                    
                 //     if (!this.param.deletePhoto) {
                 //         $('#deletePhoto').prop('checked', false);
                 //     }
@@ -1807,307 +1709,134 @@ $sess = $session->get('adminId');
                 //     }
                 // }
 
-                function updateExistParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
-                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
-                    let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
-                    let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
-                    let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
-                    let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
-                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: "Invalid value!",
-                            icon: 'error'
-                        })
+                function editExistParameter(index) {
+                    this.deletePhoto = ref(false);
+                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                    this.myModal.show();
 
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
+                    $('#imgParam').remove();
 
-                        //remove invalid class
-                        // input type
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
-                                $('.min').removeClass('is-invalid');
-                            }
-                            if (this.param.max != "" || this.param.max != null) {
-                                $('.max').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "" || this.param.uom != null) {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal != "") {
-                                $('#normal').removeClass('is-invalid');
-                            }
-                            if (this.param.abnormal != "") {
-                                $('#abnormal').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "") {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        //end remove invalid class
-
-                        //add invalid class
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
-                                $('.min').addClass('is-invalid');
-                            }
-                            if (this.param.max == "" || this.param.max == null) {
-                                $('.max').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "" || this.param.uom == null) {
-                                $('.uom').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal == "") {
-                                $('#normal').addClass('is-invalid');
-                            }
-                            if (this.param.abnormal == "") {
-                                $('#abnormal').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "") {
-                                $('.uom').addClass('is-invalid');
-                            }
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-                    } else {
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
-
-                        //remove invalid class
-                        // input type
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
-                                $('.min').removeClass('is-invalid');
-                            }
-                            if (this.param.max != "" || this.param.max != null) {
-                                $('.max').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "" || this.param.uom != null) {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal != "") {
-                                $('#normal').removeClass('is-invalid');
-                            }
-                            if (this.param.abnormal != "") {
-                                $('#abnormal').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "") {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        //end remove invalid class
-
-                        //add invalid class
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
-                                $('.min').addClass('is-invalid');
-                            }
-                            if (this.param.max == "" || this.param.max == null) {
-                                $('.max').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "" || this.param.uom == null) {
-                                $('.uom').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal == "") {
-                                $('#normal').addClass('is-invalid');
-                            }
-                            if (this.param.abnormal == "") {
-                                $('#abnormal').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "") {
-                                $('.uom').addClass('is-invalid');
-                            }
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-                        
-                        // index = this.param.i;
-                        let keyGP = this.param.keyGP;
-                        let key = this.param.key;
-                        // this.parameterGroupData[keyGP][key] = {
-                        //     parameterId: this.param.parameterId,
-                        //     sortId: this.param.sortId,
-                        //     parameterName: this.param.parameterName,
-                        //     photo: this.paramPhoto,
-                        //     photo1: this.param.photo1,
-                        //     photo2: this.param.photo2,
-                        //     photo3: this.param.photo3,
-                        //     description: this.param.description,
-                        //     uom: this.param.uom,
-                        //     min: this.param.min,
-                        //     max: this.param.max,
-                        //     normal: this.param.normal,
-                        //     abnormal: this.param.abnormal,
-                        //     option: this.param.option,
-                        //     inputType: this.param.inputType,
-                        //     showOn: this.param.showOn,
-                        //     keyGP: keyGP,
-                        //     key: key,
-                        //     deletePhoto: this.deletePhoto 
-                        // }
-
-                        let compare = "";
-                        let edited = _.omit(this.param, ['keyGP', 'key', 'status', 'i']);
-                        
-                        this.compareParameter.forEach((el, i) => {
-                            if (el.parameterId === this.param.parameterId) {
-                                compare = _.omit(el, ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
-                            }
-                        });
-
-                        let check = _.isEqual(compare, edited);
-                        console.log(check);
-                        let lengthEdited = this.editedParameter.length;
-                        if (check) {
-                            for (let i = 0; i < lengthEdited; i++) {
-                                // console.log(this.editedParameter[i].parameterId);
-                                let isEditedParam = this.editedParameter[i].parameterId
-                                if (isEditedParam == this.param.parameterId) {
-                                    this.param.status = 'old';
-                                    return this.editedParameter.splice(i, 1);
-                                }
-                            }
-                            this.param.status = 'old';
-                        } else {
-                            setTimeout(() => {
-                                for (let i = 0; i < lengthEdited; i++) {
-                                    // console.log(this.editedParameter[i].parameterId);
-                                    let isEditedParam = this.editedParameter[i].parameterId
-                                    if (isEditedParam == this.param.parameterId) {
-                                        return this.editedParameter.splice(i, 1);
+                    this.paramPhoto = ref("");
+                    $('#photoParam').filepond('removeFiles');
+                    FilePond.destroy(document.querySelector('#photoParam'));
+                    if (this.parameter[index].photo != '' && this.parameter[index].photo != undefined) {
+                        let url = URL.createObjectURL(this.parameter[index].photo)
+                        const inputElement = document.querySelector('#photoParam');
+                        var photoEdit = {
+                            acceptedFileTypes: ['image/png', 'image/jpeg'],
+                            allowFilePoster: true,
+                            allowImagePreview: true,
+                            imagePreviewMaxHeight: 200,
+                            allowImageCrop: true,
+                            allowMultiple: false,
+                            credits: false,
+                            styleLoadIndicatorPosition: 'center bottom',
+                            styleProgressIndicatorPosition: 'right bottom',
+                            styleButtonRemoveItemPosition: 'left bottom',
+                            styleButtonProcessItemPosition: 'right bottom',
+                            files: [{
+                                source: url,
+                                options: {
+                                    type: 'local',
+                                    file: this.parameter[index].photo,
+                                    metadata: {
+                                        poster: ''
                                     }
                                 }
-                            }, 2000);
-                            this.param.status = 'updated';
-                            this.editedParameter.push(this.param);
-                        }
-
-                        this.allParameter[0].forEach((el, i) => {
-                            if (el.parameterId === this.param.parameterId) {
-                                this.allParameter[0][i] = this.param
-                            }
-                        });
-
-                        console.log(allParameter[0]);
-                        this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
-                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                        });
-
-                        // let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
-                        // let edited = _.omit(this.parameter[index], ['i']);
-
-                        // const {
-                        //     assetId,
-                        //     createdAt,
-                        //     deletedAt,
-                        //     updatedAt,
-                        //     ...newParam
-                        // } = this.compareParameter[index];
-                        // const {
-                        //     i,
-                        //     photo,
-                        //     ...newEdited
-                        // } = this.parameter[index];
-                        // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
-
-                        this.myModal.hide();
-                        this.deletePhoto = ref(false);
-
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            iconColor: 'white',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
-                            customClass: {
-                                popup: 'colored-toast'
-                            },
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
+                            }]
+                        };
+                        let pond = FilePond.create(inputElement, photoEdit);
+                        pond.on('addfile', (error, file) => {
+                            v.paramPhoto = file.file;
                         })
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Successfully Modify Parameter'
+                        pond.on('removefile', (error, file) => {
+                            v.paramPhoto = ref("");
+                        })
+                    }else{
+                        var filepondParam = {
+                            acceptedFileTypes: ['image/png', 'image/jpeg'],
+                            allowFilePoster: true,
+                            allowImagePreview: true,
+                            imagePreviewMaxHeight: 200,
+                            allowImageCrop: true,
+                            allowMultiple: false,
+                            credits: false,
+                            styleLoadIndicatorPosition: 'center bottom',
+                            styleProgressIndicatorPosition: 'right bottom',
+                            styleButtonRemoveItemPosition: 'left bottom',
+                            styleButtonProcessItemPosition: 'right bottom',
+                        };
+
+                        let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                        pond.on('addfile', (error, file) => {
+                            v.paramPhoto = file.file;
+                        })
+                        pond.on('removefile', (error, file) => {
+                            v.paramPhoto = ref("");
                         })
                     }
+                    
+
+                    this.param.parameterId = this.parameter[index].parameterId;
+                    this.param.sortId = this.parameter[index].sortId;
+                    this.param.parameterName = this.parameter[index].parameterName;
+                    this.param.photo = this.parameter[index].photo;
+                    this.param.photo1 = this.parameter[index].photo1;
+                    this.param.photo2 = this.parameter[index].photo2;
+                    this.param.photo3 = this.parameter[index].photo3;
+                    this.param.description = this.parameter[index].description;
+                    if (this.parameter[index].uom != "") {
+                        this.param.uom = this.parameter[index].uom;
+                    } else {
+                        this.param.uom = "";
+                    }
+                    this.param.min = this.parameter[index].min;
+                    this.param.max = this.parameter[index].max;
+                    this.param.normal = this.parameter[index].normal;
+                    this.param.abnormal = this.parameter[index].abnormal;
+                    this.param.option = this.parameter[index].option;
+                    this.param.inputType = this.parameter[index].inputType;
+                    this.param.showOn = this.parameter[index].showOn;
+                    this.param.i = index;
+                    this.param.deletePhoto = this.parameter[index].deletePhoto;
+                    if (!this.param.deletePhoto) {
+                        $('#deletePhoto').prop('checked', false);
+                    }
+
+                    if (this.param.photo1 != "" && !this.param.deletePhoto && this.param.photo1 != null) {
+                        $('#previewImg').show();
+                        $('#preview').append("<img class='img-thumbnail' id='imgParam' style='height:150px; cursor: pointer' src='" + this.param.photo1 + "' alt=''  onclick='modalPreviewImg()' data-toggle='tooltip' title='click to preview this image'>");
+                    } else if (this.param.photo1 == "" || this.param.photo1 == null || this.param.deletePhoto) {
+                        $('#previewImg').hide();
+                    }
+
+                    if (v.param.inputType != '') {
+                        $('.type').val(v.param.inputType).trigger("change");
+                    }
+
+                    if (v.param.normal != '' || v.param.abnormal != '') {
+                        $lengthNormal = v.param.normal.split(",").length;
+                        $lengthAbnormal = v.param.abnormal.split(",").length;
+                        if ($lengthNormal > 0) {
+                            var dataNormal = v.param.normal.split(",");
+                            for (let index = 0; index < dataNormal.length; index++) {
+                                $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
+                            }
+                        }
+                        if ($lengthAbnormal > 0) {
+                            var dataAbnormal = v.param.abnormal.split(",");
+                            for (let index = 0; index < dataAbnormal.length; index++) {
+                                $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
+                            }
+                        }
+                    }
+                    if (this.param.showOn != '') {
+                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                    }
                 }
+
                 // function updateExistParameter() {
                 //     let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
                 //     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
@@ -2296,33 +2025,81 @@ $sess = $session->get('adminId');
                 //             $('.showOn').addClass('is-invalid');
                 //         }
                         
-                //         index = this.param.i;
-                //         this.parameter[index] = {
-                //             parameterId: this.param.parameterId,
-                //             sortId: this.param.sortId,
-                //             parameterName: this.param.parameterName,
-                //             photo: this.paramPhoto,
-                //             photo1: this.param.photo1,
-                //             photo2: this.param.photo2,
-                //             photo3: this.param.photo3,
-                //             description: this.param.description,
-                //             uom: this.param.uom,
-                //             min: this.param.min,
-                //             max: this.param.max,
-                //             normal: this.param.normal,
-                //             abnormal: this.param.abnormal,
-                //             option: this.param.option,
-                //             inputType: this.param.inputType,
-                //             showOn: this.param.showOn,
-                //             i: index,
-                //             deletePhoto: this.deletePhoto 
-                //         }
-                //         let lengthEdited = this.editedParameter.length;
+                //         // index = this.param.i;
+                //         let keyGP = this.param.keyGP;
+                //         let key = this.param.key;
+                //         // this.parameterGroupData[keyGP][key] = {
+                //         //     parameterId: this.param.parameterId,
+                //         //     sortId: this.param.sortId,
+                //         //     parameterName: this.param.parameterName,
+                //         //     photo: this.paramPhoto,
+                //         //     photo1: this.param.photo1,
+                //         //     photo2: this.param.photo2,
+                //         //     photo3: this.param.photo3,
+                //         //     description: this.param.description,
+                //         //     uom: this.param.uom,
+                //         //     min: this.param.min,
+                //         //     max: this.param.max,
+                //         //     normal: this.param.normal,
+                //         //     abnormal: this.param.abnormal,
+                //         //     option: this.param.option,
+                //         //     inputType: this.param.inputType,
+                //         //     showOn: this.param.showOn,
+                //         //     keyGP: keyGP,
+                //         //     key: key,
+                //         //     deletePhoto: this.deletePhoto 
+                //         // }
 
-                //         let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
-                //         let edited = _.omit(this.parameter[index], ['i']);
+                //         // this.param.keyGP = this.param.parameterName.includes("#") ? this.param.parameterName.split("#")[0] + "#" : this.param.parameterName;
+
+                //         let compare = "";
+                //         let edited = _.omit(this.param, ['keyGP', 'key', 'status', 'i']);
+                        
+                //         this.compareParameter.forEach((el, i) => {
+                //             if (el.parameterId === this.param.parameterId) {
+                //                 compare = _.omit(el, ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                //             }
+                //         });
 
                 //         let check = _.isEqual(compare, edited);
+                //         let lengthEdited = this.editedParameter.length;
+                //         if (check) {
+                //             for (let i = 0; i < lengthEdited; i++) {
+                //                 // console.log(this.editedParameter[i].parameterId);
+                //                 let isEditedParam = this.editedParameter[i].parameterId
+                //                 if (isEditedParam == this.param.parameterId) {
+                //                     this.param.status = 'old';
+                //                     return this.editedParameter.splice(i, 1);
+                //                 }
+                //             }
+                //             this.param.status = 'old';
+                //         } else {
+                //             setTimeout(() => {
+                //                 for (let i = 0; i < lengthEdited; i++) {
+                //                     // console.log(this.editedParameter[i].parameterId);
+                //                     let isEditedParam = this.editedParameter[i].parameterId
+                //                     if (isEditedParam == this.param.parameterId) {
+                //                         return this.editedParameter.splice(i, 1);
+                //                     }
+                //                 }
+                //             }, 2000);
+                //             this.param.status = 'updated';
+                //             this.editedParameter.push(this.param);
+                //         }
+
+                //         this.allParameter[0].forEach((el, i) => {
+                //             if (el.parameterId === this.param.parameterId) {
+                //                 this.allParameter[0][i] = this.param
+                //             }
+                //         });
+                //         this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
+                //             return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                //         });
+
+
+                //         // let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                //         // let edited = _.omit(this.parameter[index], ['i']);
+
                 //         // const {
                 //         //     assetId,
                 //         //     createdAt,
@@ -2359,31 +2136,284 @@ $sess = $session->get('adminId');
                 //             icon: 'success',
                 //             title: 'Successfully Modify Parameter'
                 //         })
-                //         if (check) {
-                //             for (let i = 0; i < lengthEdited; i++) {
-                //                 // console.log(this.editedParameter[i].parameterId);
-                //                 let idEditedParam = this.editedParameter[i].parameterId
-                //                 if (idEditedParam == this.parameter[index].parameterId) {
-                //                     this.parameter[index].status = 'old';
-                //                     return this.editedParameter.splice(i, 1);
-                //                 }
-                //             }
-                //             this.parameter[index].status = 'old';
-                //         } else {
-                //             setTimeout(() => {
-                //                 for (let i = 0; i < lengthEdited; i++) {
-                //                     // console.log(this.editedParameter[i].parameterId);
-                //                     let idEditedParam = this.editedParameter[i].parameterId
-                //                     if (idEditedParam == this.parameter[index].parameterId) {
-                //                         return this.editedParameter.splice(i, 1);
-                //                     }
-                //                 }
-                //             }, 2000);
-                //             this.editedParameter.push(this.parameter[index]);
-                //             this.parameter[index].status = 'updated';
-                //         }
                 //     }
                 // }
+                function updateExistParameter() {
+                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                    let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
+                    let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
+                    let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
+                    let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
+                            icon: 'error'
+                        })
+
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+
+                        //remove invalid class
+                        // input type
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min != "" || this.param.min != null) {
+                                $('.min').removeClass('is-invalid');
+                            }
+                            if (this.param.max != "" || this.param.max != null) {
+                                $('.max').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "" || this.param.uom != null) {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal != "") {
+                                $('#normal').removeClass('is-invalid');
+                            }
+                            if (this.param.abnormal != "") {
+                                $('#abnormal').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "") {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        //end remove invalid class
+
+                        //add invalid class
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min == "" || this.param.min == null) {
+                                $('.min').addClass('is-invalid');
+                            }
+                            if (this.param.max == "" || this.param.max == null) {
+                                $('.max').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "" || this.param.uom == null) {
+                                $('.uom').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal == "") {
+                                $('#normal').addClass('is-invalid');
+                            }
+                            if (this.param.abnormal == "") {
+                                $('#abnormal').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "") {
+                                $('.uom').addClass('is-invalid');
+                            }
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    } else {
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+
+                        //remove invalid class
+                        // input type
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min != "" || this.param.min != null) {
+                                $('.min').removeClass('is-invalid');
+                            }
+                            if (this.param.max != "" || this.param.max != null) {
+                                $('.max').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "" || this.param.uom != null) {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal != "") {
+                                $('#normal').removeClass('is-invalid');
+                            }
+                            if (this.param.abnormal != "") {
+                                $('#abnormal').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "") {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        //end remove invalid class
+
+                        //add invalid class
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min == "" || this.param.min == null) {
+                                $('.min').addClass('is-invalid');
+                            }
+                            if (this.param.max == "" || this.param.max == null) {
+                                $('.max').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "" || this.param.uom == null) {
+                                $('.uom').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal == "") {
+                                $('#normal').addClass('is-invalid');
+                            }
+                            if (this.param.abnormal == "") {
+                                $('#abnormal').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "") {
+                                $('.uom').addClass('is-invalid');
+                            }
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                        
+                        index = this.param.i;
+                        this.parameter[index] = {
+                            parameterId: this.param.parameterId,
+                            sortId: this.param.sortId,
+                            parameterName: this.param.parameterName,
+                            photo: this.paramPhoto,
+                            photo1: this.param.photo1,
+                            photo2: this.param.photo2,
+                            photo3: this.param.photo3,
+                            description: this.param.description,
+                            uom: this.param.uom,
+                            min: this.param.min,
+                            max: this.param.max,
+                            normal: this.param.normal,
+                            abnormal: this.param.abnormal,
+                            option: this.param.option,
+                            inputType: this.param.inputType,
+                            showOn: this.param.showOn,
+                            i: index,
+                            deletePhoto: this.deletePhoto 
+                        }
+                        let lengthEdited = this.editedParameter.length;
+
+                        let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                        let edited = _.omit(this.parameter[index], ['i']);
+
+                        let check = _.isEqual(compare, edited);
+                        // const {
+                        //     assetId,
+                        //     createdAt,
+                        //     deletedAt,
+                        //     updatedAt,
+                        //     ...newParam
+                        // } = this.compareParameter[index];
+                        // const {
+                        //     i,
+                        //     photo,
+                        //     ...newEdited
+                        // } = this.parameter[index];
+                        // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
+
+                        this.myModal.hide();
+                        this.deletePhoto = ref(false);
+
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Successfully Modify Parameter'
+                        })
+                        if (check) {
+                            for (let i = 0; i < lengthEdited; i++) {
+                                // console.log(this.editedParameter[i].parameterId);
+                                let idEditedParam = this.editedParameter[i].parameterId
+                                if (idEditedParam == this.parameter[index].parameterId) {
+                                    this.parameter[index].status = 'old';
+                                    return this.editedParameter.splice(i, 1);
+                                }
+                            }
+                            this.parameter[index].status = 'old';
+                        } else {
+                            setTimeout(() => {
+                                for (let i = 0; i < lengthEdited; i++) {
+                                    // console.log(this.editedParameter[i].parameterId);
+                                    let idEditedParam = this.editedParameter[i].parameterId
+                                    if (idEditedParam == this.parameter[index].parameterId) {
+                                        return this.editedParameter.splice(i, 1);
+                                    }
+                                }
+                            }, 2000);
+                            this.editedParameter.push(this.parameter[index]);
+                            this.parameter[index].status = 'updated';
+                        }
+                    }
+                }
 
                 function addParameter() {
                     this.paramPhoto = ref("");
@@ -3654,6 +3684,8 @@ $sess = $session->get('adminId');
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
                     this.param.parameterName = '';
                     this.param.photo = '';
+                    this.param.photo1 = '';
+                    this.param.photo2 = '';
                     this.param.photo3 = '';
                     this.param.description = '';
                     this.param.uom = '';
@@ -3664,7 +3696,9 @@ $sess = $session->get('adminId');
                     this.param.option = '';
                     this.param.inputType = '';
                     this.param.showOn = '';
-                    this.param.i = null;
+                    // this.param.i = null;
+                    this.param.keyGP = '';
+                    this.param.key = '';
 
                     $('#addParameterModal').modal('hide');
                     $('#previewImg').hide();

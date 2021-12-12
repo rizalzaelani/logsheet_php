@@ -280,21 +280,21 @@ class Asset extends BaseController
 						$name2 = 'paramPhotoM_' . $file->getRandomName();
 						$image2 = \Config\Services::image()
 							->withFile($file)
-							->resize(480,480, true, 'heigth')
+							->resize(480, 480, true, 'heigth')
 							->save($dirPhoto . '/' . $name2);
 						$name3 = 'paramPhotoL_' . $file->getRandomName();
 						$image3 = \Config\Services::image()
 							->withFile($file)
-							->resize(144,144, true, 'heigth')
+							->resize(144, 144, true, 'heigth')
 							->save($dirPhoto . '/' . $name3);
 						$dataParam = array(
 							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
 							'assetId' => $assetId,
 							'sortId' => $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo1' => base_url() . '/' . $dirPhoto . '/' .$name1,
-							'photo2' => base_url() . '/' . $dirPhoto . '/' .$name2,
-							'photo3' => base_url() . '/' . $dirPhoto . '/' .$name3,
+							'photo1' => base_url() . '/' . $dirPhoto . '/' . $name1,
+							'photo2' => base_url() . '/' . $dirPhoto . '/' . $name2,
+							'photo3' => base_url() . '/' . $dirPhoto . '/' . $name3,
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
@@ -591,21 +591,21 @@ class Asset extends BaseController
 						$name2 = 'paramPhotoM_' . $file->getRandomName();
 						$image2 = \Config\Services::image()
 							->withFile($file)
-							->resize(480,480, true, 'heigth')
+							->resize(480, 480, true, 'heigth')
 							->save($dirPhoto . '/' . $name2);
 						$name3 = 'paramPhotoL_' . $file->getRandomName();
 						$image3 = \Config\Services::image()
 							->withFile($file)
-							->resize(144,144, true, 'heigth')
+							->resize(144, 144, true, 'heigth')
 							->save($dirPhoto . '/' . $name3);
 						$dataEdited = json_decode($post['editedParameter'][$i]);
 						$data = array(
 							'parameterId'		=> $dataEdited->parameterId,
 							'sortId'			=> $dataEdited->sortId,
 							'parameterName'		=> $dataEdited->parameterName,
-							'photo1' 			=> base_url() . '/' . $dirPhoto . '/' .$name1,
-							'photo2' 			=> base_url() . '/' . $dirPhoto . '/' .$name2,
-							'photo3' 			=> base_url() . '/' . $dirPhoto . '/' .$name3,
+							'photo1' 			=> base_url() . '/' . $dirPhoto . '/' . $name1,
+							'photo2' 			=> base_url() . '/' . $dirPhoto . '/' . $name2,
+							'photo3' 			=> base_url() . '/' . $dirPhoto . '/' . $name3,
 							'description'		=> $dataEdited->description,
 							'uom'				=> $dataEdited->uom,
 							'min'				=> $dataEdited->min,
@@ -617,15 +617,15 @@ class Asset extends BaseController
 							'showOn'			=> $dataEdited->showOn,
 						);
 						$parameterModel->update($dataEdited->parameterId, $data);
-						if ($dataEdited->photo1 != '' && $dataEdited->photo1 != '' && $dataEdited->photo1 != '') {                               
-							$path1 = str_replace(base_url() . '/', "" ,$dataEdited->photo1);
-							$path2 = str_replace(base_url() . '/', "" ,$dataEdited->photo2);
-							$path3 = str_replace(base_url() . '/', "" ,$dataEdited->photo3);
+						if ($dataEdited->photo1 != '' && $dataEdited->photo1 != '' && $dataEdited->photo1 != '') {
+							$path1 = str_replace(base_url() . '/', "", $dataEdited->photo1);
+							$path2 = str_replace(base_url() . '/', "", $dataEdited->photo2);
+							$path3 = str_replace(base_url() . '/', "", $dataEdited->photo3);
 							unlink($path1);
 							unlink($path2);
 							unlink($path3);
 						}
-					}else{
+					} else {
 						$dataEdited = json_decode($post['editedParameter'][$i]);
 						$data = array(
 							'parameterId'		=> $dataEdited->parameterId,
@@ -646,9 +646,9 @@ class Asset extends BaseController
 						);
 						$parameterModel->update($dataEdited->parameterId, $data);
 						if ($dataEdited->deletePhoto) {
-							$path1 = str_replace(base_url() . '/', "" ,$dataEdited->photo1);
-							$path2 = str_replace(base_url() . '/', "" ,$dataEdited->photo2);
-							$path3 = str_replace(base_url() . '/', "" ,$dataEdited->photo3);
+							$path1 = str_replace(base_url() . '/', "", $dataEdited->photo1);
+							$path2 = str_replace(base_url() . '/', "", $dataEdited->photo2);
+							$path3 = str_replace(base_url() . '/', "", $dataEdited->photo3);
 							unlink($path1);
 							unlink($path2);
 							unlink($path3);
@@ -680,21 +680,21 @@ class Asset extends BaseController
 						$name2 = 'paramPhotoM_' . $file->getRandomName();
 						$image2 = \Config\Services::image()
 							->withFile($file)
-							->resize(480,480, true, 'heigth')
+							->resize(480, 480, true, 'heigth')
 							->save($dirPhoto . '/' . $name2);
 						$name3 = 'paramPhotoL_' . $file->getRandomName();
 						$image3 = \Config\Services::image()
 							->withFile($file)
-							->resize(144,144, true, 'heigth')
+							->resize(144, 144, true, 'heigth')
 							->save($dirPhoto . '/' . $name3);
 						$dataParam = array(
 							'parameterId' => json_decode($post['parameter'][$i])->parameterId,
 							'assetId' => $assetId,
 							'sortId' => (json_decode($post['parameter'][$i])->sortId) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->sortId,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo1' => base_url() . '/' . $dirPhoto . '/' .$name1,
-							'photo2' => base_url() . '/' . $dirPhoto . '/' .$name2,
-							'photo3' => base_url() . '/' . $dirPhoto . '/' .$name3,
+							'photo1' => base_url() . '/' . $dirPhoto . '/' . $name1,
+							'photo2' => base_url() . '/' . $dirPhoto . '/' . $name2,
+							'photo3' => base_url() . '/' . $dirPhoto . '/' . $name3,
 							'description' => json_decode($post['parameter'][$i])->description,
 							'uom' => json_decode($post['parameter'][$i])->uom,
 							'min' => (json_decode($post['parameter'][$i])->min) == "null" || "" || "0" ? null : json_decode($post['parameter'][$i])->min,
@@ -781,21 +781,21 @@ class Asset extends BaseController
 				foreach ($sheet->getRowIterator() as $row) {
 					if ($numrow > 1) {
 						// if ($row->getCellAtIndex(1) != '' && $row->getCellAtIndex(2) != '') {
-							$dataImport[] = array(
-								'no' => $row->getCellAtIndex(0)->getValue(),
-								'parameterName' => $row->getCellAtIndex(1)->getValue(),
-								'description' => $row->getCellAtIndex(2)->getValue(),
-								'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(3)->getValue(),
-								'min' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() == true ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(4)->getValue(),
-								'normal' => $row->getCellAtIndex(5)->getValue(),
-								'abnormal' => $row->getCellAtIndex(6)->getValue(),
-								'option' => $row->getCellAtIndex(8)->getValue(),
-								'uom' => $row->getCellAtIndex(7)->getValue(),
-								'inputType' => $row->getCellAtIndex(9)->getValue(),
-								'showOn' => $row->getCellAtIndex(10)->getValue(),
-								'flipMax' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() ? true : false,
-								'flipMin' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() ? true : false,
-							);
+						$dataImport[] = array(
+							'no' => $row->getCellAtIndex(0)->getValue(),
+							'parameterName' => $row->getCellAtIndex(1)->getValue(),
+							'description' => $row->getCellAtIndex(2)->getValue(),
+							'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(3)->getValue(),
+							'min' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() == true ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(4)->getValue(),
+							'normal' => $row->getCellAtIndex(5)->getValue(),
+							'abnormal' => $row->getCellAtIndex(6)->getValue(),
+							'option' => $row->getCellAtIndex(8)->getValue(),
+							'uom' => $row->getCellAtIndex(7)->getValue(),
+							'inputType' => $row->getCellAtIndex(9)->getValue(),
+							'showOn' => $row->getCellAtIndex(10)->getValue(),
+							'flipMax' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() ? true : false,
+							'flipMin' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() ? true : false,
+						);
 						// } else {
 						// 	return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Does Not Match'));
 						// }
@@ -856,7 +856,7 @@ class Asset extends BaseController
 		if (!checkRoleList("MASTER.ASSET.PARAMETER.IMPORT.SAMPLE")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
-		
+
 		return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . '/download/SampleImportAsset.xlsx', null);
 	}
 
