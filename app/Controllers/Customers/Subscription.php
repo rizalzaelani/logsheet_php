@@ -43,39 +43,6 @@ class Subscription extends BaseController
         if ($getInvoice['error'] == false) {
             $dataInvoice = json_decode($getInvoice['data'], TRUE)['data']['data'];
         }
-
-        // if (count($getSubscription)) {
-        //     $due = $getSubscription[0]['dueDate'];
-        //     $now = new DateTime();
-        //     $check = $now->format("Y-m-d H:i:s") < $due;
-
-        //     if (!$check) {
-        //         $transactionId = $getSubscription[0]['transactionId'];
-        //         $duedate = [
-        //             'cancelDate' => $getSubscription[0]['dueDate']
-        //         ];
-        //         if ($getSubscription[0]['paidDate'] == null && $getSubscription[0]['approvedDate'] == null) {
-        //             $transactionModel->update($transactionId, $duedate);
-        //         }
-        //         $subscription = $subscriptionModel->getAllData(['userId' => $adminId, 'cancelDate' => null]);
-        //         foreach ($subscription as $key => $value) {
-        //             foreach ($dataInvoice as $i => $val) {
-        //                 if ($value['invoiceId'] == $val['id']) {
-        //                     $subscription[$key]['status'] = $val['status_id'];
-        //                 }
-        //             }
-        //         }
-        //     } else {
-        //         $subscription = $getSubscription;
-        //         foreach ($subscription as $key => $value) {
-        //             foreach ($dataInvoice as $i => $val) {
-        //                 if ($value['invoiceId'] == $val['id']) {
-        //                     $subscription[$key]['status'] = $val['status_id'];
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
         if (count($getTransaction)) {
             $due = $getTransaction[0]['dueDate'];
             $now = new DateTime();
@@ -89,7 +56,7 @@ class Subscription extends BaseController
                 if ($getTransaction[0]['paidDate'] == null && $getTransaction[0]['approvedDate'] == null) {
                     $transactionModel->update($transactionId, $duedate);
                 }
-                $transaction = $subscriptionModel->getAllData(['userId' => $adminId, 'cancelDate' => null]);
+                $transaction = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
                 foreach ($transaction as $key => $value) {
                     foreach ($dataInvoice as $i => $val) {
                         if ($value['invoiceId'] == $val['id']) {
@@ -189,7 +156,7 @@ class Subscription extends BaseController
         $adminId = $this->session->get('adminId');
         $transaction    = $transactionModel->getAll(['userId' => $adminId, 'cancelDate' => null]);
 
-        if ($transaction[0]['paidDate'] == null) {
+        if ($transaction[0]['paidDate'] == null && $transaction[0]['cancelDate'] == null) {
             return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "Please make a payment first or cancel the previous transaction"]);
         }
 
@@ -201,6 +168,14 @@ class Subscription extends BaseController
             [
                 "title"    => "Home",
                 "link"    => "Dashboard"
+            ],
+            [
+                "title" => "Subscription",
+                "link"  => "Subscription"
+            ],
+            [
+                "title" => "Upgrade",
+                "link"  => "Upgrade"
             ]
         ];
         $data['package'] = $package;
@@ -225,6 +200,8 @@ class Subscription extends BaseController
 
         if ($transaction[0]['paymentTotal'] == '0') {
             return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "You can only upgrade this package"]);
+        } else if ($transaction[0]['paidDate'] == null && $transaction[0]['cancelDate'] == null) {
+            return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "Please make a payment first or cancel the previous transaction"]);
         }
 
         $packagePrice   = $packagePriceModel->getAll();
@@ -234,13 +211,21 @@ class Subscription extends BaseController
         $packagePrice   = $packagePriceModel->getById(['packageId' => $packageId]);
 
         $data = array(
-            'title'     => "Renewal",
-            'subtitle'  => 'Renewal'
+            'title'     => "Renew",
+            'subtitle'  => 'Renew'
         );
         $data["breadcrumbs"] = [
             [
                 "title" => "Home",
                 "link"  => "Dashboard"
+            ],
+            [
+                "title" => "Subscription",
+                "link"  => "Subscription"
+            ],
+            [
+                "title" => "Renew",
+                "link"  => "Renew"
             ]
         ];
         $data['package']        = $package;
@@ -297,8 +282,8 @@ class Subscription extends BaseController
                     'tax_id'            => null,
                     'desc'              => $package->description,
                     'qty'               => 1,
-                    'price'             => $package->price,
-                    'amount'            => $package->price,
+                    'price'             => $package->packagePrice->price,
+                    'amount'            => $package->packagePrice->price,
                     'price_after_tax'   => 0,
                     'amount_after_tax'  => 0,
                     'tax_manual'        => 0,
@@ -326,12 +311,14 @@ class Subscription extends BaseController
                 $transaction = [
                     'transactionId' => null,
                     'subscriptionId' => $subscription['subscriptionId'],
+                    'packageId'     => $package->packageId,
+                    'packagePriceId' => $package->packagePrice->packagePriceId,
                     'userId'        => $adminId,
                     'invoiceId'     => $dataInvoice['id'],
                     'refNumber'     => $dataInvoice['ref_number'],
                     'period'        => $package->period,
-                    'description'   => $package->description,
-                    'paymentTotal'  => $package->price,
+                    'description'   => 'Upgrade ' . $package->description,
+                    'paymentTotal'  => $package->packagePrice->price,
                     'paymentMethod' => 'Bank Transfer',
                     'attachment'    => null,
                     'issueDate'     => date("Y-m-d H:i:s"),
@@ -515,9 +502,11 @@ class Subscription extends BaseController
                     'subscriptionId' => $subscription['subscriptionId'],
                     'userId'        => $adminId,
                     'invoiceId'     => $dataInvoice['id'],
+                    'packageId'     => $package->packageId,
+                    'packagePriceId' => $package->packagePriceId,
                     'refNumber'     => $dataInvoice['ref_number'],
                     'period'        => $package->period,
-                    'description'   => $package->description,
+                    'description'   => 'Renew ' . $package->description,
                     'paymentTotal'  => $package->price,
                     'paymentMethod' => $package->price == '0' ? 'Free' : 'Bank Transfer',
                     'attachment'    => null,

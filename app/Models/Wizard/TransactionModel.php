@@ -24,7 +24,7 @@ class TransactionModel extends Model
     {
         $query = $this->builder('vw_transaction');
         if ($where != null) {
-            $query = $query->where($where)->orderBy('createdAt', 'asc');
+            $query = $query->where($where)->orderBy('createdAt', 'desc');
         }
         return $query->get()->getResultArray();
     }

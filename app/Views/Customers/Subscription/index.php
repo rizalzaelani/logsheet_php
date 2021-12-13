@@ -120,7 +120,7 @@ $session = \Config\Services::session();
                                 <tr v-for="(val, key) in transaction">
                                     <td width="15%">{{ val.issueDate }}</td>
                                     <td width="20%">{{ val.description }}</td>
-                                    <td>{{ val.trxPeriod }}</td>
+                                    <td>{{ val.period }}</td>
                                     <td width="15%">{{ val.paidDate }}</td>
                                     <td>Rp. {{ formatNumber(val.paymentTotal) }}</td>
                                     <template v-if="val.paidDate == null">
@@ -129,7 +129,7 @@ $session = \Config\Services::session();
                                     <template v-else>
                                         <td class="text-success">Paid</td>
                                     </template>
-                                    <td v-if="val.paidDate == null" class="text-danger">
+                                    <td v-if="val.paidDate == null && val.cancelDate == null" class="text-danger">
                                         {{ countdown }}
                                     </td>
                                     <td v-else>
@@ -169,7 +169,7 @@ $session = \Config\Services::session();
                                 </div>
                             </div>
                         </div>
-                        <div :class="dataModal.status == 1 ? '' : 'd-none'">
+                        <div :class="dataModal.paidDate == null && dataModal.cancelDate == null ? '' : 'd-none'">
                             <h1 class="text-danger">{{ countdown }}</h1>
                         </div>
                     </div>
@@ -207,7 +207,7 @@ $session = \Config\Services::session();
                                 Duration
                             </div>
                             <div class="col-4">
-                                {{ dataModal.trxPeriod }}
+                                {{ dataModal.period }}
                             </div>
                         </div>
                         <div class="row">
@@ -348,7 +348,7 @@ $session = \Config\Services::session();
             var transaction = <?= $transaction ? json_encode($transaction) : ''; ?>;
             var subscription = <?= $subscription ? json_encode($subscription) : ''; ?>;
             var activeFrom = moment().format("YYYY-MM-DD");
-            var activeTo = transaction[0].paidDate == null ? moment(transaction[0].expiredDate, "YYYY-MM-DD") : moment(subscription[0].expiredDate, "YYYY-MM-DD");
+            var activeTo = moment(subscription[0].expiredDate, "YYYY-MM-DD");
             var from = subscription ? moment(subscription[0].activeFrom).format("DD MMM YYYY") : '';
             var to = subscription ? moment(subscription[0].expiredDate).format("DD MMM YYYY") : '';
             var range = activeTo.diff(activeFrom, 'days');
@@ -356,7 +356,7 @@ $session = \Config\Services::session();
 
             var dueDate = [];
             transaction.forEach((el, i) => {
-                if (el.paidDate == null) {
+                if (el.paidDate == null && el.cancelDate == null) {
                     dueDate.push(el.dueDate);
                 }
             })
@@ -367,22 +367,24 @@ $session = \Config\Services::session();
             var interval = 1000;
             var countdown = ref("");
 
-            setInterval(() => {
-                v.duration = moment.duration(v.duration - v.interval, 'milliseconds');
-                v.countdown = v.duration.hours() + ":" + v.duration.minutes() + ":" + v.duration.seconds()
-                if ((v.transaction[0].cancelDate == null && v.transaction[0].approvedDate == null) && (v.duration._milliseconds == 0000 || (Math.sign(v.duration._milliseconds))) == -1) {
-                    // let formdata = new FormData();
-                    // formdata.append('transactionId', v.subscription[0].transactionId);
-                    // axios({
-                    //     url: "<?= base_url('/Subscription/update') ?>",
-                    //     method: 'POST',
-                    //     data: formdata
-                    // }).then((res) => {
-                    //     console.log(res);
-                    // })
-                    // v.subscription.shift();
-                }
-            }, 1000);
+            if (dueDate.length) {
+                setInterval(() => {
+                    v.duration = moment.duration(v.duration - v.interval, 'milliseconds');
+                    v.countdown = v.duration.hours() + ":" + v.duration.minutes() + ":" + v.duration.seconds()
+                    if ((v.transaction[0].cancelDate == null && v.transaction[0].approvedDate == null) && (v.duration._milliseconds == 0000 || (Math.sign(v.duration._milliseconds))) == -1) {
+                        let formdata = new FormData();
+                        formdata.append('transactionId', v.transaction[0].transactionId);
+                        axios({
+                            url: "<?= base_url('/Subscription/update') ?>",
+                            method: 'POST',
+                            data: formdata
+                        }).then((res) => {
+                            location.reload();  
+                        })
+                        v.subscription.shift();
+                    }
+                }, 1000);
+            }
 
             var dataModal = ref("");
 
@@ -403,7 +405,7 @@ $session = \Config\Services::session();
 
             function upgrade() {
                 if (transaction.length) {
-                    if (transaction[0].status == 1) {
+                    if (transaction[0].paidDate == null) {
                         swal.fire({
                             icon: 'warning',
                             title: 'Please make a payment first or cancel the previous transaction',

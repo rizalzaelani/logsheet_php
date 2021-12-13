@@ -24,7 +24,9 @@
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <h2><?= $title ?></h2>
-                    <a href="<?= base_url('/Subscription') ?>" class="btn btn-sm btn-success"><i class="fa fa-arrow-left"></i> Back</a>
+                    <h5 class="header-icon">
+                        <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                    </h5>
                 </div>
                 <div class="pt-4">
                     <div class="row">
@@ -164,6 +166,7 @@
             var packagePrice = <?= json_encode($packagePrice) ?>;
             var bank = ref("");
             var selected = ref("");
+            var selectedPrice = ref("");
             var price = ref("");
             var type = ref("");
             var time = ref("");
@@ -173,10 +176,11 @@
             }
 
             function payment() {
-                if (v.selected != '' && v.price != '' && v.bank != '') {
-                    v.selected.price = v.price;
+                if (v.selected != '' && v.selectedPrice != '' && v.bank != '') {
+                    // v.selected.price = v.price;
                     v.selected.period = v.time;
                     v.selected.bank = v.bank;
+                    v.selected.packagePrice = v.selectedPrice;
                     let formdata = new FormData();
                     formdata.append('package', JSON.stringify(this.selected));
                     axios({
@@ -232,6 +236,7 @@
                 packagePrice,
                 price,
                 selected,
+                selectedPrice,
                 formatNumber,
                 bank,
                 payment
@@ -244,6 +249,8 @@
         v.packagePrice.forEach((el, i) => {
             if (el.packageId == $(this).val() && el.period == v.time) {
                 v.price = el.price;
+                // v.selected.packagePriceId = el.packagePriceId;
+                v.selectedPrice = el
             }
         });
         v.package.forEach((el, i) => {
@@ -257,6 +264,7 @@
         v.packagePrice.forEach((el, i) => {
             if (el.packageId == v.type && el.period == $(this).val()) {
                 v.price = el.price;
+                v.selectedPrice = el
             }
         });
     })

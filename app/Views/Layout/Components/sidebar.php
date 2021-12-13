@@ -179,6 +179,13 @@
                 </svg> Subscription
             </a>
         </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link" href="<?= base_url('/CustomersTransaction') ?>">
+                <svg class="c-sidebar-nav-icon">
+                    <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-excerpt') ?>"></use>
+                </svg> Transaction
+            </a>
+        </li>
 
         <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
             <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>

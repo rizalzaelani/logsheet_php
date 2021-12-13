@@ -24,7 +24,10 @@
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <h2><?= $title ?></h2>
-                    <a href="<?= base_url('/Subscription') ?>" class="btn btn-sm btn-success"><i class="fa fa-arrow-left"></i> Back</a>
+                    <!-- <a href="<?= base_url('/Subscription') ?>" class="btn btn-sm btn-success"><i class="fa fa-arrow-left"></i> Back</a> -->
+                    <h5 class="header-icon">
+                        <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                    </h5>
                 </div>
                 <div class="pt-4">
                     <div class="row">

@@ -214,6 +214,12 @@ $routes->get('/payment', 'Customers/Subscription::payment');
 
 $routes->get('/renew', 'Customers/Subscription::renew');
 $routes->post('/invoiceRenew', 'Customers/Subscription::invoiceRenew');
+
+$routes->get('/CustomersTransaction', 'Customers/CustomersTransaction::index');
+$routes->add('/CustomersTransaction/datatable', 'Customers/CustomersTransaction::datatable');
+$routes->get('/Invoice/detail/(:any)', 'Customers\CustomersTransaction::detail/$1');
+$routes->post('/CustomersTransaction/approve', 'Customers/CustomersTransaction::approve');
+$routes->post('/CustomersTransaction/delete', 'Customers/CustomersTransaction::delete');
 /*
  * --------------------------------------------------------------------
  * Additional Routing
