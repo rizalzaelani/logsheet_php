@@ -28,7 +28,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     <h5>
                         <?= $title; ?>
                     </h5>
-                    <a class="btn btn-sm btn-success" href="<?= base_url('Asset'); ?>"><i class="fa fa-arrow-left"></i> Back</a>
+                    <!-- <a class="btn btn-sm btn-success" href="<?= base_url('Asset'); ?>"><i class="fa fa-arrow-left"></i> Back</a> -->
+                    <h5 class="header-icon">
+                        <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                    </h5>
                 </div>
                 <div class="form-group mt-3">
                     <form method="post" enctype="multipart/form-data">
@@ -933,54 +936,54 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr> -->
-                            <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
-                                <template v-for="(val, key) in valGP">
-                                    <template v-if="key == 0 & keyGP != val.parameterName">
-                                            <tr>
-                                                <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
-                                                <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
-                                            </tr>
-                                    </template>
-                                        <tr>
-                                            <template v-if="key == 0 && keyGP == val.parameterName">
-                                                <td class="text-center">{{ iGP + 1 }}</td>
-                                            </template>
-                                            <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
-                                            <td>{{ val.description }}</td>
-                                            <template v-if="!val.option">
-                                                <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
-                                                <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
-                                                <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.uom ? "(Empty)" :val.uom }}</td>
-                                            </template>
-                                            <template v-else>
-                                                <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
-                                                <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
-                                                <td :class="!val.option ? 'font-italic text-center' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
-                                            </template>
-                                            <template v-if="val.uom != ''">
-                                                <td>
-                                                    {{ val.uom }}
-                                                </td>
-                                            </template>
-                                            <template  v-else-if="val.option != ''">
-                                                <td>
-                                                    {{ val.option }}
-                                                </td>
-                                            </template>
-                                            <template  v-else>
-                                                <td>
-                                                </td>
-                                            </template>
-                                            <td>
-                                                <i class="text-success"><span class="badge badge-success text-white"><i>New!</i></span></i>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key); checkModalAdd = false"><i class="fa fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key)"><i class="fa fa-trash"></i></button>
-                                            </td>
-                                        </tr>
+                        <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
+                            <template v-for="(val, key) in valGP">
+                                <template v-if="key == 0 & keyGP != val.parameterName">
+                                    <tr>
+                                        <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
+                                        <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
+                                    </tr>
                                 </template>
+                                <tr>
+                                    <template v-if="key == 0 && keyGP == val.parameterName">
+                                        <td class="text-center">{{ iGP + 1 }}</td>
+                                    </template>
+                                    <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
+                                    <td>{{ val.description }}</td>
+                                    <template v-if="!val.option">
+                                        <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
+                                        <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
+                                        <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.uom ? "(Empty)" :val.uom }}</td>
+                                    </template>
+                                    <template v-else>
+                                        <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
+                                        <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                        <td :class="!val.option ? 'font-italic text-center' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                    </template>
+                                    <template v-if="val.uom != ''">
+                                        <td>
+                                            {{ val.uom }}
+                                        </td>
+                                    </template>
+                                    <template v-else-if="val.option != ''">
+                                        <td>
+                                            {{ val.option }}
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td>
+                                        </td>
+                                    </template>
+                                    <td>
+                                        <i class="text-success"><span class="badge badge-success text-white"><i>New!</i></span></i>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key); checkModalAdd = false"><i class="fa fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key)"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
                             </template>
+                        </template>
                     </tbody>
                 </table>
             </div>
@@ -1577,7 +1580,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     pond.on('removefile', (error, file) => {
                         v.paramPhoto = ref("");
                     })
-                }else{
+                } else {
                     const inputElement = document.querySelector('#photoParam');
                     var photoEdit2 = {
                         acceptedFileTypes: ['image/png', 'image/jpeg'],
@@ -3359,50 +3362,50 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
             data: importList,
             columns: [{
-                        data: "no"
-                    },
-                    {
-                        data: "parameterName"
-                    },
-                    {
-                        data: "description"
-                    },
-                    {
-                        data: "max",
-                        render: function(type, data, row, meta){
-                            if (row.max != '') {
-                                if (row.flipMax && row.flipMin) {
-                                    return '<div>'+row.min + ' - ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
-                                }
-                                return row.min + ' - ' + row.max
-                            }else{
-                                return row.normal
+                    data: "no"
+                },
+                {
+                    data: "parameterName"
+                },
+                {
+                    data: "description"
+                },
+                {
+                    data: "max",
+                    render: function(type, data, row, meta) {
+                        if (row.max != '') {
+                            if (row.flipMax && row.flipMin) {
+                                return '<div>' + row.min + ' - ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                             }
+                            return row.min + ' - ' + row.max
+                        } else {
+                            return row.normal
                         }
-                    },
-                    {
-                        data: "min",
-                        render: function(type, data, row, meta){
-                            if (row.min != '') {
-                                if (row.flipMax && row.flipMin) {
-                                    return '<div>x < ' + row.min + '; x > ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
-                                }
-                                return 'x < ' + row.min + '; x > ' + row.max
-                            }else{
-                                return row.abnormal
-                            }
-                        }
-                    },
-                    {
-                        data: "uom"
-                    },
-                    {
-                        data: "option"
-                    },
-                    {
-                        data: "showOn"
                     }
-                ],
+                },
+                {
+                    data: "min",
+                    render: function(type, data, row, meta) {
+                        if (row.min != '') {
+                            if (row.flipMax && row.flipMin) {
+                                return '<div>x < ' + row.min + '; x > ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
+                            }
+                            return 'x < ' + row.min + '; x > ' + row.max
+                        } else {
+                            return row.abnormal
+                        }
+                    }
+                },
+                {
+                    data: "uom"
+                },
+                {
+                    data: "option"
+                },
+                {
+                    data: "showOn"
+                }
+            ],
             columnDefs: [{
                 targets: 0,
                 searchable: false,

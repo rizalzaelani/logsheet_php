@@ -105,10 +105,11 @@ class Asset extends BaseController
 		}
 
 		$modelAsset = new AssetModel();
+		$adminId = $this->session->get('adminId');
 
-		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
-		$tagData = $this->db->table('tblm_tag')->get()->getResult();
-		$statusData = $this->db->table('tblm_assetStatus')->where('deletedAt IS NULL')->get()->getResult();
+		$locationData = $this->db->table('tblm_tagLocation')->where(['userId' => $adminId])->get()->getResult();
+		$tagData = $this->db->table('tblm_tag')->where(['userId' => $adminId])->get()->getResult();
+		$statusData = $this->db->table('tblm_assetStatus')->where(['deletedAt' => null, 'userId' => $adminId])->get()->getResult();
 		$data = array(
 			'title' => "Add Asset",
 			'subtitle' => "Add Asset",
@@ -344,6 +345,8 @@ class Asset extends BaseController
 		$model = new AssetModel();
 		$assetTaggingModel = new AssetTaggingModel();
 
+		$adminId = $this->session->get('adminId');
+
 		$assetData = $model->getById($assetId);
 		$assetParameter = $this->db->table('tblm_parameter')->where('assetId', $assetId)->orderBy('sortId', 'asc')->getWhere('deletedAt', null)->getResultArray();
 
@@ -364,9 +367,9 @@ class Asset extends BaseController
 		$abnormal = array_filter(array_unique(explode(",", implode(",", $abnormalArray))));
 
 		$tagging = $assetTaggingModel->where('assetId', $assetId)->orderBy('assetTaggingtype', 'asc')->findAll();
-		$tagData = $this->db->table('tblm_tag')->get()->getResult();
-		$statusData = $this->db->table('tblm_assetStatus')->where('deletedAt IS NULL')->get()->getResult();
-		$locationData = $this->db->table('tblm_tagLocation')->get()->getResult();
+		$tagData = $this->db->table('tblm_tag')->where(['userId' => $adminId])->get()->getResult();
+		$statusData = $this->db->table('tblm_assetStatus')->where(['deletedAt' => null, 'userId' => $adminId])->get()->getResult();
+		$locationData = $this->db->table('tblm_tagLocation')->where(['userId' => $adminId])->get()->getResult();
 
 		$data = array(
 			'title' => 'Detail Asset',
