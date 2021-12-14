@@ -12,6 +12,7 @@
         vertical-align: middle !important;
         text-align: left;
     }
+
     .modal-fs {
         width: 100%;
         max-width: 100%;
@@ -154,9 +155,9 @@ $sess = $session->get('adminId');
                                             <td><?= $key['parameterName']; ?></td>
                                             <td><?= $key['description']; ?></td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['max'] != '' && $key['max'] != '' && $key['max'] != '0') {
+                                                <?php if ($key['max'] != '' && $key['max'] != null && $key['inputType'] == 'input') {
                                                     echo $key['min'] . ' - ' . $key['max'];
-                                                } else if ($key['normal'] != '') {
+                                                } else if ($key['normal'] != '' && $key['inputType'] == 'select') {
                                                     echo $key['normal'];
                                                 } else {
                                                     echo '<i>-</i>';
@@ -164,9 +165,9 @@ $sess = $session->get('adminId');
                                                 ?>
                                             </td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['min'] != '' && $key['min'] != '' && $key['min'] != '0') {
+                                                <?php if ($key['min'] != '' && $key['min'] != null && $key['inputType'] == 'input') {
                                                     echo 'x < ' . $key['min'] . '; x > ' . $key['max'];
-                                                } else if ($key['abnormal'] != '') {
+                                                } else if ($key['abnormal'] != '' && $key['inputType'] == 'select') {
                                                     echo $key['abnormal'];
                                                 } else {
                                                     echo '<i>-</i>';
@@ -582,7 +583,7 @@ $sess = $session->get('adminId');
                 </div>
 
                 <!-- modal preview location -->
-                <div class="modal fade" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true"  >
+                <div class="modal fade" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
                     <div class="modal-dialog modal-fs" role="document">
                         <div class="modal-content">
                             <div class="d-flex justify-content-end p-3">
@@ -1109,19 +1110,19 @@ $sess = $session->get('adminId');
                         <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
+                            <td v-if="items.max != null && items.inputType == 'input'">
                                 {{ items.min + ' - ' + items.max }}
                             </td>
-                            <td v-else-if="items.normal != ''" style="max-height: 150px !important;">
+                            <td v-else-if="items.normal != '' && items.inputType == 'select'" style="max-height: 150px !important;">
                                 {{ items.normal }}
                             </td>
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
+                            <td v-if="items.min != null && items.inputType == 'input'">
                                 {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
-                            <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.abnormal != '' && items.inputType == 'select'" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
                             <td v-else>
@@ -1146,19 +1147,19 @@ $sess = $session->get('adminId');
                         <tr v-for="(items, i) in parameter" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
+                            <td v-if="items.max != null && items.max != '' && items.inputType == 'input'">
                                 {{ items.min + ' - ' + items.max }}
                             </td>
-                            <td v-else-if="items.normal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.normal != '' && items.inputType == 'select'" style="max-width: 150px !important">
                                 {{ items.normal }}
                             </td>
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
+                            <td v-if="items.min != null && items.min != '' && items.inputType == 'input'">
                                 {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
-                            <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.abnormal != '' && items.inputType == 'select'" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
                             <td v-else>
@@ -1177,7 +1178,7 @@ $sess = $session->get('adminId');
                             <td v-if="items.status == 'old'">
                                 <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
                             </td>
-                            <td v-else>
+                            <td v-else-if="items.status == 'updated'">
                                 <i class="text-warning"><span class="badge badge-warning text-white">Updated</span></i>
                             </td>
                             <td style="min-width: 90px !important">
@@ -1385,12 +1386,12 @@ $sess = $session->get('adminId');
                 var tempParameterGroupData = ref("");
                 var allParameter = [];
                 var parameterGroupData = ref("");
-                
+
                 var tempPhoto = ref('');
                 var params = ref([]);
                 var paramPhoto = ref("");
                 var deletePhoto = ref(false);
-                var pathParamPhoto = ref("../uploads/Asset/file"+"<?= $sess ?>"+"/");
+                var pathParamPhoto = ref("../uploads/Asset/file" + "<?= $sess ?>" + "/");
                 var importList = reactive({});
                 var tableImportParam = ref("");
                 var listNewParam = ref([]);
@@ -1619,7 +1620,7 @@ $sess = $session->get('adminId');
                 //             v.paramPhoto = ref("");
                 //         })
                 //     }
-                    
+
                 //     let data = this.parameterGroupData[keyGP][key];
                 //     // this.param = {
                 //     //     parameterId: this.parameterGroupData[keyGP][key].parameterId,
@@ -1672,7 +1673,7 @@ $sess = $session->get('adminId');
                 //             this.param.keyGP = el.parameterName.includes("#") ? el.parameterName.split("#")[0] + "#" : el.parameterName;
                 //         }
                 //     });
-                    
+
                 //     if (!this.param.deletePhoto) {
                 //         $('#deletePhoto').prop('checked', false);
                 //     }
@@ -1754,7 +1755,7 @@ $sess = $session->get('adminId');
                         pond.on('removefile', (error, file) => {
                             v.paramPhoto = ref("");
                         })
-                    }else{
+                    } else {
                         var filepondParam = {
                             acceptedFileTypes: ['image/png', 'image/jpeg'],
                             allowFilePoster: true,
@@ -1777,7 +1778,7 @@ $sess = $session->get('adminId');
                             v.paramPhoto = ref("");
                         })
                     }
-                    
+
 
                     this.param.parameterId = this.parameter[index].parameterId;
                     this.param.sortId = this.parameter[index].sortId;
@@ -2024,7 +2025,7 @@ $sess = $session->get('adminId');
                 //         if (this.param.showOn == '') {
                 //             $('.showOn').addClass('is-invalid');
                 //         }
-                        
+
                 //         // index = this.param.i;
                 //         let keyGP = this.param.keyGP;
                 //         let key = this.param.key;
@@ -2054,7 +2055,7 @@ $sess = $session->get('adminId');
 
                 //         let compare = "";
                 //         let edited = _.omit(this.param, ['keyGP', 'key', 'status', 'i']);
-                        
+
                 //         this.compareParameter.forEach((el, i) => {
                 //             if (el.parameterId === this.param.parameterId) {
                 //                 compare = _.omit(el, ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -2139,7 +2140,7 @@ $sess = $session->get('adminId');
                 //     }
                 // }
                 function updateExistParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                    let min = ((this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
                     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -2168,7 +2169,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2210,7 +2211,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2252,7 +2253,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2294,7 +2295,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2325,7 +2326,7 @@ $sess = $session->get('adminId');
                         if (this.param.showOn == '') {
                             $('.showOn').addClass('is-invalid');
                         }
-                        
+
                         index = this.param.i;
                         this.parameter[index] = {
                             parameterId: this.param.parameterId,
@@ -2345,7 +2346,7 @@ $sess = $session->get('adminId');
                             inputType: this.param.inputType,
                             showOn: this.param.showOn,
                             i: index,
-                            deletePhoto: this.deletePhoto 
+                            deletePhoto: this.deletePhoto
                         }
                         let lengthEdited = this.editedParameter.length;
 
@@ -2432,7 +2433,7 @@ $sess = $session->get('adminId');
                         styleButtonRemoveItemPosition: 'left bottom',
                         styleButtonProcessItemPosition: 'right bottom',
                     };
-                    
+
                     let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
                     pond.on('addfile', (error, file) => {
                         v.paramPhoto = file.file
@@ -2449,7 +2450,7 @@ $sess = $session->get('adminId');
 
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
+                        this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.photo1 = '';
                     this.param.photo2 = '';
@@ -2484,7 +2485,7 @@ $sess = $session->get('adminId');
                 };
 
                 function addTempParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                    let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -2506,7 +2507,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2548,7 +2549,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2590,7 +2591,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2632,7 +2633,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2666,7 +2667,7 @@ $sess = $session->get('adminId');
 
                         this.param.photo = this.paramPhoto;
                         this.params.push(this.param);
-                        this.allParameter[0].push(this.param);
+                        // this.allParameter[0].push(this.param); 
                         this.param = reactive({
                             parameterId: uuidv4(),
                             sortId: $('#tableParameter tbody tr').length + 2,
@@ -2685,13 +2686,13 @@ $sess = $session->get('adminId');
                             inputType: '',
                             showOn: '',
                         })
-                        this.tempParameterGroupData = _.groupBy(this.params, function(val) {
-                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                        });
-                        this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
-                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                        });
-                        
+                        // this.tempParameterGroupData = _.groupBy(this.params, function(val) {
+                        //     return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        // });
+                        // this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
+                        //     return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        // });
+
                         $('#photoParam').filepond('removeFiles');
                         $('.type').val('').trigger("change");
                         $('#showOn').val('').trigger('change');
@@ -2829,7 +2830,7 @@ $sess = $session->get('adminId');
                 };
 
                 function updateTempParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                    let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -2858,7 +2859,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2900,7 +2901,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2942,7 +2943,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2984,7 +2985,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -3682,7 +3683,7 @@ $sess = $session->get('adminId');
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
+                        this.param.parameterName = '';
                     this.param.photo = '';
                     this.param.photo1 = '';
                     this.param.photo2 = '';
@@ -4378,27 +4379,31 @@ $sess = $session->get('adminId');
                     },
                     {
                         data: "max",
-                        render: function(type, data, row, meta){
-                            if (row.max != '') {
+                        render: function(type, data, row, meta) {
+                            if (row.max != null && row.normal == '' && row.inputType == 'input') {
                                 if (row.flipMax && row.flipMin) {
-                                    return '<div>'+row.min + ' - ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                    return '<div>' + row.min + ' - ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                                 }
                                 return row.min + ' - ' + row.max
-                            }else{
+                            } else if (row.normal != '') {
                                 return row.normal
+                            } else {
+                                return '-';
                             }
                         }
                     },
                     {
                         data: "min",
-                        render: function(type, data, row, meta){
-                            if (row.min != '') {
+                        render: function(type, data, row, meta) {
+                            if (row.min != null && row.abnormal == '' && row.inputType == 'input') {
                                 if (row.flipMax && row.flipMin) {
-                                    return '<div>x < ' + row.min + '; x > ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                    return '<div>x < ' + row.min + '; x > ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                                 }
                                 return 'x < ' + row.min + '; x > ' + row.max
-                            }else{
+                            } else if (row.abnormal != '') {
                                 return row.abnormal
+                            } else {
+                                return '-';
                             }
                         }
                     },

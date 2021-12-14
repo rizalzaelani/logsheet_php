@@ -950,15 +950,15 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     </template>
                                     <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
                                     <td>{{ val.description }}</td>
-                                    <template v-if="!val.option">
-                                        <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
-                                        <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
+                                    <template v-if="!val.option && val.inputType == 'input'">
+                                        <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" : val.min + ' - ' + val.max }}</td>
+                                        <td>{{ val.min == null ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
                                         <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.uom ? "(Empty)" :val.uom }}</td>
                                     </template>
                                     <template v-else>
-                                        <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
-                                        <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
-                                        <td :class="!val.option ? 'font-italic text-center' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                        <td :class="!val.abnormal ? 'font-italic' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
+                                        <td :class="!val.normal ? 'font-italic' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                        <td :class="!val.option ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
                                     </template>
                                     <template v-if="val.uom != ''">
                                         <td>
@@ -1212,7 +1212,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function addTempParameter() {
-                let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                 let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                 let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                 let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -1234,7 +1234,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1276,7 +1276,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -1318,7 +1318,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1360,7 +1360,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -1663,7 +1663,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function updateTempParameter() {
-                let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                 let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                 let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                 let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -1692,7 +1692,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1734,7 +1734,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -1776,7 +1776,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1818,7 +1818,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -3373,26 +3373,30 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 {
                     data: "max",
                     render: function(type, data, row, meta) {
-                        if (row.max != '') {
+                        if (row.max != null && row.inputType == 'input') {
                             if (row.flipMax && row.flipMin) {
                                 return '<div>' + row.min + ' - ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                             }
                             return row.min + ' - ' + row.max
-                        } else {
+                        } else if (row.inputType == 'select' && row.normal != '') {
                             return row.normal
+                        } else {
+                            return '-';
                         }
                     }
                 },
                 {
                     data: "min",
                     render: function(type, data, row, meta) {
-                        if (row.min != '') {
+                        if (row.min != null && row.inputType == 'input') {
                             if (row.flipMax && row.flipMin) {
                                 return '<div>x < ' + row.min + '; x > ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                             }
                             return 'x < ' + row.min + '; x > ' + row.max
-                        } else {
+                        } else if (row.inputType == 'select' && row.abnormal != '') {
                             return row.abnormal
+                        } else {
+                            return '-';
                         }
                     }
                 },
