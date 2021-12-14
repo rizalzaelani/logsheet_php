@@ -2,6 +2,15 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+<style>
+    table>thead>tr>th {
+        vertical-align: middle !important;
+    }
+
+    table>tbody>tr>td {
+        vertical-align: middle !important;
+    }
+</style>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -67,9 +76,9 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" @click="btnCancel()" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
+                                <button type="button" class="btn btn-secondary" @click="btnCancel()" data-dismiss="modal"><i class="fa fa-times"></i>Cancel</button>
                                 <button type="button" class="btn btn-success" @click="add()" id="btnAdd"><i class="fa fa-plus"></i> Add Tag</button>
-                                <button style="display: none;" type="button" class="btn btn-success" @click="update()" id="btnEdit"><i class="fa fa-check"></i> Save Changes</button>
+                                <button style="display: none;" type="button" class="btn btn-success" @click="update()" id="btnEdit"><i class="fa fa-save"></i> Save Changes</button>
                             </div>
                         </div>
                     </div>
@@ -144,7 +153,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
                                 <button type="button" class="btn btn-success" @click="insertTag()" id="btnAddTag"><i class="fa fa-plus"></i> Add Location</button>
                             </div>
                         </div>
@@ -215,8 +224,8 @@
                                 targets: 2,
                                 data: "tagId",
                                 render: function(data, type, row, meta) {
-                                    return `<div class='d-flex justify-content-start align-items-center'><button class='btn btn-outline-success btn-sm mr-1' id=` + data + ` onclick="editTag(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
-                                        <button class='btn btn-outline-danger btn-sm' id="` + data + `" onclick="deleteTag(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
+                                    return `<div class='d-flex justify-content-start align-items-center'><button class='btn btn-primary btn-sm mr-1' id=` + data + ` onclick="editTag(` + `'` + data + `'` + `)"><i class='fa fa-edit'></i> Edit</button>
+                                        <button class='btn btn-danger btn-sm' id="` + data + `" onclick="deleteTag(` + `'` + data + `'` + `)"><i class='fa fa-trash'></i> Delete</button></div>`;
                                 },
                             }, ]
                         });
