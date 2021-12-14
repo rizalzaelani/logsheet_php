@@ -23,6 +23,20 @@ class Login extends BaseController
         return $this->template->render('Auth/login', $data);
     }
 
+    public function forgotPassword()
+    {
+        $session = \Config\Services::session();
+        if ($session->has('userId')) {
+            return redirect()->to("Dashboard");
+        }
+        $data = array(
+            'title' => 'Login Page | Logsheet Digital',
+            'subtitle' => 'Logsheet Digital',
+        );
+
+        return $this->template->render('Auth/forgotPassword', $data);
+    }
+
     public function auth()
     {
         $session = \Config\Services::session();
@@ -95,6 +109,48 @@ class Login extends BaseController
                     'data' => $e
                 ], 500);
             }
+        }
+    }
+
+    public function sendMailForgotPassword()
+    {
+        $isValid = $this->validate([
+            'email' => 'required',
+        ]);
+
+        if (!$isValid) {
+            return $this->response->setJSON([
+                'status' => 400,
+                'error' => true,
+                'message' => $this->validator->getErrors(),
+                'data' => []
+            ], 400);
+        }
+
+        try {
+            $userModel = new UserModel();
+            $dataRes = $userModel->forgotPassword(['email' => $this->request->getVar("email")]);
+            
+            $resData = $dataRes['data'];
+            if ($dataRes['error']) {
+                return $this->response->setJSON(array(
+                    'status' => isset($resData->message) ? 400 : 500,
+                    'message' => $resData->message ?? $dataRes['message'],
+                    'data' => $resData
+                ), isset($resData->message) ? 400 : 500);
+            } else {
+                return $this->response->setJSON([
+                    'status' => 200,
+                    'message' => "Success Create App",
+                    'data' => $resData
+                ], 200);
+            }
+        } catch (Exception $e){
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => $e->getMessage(),
+                'data' => $e
+            ], 500);
         }
     }
 

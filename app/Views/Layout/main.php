@@ -40,6 +40,43 @@
         </div>
     </div>
 
+    <div class="modal fade" role="dialog" id="changePassModal" data-backdrop="static" aria-modal="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="password">Current Password</label>
+                        <input class="form-control" type="password" name="currPass" placeholder="Enter your current Password">
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-sm-6 mb-0">
+                            <label for="password">New Password</label>
+                            <input class="form-control" type="password" name="newPass" placeholder="Enter your new Password">
+                        </div>
+                        <div class="form-group mb-0 col-sm-6 mb-0">
+                            <label for="confirmPass">Confirm</label>
+                            <input class="form-control" type="password" name="confPass" placeholder="Confirm your passsword">
+                        </div>
+                    </div>
+                    <span class="invalid-feedback-password d-none" id="errCPMessage">
+                        <svg aria-hidden="true" fill="currentColor" focusable="false" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                        </svg>
+                        Those passwords didn’t match. Try again.
+                    </span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark ml-2" data-dismiss="modal" id="cancel"><i class="fa fa-times"></i> Cancel</button>
+                    <button type="button" class="btn btn-success ml-2" onclick="changePass()"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="loader">
         <div class="loadingio-spinner-double-ring">
             <div class="ldio">
@@ -60,7 +97,7 @@
             <script type="text/javascript" src="<?= $item ?>"></script>
         <?php endforeach; ?>
     <?php endif; ?>
-    
+
     <?= $this->renderSection('customScripts'); ?>
     <script type="text/javascript">
         $(function() {
@@ -84,6 +121,39 @@
             });
 
         });
+
+        const changePass = () => {
+            let currPass = document.querySelector("input[name=currPass]").value;
+            let newPass = document.querySelector("input[name=newPass]").value;
+            let confPass = document.querySelector("input[name=confPass]").value;
+
+            if (newPass != confPass) {
+                document.getElementById("errCPMessage").classList.add("d-none");
+            } else {
+                let res = axios.post("<?= site_url("user/changePassword") ?>", {
+                    currentPassword: currPass,
+                    newPassword: newPass,
+                }).then(res => {
+                    xhrThrowRequest(res)
+                        .then(() => {
+                            Toast.fire({
+                                title: 'Success Change Password!',
+                                icon: 'success'
+                            });
+                            $("#changePassModal").modal("hide");
+                            document.getElementById("errCPMessage").classList.remove("d-none");
+                            document.querySelector("input[name=currPass]").value = '';
+                            document.querySelector("input[name=newPass]").value = '';
+                            document.querySelector("input[name=confPass]").value = '';
+                        })
+                        .catch((rej) => {
+                            if (rej.throw) {
+                                throw new Error(rej.message);
+                            }
+                        });
+                })
+            }
+        }
     </script>
     <script type="text/javascript">
         $(document).ready(function() {

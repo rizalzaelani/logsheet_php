@@ -12,11 +12,7 @@
         </button>
         <!-- <h6 class="text-uppercase mb-0"><?= $title ?></h6> -->
         <ol class="breadcrumb border-bottom-0">
-            <?php
-
-                                                use PhpParser\Node\Stmt\Echo_;
-
-foreach (($breadcrumbs ?? []) as $key => $row) { ?>
+            <?php foreach (($breadcrumbs ?? []) as $key => $row) { ?>
                 <?php if (count($breadcrumbs ?? []) == $key + 1) { ?>
                     <li class="breadcrumb-item active text-capitalize"><?= $row['title']; ?></li>
                 <?php } else { ?>
@@ -47,58 +43,13 @@ foreach (($breadcrumbs ?? []) as $key => $row) { ?>
             </a>
             <div class="dropdown-menu dropdown-menu-right pt-0 mr-2">
                 <div class="dropdown-header bg-light py-2">
-                    <strong class="text-uppercase"><?php $session = \Config\Services::session();
-                            echo $session->get('name') ?></strong>
+                    <strong class="text-uppercase"><?php $session = \Config\Services::session(); echo $session->get('name') ?></strong>
                 </div>
-                <!-- <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-bell') ?>"></use>
-                    </svg> Updates<span class="badge badge-info mfs-auto">42</span>
-                </a>
-                <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-envelope-open') ?>"></use>
-                    </svg> Messages<span class="badge badge-success mfs-auto">42</span>
-                </a>
-                <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-task') ?>"></use>
-                    </svg> Tasks<span class="badge badge-danger mfs-auto">42</span>
-                </a>
-                <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-comment-square') ?>"></use>
-                    </svg> Comments<span class="badge badge-warning mfs-auto">42</span>
-                </a>
-                <div class="dropdown-header bg-light py-2">
-                    <strong>Settings</strong>
-                </div>
-                <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-user') ?>"></use>
-                    </svg> Profile
-                </a>
-                <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-settings') ?>"></use>
-                    </svg> Settings
-                </a>
-                <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-credit-card') ?>"></use>
-                    </svg> Payments<span class="badge badge-secondary mfs-auto">42</span>
-                </a>
-                <a class="dropdown-item" href="#">
-                    <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-file') ?>"></use>
-                    </svg> Projects<span class="badge badge-primary mfs-auto">42</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="javascript:;" data-target="#changePassModal" data-toggle="modal">
                     <svg class="c-icon mfe-2">
                         <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-lock-locked') ?>"></use>
-                    </svg> Lock Account
-                </a> -->
+                    </svg> Change Password
+                </a>
                 <a class="dropdown-item" href="<?= base_url('/logout'); ?>">
                     <svg class="c-icon mfe-2">
                         <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-account-logout') ?>"></use>
@@ -107,17 +58,4 @@ foreach (($breadcrumbs ?? []) as $key => $row) { ?>
             </div>
         </li>
     </ul>
-    <!-- <div class="c-subheader justify-content-between px-3">
-        <ol class="breadcrumb border-0 m-0 px-0 px-md-3">
-            <li class="breadcrumb-item"><a href="/Dashboard" class="" style="color: #003399">Home</a></li>
-            <li class="breadcrumb-item"><?= (isset($title) ? $title : '')  ?></li>
-        </ol>
-        <div class="c-subheader-nav d-md-down-none mfe-2">
-            <a class="c-subheader-nav-link" href="#">
-                <svg class="c-icon">
-                    <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-settings') ?>"></use>
-                </svg> &nbsp;Account Settings
-            </a>
-        </div>
-    </div> -->
 </header>

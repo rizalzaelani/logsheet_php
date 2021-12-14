@@ -36,6 +36,8 @@ $routes->get('/Login', 'Auth/Login::index');
 $routes->post('/Login/auth', 'Auth/Login::auth');
 $routes->get('/logout', 'Auth/Login::logout');
 $routes->get('/login/testMail', 'Auth/Login::testMail');
+$routes->get('/forgotPassword', 'Auth/Login::forgotPassword');
+$routes->post('/forgotPassword/sendMail', 'Auth/Login::sendMailForgotPassword');
 
 $routes->get('/register', 'Auth/Register::index');
 $routes->post('/register/doRegister', 'Auth/Register::doRegister');
@@ -196,6 +198,7 @@ $routes->get('/user/userList', 'UserRole/User::userList');
 $routes->get('/user/getUserById', 'UserRole/User::getUserById');
 $routes->post('/user/saveUser', 'UserRole/User::saveUser');
 $routes->post('/user/deleteUser', 'UserRole/User::deleteUser');
+$routes->post('/user/changePassword', 'UserRole/User::changePassword');
 
 $routes->get('/role', 'UserRole/Role::index');
 $routes->get('/role/detail', 'UserRole/Role::detail');

@@ -52,7 +52,7 @@
                     <div class="card card-main">
                         <div class="card-body p-sm-5">
                             <img src="<?= base_url('/img/ilustration/login-animate.png') ?>" class="w-100 d-block d-sm-none">
-                            <div class="d-flex justify-content-between d-sm-down-none">
+                            <div class="d-sm-flex justify-content-between d-none">
                                 <img src="<?= base_url('/img/logo-act.png') ?>" width="120">
                                 <a href="<?= site_url("register") ?>" class="h6 mb-0 text-muted font-weight-500 text-decoration-none">Sign Up</a>
                             </div>
@@ -88,7 +88,7 @@
                                     </div>
                                 </div>
                                 <div class="w-100 text-right mt-2">
-                                    <a href="" class="text-info font-weight-500">Forgot password?</a>
+                                    <a href="<?= site_url("forgotPassword") ?>" class="text-info font-weight-500">Forgot password?</a>
                                 </div>
                                 <div class="invalid-feedback-password d-none">
                                     Field cannot be empty.
