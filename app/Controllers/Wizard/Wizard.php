@@ -147,7 +147,7 @@ class Wizard extends BaseController
                 $date = new DateTime();
                 $body = [
                     'trans_date'    => date("Y-m-d"),
-                    'due_date'      => $date->modify("+2 days")->format("Y-m-d"),
+                    'due_date'      => $date->modify("+1 days")->format("Y-m-d"),
                     'contact_id'    => $contactId,
                     'status_id'     => 1,
                     "include_tax"   => 0,

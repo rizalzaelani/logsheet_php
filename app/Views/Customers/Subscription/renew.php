@@ -186,6 +186,7 @@
                     v.selected.packagePriceId = v.priceId;
                     v.selected.period = v.time;
                     v.selected.bank = v.bank;
+                    v.selected.transactionId = uuidv4();
                     console.log(v.selected);
                     let formdata = new FormData();
                     formdata.append('package', JSON.stringify(this.selected));
@@ -196,7 +197,8 @@
                     }).then((res) => {
                         let rsp = res.data;
                         if (rsp.status == 200) {
-                            window.location.href = "<?= base_url('/payment'); ?>"
+                            window.open("<?= base_url('/Subscription/invoice'); ?>/"+v.selected.transactionId+"")
+                            window.location.href = "<?= base_url('/Subscription'); ?>";
                         } else {
 
                         }
@@ -225,6 +227,15 @@
                     }
                 }
             }
+
+            function uuidv4() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0,
+                        v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
             onMounted(() => {
                 type.value = package[0].packageId;
                 selected.value = package[0]
@@ -246,7 +257,8 @@
                 selected,
                 formatNumber,
                 bank,
-                payment
+                payment,
+                uuidv4
             }
         },
     }).mount('#app');

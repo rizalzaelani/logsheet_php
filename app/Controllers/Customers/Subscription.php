@@ -154,7 +154,7 @@ class Subscription extends BaseController
         $package = $packageModel->getAllPackage();
         $packagePrice = $packagePriceModel->getAll();
         $adminId = $this->session->get('adminId');
-        $transaction    = $transactionModel->getAll(['userId' => $adminId, 'cancelDate' => null]);
+        $transaction    = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
 
         if ($transaction[0]['paidDate'] == null && $transaction[0]['cancelDate'] == null) {
             return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "Please make a payment first or cancel the previous transaction"]);
@@ -196,7 +196,7 @@ class Subscription extends BaseController
         $dataSubscription   = $subscriptionModel->getByUser($adminId);
         $packageId          = $dataSubscription[0]['packageId'];
         $packagePriceId     = $dataSubscription[0]['packagePriceId'];
-        $transaction        = $transactionModel->getAll(['userId' => $adminId, 'cancelDate' => null]);
+        $transaction        = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
 
         if ($transaction[0]['paymentTotal'] == '0') {
             return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "You can only upgrade this package"]);
@@ -309,7 +309,7 @@ class Subscription extends BaseController
             $transaction = "";
             if ($dataInvoice != "") {
                 $transaction = [
-                    'transactionId' => null,
+                    'transactionId' => $package->transactionId,
                     'subscriptionId' => $subscription['subscriptionId'],
                     'packageId'     => $package->packageId,
                     'packagePriceId' => $package->packagePrice->packagePriceId,
@@ -362,11 +362,28 @@ class Subscription extends BaseController
         }
     }
 
-    public function payment()
+    public function invoice($trxId)
     {
+        $transactionModel   = new TransactionModel();
+        $kledoModel         = new kledoModel();
+        $adminId = $this->session->get('adminId');
+
+        $dataTransaction    = $transactionModel->getByUser(['userId' => $adminId, 'transactionId' => $trxId]);
+
+        $body = [
+            'search' => $dataTransaction[0]['refNumber']
+        ];
+
+        $getInvoice = $kledoModel->getInvoice(http_build_query($body, ""));
+        $contact = "";
+        if ($getInvoice['error'] == false) {
+            $data = json_decode($getInvoice['data']);
+            $contact = $data->data->data[0]->contact;
+        }
+
         $data = array(
-            'title' => "Payment",
-            'subtitle' => 'Payment'
+            'title' => "Detail Invoice",
+            'subtitle' => 'Detail Invoice'
         );
         $data["breadcrumbs"] = [
             [
@@ -374,8 +391,8 @@ class Subscription extends BaseController
                 "link"    => "Dashboard"
             ]
         ];
-
-
+        $data['transaction'] = $dataTransaction;
+        $data['contact']     = $contact;
         return $this->template->render('Customers/Subscription/payment', $data);
     }
 
@@ -416,7 +433,7 @@ class Subscription extends BaseController
         $transactionModel->update($transactionId, $data);
         return $this->response->setJSON(array(
             'status'    => 200,
-            'message'   => 'Upgrade package cancelled',
+            'message'   => 'Update package cancelled',
             'data'      => ''
         ));
     }
@@ -498,7 +515,7 @@ class Subscription extends BaseController
             $transaction = "";
             if ($dataInvoice != "") {
                 $transaction = [
-                    'transactionId' => null,
+                    'transactionId' => $package->transactionId,
                     'subscriptionId' => $subscription['subscriptionId'],
                     'userId'        => $adminId,
                     'invoiceId'     => $dataInvoice['id'],
@@ -549,5 +566,67 @@ class Subscription extends BaseController
                 'data' => $e
             ], 500);
         }
+    }
+
+    public function downloadInvoice()
+    {
+        $kledoModel = new kledoModel();
+        $post = $this->request->getPost('transaction');
+        $transaction = json_decode($post, true);
+
+        $bodyGetInvoice = [
+            'search' => $transaction['refNumber']
+        ];
+
+        $getInvoice = $kledoModel->getInvoice(http_build_query($bodyGetInvoice, ""));
+        $dataInvoice = "";
+        if ($getInvoice['error'] == false) {
+            $dataInvoice = json_decode($getInvoice['data'])->data->data[0];
+        }
+        $contact = $dataInvoice->contact;
+        $bodyGenerate = [
+            'ref_number'        => $dataInvoice->ref_number,
+            'trans_date'        => $dataInvoice->trans_date,
+            'due_date'          => $dataInvoice->due_date,
+            'contact_name'      => $contact->name,
+            'contact_address'   => $contact->address,
+            'contact_phone'     => $contact->phone,
+            'contact_email'     => $contact->email,
+            'company_name'      => 'Nocola IOT Solution',
+            'company_address'   => 'Jl. Ir. H. juanda No. 117',
+            'company_phone'     => '02187767777',
+            'company_email'     => 'rizal@nocola.co.id',
+            'items' => [[
+                'product_name'      => $dataInvoice->memo,
+                'description'       => $dataInvoice->memo,
+                'qty'               => 1,
+                'price'             => $transaction['price'],
+                'amount'            => $dataInvoice->amount_after_tax,
+                'discount_percent'  => 0,
+                'tax_percent'       => null,
+                'tax_manual'        => 0,
+                'tax_title'         => "",
+            ]],
+            // 'message'                       => $dataInvoice->memo,
+            'company_logo'                  => "https://kledo-live-user.s3.ap-southeast-1.amazonaws.com/rizal.api.kledo.com/invoice-logo.png",
+            'signature_name'                => 'Rizal Zaelani',
+            'signature_dept'                => 'Finance Dept',
+            'invoice_signature_url'         => "https://kledo-live-user.s3.ap-southeast-1.amazonaws.com/rizal.api.kledo.com/invoice-signature.png",
+            'invoice_lang_product'          => 'Product',
+            'invoice_lang_qty'              => 'Satuan',
+            'invoice_lang_unit'             => 'Package',
+            'invoice_lang_desc'             => 'Description',
+            "invoice_lang_amount"           => "Harga",
+            'invoice_lang_signature_header' => 'Dengan Hormat,',
+            'invoice_lang_message'          => 'Description',
+            'trans_type_title'              => 'Invoice',
+        ];
+        $resGenerate = $kledoModel->generateInvoice(json_encode($bodyGenerate));
+        $base64 = base64_encode($resGenerate['data']);
+        return $this->response->setJSON(array(
+            'status' => 200,
+            'message' => 'Successfully get file',
+            'data' => $base64,
+        ));
     }
 }

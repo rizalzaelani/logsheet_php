@@ -150,6 +150,7 @@ class CustomersTransaction extends BaseController
             $subscriptionId = $post['subscriptionId'];
 
             $dataTransaction = $transactionModel->getById($transactionId);
+            $dataSubscription = $subscriptionModel->getById($subscriptionId);
             $packageId = $dataTransaction[0]['packageId'];
             $packagePriceId = $dataTransaction[0]['packagePriceId'];
 
@@ -163,6 +164,8 @@ class CustomersTransaction extends BaseController
             ];
             $transactionModel->update($transactionId, $bodyTransaction);
 
+            // check renew or upgrade
+            $checkString = strpos($dataTransaction[0]['description'], 'Renew');
             $bodySubscription = [
                 'packageId'     => $packageId,
                 'packagePriceId' => $packagePriceId,
@@ -172,7 +175,8 @@ class CustomersTransaction extends BaseController
                 'tagMax'        => $dataPackage[0]['tagMax'],
                 'trxDailyMax'   => $dataPackage[0]['trxDailyMax'],
                 'userMax'       => $dataPackage[0]['userMax'],
-                'activeFrom'    => $dataTransaction[0]['activeFrom'],
+                'activeFrom'    => $checkString !== false ? $dataSubscription['activeFrom'] : $dataTransaction[0]['activeFrom'],
+                // 'activeFrom'    => $dataTransaction[0]['activeFrom'],
                 'expiredDate'   => $dataTransaction[0]['activeTo'],
             ];
             $subscriptionModel->update($subscriptionId, $bodySubscription);

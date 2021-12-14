@@ -210,7 +210,8 @@ $routes->post('/Subscription/cancelUp', 'Customers/Subscription::cancelUp');
 
 $routes->get('/Subscription/upgrade', 'Customers/Subscription::upgrade');
 $routes->post('/invoiceUpgrade', 'Customers/Subscription::invoiceUpgrade');
-$routes->get('/payment', 'Customers/Subscription::payment');
+$routes->get('/Subscription/invoice/(:any)', 'Customers\Subscription::invoice/$1');
+$routes->post('/Subscription/downloadInvoice', 'Customers\Subscription::downloadInvoice');
 
 $routes->get('/Subscription/renew', 'Customers/Subscription::renew');
 $routes->post('/invoiceRenew', 'Customers/Subscription::invoiceRenew');

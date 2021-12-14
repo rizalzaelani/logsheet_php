@@ -39,6 +39,28 @@
         background-color: #e7f3fe;
         border-left: 6px solid #2196F3;
     }
+
+    .btn-custom {
+        /* border-radius: 2px; */
+        height: 32px;
+        padding: 4.8px 15px;
+        font-size: 13px;
+        font-weight: 400;
+        text-align: center;
+        transition: all .3s cubic-bezier(.645, .045, .355, 1);
+    }
+
+    .btn-custom-primary {
+        color: rgba(0, 0, 0, .85);
+        background-color: #fff;
+        border: 1px solid #1D6DE5;
+    }
+
+    .btn-custom-primary:hover {
+        color: rgba(0, 0, 0, .85);
+        background-color: #fff;
+        border: 1px solid #175cc5;
+    }
 </style>
 <?= $this->endSection(); ?>
 <?= $this->section('content') ?>
@@ -173,8 +195,19 @@ $session = \Config\Services::session();
                                 </div>
                             </div>
                         </div>
-                        <div :class="dataModal.paidDate == null && dataModal.cancelDate == null ? '' : 'd-none'">
-                            <h1 class="text-danger">{{ countdown }}</h1>
+                        <div>
+                            <div class="mb-2 btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i> Download</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" target="_blank" @click="download()" style="cursor: pointer;"><i class="fa fa-file-pdf mr-1"></i> Pdf</a>
+                                </div>
+                            </div>
+                            <div :class="dataModal.paidDate == null && dataModal.cancelDate == null ? '' : 'd-none'">
+                                <h5 class="text-danger">{{ countdown }}</h1>
+                            </div>
                         </div>
                     </div>
                     <div class="p-3">
@@ -262,7 +295,7 @@ $session = \Config\Services::session();
                                 <b>Rp. {{ formatNumber(parseInt(dataModal.paymentTotal)) }}</b>
                             </div>
                         </div>
-                        <div :class="dataModal.status == 1 ? 'row py-4' : 'd-none'">
+                        <div :class="dataModal.paidDate == null ? 'row py-4' : 'd-none'">
                             <div class="col">
                                 <div class="accordion" id="accordionExample">
                                     <div class="">
@@ -463,6 +496,29 @@ $session = \Config\Services::session();
                 })
             }
 
+            function download() {
+                this.myModal.hide();
+                let formdata = new FormData();;
+                formdata.append('transaction', JSON.stringify(this.dataModal));
+                axios({
+                    url: '<?= base_url('/Subscription/downloadInvoice') ?>',
+                    method: 'POST',
+                    data: formdata
+                }).then((res) => {
+                    // console.log(res);
+                    let rsp = res.data;
+                    if (rsp.status == 200) {
+                        let base64 = rsp.data;
+                        const linkSource = `data:applicaiton/pdf;base64,` + base64 + ``;
+                        const downloadLink = document.createElement("a");
+                        downloadLink.href = linkSource;
+                        downloadLink.setAttribute('target', '_blank');
+                        downloadLink.download = v.dataModal.refNumber + '.pdf';
+                        downloadLink.click();
+                    }
+                })
+            }
+
             var getData = () => {
                 this.table = $('#tableSubs').DataTable({
                     processing: true,
@@ -561,7 +617,8 @@ $session = \Config\Services::session();
                 interval,
                 countdown,
                 now,
-                dd
+                dd,
+                download
             }
         },
     }).mount('#app');

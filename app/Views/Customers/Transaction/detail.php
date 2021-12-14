@@ -237,7 +237,6 @@
                                 location.reload();
                             })
                         }
-                        console.log(res);
                     })
                 } else {
                     swal.fire({
@@ -278,6 +277,7 @@
                                     icon: 'success',
                                     title: rsp.message
                                 })
+                                window.location.href = "<?= base_url('CustomersTransaction') ?>";
                             }
                         })
                     }
