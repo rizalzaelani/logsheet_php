@@ -785,7 +785,7 @@ class Asset extends BaseController
 					if ($numrow > 1) {
 						// if ($row->getCellAtIndex(1) != '' && $row->getCellAtIndex(2) != '') {
 						$dataImport[] = array(
-							'no' => $row->getCellAtIndex(0)->getValue(),
+							'no' => $numrow+1,
 							'parameterName' => $row->getCellAtIndex(1)->getValue(),
 							'description' => $row->getCellAtIndex(2)->getValue(),
 							'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(3)->getValue(),
