@@ -105,39 +105,43 @@ $session = \Config\Services::session();
                     <table class="table table-hover display nowrap" id="tableSubs">
                         <thead>
                             <tr>
+                                <th class="d-none">id</th>
+                                <th>Status</th>
+                                <th>Number</th>
                                 <th>Issue Date</th>
                                 <th>Description</th>
-                                <th>Period</th>
-                                <th>Paid</th>
-                                <th>Total</th>
-                                <th>Status</th>
+                                <!-- <th>Period</th> -->
+                                <!-- <th>Paid</th> -->
+                                <!-- <th>Total</th> -->
                                 <th>Due on</th>
-                                <th>Action</th>
+                                <!-- <th>Action</th> -->
                             </tr>
                         </thead>
                         <tbody>
                             <template v-if="subscription">
                                 <tr v-for="(val, key) in transaction">
-                                    <td width="15%">{{ val.issueDate }}</td>
-                                    <td width="20%">{{ val.description }}</td>
-                                    <td>{{ val.period }}</td>
-                                    <td width="15%">{{ val.paidDate }}</td>
-                                    <td>Rp. {{ formatNumber(val.paymentTotal) }}</td>
+                                    <td class="d-none">{{ val.transactionId }}</td>
                                     <template v-if="val.paidDate == null">
-                                        <td class="text-danger">Unpaid</td>
+                                        <td class="text-danger text-uppercase"><span class="badge badge-danger">Unpaid</span></td>
                                     </template>
                                     <template v-else>
-                                        <td class="text-success">Paid</td>
+                                        <td class="text-success text-uppercase"><span class="badge badge-success">Paid</span></td>
                                     </template>
+                                    <td><span class="text-info">{{ val.refNumber }}</span></td>
+                                    <td>{{ moment2(val.issueDate) }}</td>
+                                    <td>{{ val.description }}</td>
+                                    <!-- <td>{{ val.period }}</td> -->
+                                    <!-- <td>{{ moment2(val.paidDate) }}</td> -->
+                                    <!-- <td>Rp. {{ formatNumber(val.paymentTotal) }}</td> -->
                                     <td v-if="val.paidDate == null && val.cancelDate == null" class="text-danger">
                                         {{ countdown }}
                                     </td>
                                     <td v-else>
                                         0
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         <a @click="modalTrx(val.transactionId)" class="btn btn-link text-primary decoration-none"><i class="fa fa-eye"></i></a>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </template>
                         </tbody>
@@ -162,10 +166,10 @@ $session = \Config\Services::session();
                             <h5>Status Invoice</h5>
                             <div>
                                 <div v-if="dataModal.paidDate == null">
-                                    <h5 class="text-danger">Unpaid</h5>
+                                    <h5 class="text-danger text-uppercase">Unpaid</h5>
                                 </div>
                                 <div v-else>
-                                    <h5 class="text-success">Paid</h5>
+                                    <h5 class="text-success text-uppercase">Paid</h5>
                                 </div>
                             </div>
                         </div>
@@ -379,7 +383,7 @@ $session = \Config\Services::session();
                             method: 'POST',
                             data: formdata
                         }).then((res) => {
-                            location.reload();  
+                            location.reload();
                         })
                         v.subscription.shift();
                     }
@@ -411,7 +415,7 @@ $session = \Config\Services::session();
                             title: 'Please make a payment first or cancel the previous transaction',
                         })
                     } else {
-                        window.location.href = "<?= base_url('/upgrade') ?>";
+                        window.location.href = "<?= base_url('/Subscription/upgrade') ?>";
                     }
                 }
             }
@@ -429,7 +433,7 @@ $session = \Config\Services::session();
                             title: 'You can only upgrade this package',
                         })
                     } else {
-                        window.location.href = "<?= base_url('/renew') ?>";
+                        window.location.href = "<?= base_url('/Subscription/renew') ?>";
                     }
                 }
             }
@@ -522,6 +526,10 @@ $session = \Config\Services::session();
                 return moment(date).format("dddd, DD MMM YYYY");
             }
 
+            function moment2(date) {
+                return moment(date).format("DD MMM YYYY hh:mm")
+            }
+
             onMounted(() => {
                 $('#bank').select2({
                     theme: 'coreui',
@@ -532,6 +540,7 @@ $session = \Config\Services::session();
             return {
                 formatNumber,
                 momentjs,
+                moment2,
                 cancelUp,
                 upgrade,
                 renew,
@@ -556,5 +565,31 @@ $session = \Config\Services::session();
             }
         },
     }).mount('#app');
+    $(document).ready(function() {
+        $('#tableSubs').DataTable({
+            order: [1, 'desc'],
+            scrollX: true,
+            columnDefs: [],
+            'createdRow': function(row, data) {
+                row.setAttribute("data-id", data[0]);
+                row.classList.add("cursor-pointer");
+                // row.setAttribute("data-toggle", "tooltip");
+                // row.setAttribute("data-html", "true");
+                // row.setAttribute("title", "<div>Click to go to detail transaction</div>");
+            },
+        });
+        $(document).on('click', '#tableSubs tbody tr', function() {
+            let trxId = $(this).attr("data-id");
+            v.myModal = new coreui.Modal(document.getElementById('modalTrx'), {});
+            v.myModal.show();
+
+            v.transaction.forEach((el, i) => {
+                if (el.transactionId == trxId) {
+                    v.dataModal = el;
+                }
+            });
+            // window.location.href = "<?= site_url('Invoice/detail') ?>/" + $(this).attr("data-id");
+        });
+    })
 </script>
 <?= $this->endSection(); ?>

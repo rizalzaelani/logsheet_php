@@ -208,11 +208,11 @@ $routes->add('/Subscription/datatable', 'Customers/Subscription::datatable');
 $routes->post('/Subscription/update', 'Customers/Subscription::update');
 $routes->post('/Subscription/cancelUp', 'Customers/Subscription::cancelUp');
 
-$routes->get('/upgrade', 'Customers/Subscription::upgrade');
+$routes->get('/Subscription/upgrade', 'Customers/Subscription::upgrade');
 $routes->post('/invoiceUpgrade', 'Customers/Subscription::invoiceUpgrade');
 $routes->get('/payment', 'Customers/Subscription::payment');
 
-$routes->get('/renew', 'Customers/Subscription::renew');
+$routes->get('/Subscription/renew', 'Customers/Subscription::renew');
 $routes->post('/invoiceRenew', 'Customers/Subscription::invoiceRenew');
 
 $routes->get('/CustomersTransaction', 'Customers/CustomersTransaction::index');

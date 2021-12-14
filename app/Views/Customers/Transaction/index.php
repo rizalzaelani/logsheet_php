@@ -197,11 +197,11 @@ $session = \Config\Services::session();
                                     name: "paidDate",
                                     render: function(data, type, row, meta) {
                                         if (data == null && row.cancelDate == null) {
-                                            return '<span class="badge badge-danger">Unpaid</span>'
+                                            return '<span class="badge badge-danger text-uppercase">Unpaid</span>'
                                         } else if (data == null && row.cancelDate != null) {
-                                            return '<span class="badge badge-warning text-white">Cancelled</span>'
+                                            return '<span class="badge badge-warning text-white text-uppercase">Cancelled</span>'
                                         } else {
-                                            return '<span class="badge badge-success">Paid</span>'
+                                            return '<span class="badge badge-success text-uppercase">Paid</span>'
                                         }
                                     }
                                 },
@@ -219,9 +219,9 @@ $session = \Config\Services::session();
                             'createdRow': function(row, data) {
                                 row.setAttribute("data-id", data.transactionId);
                                 row.classList.add("cursor-pointer");
-                                row.setAttribute("data-toggle", "tooltip");
-                                row.setAttribute("data-html", "true");
-                                row.setAttribute("title", "<div>Click to go to detail transaction</div>");
+                                // row.setAttribute("data-toggle", "tooltip");
+                                // row.setAttribute("data-html", "true");
+                                // row.setAttribute("title", "<div>Click to go to detail transaction</div>");
                             },
                         });
                     } catch (er) {

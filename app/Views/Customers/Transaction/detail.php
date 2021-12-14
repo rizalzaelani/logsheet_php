@@ -30,13 +30,13 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div v-if="transaction[0].paidDate == null && transaction[0].cancelDate == null">
-                                        <h4 class="m-0 text-danger">Unpaid</h4>
+                                        <h4 class="m-0 text-danger text-uppercase">Unpaid</h4>
                                     </div>
                                     <div v-else-if="transaction[0].paidDate == null && transaction[0].cancelDate != null">
-                                        <h4 class="m-0 text-warning">Cancelled</h4>
+                                        <h4 class="m-0 text-warning text-uppercase">Cancelled</h4>
                                     </div>
                                     <div v-else>
-                                        <h4 class="m-0 text-success">Paid</h4>
+                                        <h4 class="m-0 text-success text-uppercase">Paid</h4>
                                     </div>
                                 </div>
                             </div>
