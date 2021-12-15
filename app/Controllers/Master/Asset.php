@@ -11,8 +11,13 @@ use App\Models\TagLocationModel;
 use App\Models\AssetStatusModel;
 use App\Models\AssetTagModel;
 use App\Models\ParameterModel;
+use App\Models\Wizard\TransactionModel;
 use CodeIgniter\API\ResponseTrait;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Entity\Style\Color;
 use Exception;
 
 class Asset extends BaseController
@@ -157,7 +162,42 @@ class Asset extends BaseController
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
 
+		$dirPath = 'upload/Asset';
+		$fileAsset = $this->request->getFile('photo');
+		$namePhoto = "";
+		if ($fileAsset != null) {
+			if (!is_dir($dirPath)) {
+				mkdir($dirPath);
+			}
+			$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
+			if (!is_dir($dirPhoto)) {
+				mkdir($dirPhoto);
+			}
+			$namePhoto = 'assetPhoto' . $fileAsset->getRandomName();
+			$image1 = \Config\Services::image()
+				->withFile($fileAsset)
+				->save($dirPhoto . '/' . $namePhoto);
+		}
+
 		if (isset($post['assetId'])) {
+			$dirPath = 'upload/Asset';
+			$fileAsset = $this->request->getFile('photo');
+			$namePhoto = "";
+			$dirPhoto = "";
+			if ($fileAsset != null) {
+				if (!is_dir($dirPath)) {
+					mkdir($dirPath);
+				}
+				$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
+				if (!is_dir($dirPhoto)) {
+					mkdir($dirPhoto);
+				}
+				$namePhoto = 'IMG_' . $fileAsset->getRandomName();
+				$image1 = \Config\Services::image()
+					->withFile($fileAsset)
+					->resize(480, 480, true, 'heigth')
+					->save($dirPhoto . '/' . $namePhoto);
+			}
 			// asset
 			$dataAsset = array(
 				'assetId'		=> $assetId,
@@ -165,6 +205,7 @@ class Asset extends BaseController
 				'assetStatusId' => $post['assetStatusId'],
 				'assetName'		=> $post['assetName'],
 				'assetNumber'	=> $post['assetNumber'],
+				'photo'			=> $namePhoto == "" ? null : (base_url() . '/' . $dirPhoto . '/' . $namePhoto),
 				'description'	=> $post['assetDesc'],
 				'schManual'		=> $post['schManual'],
 				'schType'		=> $post['schType'],
@@ -274,16 +315,16 @@ class Asset extends BaseController
 						if (!is_dir($dirPhoto)) {
 							mkdir($dirPhoto);
 						}
-						$name1 = 'paramPhotoH_' . $file->getRandomName();
+						$name1 = 'IMG_PARAM_H_' . $file->getRandomName();
 						$image1 = \Config\Services::image()
 							->withFile($file)
 							->save($dirPhoto . '/' . $name1);
-						$name2 = 'paramPhotoM_' . $file->getRandomName();
+						$name2 = 'IMG_PARAM_M_' . $file->getRandomName();
 						$image2 = \Config\Services::image()
 							->withFile($file)
 							->resize(480, 480, true, 'heigth')
 							->save($dirPhoto . '/' . $name2);
-						$name3 = 'paramPhotoL_' . $file->getRandomName();
+						$name3 = 'IMG_PARAM_L_' . $file->getRandomName();
 						$image3 = \Config\Services::image()
 							->withFile($file)
 							->resize(144, 144, true, 'heigth')
@@ -458,21 +499,59 @@ class Asset extends BaseController
 				}
 			}
 
+			$dirPath = 'upload/Asset';
+			$fileAsset = $this->request->getFile('assetPhoto');
+			$namePhoto = "";
+			$dirPhoto = "";
+			if ($fileAsset != null) {
+				if (!is_dir($dirPath)) {
+					mkdir($dirPath);
+				}
+				$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
+				if (!is_dir($dirPhoto)) {
+					mkdir($dirPhoto);
+				}
+				$namePhoto = 'IMG_' . $fileAsset->getRandomName();
+				$image1 = \Config\Services::image()
+					->withFile($fileAsset)
+					->resize(480, 480, true, 'heigth')
+					->save($dirPhoto . '/' . $namePhoto);
+			}
 			// asset
 			$dataAsset = array(
-				'assetId' => $post['assetId'],
-				'assetName' => $post['assetName'],
-				'assetNumber' => $post['assetNumber'],
-				'description' => $post['assetDesc'],
-				'schManual' => $post['schManual'],
-				'schType' => $post['schType'],
-				'schFrequency' => $post['schFrequency'] == '' ? 1 : (int)$post['schFrequency'],
-				'schWeekDays' => $post['schWeekDays'],
-				'schWeeks' => $post['schWeeks'],
-				'schDays' => $post['schDays'],
-				'latitude' => $post['latitude'],
-				'longitude' => $post['longitude'],
+				'assetId'		=> $post['assetId'],
+				'assetName'		=> $post['assetName'],
+				'assetNumber'	=> $post['assetNumber'],
+				// 'photo'			=> $post['assetNumber'],
+				'description'	=> $post['assetDesc'],
+				'schManual'		=> $post['schManual'],
+				'schType'		=> $post['schType'],
+				'schFrequency'	=> $post['schFrequency'] == '' ? 1 : (int)$post['schFrequency'],
+				'schWeekDays'	=> $post['schWeekDays'],
+				'schWeeks'		=> $post['schWeeks'],
+				'schDays'		=> $post['schDays'],
+				'latitude'		=> $post['latitude'],
+				'longitude'		=> $post['longitude'],
 			);
+			if ($fileAsset != null) {
+				$dataAsset['photo'] = (base_url() . '/' . $dirPhoto . '/' . $namePhoto);
+				if ($post['photo'] != 'null') {
+					$path = str_replace(base_url() . '/', "", $post['photo']);
+					unlink($path);
+				}
+			}else{
+				$check = $post['deleteAssetPhoto'] == 'true' ? true : false;
+				if ($check) {
+					$dataAsset['photo'] = null;
+					$path = str_replace(base_url() . '/', "", $post['photo']);
+					unlink($path);
+				}else{
+					$dataAsset['photo'] = $post['photo'];
+				}
+				if ($post['photo'] == 'null') {
+					$dataAsset['photo'] = null;
+				}
+			}
 			$assetModel->update($assetId, $dataAsset);
 			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
 
@@ -587,16 +666,16 @@ class Asset extends BaseController
 						if (!is_dir($dirPhoto)) {
 							mkdir($dirPhoto);
 						}
-						$name1 = 'paramPhotoH_' . $file->getRandomName();
+						$name1 = 'IMG_PARAM_H_' . $file->getRandomName();
 						$image1 = \Config\Services::image()
 							->withFile($file)
 							->save($dirPhoto . '/' . $name1);
-						$name2 = 'paramPhotoM_' . $file->getRandomName();
+						$name2 = 'IMG_PARAM_M_' . $file->getRandomName();
 						$image2 = \Config\Services::image()
 							->withFile($file)
 							->resize(480, 480, true, 'heigth')
 							->save($dirPhoto . '/' . $name2);
-						$name3 = 'paramPhotoL_' . $file->getRandomName();
+						$name3 = 'IMG_PARAM_L_' . $file->getRandomName();
 						$image3 = \Config\Services::image()
 							->withFile($file)
 							->resize(144, 144, true, 'heigth')
@@ -620,7 +699,7 @@ class Asset extends BaseController
 							'showOn'			=> $dataEdited->showOn,
 						);
 						$parameterModel->update($dataEdited->parameterId, $data);
-						if ($dataEdited->photo1 != '' && $dataEdited->photo1 != '' && $dataEdited->photo1 != '') {
+						if ($dataEdited->photo1 != '' && $dataEdited->photo2 != '' && $dataEdited->photo3 != '') {
 							$path1 = str_replace(base_url() . '/', "", $dataEdited->photo1);
 							$path2 = str_replace(base_url() . '/', "", $dataEdited->photo2);
 							$path3 = str_replace(base_url() . '/', "", $dataEdited->photo3);
@@ -676,16 +755,16 @@ class Asset extends BaseController
 						if (!is_dir($dirPhoto)) {
 							mkdir($dirPhoto);
 						}
-						$name1 = 'paramPhotoH_' . $file->getRandomName();
+						$name1 = 'IMG_PARAM_H_' . $file->getRandomName();
 						$image1 = \Config\Services::image()
 							->withFile($file)
 							->save($dirPhoto . '/' . $name1);
-						$name2 = 'paramPhotoM_' . $file->getRandomName();
+						$name2 = 'IMG_PARAM_M_' . $file->getRandomName();
 						$image2 = \Config\Services::image()
 							->withFile($file)
 							->resize(480, 480, true, 'heigth')
 							->save($dirPhoto . '/' . $name2);
-						$name3 = 'paramPhotoL_' . $file->getRandomName();
+						$name3 = 'IMG_PARAM_L_' . $file->getRandomName();
 						$image3 = \Config\Services::image()
 							->withFile($file)
 							->resize(144, 144, true, 'heigth')
@@ -785,7 +864,7 @@ class Asset extends BaseController
 					if ($numrow > 1) {
 						// if ($row->getCellAtIndex(1) != '' && $row->getCellAtIndex(2) != '') {
 						$dataImport[] = array(
-							'no' => $numrow+1,
+							'no' => $numrow + 1,
 							'parameterName' => $row->getCellAtIndex(1)->getValue(),
 							'description' => $row->getCellAtIndex(2)->getValue(),
 							'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(3)->getValue(),
@@ -1189,5 +1268,42 @@ class Asset extends BaseController
 			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
 		}
 		die();
+	}
+
+	public function export()
+	{
+		$writer = WriterEntityFactory::createXLSXWriter();
+		$assetModel = new AssetModel();
+		$adminId = $this->session->get('adminId');
+
+		$dataAsset = $assetModel->getAll(['userId' => $adminId, 'deletedAt' => null]);
+
+		$writer->setShouldUseInlineStrings(true);
+		$header = ["No", "Asset Name", "Asset Number", "Asset Status", "Tag", "Tag Location"];
+		$styleHeader = (new StyleBuilder())
+			->setCellAlignment(CellAlignment::CENTER)
+			->setBackgroundColor(COLOR::YELLOW)
+			->build();
+		$styleBody = (new StyleBuilder())
+			->setCellAlignment(CellAlignment::LEFT)
+			->build();
+		$dataArr = [];
+
+		if (count($dataAsset)) {
+			foreach ($dataAsset as $key => $value) {
+				$arr = [$key + 1, $value['assetName'], $value['assetNumber'], $value['assetStatusName'], $value['tagName'], $value['tagLocationName']];
+				array_push($dataArr, $arr);
+			}
+		}
+		$fileName = "Asset - " . date("d M Y") . '.xlsx';
+		$writer->openToBrowser($fileName);
+
+		$rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
+		$writer->addRow($rowFromValues);
+		foreach ($dataArr as $key => $value) {
+			$rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+			$writer->addRow($rowFromValues);
+		}
+		$writer->close();
 	}
 }

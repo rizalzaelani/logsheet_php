@@ -116,9 +116,13 @@ $sess = $session->get('adminId');
                                     </template>
                                 </table>
                             </div>
-                            <div class="col-md-6 imgMap">
-                                <img src="<?= base_url() ?>/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
-                                <div class="mt-1" id="mapDetail" style="width: 100% !important; height: 170px; display: none"></div>
+                            <div class="col-md-6 d-flex justify-content-center align-items-center imgMap">
+                                <img src="<?= base_url() ?>/img/img-alt.png" alt="Image" :class="assetData.photo == null || assetData.photo == '' ? 'mt-1 m-0' :'d-none'" style="width: 200px !important; height: 200px !important;">
+                                <!-- <div :class="((assetData.photo == null || assetData.photo == '') ? 'd-none' : '')">
+                                </div>
+                                <div :class="((assetData.photo != null && assetData.photo != '') ? '' : 'd-none')">
+                                    </div> -->
+                                <img :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important;">
                             </div>
                         </div>
                     </div>
@@ -269,7 +273,12 @@ $sess = $session->get('adminId');
                             <div class="col-md-6 h-100">
                                 <div class="valueDefault w-100">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <img src="<?= base_url() ?>/img/logo-act.png" alt="Image" class="img-thumbnail">
+                                        <img src="<?= base_url() ?>/img/img-alt.png" alt="Image" :class="assetData.photo == null || assetData.photo == '' ? 'mt-1 m-0' : 'd-none'" style="width: 200px !important; height: 200px !important;">
+                                        <!-- <div :class="((assetData.photo == null || assetData.photo == '') ? 'd-none' : '')">
+                                        </div> -->
+                                        <!-- <div :class="((assetData.photo != null && assetData.photo != '') ? '' : 'd-none')">
+                                            </div> -->
+                                        <img :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important;">
                                     </div>
                                 </div>
                                 <div>
@@ -277,6 +286,15 @@ $sess = $session->get('adminId');
                                         <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" id="logo" accept="image/png, image/jpeg, image/gif" />
                                     </div>
                                 </div>
+                                <template v-if="assetData.photo != null && assetData.photo != ''">
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-danger m-0">
+                                            <input type="checkbox" id="deleteAssetPhoto" name="deleteAssetPhoto" class="c-switch-input" @change="deleteAssetPhoto = $event.target.checked">
+                                            <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                        </label>
+                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="if asset photo exist, you can turn switch button to delete the photo"></i></label>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -1328,6 +1346,8 @@ $sess = $session->get('adminId');
                 var checkTabParameter = ref(false);
                 var checkTabSetting = ref(false);
                 var assetData = reactive(<?= json_encode($assetData); ?>);
+                var assetPhoto = ref("");
+                var deleteAssetPhoto = ref(false);
                 var parameter = reactive(<?= json_encode($parameter); ?>);
                 var compareParameter = reactive(<?= json_encode($parameter); ?>);
                 var deletedParameter = ref([]);
@@ -3430,6 +3450,9 @@ $sess = $session->get('adminId');
                         formdata.append('assetId', this.assetData.assetId);
                         formdata.append('assetName', this.assetData.assetName);
                         formdata.append('assetNumber', this.assetData.assetNumber);
+                        formdata.append('deleteAssetPhoto', this.deleteAssetPhoto);
+                        formdata.append('assetPhoto', this.assetPhoto);
+                        formdata.append('photo', this.assetData.photo);
                         formdata.append('latitude', this.assetData.latitude);
                         formdata.append('longitude', this.assetData.longitude);
                         formdata.append('schManual', this.assetData.schManual);
@@ -3880,6 +3903,27 @@ $sess = $session->get('adminId');
                             return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
                         });
                     }
+
+                    let assetPhotoPond = {
+                        acceptedFileTypes: ['image/png', 'image/jpeg'],
+                        allowImagePreview: true,
+                        imagePreviewMaxHeight: 200,
+                        allowImageCrop: true,
+                        allowMultiple: false,
+                        credits: false,
+                        styleLoadIndicatorPosition: 'center bottom',
+                        styleProgressIndicatorPosition: 'right bottom',
+                        styleButtonRemoveItemPosition: 'left bottom',
+                        styleButtonProcessItemPosition: 'right bottom',
+                    };
+                    let assetPhoto1 = FilePond.create(document.querySelector('#logo'), assetPhotoPond);
+                    assetPhoto1.on('addfile', (error, file) => {
+                        v.assetPhoto = file.file
+                    })
+                    assetPhoto1.on('removefile', (error, file) => {
+                        v.assetPhoto = ref("");
+                    })
+                    
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
                     let dataAssetDesc = assetData.description;
@@ -3939,6 +3983,8 @@ $sess = $session->get('adminId');
 
                     checked,
                     assetData,
+                    deleteAssetPhoto,
+                    assetPhoto,
                     descJson,
                     parameter,
                     compareParameter,
@@ -4170,21 +4216,6 @@ $sess = $session->get('adminId');
             v.assetTagging.assetTaggingtype = data;
         })
 
-        $(document).ready(function() {
-            mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-            const map = new mapboxgl.Map({
-                container: 'mapDetail', // container ID
-                style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                center: [v.assetData.longitude, v.assetData.latitude], // starting position [lng, lat]
-                zoom: 14, // starting zoom
-            });
-            map.addControl(new mapboxgl.FullscreenControl());
-            map.resize();
-            const marker = new mapboxgl.Marker()
-                .setLngLat([v.assetData.longitude, v.assetData.latitude])
-                .addTo(map);
-        })
-
         // map tagging
         $(document).ready(function() {
             mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
@@ -4232,37 +4263,6 @@ $sess = $session->get('adminId');
             }
             marker.on('dragend', onDragEnd);
         })
-
-        $(document).ready(function() {
-            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
-            let pond = $('#logo').filepond({
-                acceptedFileTypes: ['image/png', 'image/jpeg'],
-                allowImagePreview: true,
-                imagePreviewMaxHeight: 200,
-                allowImageCrop: true,
-                allowMultiple: false,
-                credits: false,
-                styleLoadIndicatorPosition: 'center bottom',
-                styleProgressIndicatorPosition: 'right bottom',
-                styleButtonRemoveItemPosition: 'left bottom',
-                styleButtonProcessItemPosition: 'right bottom',
-            });
-        })
-        // $(document).ready(function() {
-        //     FilePond.registerPlugin(FilePondPluginFileValidateType);
-        //     let pond = $('#photoParam').filepond({
-        //         acceptedFileTypes: ['image/png', 'image/jpeg'],
-        //         allowImagePreview: true,
-        //         imagePreviewMaxHeight: 200,
-        //         allowImageCrop: true,
-        //         allowMultiple: false,
-        //         credits: false,
-        //         styleLoadIndicatorPosition: 'center bottom',
-        //         styleProgressIndicatorPosition: 'right bottom',
-        //         styleButtonRemoveItemPosition: 'left bottom',
-        //         styleButtonProcessItemPosition: 'right bottom',
-        //     });
-        // })
 
         // import parameter
         $(document).ready(function() {

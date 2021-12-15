@@ -1022,6 +1022,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 assetId: uuidv4(),
                 assetName: '',
                 assetNumber: '',
+                photo: '',
                 description: '',
                 descriptionJson: [],
                 assetStatusId: '',
@@ -1037,6 +1038,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 tagId: [],
                 tagLocationId: [],
             });
+            var assetPhoto = ref("");
             var assetTagging = reactive([{
                     assetId: assetData.assetId,
                     assetTaggingId: uuidv4(),
@@ -2734,9 +2736,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     }
                     let formdata = new FormData();
                     // asset
+                    this.assetData.photo = this.assetPhoto;
                     formdata.append('assetId', this.assetData.assetId);
                     formdata.append('assetName', this.assetData.assetName);
                     formdata.append('assetNumber', this.assetData.assetNumber);
+                    formdata.append('photo', this.assetData.photo);
                     formdata.append('latitude', this.assetLatitude);
                     formdata.append('longitude', this.assetLongitude);
                     formdata.append('schManual', this.assetData.schManual);
@@ -2887,11 +2891,32 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     v.paramPhoto = ref("");
                 })
 
+                let assetPhoto = {
+                    acceptedFileTypes: ['image/png', 'image/jpeg'],
+                    allowImagePreview: true,
+                    imagePreviewMaxHeight: 200,
+                    allowImageCrop: true,
+                    allowMultiple: false,
+                    credits: false,
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                };
+                let assetPhoto1 = FilePond.create(document.querySelector('#logo'), assetPhoto);
+                assetPhoto1.on('addfile', (error, file) => {
+                    v.assetPhoto = file.file
+                })
+                assetPhoto1.on('removefile', (error, file) => {
+                    v.assetPhoto = ref("");
+                })
+
 
             });
             return {
                 checkModalAdd,
                 assetData,
+                assetPhoto,
                 setSch,
                 selectedSchWeekly,
                 selectedSchMonthlyDays,
@@ -3284,23 +3309,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         placeholder: "Parameter Status",
         dropdownParent: $('#addParameterModal'),
     });
-
-    // filepond
-    $(document).ready(function() {
-        FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
-        let pond = $('#logo').filepond({
-            acceptedFileTypes: ['image/png', 'image/jpeg'],
-            allowImagePreview: true,
-            imagePreviewMaxHeight: 200,
-            allowImageCrop: true,
-            allowMultiple: false,
-            credits: false,
-            styleLoadIndicatorPosition: 'center bottom',
-            styleProgressIndicatorPosition: 'right bottom',
-            styleButtonRemoveItemPosition: 'left bottom',
-            styleButtonProcessItemPosition: 'right bottom',
-        });
-    })
 
     var loadListImport = (importList) => {
         var table = $('#tableImport').DataTable({
