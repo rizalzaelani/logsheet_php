@@ -139,7 +139,7 @@ class Finding extends BaseController
 
 		$filtTag = $_POST["columns"][3]["search"]["value"] ?? '';
 		$filtLoc = $_POST["columns"][4]["search"]["value"] ?? '';
-		$filtCond = $_POST["columns"][5]["search"]["value"] ?? '';
+		$filtCond = $_POST["columns"][0]["search"]["value"] ?? '';
 		
 		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagName)"] = null;
 		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationName)"] = null;
@@ -187,15 +187,15 @@ class Finding extends BaseController
 					"trxId" => $checkTrx["trxId"],
 					"condition" => "Open",
 					"openedAt" => $dateNow->format("Y-m-d H:i:s"),
-					"openedBy" => $_SESSION["username"] ?? "user01",
+					"openedBy" => $this->session->get("name"),
 					"findingPriority" => "Low"
 				);
 				
 				$dataInsertLog = array(
 					"findingLogId" => null,
 					"findingId" => $findingId,
-					"notes" => "Finding Opened By " . ($_SESSION["username"] ?? "user01"),
-					"createdBy" => $_SESSION["username"] ?? "user01"
+					"notes" => "Finding Opened By " . ($this->session->get("name")),
+					"createdBy" => $this->session->get("name")
 				);
 				
 				$findingModel->insert($dtInsertFinding);
@@ -263,15 +263,15 @@ class Finding extends BaseController
 		try {
 			$dtUpdateFinding = array(
 				"closedAt" => $dateNow->format("Y-m-d H:i:s"),
-				"closedBy" => $_SESSION["username"] ?? "user01",
+				"closedBy" => $this->session->get("name"),
 				"condition" => "Closed"
 			);
 				
 			$dataInsertLog = array(
 				"findingLogId" => null,
 				"findingId" => $findingId,
-				"notes" => "Finding Opened By " . ($_SESSION["username"] ?? "user01"),
-				"createdBy" => $_SESSION["username"] ?? "user01"
+				"notes" => "Finding Closed By " . ($this->session->get("name")),
+				"createdBy" => $this->session->get("name")
 			);
 			
 			$findingModel->update($findingId, $dtUpdateFinding);
@@ -395,7 +395,7 @@ class Finding extends BaseController
 			"findingLogId" => null,
 			"findingId" => $findingId,
 			"notes" => $notes,
-			"createdBy" => $_SESSION["username"] ?? "user01"
+			"createdBy" => $this->session->get("name")
 		);
 
 		try {

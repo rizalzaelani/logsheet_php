@@ -59,7 +59,6 @@
 								<th>Asset Number</th>
 								<th width="27.5%">Tag</th>
 								<th width="27.5%">Location</th>
-								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -121,13 +120,15 @@
 								},
 								{
 									data: "tagLocationName",
-								},
-								{
-									data: "approvedAt",
-								},
+								}
 							],
 							order: [0, 'asc'],
-							columnDefs: [
+							columnDefs: [{
+									targets: 0,
+									render: function(data, type, row) {
+										return `<div class="d-flex align-items-center"><span class="badge badge-pill badge-${(row.approvedAt ? "primary" : "warning")} p-2 mr-2" title="${row.approvedAt ? "Approved" : "Waiting Approve"}"></span>${moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")}</div>`;
+									}
+								},
 								{
 									targets: [3, 4],
 									render: function(data) {
@@ -142,12 +143,6 @@
 										} else {
 											return data;
 										}
-									}
-								},
-								{
-									targets: -1,
-									render: function(data) {
-										return isNullEmptyOrUndefined(data) ? "Waiting" : "Approved"
 									}
 								}
 							],
@@ -190,7 +185,7 @@
 					let valLoc = $('#filtDTLoc').val() ?? '';
 					let valStatus = $('#filtDTStatus').val() ?? '2';
 
-					table.value.columns(3).search(valTag).columns(4).search(valLoc).columns(5).search(valStatus).draw();
+					table.value.columns(3).search(valTag).columns(4).search(valLoc).columns(0).search(valStatus).draw();
 				});
 			});
 

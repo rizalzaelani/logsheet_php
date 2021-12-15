@@ -376,7 +376,7 @@
                                                     swal.showLoading()
                                                 }
                                             })
-                                            // location.reload();
+                                            location.reload();
                                         }
                                     })
                                 })

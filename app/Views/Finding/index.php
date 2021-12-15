@@ -59,7 +59,6 @@
 								<th>Asset Number</th>
 								<th width="27.5%">Tag</th>
 								<th width="27.5%">Location</th>
-								<th>Condition</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -123,15 +122,12 @@
 								{
 									data: "tagLocationName",
 								},
-								{
-									data: "condition",
-								},
 							],
 							order: [0, 'asc'],
 							columnDefs: [{
 									targets: 0,
 									render: function(data, type, row) {
-										return moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")
+										return `<div class="d-flex align-items-center"><span class="badge badge-pill badge-${(row.condition.toLocaleLowerCase() == "open" ? "warning" : (row.condition.toLocaleLowerCase() == "closed" ? "primary" : "dark"))} p-2 mr-2" title="${row.condition}"></span>${moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")}</div>`;
 									}
 								},
 								{
@@ -190,7 +186,7 @@
 					let valLoc = $('#filtDTLoc').val() ?? '';
 					let valCond = $('#filtDTCond').val() ?? '2';
 
-					table.value.columns(3).search(valTag).columns(4).search(valLoc).columns(5).search(valCond).draw();
+					table.value.columns(3).search(valTag).columns(4).search(valLoc).columns(0).search(valCond).draw();
 				});
 			});
 

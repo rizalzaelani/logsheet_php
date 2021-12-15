@@ -105,7 +105,7 @@ class Transaction extends BaseController
 
 		$filtTag = $_POST["columns"][3]["search"]["value"] ?? '';
 		$filtLoc = $_POST["columns"][4]["search"]["value"] ?? '';
-		$filtStatus = $_POST["columns"][5]["search"]["value"] == '' ? 2 : $_POST["columns"][5]["search"]["value"];
+		$filtStatus = $_POST["columns"][0]["search"]["value"] == '' ? 2 : $_POST["columns"][0]["search"]["value"];
 		
 		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagName)"] = null;
 		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationName)"] = null;
@@ -189,7 +189,7 @@ class Transaction extends BaseController
 		$dataUpdate = [
 			"approvedNotes" => $approvedNotes,
 			"approvedAt" => $dateNow->format("Y-m-d H:i:s"),
-			"approvedBy" => $_SESSION["username"] ?? "user01",
+			"approvedBy" => $this->session->get("name"),
 			"condition" => $condition
 		];
 

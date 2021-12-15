@@ -1,7 +1,7 @@
 const checkAbnormal = (val, approvedAt) => {
     if (!isNullEmptyOrUndefined(approvedAt)) {
         if (val.condition != 'Normal' && val.condition) {
-            if (val.findingId) {
+            if (!val.findingId) {
                 return {
                     'class': 'danger',
                     'name': 'Open'

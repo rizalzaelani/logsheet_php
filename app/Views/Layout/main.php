@@ -10,7 +10,7 @@
     <meta name="description" content="Core UI">
     <meta name="author" content="CoreUI">
     <meta name="keyword" content="Dashboard,Monitor,CoreUI">
-    <title>Nocola - Equipment Record</title>
+    <title><?= get_cookie("appName") ?? 'Nocola - Logsheet Digital' ?></title>
 
     <style type="text/css">
 

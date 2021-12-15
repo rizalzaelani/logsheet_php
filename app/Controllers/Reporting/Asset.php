@@ -136,8 +136,8 @@ class Asset extends BaseController
 		$list = $DTModel->datatable($where);
 		$output = array(
 			"draw" => $request->getPost('draw'),
-			// "recordsTotal" => $DTModel->count_all($where),
-			// "recordsFiltered" => $DTModel->count_filtered($where),
+			"recordsTotal" => $DTModel->count_all($where),
+			"recordsFiltered" => $DTModel->count_filtered($where),
 			"data" => $list,
 			'status' => 200,
 			'message' => 'success',

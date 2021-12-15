@@ -35,7 +35,8 @@ $routes->get('/', 'Auth/Login::index');
 $routes->get('/Login', 'Auth/Login::index');
 $routes->post('/Login/auth', 'Auth/Login::auth');
 $routes->get('/logout', 'Auth/Login::logout');
-$routes->get('/login/testMail', 'Auth/Login::testMail');
+$routes->get('/Login/testMail', 'Auth/Login::testMail');
+$routes->get('/Login/testTelegram', 'Auth/Login::testTelegram');
 $routes->get('/forgotPassword', 'Auth/Login::forgotPassword');
 $routes->post('/forgotPassword/sendMail', 'Auth/Login::sendMailForgotPassword');
 

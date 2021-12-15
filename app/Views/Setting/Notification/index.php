@@ -112,6 +112,9 @@
                         </svg>
                         {{ notifFormErr.trigger }}
                     </span>
+                    <div class="form-group mb-0 mt-3" :class="notifForm.type != 'telegram' ? 'd-none' : ''">
+                        <h5>Make sure the recipient of the message has joined this bot <a href="https://t.me/LogsheetDigitalBot" target="_blank" class="text-primary">t.me/LogsheetDigitalBot</a></h5>
+                    </div>
                 </div>
                 <div class="modal-footer d-flex" :class="notifForm.notificationId ? 'justify-content-between' : ''">
                     <div>
@@ -221,6 +224,12 @@
                                             </svg>
                                         `;
                                         }
+                                    }
+                                },
+                                {
+                                    targets: 1,
+                                    render: function(data, type, row) {
+                                        return `${row.friendlyName}<br><span class="sub-text">${data}</span>`;
                                     }
                                 },
                                 {

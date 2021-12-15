@@ -130,7 +130,7 @@ class Login extends BaseController
         try {
             $userModel = new UserModel();
             $dataRes = $userModel->forgotPassword(['email' => $this->request->getVar("email")]);
-            
+
             $resData = $dataRes['data'];
             if ($dataRes['error']) {
                 return $this->response->setJSON(array(
@@ -145,7 +145,7 @@ class Login extends BaseController
                     'data' => $resData
                 ], 200);
             }
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return $this->response->setJSON([
                 'status' => 500,
                 'message' => $e->getMessage(),
@@ -170,11 +170,11 @@ class Login extends BaseController
             $message = "Please activate the account " . anchor('role', 'Activate Now', '');
             $email = \Config\Services::email();
 
-            $email->setFrom('andri@nocola.co.id', 'Andrianto');
-            $email->setTo("zaelanirizal.rz@gmail.com");
+            $email->setFrom('ganang@nocola.co.id', 'Ganang');
+            $email->setTo("andrianto3579@gmail.com");
             $email->setSubject('Test Logsheet Mail');
             $email->setMessage($message); //your message here
-            $email->setMailType("html");
+            $email->setMailType("text");
 
             // $email->setCC('another@emailHere'); //CC
             // $email->setBCC('thirdEmail@emialHere'); // and BCC
@@ -186,6 +186,21 @@ class Login extends BaseController
 
             echo "success";
         } catch (Exception $e) {
+            print_r($e);
+        }
+    }
+
+    public function testTelegram()
+    {
+        try {
+            $chatId = $this->request->getVar("chatId") ?? "586103052";
+            $bot = new \TelegramBot\Api\BotApi(env('botTelegramToken'));
+
+            $bot->sendMessage($chatId, "Hallo, Welcome to Logsheet Digital");
+
+            echo "success";
+        } catch (Exception $e) {
+            echo "<pre />";
             print_r($e);
         }
     }
