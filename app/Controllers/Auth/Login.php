@@ -26,20 +26,6 @@ class Login extends BaseController
         return $this->template->render('Auth/login', $data);
     }
 
-    public function forgotPassword()
-    {
-        $session = \Config\Services::session();
-        if ($session->has('userId')) {
-            return redirect()->to("Dashboard");
-        }
-        $data = array(
-            'title' => 'Login Page | Logsheet Digital',
-            'subtitle' => 'Logsheet Digital',
-        );
-
-        return $this->template->render('Auth/forgotPassword', $data);
-    }
-
     public function auth()
     {
         $session = \Config\Services::session();
@@ -121,65 +107,6 @@ class Login extends BaseController
                     'data' => $e
                 ], 500);
             }
-        }
-    }
-
-    public function sendMailForgotPassword()
-    {
-        $isValid = $this->validate([
-            'email' => 'required',
-        ]);
-
-        if (!$isValid) {
-            return $this->response->setJSON([
-                'status' => 400,
-                'error' => true,
-                'message' => $this->validator->getErrors(),
-                'data' => []
-            ], 400);
-        }
-
-        try {
-            $userModel = new UserModel();
-            $dataRes = $userModel->forgotPassword(['email' => $this->request->getVar("email")]);
-
-            $resData = $dataRes['data'];
-            if ($dataRes['error']) {
-                return $this->response->setJSON(array(
-                    'status' => isset($resData->message) ? 400 : 500,
-                    'message' => $resData->message ?? $dataRes['message'],
-                    'data' => $resData
-                ), isset($resData->message) ? 400 : 500);
-            } else {
-                $linkReset = site_url("resetPassword") . "?secret=" . $resData->data->token . "&userId=" . $resData->data->userId . "&mail=" . $this->request->getVar("email");
-                $message = file_get_contents(base_url()."/assets/Mail/forgotPassword.txt");
-    
-                $message = str_replace("{{linkBtnReset}}", $linkReset, $message);
-    
-                $email = \Config\Services::email();
-    
-                $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
-                $email->setTo($this->request->getVar("email"));
-                $email->setSubject('Reset your Logsheet Digital password');
-                $email->setMessage($message);
-                $email->setMailType("html");
-    
-                $email->send();
-                // $email->printDebugger(['headers']);
-
-                return $this->response->setJSON([
-                    'status' => 200,
-                    'message' => "Please check your mailbox",
-                    'data' => $resData,
-                    "message" => $message
-                ], 200);
-            }
-        } catch (Exception $e) {
-            return $this->response->setJSON([
-                'status' => 500,
-                'message' => $e->getMessage(),
-                'data' => $e
-            ], 500);
         }
     }
 
