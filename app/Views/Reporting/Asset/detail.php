@@ -179,11 +179,11 @@
                                                 <td class="text-center">{{ iGP + 1 }}</td>
                                             </template>
                                             <td class="text-center">
-                                                <input type="checkbox" :value="val.parameterId" class="check-param-trend" @change="checkParameterId(val.parameterId)" :checked="parameterIdSelect.includes(val.parameterId)" />
+                                                <input v-if="!val.option" type="checkbox" :value="val.parameterId" class="check-param-trend" @change="checkParameterId(val.parameterId)" :checked="parameterIdSelect.includes(val.parameterId)" />
                                             </td>
                                             <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
                                             <td>
-                                                <div class="chart-wrapper cursor-pointer" data-toggle="tooltip" title="Click To Open Trend">
+                                                <div v-if="!val.option" class="chart-wrapper cursor-pointer" data-toggle="tooltip" title="Click To Open Trend">
                                                     <div :id="'miniTrend-' + val.parameterId" style="width: 100px;height: 30px;" @click="showTrend(val.parameterId)"></div>
                                                 </div>
                                             </td>
@@ -256,7 +256,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary font-weight-500" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> Close</button>
-                    <button type="button" class="btn btn-outline-primary font-weight-500" onclick="modalMailTrend()"><i class="fab fa-telegram-plane"></i> Send Mail</button>
+                    <!-- <button type="button" class="btn btn-outline-primary font-weight-500" onclick="modalMailTrend()"><i class="fab fa-telegram-plane"></i> Send Mail</button> -->
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -353,74 +353,6 @@
                     'scheduleTrxId': schId,
                     'parameterId': paramId
                 });
-            }
-
-            const checkAbnormal = (val, approvedAt) => {
-                if (!isNullEmptyOrUndefined(approvedAt)) {
-                    if (val.condition != 'Normal' & val.condition != '' & val.condition != null & val.condition != undefined) {
-                        if (val.findingId == null) {
-                            return {
-                                'class': 'btn-danger',
-                                'name': 'Follow Up'
-                            };
-                        } else {
-                            if (val.condition == 'Closed') {
-                                return {
-                                    'class': 'btn-primary',
-                                    'name': 'Is Closed'
-                                };
-                            } else if (val.condition == 'Open') {
-                                return {
-                                    'class': 'btn-warning',
-                                    'name': 'Is Followed Up'
-                                };
-                            } else {
-                                return {
-                                    'class': 'btn-danger',
-                                    'name': 'Follow Up'
-                                };
-                            }
-                        }
-                    } else {
-                        return {
-                            'class': '',
-                            'name': 'Normal'
-                        };
-                    }
-                } else {
-                    if (val.inputType == "input") {
-                        if ((val.min != null & val.max != null & val.value >= val.min & val.value <= val.max) || (val.min != null & val.max == null & val.value >= val.min) || (val.min == null & val.max != null & val.value <= val.max) || (val.min == null & val.max == null) || isNaN(val.value)) {
-                            return {
-                                'class': '',
-                                'name': 'Normal'
-                            };
-                        } else {
-                            return {
-                                'class': 'btn-danger',
-                                'name': 'Follow Up'
-                            };
-                        }
-                    } else if (val.inputType == "select") {
-                        let itmAbnormal = val.abnormal.toLowerCase().split(",");
-                        let isContain = _.includes(itmAbnormal, val.value.toLowerCase());
-                        if (isNullEmptyOrUndefined(val.abnormal) || isNullEmptyOrUndefined(val.option) || isContain == false) {
-                            return {
-                                'class': '',
-                                'name': 'Normal'
-                            };
-                        } else {
-                            return {
-                                'class': 'btn-danger',
-                                'name': 'Follow Up'
-                            };
-                        }
-                    } else {
-                        return {
-                            'class': '',
-                            'name': 'Normal'
-                        };
-                    }
-                }
             }
 
             //chart

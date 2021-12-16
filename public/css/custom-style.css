@@ -104,6 +104,10 @@ a {
   display: none !important;
 }
 
+.badge:empty{
+  display: inline-block !important;
+}
+
 /* input */
 .form-control[readonly] {
   background-color: #fff !important;

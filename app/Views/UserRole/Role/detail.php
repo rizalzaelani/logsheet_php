@@ -327,7 +327,7 @@
                 getRoleChecked,
 
                 <?= (checkRoleList("ROLE.ADD,ROLE.MODIFY") ? "SCAllRole,saveRole," : ""); ?>
-                <?= (checkRoleList("ROLE.DELETE") ? "deleteRole," : ""); ?>
+                <?= (checkRoleList("ROLE.DELETE") && !empty($groupData ?? []) ? "deleteRole," : ""); ?>
             }
         }
     }).mount("#app")

@@ -11,17 +11,17 @@ use Exception;
 
 class User extends BaseController
 {
-	public function index()
-	{
-        if(!checkRoleList("USER.VIEW")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
+    public function index()
+    {
+        if (!checkRoleList("USER.VIEW")) {
+            return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
         }
 
-		$data = array(
-			'title' => 'User Logsheet Digital',
-			'subtitle' => 'All User Logsheet',
+        $data = array(
+            'title' => 'User Logsheet Digital',
+            'subtitle' => 'All User Logsheet',
             'groupData' => []
-		);
+        );
 
         $tagModel = new TagModel();
         $tagLocationModel = new TagLocationModel();
@@ -52,25 +52,25 @@ class User extends BaseController
             //
         }
 
-		return $this->template->render('UserRole/User/index', $data);
-	}
+        return $this->template->render('UserRole/User/index', $data);
+    }
 
-	public function userList()
-	{
-        if(!checkRoleList("USER.VIEW")){
-        	return $this->response->setJSON([
-        		'status' => 403,
+    public function userList()
+    {
+        if (!checkRoleList("USER.VIEW")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
-		try {
+        try {
             $userModel = new UserModel();
             $clientToken = get_cookie("clientToken");
-            if(!isset($clientToken) || $clientToken == null){
+            if (!isset($clientToken) || $clientToken == null) {
                 $resRT = $userModel->refreshToken();
-                if($resRT['error']){
+                if ($resRT['error']) {
                     return $this->response->setJSON(array(
                         'status' => isset($resRT['data']->message) ? 400 : 500,
                         'message' => $resRT['data']->message ?? $resRT['message'],
@@ -79,7 +79,7 @@ class User extends BaseController
                 }
             }
             $dataRes = $userModel->userList();
-            
+
             $data = $dataRes['data'];
             if ($dataRes['error']) {
                 return $this->response->setJSON(array(
@@ -95,31 +95,31 @@ class User extends BaseController
                     'data' => $data->data ?? []
                 ], 200);
             }
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return $this->response->setJSON([
                 'status' => 500,
                 'message' => $e->getMessage(),
                 'data' => $e
             ], 500);
         }
-	}
+    }
 
     public function getUserById()
-	{
-        if(!checkRoleList("USER.VIEW")){
-        	return $this->response->setJSON([
-        		'status' => 403,
+    {
+        if (!checkRoleList("USER.VIEW")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
-		try {
+        try {
             $userModel = new UserModel();
             $clientToken = get_cookie("clientToken");
-            if(!isset($clientToken) || $clientToken == null){
+            if (!isset($clientToken) || $clientToken == null) {
                 $resRT = $userModel->refreshToken();
-                if($resRT['error']){
+                if ($resRT['error']) {
                     return $this->response->setJSON(array(
                         'status' => isset($resRT['data']->message) ? 400 : 500,
                         'message' => $resRT['data']->message ?? $resRT['message'],
@@ -130,7 +130,7 @@ class User extends BaseController
 
             $userId = $this->request->getGet("userId") ?? "";
             $dataRes = $userModel->userDetail($userId);
-            
+
             $data = $dataRes['data'];
             if ($dataRes['error']) {
                 return $this->response->setJSON(array(
@@ -146,24 +146,24 @@ class User extends BaseController
                     'data' => $data->data ?? []
                 ], 200);
             }
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return $this->response->setJSON([
                 'status' => 500,
                 'message' => $e->getMessage(),
                 'data' => $e
             ], 500);
         }
-	}
+    }
 
     public function saveUser()
     {
         $userId = $this->request->getVar("userId") ?? "";
-        if(($userId == "" && !checkRoleList("USER.ADD")) || ($userId != "" && !checkRoleList("USER.MODIFY"))){
-        	return $this->response->setJSON([
-        		'status' => 403,
+        if (($userId == "" && !checkRoleList("USER.ADD")) || ($userId != "" && !checkRoleList("USER.MODIFY"))) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
         $isValid = $this->validate([
@@ -186,7 +186,7 @@ class User extends BaseController
         $tag = $this->request->getVar("tagId");
         $tagLocation = $this->request->getVar("tagLocationId");
         $groupId = $this->request->getVar("groupId");
-        
+
         if ($userId == "" && $password == "") {
             return $this->response->setJson([
                 'status' => 400,
@@ -223,12 +223,12 @@ class User extends BaseController
                 $param["password"] = $password;
                 $param["confirm_password"] = $password;
             } else {
-                if($password != ""){
+                if ($password != "") {
                     $param["password"] = $password;
                     $param["confirm_password"] = $password;
                 }
             }
-            
+
             $dataRes = $userModel->saveUser($param);
 
             $dataResData = $dataRes['data'];
@@ -256,13 +256,14 @@ class User extends BaseController
         }
     }
 
-    public function deleteUser(){
-        if(!checkRoleList("USER.DELETE")){
-        	return $this->response->setJSON([
-        		'status' => 403,
+    public function deleteUser()
+    {
+        if (!checkRoleList("USER.DELETE")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
         $isValid = $this->validate([
@@ -276,7 +277,7 @@ class User extends BaseController
                 'data' => $this->validator->getErrors()
             ], 400);
         }
-        
+
         $userModel = new UserModel();
 
         try {
@@ -291,7 +292,7 @@ class User extends BaseController
                     ), isset($resRT['data']->message) ? 400 : 500);
                 }
             }
-            
+
             $param["userId"] = $this->request->getVar("userId");
             $param["appId"] = $this->session->get("appId");
             $param["force"] = true;
@@ -310,6 +311,73 @@ class User extends BaseController
                     'error' => true,
                     'message' => "Success Delete user",
                     'data' => $dataResData->data ?? []
+                ], 200);
+            }
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => $e->getMessage(),
+                'data' => $e
+            ], 500);
+        }
+    }
+
+    public function changePassword()
+    {
+        $isValid = $this->validate([
+            'currentPassword' => 'required',
+            'newPassword' => 'required'
+        ]);
+
+        if (!$isValid) {
+            return $this->response->setJson([
+                'status' => 400,
+                'message' => "Data is Not Valid",
+                'data' => $this->validator->getErrors()
+            ], 400);
+        }
+
+        $currentPassword = $this->request->getVar("currentPassword");
+        $newPassword = $this->request->getVar("newPassword");
+
+        $userModel = new UserModel();
+
+        try {
+            $clientToken = get_cookie("clientToken");
+            if (!isset($clientToken) || $clientToken == null) {
+                $resRT = $userModel->refreshToken();
+                if ($resRT['error']) {
+                    return $this->response->setJSON(array(
+                        'status' => isset($resRT['data']->message) ? 400 : 500,
+                        'message' => $resRT['data']->message ?? $resRT['message'],
+                        'data' => $resRT['data']
+                    ), isset($resRT['data']->message) ? 400 : 500);
+                }
+            }
+
+            $param["current_password"] = $currentPassword;
+            $param["password"] = $newPassword;
+            $param["confirm_password"] = $newPassword;
+            $param["userId"] = $this->session->get("userId");
+
+            $dataRes = $userModel->changePassword($param);
+
+            $dataResData = $dataRes['data'];
+            if ($dataRes['error']) {
+                return $this->response->setJSON(array(
+                    'status' => isset($dataResData->message) ? 400 : 500,
+                    'message' => $dataResData->message ?? $dataRes['message'],
+                    'data' => $dataResData,
+                    'token' => $this->session->get("token"),
+                    'userId' => $this->session->get("userId")
+                ), isset($dataResData->message) ? 400 : 500);
+            } else {
+                return $this->response->setJSON([
+                    'status' => 200,
+                    'error' => true,
+                    'message' => "Success change password user",
+                    'data' => $dataResData->data ?? [],
+                    'dataParam' => $param
                 ], 200);
             }
         } catch (Exception $e) {

@@ -102,6 +102,15 @@ class Transaction extends BaseController
 			'userId' => $this->session->get("adminId"),
 			'scannedAt IS NOT NULL' => null
 		];
+
+		$filtTag = $_POST["columns"][3]["search"]["value"] ?? '';
+		$filtLoc = $_POST["columns"][4]["search"]["value"] ?? '';
+		$filtStatus = $_POST["columns"][0]["search"]["value"] == '' ? 2 : $_POST["columns"][0]["search"]["value"];
+		
+		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
+		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
+		if($filtStatus == 0 || $filtStatus == 1) $where["approvedAt IS " . ($filtStatus == 1 ? 'NOT ' : '') . "NULL"] = null;
+
 		$list = $DTModel->datatable($where);
 		$output = array(
 			"draw" => $request->getPost('draw'),
@@ -109,7 +118,8 @@ class Transaction extends BaseController
 			"recordsFiltered" => $DTModel->count_filtered($where),
 			"data" => $list,
 			'status' => 200,
-			'message' => 'success'
+			'message' => 'success',
+			's' => $filtStatus
 		);
 		echo json_encode($output);
 	}
@@ -179,7 +189,7 @@ class Transaction extends BaseController
 		$dataUpdate = [
 			"approvedNotes" => $approvedNotes,
 			"approvedAt" => $dateNow->format("Y-m-d H:i:s"),
-			"approvedBy" => $_SESSION["username"] ?? "user01",
+			"approvedBy" => $this->session->get("name"),
 			"condition" => $condition
 		];
 

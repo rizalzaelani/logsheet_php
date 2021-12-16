@@ -227,8 +227,18 @@
             <div class="row" v-if="attachmentTrxData.length > 0">
                 <div class="col-sm-6 col-md-4 col-lg-3" v-for="(val, key) in attachmentTrxData">
                     <div class="card">
-                        <img class="card-img-top" :src="val.attachment" :alt="'Attachment' + key">
+                        <img v-if="['jpg','png','jpeg'].includes((val.attachment.split('.').pop()).toLocaleLowerCase())" class="card-img-top" :src="val.attachment" :alt="'Attachment' + key">
+                        <video v-else-if="['mp4','3gp','3gpp'].includes((val.attachment.split('.').pop()).toLocaleLowerCase())" width="320" height="240" controls>
+                            <source :src="val.attachment" :type="'video/' + (val.attachment.split('.').pop()).toLocaleLowerCase()">
+                            Your browser does not support the video tag.
+                        </video>
+                        <audio v-else-if="['mp3','ogg','wav','mpeg'].includes((val.attachment.split('.').pop()).toLocaleLowerCase())" controls>
+                            <source :src="val.attachment" :type="'video/' + (val.attachment.split('.').pop()).toLocaleLowerCase()">
+                            Your browser does not support the video tag.
+                        </audio>
+                        <iframe v-else :src="val.attachment" class="w-100"></iframe>
                         <div class="card-body">
+                            <h4 class="card-title"><a class="text-primary" :href="val.attachment" target="_blank">View In New Tab</a></h4>
                             <p class="card-text">{{ val.notes ?? '' }}</p>
                         </div>
                     </div>

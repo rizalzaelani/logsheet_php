@@ -103,7 +103,7 @@
 							<option v-for="(val) in tagLocData" :value="val.tagLocationId" :checked="(userForm.tagLocationId ?? []).includes(val.tagLocationId)">{{val.tagLocationName}}</option>
 						</select>
 					</div>
-					<div class="row">
+					<div class="row" v-if="!userForm.userId">
 						<div class="form-group mb-0 mt-3 col-sm-6 mb-0 mt-3">
 							<label for="password">Password</label>
 							<input class="form-control" id="password" v-model="userForm.password" @keyup="userFormErr.password = (userForm.password ? '' : 'Enter your password')" type="password" placeholder="Enter your Password">
@@ -327,8 +327,8 @@
 								email: userForm.email,
 								password: userForm.password,
 								groupId: userForm.groupId,
-								tagId: (userForm.tagId ?? "").join(","),
-								tagLocationId: (userForm.tagLocationId ?? "").join(",")
+								tagId: (userForm.tagId ?? []).join(","),
+								tagLocationId: (userForm.tagLocationId ?? []).join(",")
 							}).then(res => {
 								xhrThrowRequest(res)
 									.then(() => {

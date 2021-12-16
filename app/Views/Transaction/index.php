@@ -18,43 +18,33 @@
 				<div class="d-flex justify-content-between mb-1">
 					<h4><?= $title ?></h4>
 					<h5 class="header-icon">
-						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
+						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="btnFiltDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
-							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+							<a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>
 					</h5>
 				</div>
 				<div class="row mt-2 collapse" id="filterDT">
-					<div class="col-4">
-						<div class="form-group" id="filterCompany">
-							<select class="form-control bg-transparent select2-multiple w-100 company" name="company" id="company" multiple="multiple">
-								<option value="all">All</option>
-								<option value="IPC">IPC</option>
-							</select>
-						</div>
-					</div>
-					<div class="col-4">
+					<div class="col-sm-5">
 						<fieldset class="form-group">
 							<div class="" id="filterArea">
-								<select class="form-control bg-transparent select2-multiple w-100 area" name="area" id="area" multiple="multiple">
-									<option value="all">All</option>
-									<option value="GEDUNG PARKIR">GEDUNG PARKIR</option>
-									<option value="GEDUNG KAS">GEDUNG KAS</option>
-									<option value="GEDUNG MAINTENANCE">GEDUNG MAINTENANCE</option>
-									<option value="GEDUNG FINANCE">GEDUNG FINANCE</option>
-								</select>
+								<select class="form-control bg-transparent w-100" name="filtDTTag" id="filtDTTag" multiple="multiple"></select>
 							</div>
 						</fieldset>
 					</div>
-					<div class="col-4">
-						<div class="form-group" id="filterUnit">
-							<select class="form-control bg-transparent select2-multiple w-100 unit" name="unit" id="unit" multiple="multiple">
-								<option value="all">All</option>
-								<option value="CCTV">CCTV</option>
-								<option value="ROUTER">ROUTER</option>
-								<option value="IT">IT</option>
+					<div class="col-sm-5">
+						<div class="form-group">
+							<select class="form-control bg-transparent w-100" name="filtDTLoc" id="filtDTLoc" multiple="multiple"></select>
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<select class="form-control bg-transparent w-100" name="filtDTStatus" id="filtDTStatus">
+								<option value="2">All</option>
+								<option value="1">Approved</option>
+								<option value="0">Not Approved</option>
 							</select>
 						</div>
 					</div>
@@ -69,7 +59,6 @@
 								<th>Asset Number</th>
 								<th width="27.5%">Tag</th>
 								<th width="27.5%">Location</th>
-								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -87,13 +76,12 @@
 <script>
 	let v = Vue.createApp({
 		setup() {
-			var data = null;
-			var table = null;
+			var table = Vue.ref(null);
 
 			const getData = () => {
 				return new Promise(async (resolve, reject) => {
 					try {
-						this.table = await $('#tableTrx').DataTable({
+						table.value = await $('#tableTrx').DataTable({
 							drawCallback: function(settings) {
 								$(document).ready(function() {
 									$('[data-toggle="tooltip"]').tooltip();
@@ -132,13 +120,15 @@
 								},
 								{
 									data: "tagLocationName",
-								},
-								{
-									data: "approvedAt",
-								},
+								}
 							],
 							order: [0, 'asc'],
-							columnDefs: [
+							columnDefs: [{
+									targets: 0,
+									render: function(data, type, row) {
+										return `<div class="d-flex align-items-center"><span class="badge badge-pill badge-${(row.approvedAt ? "primary" : "warning")} p-2 mr-2" title="${row.approvedAt ? "Approved" : "Waiting Approve"}"></span>${moment(row.scannedAt ? row.scannedAt : data).format("DD MMM YYYY HH:mm")}</div>`;
+									}
+								},
 								{
 									targets: [3, 4],
 									render: function(data) {
@@ -153,12 +143,6 @@
 										} else {
 											return data;
 										}
-									}
-								},
-								{
-									targets: -1,
-									render: function(data) {
-										return isNullEmptyOrUndefined(data) ? "Waiting" : "Approved"
 									}
 								}
 							],
@@ -179,14 +163,14 @@
 				})
 			}
 
-			Vue.onMounted(() => {
-				getData();
+			Vue.onMounted(async () => {
+				await getData();
 
 				let search = $(".dt-search-input input[data-target='#tableTrx']");
 				search.unbind().bind("keypress", function(e) {
 					if (e.which == 13 || e.keyCode == 13) {
 						let searchData = search.val();
-						table.search(searchData).draw();
+						table.value.search(searchData).draw();
 					}
 				});
 
@@ -195,10 +179,17 @@
 						window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
 					});
 				<?php endif; ?>
+
+				$('#filtDTTag,#filtDTLoc,#filtDTStatus').on('change', function() {
+					let valTag = $('#filtDTTag').val() ?? '';
+					let valLoc = $('#filtDTLoc').val() ?? '';
+					let valStatus = $('#filtDTStatus').val() ?? '2';
+
+					table.value.columns(3).search(valTag).columns(4).search(valLoc).columns(0).search(valStatus).draw();
+				});
 			});
 
 			return {
-				data,
 				table,
 				getData
 			};

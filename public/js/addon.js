@@ -1,7 +1,7 @@
 const checkAbnormal = (val, approvedAt) => {
     if (!isNullEmptyOrUndefined(approvedAt)) {
-        if (val.condition != 'Normal' & val.condition != '' & val.condition != null & val.condition != undefined) {
-            if (val.findingId == null) {
+        if (val.condition != 'Normal' && val.condition) {
+            if (!val.findingId) {
                 return {
                     'class': 'danger',
                     'name': 'Open'
@@ -32,7 +32,10 @@ const checkAbnormal = (val, approvedAt) => {
         }
     } else {
         if (val.inputType == "input") {
-            if ((val.min != null & val.max != null & val.value >= val.min & val.value <= val.max) || (val.min != null & val.max == null & val.value >= val.min) || (val.min == null & val.max != null & val.value <= val.max) || (val.min == null & val.max == null) || isNaN(val.value)) {
+            val.value = parseFloat(val.value);
+            val.min = parseFloat(val.min);
+            val.max = parseFloat(val.max);
+            if ((val.min && val.max && val.value >= val.min && val.value <= val.max) || (val.min && !val.max && val.value >= val.min) || (!val.min && val.max && val.value <= val.max) || (!val.min && !val.max) || !val.value) {
                 return {
                     'class': '',
                     'name': 'Normal'
@@ -46,7 +49,7 @@ const checkAbnormal = (val, approvedAt) => {
         } else if (val.inputType == "select") {
             let itmAbnormal = val.abnormal.toLowerCase().split(",");
             let isContain = _.includes(itmAbnormal, val.value.toLowerCase());
-            if (isNullEmptyOrUndefined(val.abnormal) || isNullEmptyOrUndefined(val.option) || isContain == false) {
+            if (!val.abnormal || !val.option || isContain == false) {
                 return {
                     'class': '',
                     'name': 'Normal'

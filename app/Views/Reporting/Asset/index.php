@@ -21,7 +21,7 @@
 				<div class="d-flex justify-content-between mb-1">
 					<h4><?= $title ?></h4>
 					<h5 class="header-icon">
-						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="filter"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
+						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="btnFiltDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<!-- <a href="javascript:;" onclick="table.ajax.reload();"><i class="fa fa-redo-alt" data-toggle="tooltip" title="Refresh"></i></a> -->
 						<a href="javascript:;" class="dt-search" data-target="#tableEq"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
@@ -31,41 +31,19 @@
 							<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
 							<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+							<a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>
 					</h5>
 				</div>
 				<div class="row mt-2 collapse" id="filterDT">
-					<div class="col-4">
-						<div class="form-group" id="filterCompany">
-							<select class="form-control bg-transparent select2-multiple w-100 asset" name="asset" id="asset" multiple="multiple">
-								<option value="all">All</option>
-								<?php foreach ($asset as $key) : ?>
-									<option value="<?= $key; ?>"><?= $key; ?></option>
-								<?php endforeach; ?>
-							</select>
+					<div class="col-6">
+						<div class="form-group">
+							<select class="form-control bg-transparent w-100" name="location" id="filtDTLoc" multiple="multiple"></select>
 						</div>
 					</div>
-					<div class="col-4">
-						<fieldset class="form-group">
-							<div class="" id="filterArea">
-								<select class="form-control bg-transparent select2-multiple w-100 location" name="location" id="location" multiple="multiple">
-									<option value="all">All</option>
-									<?php foreach ($tagLocation as $key) : ?>
-										<option value="<?= $key; ?>"><?= $key; ?></option>
-									<?php endforeach; ?>
-								</select>
-							</div>
-						</fieldset>
-					</div>
-					<div class="col-4">
-						<div class="form-group" id="filterUnit">
-							<select class="form-control bg-transparent select2-multiple w-100 tag" name="tag" id="tag" multiple="multiple">
-								<option value="all">All</option>
-								<?php foreach ($tag as $key) : ?>
-									<option value="<?= $key; ?>"><?= $key; ?></option>
-								<?php endforeach; ?>
-							</select>
+					<div class="col-6">
+						<div class="form-group">
+							<select class="form-control bg-transparent w-100" name="tag" id="filtDTTag" multiple="multiple"></select>
 						</div>
 					</div>
 				</div>
@@ -95,15 +73,14 @@
 		reactive
 	} = Vue;
 	let v = Vue.createApp({
-		el: '#app',
 		setup() {
 			var myModal = ref(null);
 			var table = ref(null);
 
-			function GetData() {
+			const getData = () => {
 				return new Promise(async (resolve, reject) => {
 					try {
-						this.table = await $('#tableEq').DataTable({
+						table.value = await $('#tableEq').DataTable({
 							drawCallback: function(settings) {
 								$(document).ready(function() {
 									$('[data-toggle="tooltip"]').tooltip();
@@ -182,83 +159,32 @@
 			}
 
 			onMounted(() => {
-				GetData()
+				getData();
+
 				let search = $(".dt-search-input input[data-target='#tableEq']");
 				search.unbind().bind("keypress", function(e) {
 					if (e.which == 13 || e.keyCode == 13) {
 						let searchData = search.val();
-						v.table.search(searchData).draw();
+						table.value.search(searchData).draw();
 					}
 				});
 
 				$(document).on('click', '#tableEq tbody tr', function() {
 					window.location.href = "<?= site_url('ReportingAsset/detail') ?>?assetId=" + $(this).attr("data-id");
 				});
+
+				$('#filtDTTag,#filtDTLoc').on('change', function() {
+					let valTag = $('#filtDTTag').val() ?? '';
+					let valLoc = $('#filtDTLoc').val() ?? '';
+
+					table.value.columns(1).search(valTag).columns(2).search(valLoc).draw();
+				});
 			});
 			return {
 				myModal,
-				table,
-				GetData
+				table
 			}
 		},
 	}).mount('#app');
-
-	$('#filter').click(function() {
-		let filt = document.querySelector('#filter');
-		let contain = (filt.classList.contains('collapsed'));
-		if (!(contain)) {
-			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 349px)");
-		} else if (contain) {
-			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
-		}
-		// let select = document.querySelector('.select2-container ');
-	})
-
-	$('#asset').on('change', function() {
-		let valArea = $('#location').val() ?? '';
-		let valUnit = $('#tag').val() ?? '';
-		let filter = v.table.columns(1).search($(this).val());
-		if (valArea != '' && valUnit != '') {
-			filter.columns(2).search(valArea).columns(3).search(valUnit);
-		}
-		filter.draw();
-	})
-
-	$('#location').on('change', function() {
-		let valCompany = $('#asset').val() ?? '';
-		let valUnit = $('#tag').val() ?? '';
-		var value = $(this).val();
-		let filter = v.table.columns(2).search(value);
-		if (valCompany != '' && valUnit != '') {
-			filter.columns(1).search(valCompany).columns(3).search(valUnit);
-		}
-		filter.draw();
-	})
-
-	$('#tag').on('change', function() {
-		let valCompany = $('#asset').val() ?? '';
-		let valArea = $('#location').val();
-		let filter = v.table.columns(3).search($(this).val());
-		if (valCompany != '' && valArea != '') {
-			filter.columns(1).search(valCompany).columns(2).search(valArea);
-		}
-		filter.draw();
-	})
-
-	$('#asset').select2({
-		theme: 'coreui',
-		placeholder: "Select Asset",
-		allowClear: true
-	})
-	$('#tag').select2({
-		theme: 'coreui',
-		placeholder: "Select Tag",
-		allowClear: true
-	})
-	$('#location').select2({
-		theme: 'coreui',
-		placeholder: "Select Location",
-		allowClear: true
-	})
 </script>
 <?= $this->endSection(); ?>

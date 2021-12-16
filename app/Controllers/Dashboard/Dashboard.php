@@ -7,6 +7,7 @@ use App\Models\AssetModel;
 use App\Models\ScheduleTrxModel;
 use App\Models\TagModel;
 use App\Models\TagLocationModel;
+use Exception;
 
 class Dashboard extends BaseController
 {
@@ -53,5 +54,31 @@ class Dashboard extends BaseController
 		$data['open'] = count($open);
 		$data['closed'] = count($closed);
 		return $this->template->render('Dashboard/index', $data);
+	}
+
+	public function getTagTagLoc()
+	{
+		try {
+			$tagModel = new TagModel();
+			$tagLocModel = new TagLocationModel();
+
+			$tagData = $tagModel->getAll(["userId" => $this->session->get("adminId")]);
+			$tagLocData = $tagLocModel->getAll(["userId" => $this->session->get("adminId")]);
+
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message' => 'Success Get Data',
+				'data' => [
+					'tagData' => $tagData,
+					'tagLocationData' => $tagLocData
+				]
+			), 200);
+		} catch (Exception $e){
+			return $this->response->setJSON(array(
+				'status' => 500,
+				'message' => $e->getMessage(),
+				'data' => []
+			), 500);
+		}
 	}
 }

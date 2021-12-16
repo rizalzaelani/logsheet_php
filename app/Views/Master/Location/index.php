@@ -26,7 +26,7 @@
                             <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
                             <a class="dropdown-item" target="_blank" href="<?= base_url('/Location/exportExcel'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="javascript:;" onclick="v.table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+                            <a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
                     </h5>
                 </div>
@@ -161,23 +161,19 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
-    const {
-        onMounted,
-        ref
-    } = Vue;
     let v = Vue.createApp({
         el: '#app',
         setup() {
-            var data = ref(null);
-            var modalLocation = ref('');
-            var table = ref(null);
-            var dataLocation = ref('');
-            var tableImport = ref("");
+            var data = Vue.ref(null);
+            var modalLocation = Vue.ref('');
+            var table = Vue.ref(null);
+            var dataLocation = Vue.ref('');
+            var tableImport = Vue.ref("");
 
-            getData = () => {
+            const getData = () => {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        table = await $('#tableLocation').DataTable({
+                        table.value = await $('#tableLocation').DataTable({
                             drawCallback: function(settings) {
                                 $(document).ready(function() {
                                     $('[data-toggle="tooltip"]').tooltip();
@@ -228,15 +224,18 @@
                 })
 
             };
-            handleAdd = () => {
+
+            const handleAdd = () => {
                 this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
                 this.modalLocation.show();
             };
-            uploadFile = () => {
+
+            const uploadFile = () => {
                 this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
                 this.modalLocation.show();
             };
-            insertLocation = () => {
+
+            const insertLocation = () => {
                 axios.post("<?= base_url('Location/insertLocation'); ?>", {
                     dataLocation: importList,
                     tagLocationId: uuidv4()
@@ -269,13 +268,14 @@
                     }
                 })
             }
-            onMounted(() => {
+
+            Vue.onMounted(() => {
                 getData();
                 let search = $(".dt-search-input input[data-target='#tableLocation']");
                 search.unbind().bind("keypress", function(e) {
                     if (e.which == 13 || e.keyCode == 13) {
                         let searchData = search.val();
-                        v.table.search(searchData).draw();
+                        table.value.search(searchData).draw();
                     }
                 });
 

@@ -36,18 +36,6 @@ class Asset extends BaseController
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
-		$assetModel			= new AssetModel();
-		$tagModel			= new TagModel();
-		$tagLocationModel	= new TagLocationModel();
-
-		$asset			= $assetModel->findColumn('assetName') ?? [];
-		$tag			= $tagModel->findColumn('tagName') ?? [];
-		$tagLocation	= $tagLocationModel->findColumn('tagLocationName') ?? [];
-
-		$data['asset']			= $asset;
-		$data['tag']			= $tag;
-		$data['tagLocation']	= $tagLocation;
-
 		$data['title'] = 'Asset';
 		$data['subtitle'] = 'Asset';
 		$data["breadcrumbs"] = [
@@ -84,13 +72,17 @@ class Asset extends BaseController
 		$order = array('createdAt' => 'desc');
 		$DTModel = new \App\Models\DatatableModel($table, $column_order, $column_search, $order);
 
-		$filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
-		$filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
 		$where = [
 			'userId' => $this->session->get("adminId"),
-			'deletedAt' => null,
-			// "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
+			'deletedAt' => null
 		];
+
+		$filtTag = $_POST["columns"][1]["search"]["value"] ?? '';
+		$filtLoc = $_POST["columns"][2]["search"]["value"] ?? '';
+		
+		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
+		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
+
 		$list = $DTModel->datatable($where);
 		$output = array(
 			"draw" => $request->getPost('draw'),
