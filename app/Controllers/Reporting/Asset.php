@@ -6,8 +6,6 @@ use App\Controllers\BaseController;
 use App\Models\AssetModel;
 use App\Models\ParameterModel;
 use App\Models\ScheduleTrxModel;
-use App\Models\TagLocationModel;
-use App\Models\TagModel;
 use App\Models\TransactionModel;
 
 class Asset extends BaseController
@@ -17,18 +15,6 @@ class Asset extends BaseController
 		if (!checkRoleList("REPORT.ASSET.VIEW")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
-
-		$assetModel			= new AssetModel();
-		$tagModel			= new TagModel();
-		$tagLocationModel	= new TagLocationModel();
-
-		$asset			= $assetModel->findColumn('assetName') ?? [];
-		$tag			= $tagModel->findColumn('tagName') ?? [];
-		$tagLocation	= $tagLocationModel->findColumn('tagLocationName') ?? [];
-
-		$data['asset']			= $asset;
-		$data['tag']			= $tag;
-		$data['tagLocation']	= $tagLocation;
 
 		$data['title'] = 'Reporting Asset';
 		$data['subtitle'] = 'List Equipment';
@@ -130,8 +116,8 @@ class Asset extends BaseController
 		$filtTag = $_POST["columns"][1]["search"]["value"] ?? '';
 		$filtLoc = $_POST["columns"][2]["search"]["value"] ?? '';
 		
-		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagName)"] = null;
-		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationName)"] = null;
+		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
+		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
 
 		$list = $DTModel->datatable($where);
 		$output = array(

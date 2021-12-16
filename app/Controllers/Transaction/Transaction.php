@@ -107,8 +107,8 @@ class Transaction extends BaseController
 		$filtLoc = $_POST["columns"][4]["search"]["value"] ?? '';
 		$filtStatus = $_POST["columns"][0]["search"]["value"] == '' ? 2 : $_POST["columns"][0]["search"]["value"];
 		
-		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagName)"] = null;
-		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationName)"] = null;
+		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
+		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
 		if($filtStatus == 0 || $filtStatus == 1) $where["approvedAt IS " . ($filtStatus == 1 ? 'NOT ' : '') . "NULL"] = null;
 
 		$list = $DTModel->datatable($where);

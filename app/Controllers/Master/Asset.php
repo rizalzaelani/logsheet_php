@@ -31,18 +31,6 @@ class Asset extends BaseController
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
-		$assetModel			= new AssetModel();
-		$tagModel			= new TagModel();
-		$tagLocationModel	= new TagLocationModel();
-
-		$asset			= $assetModel->findColumn('assetName') ?? [];
-		$tag			= $tagModel->findColumn('tagName') ?? [];
-		$tagLocation	= $tagLocationModel->findColumn('tagLocationName') ?? [];
-
-		$data['asset']			= $asset;
-		$data['tag']			= $tag;
-		$data['tagLocation']	= $tagLocation;
-
 		$data['title'] = 'Asset';
 		$data['subtitle'] = 'Asset';
 		$data["breadcrumbs"] = [
@@ -87,8 +75,8 @@ class Asset extends BaseController
 		$filtTag = $_POST["columns"][1]["search"]["value"] ?? '';
 		$filtLoc = $_POST["columns"][2]["search"]["value"] ?? '';
 		
-		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagName)"] = null;
-		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationName)"] = null;
+		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
+		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
 
 		$list = $DTModel->datatable($where);
 		$output = array(

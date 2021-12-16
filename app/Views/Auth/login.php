@@ -160,6 +160,13 @@
                                         title: 'Signed in successfully'
                                     });
 
+                                    // localStorage.removeItem("tagData");
+                                    // localStorage.removeItem("tagLocationData");
+
+                                    localStorage.setItem("tagLocExpire", moment().add("minutes", 30).valueOf());
+                                    localStorage.setItem("tagData", JSON.stringify(resData.data.tagData));
+                                    localStorage.setItem("tagLocationData", JSON.stringify(resData.data.tagLocationData));
+
                                     let urlParams = new URLSearchParams(window.location.search);
                                     let returnUrl = urlParams.get('ReturnUrl');
                                     if (returnUrl == null || returnUrl == "") {

@@ -132,8 +132,7 @@ const fireEvent = (element, event) => {
     }
 }
 
-function validateEmail(email) 
-{
+function validateEmail(email) {
     let re = /\S+@\S+\.\S+/;
     return re.test(email);
 }
@@ -205,25 +204,75 @@ function hideShowLoader() {
 
 // end loader
 
-$(() => {
-	$('#btnFiltDT').click(function() {
-		let filt = document.querySelector('#btnFiltDT');
-		let contain = (filt.classList.contains('collapsed'));
-		if (!(contain)) {
-			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 349px)");
-		} else if (contain) {
-			$(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
-		}
-	})
-    
+function setFiltDTTag() {
+    let tagData = JSON.parse(localStorage.getItem("tagData") ?? "[]");
+
+    let listOpt = '';
+    tagData.forEach((val) => {
+        listOpt += `<option value="${val.tagId}">${val.tagName}</option>`;
+    })
+    $('#filtDTTag').html(listOpt);
+
     $('#filtDTTag').select2({
         theme: 'coreui',
         placeholder: "Select Tag",
         allowClear: true
     })
+}
+
+function setFiltDTTagLoc() {
+    let tagLocationData = JSON.parse(localStorage.getItem("tagLocationData") ?? "[]");
+
+    let listOpt = '';
+    tagLocationData.forEach((val) => {
+        listOpt += `<option value="${val.tagLocationId}">${val.tagLocationName}</option>`;
+    })
+    $('#filtDTLoc').html(listOpt);
+
     $('#filtDTLoc').select2({
         theme: 'coreui',
         placeholder: "Select Location",
         allowClear: true
     })
+}
+
+async function getTagTagLoc() {
+    try {
+        await axios({
+            url: document.body.getAttribute("base-url") + "/service/getTagTagLoc",
+            method: 'GET'
+        }).then((res) => {
+            let resData = res.data;
+            localStorage.setItem("tagLocExpire", moment().add("minutes", 30).valueOf());
+            if (resData.status == 200 && (resData.data.tagData || resData.data.tagLocationData)) {
+                localStorage.setItem("tagData", JSON.stringify(resData.data.tagData));
+                localStorage.setItem("tagLocationData", JSON.stringify(resData.data.tagLocationData));
+            }
+        });
+    } catch (err) {
+        console.log(err)
+    }
+
+    setFiltDTTag();
+    setFiltDTTagLoc();
+}
+
+$(() => {
+    $('#btnFiltDT').click(function () {
+        let filt = document.querySelector('#btnFiltDT');
+        let contain = (filt.classList.contains('collapsed'));
+        if (!(contain)) {
+            $(".dataTables_scrollBody").css("max-height", "calc(100vh - 349px)");
+        } else if (contain) {
+            $(".dataTables_scrollBody").css("max-height", "calc(100vh - 272px)");
+        }
+    })
+
+    let expireTagLoc = parseInt(localStorage.getItem("tagLocExpire") ?? "0");
+    if (expireTagLoc < Date.now()) {
+        getTagTagLoc();
+    } else {
+        setFiltDTTag();
+        setFiltDTTagLoc();
+    }
 });

@@ -47,28 +47,28 @@ class Email extends BaseConfig
 	 *
 	 * @var string
 	 */
-	public $SMTPHost = 'mail.nocola.co.id';
+	public $SMTPHost = 'srv43.niagahoster.com';
 
 	/**
 	 * SMTP Username
 	 *
 	 * @var string
 	 */
-	public $SMTPUser = "andri@nocola.co.id";
+	public $SMTPUser = "logsheet-noreply@nocola.co.id";
 
 	/**
 	 * SMTP Password
 	 *
 	 * @var string
 	 */
-	public $SMTPPass = '$andri2k21ncl';
+	public $SMTPPass = '$logsheet2k21ncl';
 
 	/**
 	 * SMTP Port
 	 *
 	 * @var integer
 	 */
-	public $SMTPPort = 587;
+	public $SMTPPort = 465;
 
 	/**
 	 * SMTP Timeout (in seconds)

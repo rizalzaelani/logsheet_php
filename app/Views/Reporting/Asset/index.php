@@ -38,22 +38,12 @@
 				<div class="row mt-2 collapse" id="filterDT">
 					<div class="col-6">
 						<div class="form-group">
-							<select class="form-control bg-transparent select2-multiple w-100 location" name="location" id="filtDTLoc" multiple="multiple">
-								<option value="all">All</option>
-								<?php foreach ($tagLocation as $key) : ?>
-									<option value="<?= $key; ?>"><?= $key; ?></option>
-								<?php endforeach; ?>
-							</select>
+							<select class="form-control bg-transparent w-100" name="location" id="filtDTLoc" multiple="multiple"></select>
 						</div>
 					</div>
 					<div class="col-6">
 						<div class="form-group">
-							<select class="form-control bg-transparent select2-multiple w-100 tag" name="tag" id="filtDTTag" multiple="multiple">
-								<option value="all">All</option>
-								<?php foreach ($tag as $key) : ?>
-									<option value="<?= $key; ?>"><?= $key; ?></option>
-								<?php endforeach; ?>
-							</select>
+							<select class="form-control bg-transparent w-100" name="tag" id="filtDTTag" multiple="multiple"></select>
 						</div>
 					</div>
 				</div>

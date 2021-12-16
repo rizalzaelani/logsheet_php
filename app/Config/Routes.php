@@ -35,8 +35,8 @@ $routes->get('/', 'Auth/Login::index');
 $routes->get('/Login', 'Auth/Login::index');
 $routes->post('/Login/auth', 'Auth/Login::auth');
 $routes->get('/logout', 'Auth/Login::logout');
-$routes->get('/Login/testMail', 'Auth/Login::testMail');
-$routes->get('/Login/testTelegram', 'Auth/Login::testTelegram');
+$routes->get('/login/testMail', 'Auth/Login::testMail');
+$routes->get('/login/testTelegram', 'Auth/Login::testTelegram');
 $routes->get('/forgotPassword', 'Auth/Login::forgotPassword');
 $routes->post('/forgotPassword/sendMail', 'Auth/Login::sendMailForgotPassword');
 
@@ -49,7 +49,7 @@ $routes->add('/Wizard/Invoice/(:any)', 'Wizard\Wizard::invoice/$1');
 $routes->post('/Wizard/Invoice/download', 'Wizard/Wizard::download');
 
 $routes->get('/Dashboard', 'Dashboard/Dashboard::index');
-// $routes->get('/Dashboard', 'Dashboard/Dashboard::index');
+
 $routes->get('/Company', 'Master/Company::index');
 $routes->get('/AdminData', 'Master/AdminData::index');
 $routes->get('/Operation', 'Master/Operation::index');
@@ -206,6 +206,9 @@ $routes->get('/role/detail', 'UserRole/Role::detail');
 $routes->get('/role/groupList', 'UserRole/Role::groupList');
 $routes->get('/role/roleList', 'UserRole/Role::roleList');
 $routes->post('/role/saveGroup', 'UserRole/Role::saveGroup');
+
+$routes->get('/service/getTagTagLoc', 'Dashboard/Dashboard::getTagTagLoc');
+
 
 
 

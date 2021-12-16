@@ -25,7 +25,7 @@
     <?= $this->renderSection('customStyles'); ?>
 </head>
 
-<body class="c-app">
+<body class="c-app" base-url="<?= base_url(); ?>">
     <?= $this->include('Layout/Components/sidebar'); ?>
     <div class="c-wrapper">
         <?= $this->include('Layout/Components/header'); ?>

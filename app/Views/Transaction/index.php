@@ -30,13 +30,13 @@
 					<div class="col-sm-5">
 						<fieldset class="form-group">
 							<div class="" id="filterArea">
-								<select class="form-control bg-transparent select2-multiple w-100" name="filtDTTag" id="filtDTTag" multiple="multiple"></select>
+								<select class="form-control bg-transparent w-100" name="filtDTTag" id="filtDTTag" multiple="multiple"></select>
 							</div>
 						</fieldset>
 					</div>
 					<div class="col-sm-5">
 						<div class="form-group">
-							<select class="form-control bg-transparent select2-multiple w-100" name="filtDTLoc" id="filtDTLoc" multiple="multiple"></select>
+							<select class="form-control bg-transparent w-100" name="filtDTLoc" id="filtDTLoc" multiple="multiple"></select>
 						</div>
 					</div>
 					<div class="col-sm-2">

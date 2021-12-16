@@ -133,9 +133,10 @@
                                     submited.value = true;
 
                                 } else if (resData.status == 400) {
-                                    Toast.fire({
+                                    Swal.fire({
                                         icon: 'warning',
-                                        title: resData.message
+                                        title: "Bad Request",
+                                        text: resData.message
                                     });
                                 } else {
                                     Swal.fire({

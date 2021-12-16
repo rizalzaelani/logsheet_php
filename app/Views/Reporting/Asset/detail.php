@@ -179,11 +179,11 @@
                                                 <td class="text-center">{{ iGP + 1 }}</td>
                                             </template>
                                             <td class="text-center">
-                                                <input type="checkbox" :value="val.parameterId" class="check-param-trend" @change="checkParameterId(val.parameterId)" :checked="parameterIdSelect.includes(val.parameterId)" />
+                                                <input v-if="!val.option" type="checkbox" :value="val.parameterId" class="check-param-trend" @change="checkParameterId(val.parameterId)" :checked="parameterIdSelect.includes(val.parameterId)" />
                                             </td>
                                             <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
                                             <td>
-                                                <div class="chart-wrapper cursor-pointer" data-toggle="tooltip" title="Click To Open Trend">
+                                                <div v-if="!val.option" class="chart-wrapper cursor-pointer" data-toggle="tooltip" title="Click To Open Trend">
                                                     <div :id="'miniTrend-' + val.parameterId" style="width: 100px;height: 30px;" @click="showTrend(val.parameterId)"></div>
                                                 </div>
                                             </td>
