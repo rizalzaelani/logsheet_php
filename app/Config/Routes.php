@@ -207,11 +207,24 @@ $routes->get('/role/groupList', 'UserRole/Role::groupList');
 $routes->get('/role/roleList', 'UserRole/Role::roleList');
 $routes->post('/role/saveGroup', 'UserRole/Role::saveGroup');
 
-$routes->get('/service/getTagTagLoc', 'Dashboard/Dashboard::getTagTagLoc');
+$routes->get('/Subscription', 'Customers/Subscription::index');
+$routes->add('/Subscription/datatable', 'Customers/Subscription::datatable');
+$routes->post('/Subscription/update', 'Customers/Subscription::update');
+$routes->post('/Subscription/cancelUp', 'Customers/Subscription::cancelUp');
 
+$routes->get('/Subscription/upgrade', 'Customers/Subscription::upgrade');
+$routes->post('/invoiceUpgrade', 'Customers/Subscription::invoiceUpgrade');
+$routes->get('/Subscription/invoice/(:any)', 'Customers\Subscription::invoice/$1');
+$routes->post('/Subscription/downloadInvoice', 'Customers\Subscription::downloadInvoice');
 
+$routes->get('/Subscription/renew', 'Customers/Subscription::renew');
+$routes->post('/invoiceRenew', 'Customers/Subscription::invoiceRenew');
 
-
+$routes->get('/CustomersTransaction', 'Customers/CustomersTransaction::index');
+$routes->add('/CustomersTransaction/datatable', 'Customers/CustomersTransaction::datatable');
+$routes->get('/Invoice/detail/(:any)', 'Customers\CustomersTransaction::detail/$1');
+$routes->post('/CustomersTransaction/approve', 'Customers/CustomersTransaction::approve');
+$routes->post('/CustomersTransaction/delete', 'Customers/CustomersTransaction::delete');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

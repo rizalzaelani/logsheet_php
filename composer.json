@@ -12,7 +12,7 @@
 		"dompdf/dompdf": "^1.0",
 		"firebase/php-jwt": "^5.4",
 		"pear/http_request2": "^2.5",
-		"telegram-bot/api": "^2.3",
+		"influxdb/influxdb-php": "^1.15",
 		"influxdata/influxdb-client-php": "^2.4"
 	},
 	"require-dev": {

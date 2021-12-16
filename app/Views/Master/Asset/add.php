@@ -28,7 +28,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     <h5>
                         <?= $title; ?>
                     </h5>
-                    <a class="btn btn-sm btn-success" href="<?= base_url('Asset'); ?>"><i class="fa fa-arrow-left"></i> Back</a>
+                    <!-- <a class="btn btn-sm btn-success" href="<?= base_url('Asset'); ?>"><i class="fa fa-arrow-left"></i> Back</a> -->
+                    <h5 class="header-icon">
+                        <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                    </h5>
                 </div>
                 <div class="form-group mt-3">
                     <form method="post" enctype="multipart/form-data">
@@ -933,54 +936,54 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                 <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr> -->
-                            <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
-                                <template v-for="(val, key) in valGP">
-                                    <template v-if="key == 0 & keyGP != val.parameterName">
-                                            <tr>
-                                                <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
-                                                <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
-                                            </tr>
-                                    </template>
-                                        <tr>
-                                            <template v-if="key == 0 && keyGP == val.parameterName">
-                                                <td class="text-center">{{ iGP + 1 }}</td>
-                                            </template>
-                                            <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
-                                            <td>{{ val.description }}</td>
-                                            <template v-if="!val.option">
-                                                <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" :val.min + ' - ' + val.max }}</td>
-                                                <td>{{ !val.min ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
-                                                <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.uom ? "(Empty)" :val.uom }}</td>
-                                            </template>
-                                            <template v-else>
-                                                <td :class="!val.abnormal ? 'font-italic text-center' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
-                                                <td :class="!val.normal ? 'font-italic text-center' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
-                                                <td :class="!val.option ? 'font-italic text-center' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
-                                            </template>
-                                            <template v-if="val.uom != ''">
-                                                <td>
-                                                    {{ val.uom }}
-                                                </td>
-                                            </template>
-                                            <template  v-else-if="val.option != ''">
-                                                <td>
-                                                    {{ val.option }}
-                                                </td>
-                                            </template>
-                                            <template  v-else>
-                                                <td>
-                                                </td>
-                                            </template>
-                                            <td>
-                                                <i class="text-success"><span class="badge badge-success text-white"><i>New!</i></span></i>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key); checkModalAdd = false"><i class="fa fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key)"><i class="fa fa-trash"></i></button>
-                                            </td>
-                                        </tr>
+                        <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
+                            <template v-for="(val, key) in valGP">
+                                <template v-if="key == 0 & keyGP != val.parameterName">
+                                    <tr>
+                                        <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
+                                        <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
+                                    </tr>
                                 </template>
+                                <tr>
+                                    <template v-if="key == 0 && keyGP == val.parameterName">
+                                        <td class="text-center">{{ iGP + 1 }}</td>
+                                    </template>
+                                    <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
+                                    <td>{{ val.description }}</td>
+                                    <template v-if="!val.option && val.inputType == 'input'">
+                                        <td v-if="!val.option" :class="!val.max ? 'font-italic' : ''">{{ !val.max ? "(Empty)" : val.min + ' - ' + val.max }}</td>
+                                        <td>{{ val.min == null ? "(Empty)" : 'x < ' + val.min + '; x > ' + val.max }}</td>
+                                        <td v-if="!val.option" :class="!val.uom ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.uom ? "(Empty)" :val.uom }}</td>
+                                    </template>
+                                    <template v-else>
+                                        <td :class="!val.abnormal ? 'font-italic' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
+                                        <td :class="!val.normal ? 'font-italic' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                        <td :class="!val.option ? 'font-italic' : ''" style="max-width: 160px;">{{ !val.option ? "(Empty)" :val.option }}</td>
+                                    </template>
+                                    <template v-if="val.uom != ''">
+                                        <td>
+                                            {{ val.uom }}
+                                        </td>
+                                    </template>
+                                    <template v-else-if="val.option != ''">
+                                        <td>
+                                            {{ val.option }}
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td>
+                                        </td>
+                                    </template>
+                                    <td>
+                                        <i class="text-success"><span class="badge badge-success text-white"><i>New!</i></span></i>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key); checkModalAdd = false"><i class="fa fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key)"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
                             </template>
+                        </template>
                     </tbody>
                 </table>
             </div>
@@ -1019,6 +1022,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 assetId: uuidv4(),
                 assetName: '',
                 assetNumber: '',
+                photo: '',
                 description: '',
                 descriptionJson: [],
                 assetStatusId: '',
@@ -1034,6 +1038,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 tagId: [],
                 tagLocationId: [],
             });
+            var assetPhoto = ref("");
             var assetTagging = reactive([{
                     assetId: assetData.assetId,
                     assetTaggingId: uuidv4(),
@@ -1209,7 +1214,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function addTempParameter() {
-                let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                 let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                 let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                 let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -1231,7 +1236,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1273,7 +1278,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -1315,7 +1320,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1357,7 +1362,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -1577,7 +1582,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     pond.on('removefile', (error, file) => {
                         v.paramPhoto = ref("");
                     })
-                }else{
+                } else {
                     const inputElement = document.querySelector('#photoParam');
                     var photoEdit2 = {
                         acceptedFileTypes: ['image/png', 'image/jpeg'],
@@ -1660,7 +1665,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function updateTempParameter() {
-                let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                 let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                 let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                 let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -1689,7 +1694,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1731,7 +1736,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -1773,7 +1778,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     //remove invalid class
                     // input type
                     if (this.param.inputType == 'input') {
-                        if (this.param.min != "" || this.param.min != null) {
+                        if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
                         if (this.param.max != "" || this.param.max != null) {
@@ -1815,7 +1820,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         $('.type').addClass('is-invalid');
                     }
                     if (this.param.inputType == 'input') {
-                        if (this.param.min == "" || this.param.min == null) {
+                        if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
                         if (this.param.max == "" || this.param.max == null) {
@@ -2731,9 +2736,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     }
                     let formdata = new FormData();
                     // asset
+                    this.assetData.photo = this.assetPhoto;
                     formdata.append('assetId', this.assetData.assetId);
                     formdata.append('assetName', this.assetData.assetName);
                     formdata.append('assetNumber', this.assetData.assetNumber);
+                    formdata.append('photo', this.assetData.photo);
                     formdata.append('latitude', this.assetLatitude);
                     formdata.append('longitude', this.assetLongitude);
                     formdata.append('schManual', this.assetData.schManual);
@@ -2884,11 +2891,32 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     v.paramPhoto = ref("");
                 })
 
+                let assetPhoto = {
+                    acceptedFileTypes: ['image/png', 'image/jpeg'],
+                    allowImagePreview: true,
+                    imagePreviewMaxHeight: 200,
+                    allowImageCrop: true,
+                    allowMultiple: false,
+                    credits: false,
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                };
+                let assetPhoto1 = FilePond.create(document.querySelector('#logo'), assetPhoto);
+                assetPhoto1.on('addfile', (error, file) => {
+                    v.assetPhoto = file.file
+                })
+                assetPhoto1.on('removefile', (error, file) => {
+                    v.assetPhoto = ref("");
+                })
+
 
             });
             return {
                 checkModalAdd,
                 assetData,
+                assetPhoto,
                 setSch,
                 selectedSchWeekly,
                 selectedSchMonthlyDays,
@@ -3282,23 +3310,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         dropdownParent: $('#addParameterModal'),
     });
 
-    // filepond
-    $(document).ready(function() {
-        FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
-        let pond = $('#logo').filepond({
-            acceptedFileTypes: ['image/png', 'image/jpeg'],
-            allowImagePreview: true,
-            imagePreviewMaxHeight: 200,
-            allowImageCrop: true,
-            allowMultiple: false,
-            credits: false,
-            styleLoadIndicatorPosition: 'center bottom',
-            styleProgressIndicatorPosition: 'right bottom',
-            styleButtonRemoveItemPosition: 'left bottom',
-            styleButtonProcessItemPosition: 'right bottom',
-        });
-    })
-
     var loadListImport = (importList) => {
         var table = $('#tableImport').DataTable({
             drawCallback: function(settings) {
@@ -3359,50 +3370,54 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             dom: `<"d-flex justify-content-between align-items-center"<i><f>>t`,
             data: importList,
             columns: [{
-                        data: "no"
-                    },
-                    {
-                        data: "parameterName"
-                    },
-                    {
-                        data: "description"
-                    },
-                    {
-                        data: "max",
-                        render: function(type, data, row, meta){
-                            if (row.max != '') {
-                                if (row.flipMax && row.flipMin) {
-                                    return '<div>'+row.min + ' - ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
-                                }
-                                return row.min + ' - ' + row.max
-                            }else{
-                                return row.normal
+                    data: "no"
+                },
+                {
+                    data: "parameterName"
+                },
+                {
+                    data: "description"
+                },
+                {
+                    data: "max",
+                    render: function(type, data, row, meta) {
+                        if (row.max != null && row.inputType == 'input') {
+                            if (row.flipMax && row.flipMin) {
+                                return '<div>' + row.min + ' - ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                             }
+                            return row.min + ' - ' + row.max
+                        } else if (row.inputType == 'select' && row.normal != '') {
+                            return row.normal
+                        } else {
+                            return '-';
                         }
-                    },
-                    {
-                        data: "min",
-                        render: function(type, data, row, meta){
-                            if (row.min != '') {
-                                if (row.flipMax && row.flipMin) {
-                                    return '<div>x < ' + row.min + '; x > ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
-                                }
-                                return 'x < ' + row.min + '; x > ' + row.max
-                            }else{
-                                return row.abnormal
-                            }
-                        }
-                    },
-                    {
-                        data: "uom"
-                    },
-                    {
-                        data: "option"
-                    },
-                    {
-                        data: "showOn"
                     }
-                ],
+                },
+                {
+                    data: "min",
+                    render: function(type, data, row, meta) {
+                        if (row.min != null && row.inputType == 'input') {
+                            if (row.flipMax && row.flipMin) {
+                                return '<div>x < ' + row.min + '; x > ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
+                            }
+                            return 'x < ' + row.min + '; x > ' + row.max
+                        } else if (row.inputType == 'select' && row.abnormal != '') {
+                            return row.abnormal
+                        } else {
+                            return '-';
+                        }
+                    }
+                },
+                {
+                    data: "uom"
+                },
+                {
+                    data: "option"
+                },
+                {
+                    data: "showOn"
+                }
+            ],
             columnDefs: [{
                 targets: 0,
                 searchable: false,

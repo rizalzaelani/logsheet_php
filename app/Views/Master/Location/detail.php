@@ -21,7 +21,7 @@
                 <div class="d-flex justify-content-between mb-1">
                     <h4><?= $title ?></h4>
                     <h5 class="header-icon">
-                        <a href="<?= base_url('Location'); ?>" class="btn btn-sm btn-success"><i class="fa fa-arrow-left"></i> Back</a>
+                        <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
                     </h5>
                 </div>
                 <div class="row mt-2">
@@ -60,13 +60,13 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-12 d-flex justify-content-end align-items-center">
-                                <button class="btn btn-sm btn-outline-primary mr-1" type="button" @click="editLocation()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
-                                <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="cancelEditLocation()" id="btnCancelEdit"><i class="fa fa-times"></i> Cancel</button>
+                                <button class="btn btn-md btn-primary mr-1" type="button" @click="editLocation()" id="btnEdit"><i class="fa fa-edit"></i> Edit</button>
+                                <button style="display: none;" class="btn btn-md btn-secondary mr-1" type="button" @click="cancelEditLocation()" id="btnCancelEdit"><i class="fa fa-times"></i> Cancel</button>
                                 <?php if (checkRoleList("MASTER.TAGLOCATION.DELETE")) : ?>
-                                    <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="deleteLocation()" id="btnDelete"><i class="fa fa-trash"></i> Delete</button>
+                                    <button style="display: none;" class="btn btn-md btn-danger mr-1" type="button" @click="deleteLocation()" id="btnDelete"><i class="fa fa-trash"></i> Delete</button>
                                 <?php endif; ?>
                                 <?php if (checkRoleList("MASTER.TAGLOCATION.UPDATE")) : ?>
-                                    <button style="display: none;" class="btn btn-sm btn-outline-primary mr-1" type="button" @click="saveEditLocation()" id="btnSaveEdit"><i class="fa fa-save"></i> Save</button>
+                                    <button style="display: none;" class="btn btn-md btn-success mr-1" type="button" @click="saveEditLocation()" id="btnSaveEdit"><i class="fa fa-save"></i> Save</button>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -123,26 +123,26 @@
                         description: this.tagLocation.description
                     }).then(res => {
                         if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
+                            // const swalWithBootstrapButtons = swal.mixin({
+                            //     customClass: {
+                            //         confirmButton: 'btn btn-success mr-1',
+                            //     },
+                            //     buttonsStyling: false
+                            // })
+                            swal.fire({
+                                title: res.data.message,
                                 icon: 'success'
                             }).then(okay => {
                                 if (okay) {
                                     swal.fire({
                                         title: 'Please Wait!',
-                                        text: 'Reloading page..',
+                                        text: 'Redirecting Page',
                                         onOpen: function() {
                                             swal.showLoading()
                                         }
                                     })
-                                    location.reload();
+                                    // location.reload();
+                                    window.location.href = "<?= base_url('Location/'); ?>";
                                 }
                             })
                         }
@@ -188,7 +188,7 @@
                                                     swal.showLoading()
                                                 }
                                             })
-                                            window.tagLocation.href = "<?= base_url('Location/'); ?>";
+                                            window.location.href = "<?= base_url('Location/'); ?>";
                                         }
                                     })
                                 }
@@ -203,6 +203,8 @@
                 myModal,
                 editLocation,
                 cancelEditLocation,
+                saveEditLocation,
+                deleteLocation
                 <?php (checkRoleList("MASTER.TAGLOCATION.UPDATE") ? "saveEditLocation," : ""); ?>
                 <?php (checkRoleList("MASTER.TAGLOCATION.DELETE") ? "deleteLocation," : ""); ?>
             };

@@ -19,7 +19,7 @@ class PackageModel extends Model
 
     public function getById($packageId)
     {
-        return $this->builder('tblm_package')->where($this->primaryKey, $packageId)->get()->getRowArray();
+        return $this->builder('tblm_package')->where($this->primaryKey, $packageId)->get()->getResultArray();
     }
 
     public function getByName(array $where = null)
@@ -31,9 +31,12 @@ class PackageModel extends Model
 
         return $query->get()->getResultArray();
     }
-    public function getAllPackage()
+    public function getAllPackage(array $where = null)
     {
         $query = $this->builder("vw_package");
+        if ($where != null) {
+            $query = $query->where($where);
+        }
         return $query->get()->getResultArray();
     }
 }

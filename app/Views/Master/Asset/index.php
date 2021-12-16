@@ -29,7 +29,7 @@
 							<a class="dropdown-item" href="<?= base_url('/Asset/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Asset</a>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
-							<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
+							<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>" target="_blank"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>

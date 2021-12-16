@@ -12,6 +12,7 @@
         vertical-align: middle !important;
         text-align: left;
     }
+
     .modal-fs {
         width: 100%;
         max-width: 100%;
@@ -21,7 +22,15 @@
 
     .modal-fs .modal-content {
         min-height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5) !important;
+        background-color: rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .new {
+        background-color: #DFFFE6 !important;
+    }
+
+    .old {
+        background-color: #FFE6DF !important;
     }
 </style>
 <?= $this->endSection(); ?>
@@ -37,6 +46,36 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'Last');
 $session = \Config\Services::session();
 $sess = $session->get('adminId');
+$new = [
+    'assetName'     => 'APAR X01',
+    'assetNumber'   => 'xapar01',
+    'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
+    'description'   => 'Description',
+    'schManual'     => '0',
+    'schType'       => 'Weekly',
+    'schFrequency'  => '1',
+    'schWeeks'      => '',
+    'schWeekDays'   => 'Su,Mo',
+    'schDays'       => '',
+    'assetStatusName' => 'Running',
+    'tagName'       => 'APAR,UNIT',
+    'tagLocationName' => 'Ashilo,AREA X - 1A'
+];
+$old = [
+    'assetName'     => 'APAR X01',
+    'assetNumber'   => 'xaparx01',
+    'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
+    'description'   => 'Description Apar x01',
+    'schManual'     => '0',
+    'schType'       => 'Weekly',
+    'schFrequency'  => '1',
+    'schWeeks'      => '',
+    'schWeekDays'   => 'Su,Mo,Tu',
+    'schDays'       => '',
+    'assetStatusName' => 'Running',
+    'tagName'       => 'APAR,UNIT,Segitiga Apar',
+    'tagLocationName' => 'Ashilo'
+];
 ?>
 <div class="row" id="app">
     <div class="col-12">
@@ -47,17 +86,20 @@ $sess = $session->get('adminId');
                         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" id="detail_tab" @click="checkTabDetail = true;  checkTabParameter = false;  checkTabSetting = false;">
                                 <svg class="c-icon">
                                     <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-list-rich"></use>
-                                </svg> Detail <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read equipment data, edit, and delete the data. And also you can read the log of changes that have occurred to the equipment data.</div>"></i></a></li>
+                                </svg> Detail <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Contains brief data about assets. You can view asset data and data change log.</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="parameter_tab" @click="checkTabDetail = false;  checkTabParameter = true;  checkTabSetting = false;">
                                 <svg class="c-icon">
                                     <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
-                                </svg> Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read the parameter data of an equipment</div>"></i></a></li>
+                                </svg> Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Contains parameter data of an asset. You can set the order of the parameters for the assets you own.</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" id="setting_tab" @click="checkTabDetail = false;  checkTabParameter = false;  checkTabSetting = true;">
                                 <svg class="c-icon">
                                     <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
-                                </svg> Setting <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>In this tab, you can change the settings on an equipment</div>"></i></a></li>
+                                </svg> Setting <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Contains all data from assets. You can change all the data about the assets you own.</div>"></i></a></li>
                         <li class="nav-item ml-auto">
-                            <a href="<?= base_url('/Asset'); ?>" class="btn btn-sm btn-success" style="display: flex;"><i class="fa fa-arrow-left"></i> Back</a>
+                            <h5 class="header-icon">
+                                <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                            </h5>
+                            <!-- <a href="<?= base_url('/Asset'); ?>" class="btn btn-sm btn-success" style="display: flex;"><i class="fa fa-arrow-left"></i> Back</a> -->
                         </li>
                     </ul>
                 </div>
@@ -115,9 +157,13 @@ $sess = $session->get('adminId');
                                     </template>
                                 </table>
                             </div>
-                            <div class="col-md-6 imgMap">
-                                <img src="<?= base_url() ?>/img/logo-act.png" alt="Image" class="img-thumbnail mt-1 m-0">
-                                <div class="mt-1" id="mapDetail" style="width: 100% !important; height: 170px; display: none"></div>
+                            <div class="col-md-6 d-flex justify-content-center align-items-center imgMap">
+                                <img src="<?= base_url() ?>/img/img-alt.png" alt="Image" :class="assetData.photo == null || assetData.photo == '' ? 'mt-1 m-0' :'d-none'" style="width: 200px !important; height: 200px !important;">
+                                <!-- <div :class="((assetData.photo == null || assetData.photo == '') ? 'd-none' : '')">
+                                </div>
+                                <div :class="((assetData.photo != null && assetData.photo != '') ? '' : 'd-none')">
+                                    </div> -->
+                                <img onclick="modalImgAsset()" :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important; cursor: pointer;">
                             </div>
                         </div>
                     </div>
@@ -154,9 +200,9 @@ $sess = $session->get('adminId');
                                             <td><?= $key['parameterName']; ?></td>
                                             <td><?= $key['description']; ?></td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['max'] != '' && $key['max'] != '' && $key['max'] != '0') {
+                                                <?php if ($key['max'] != '' && $key['max'] != null && $key['inputType'] == 'input') {
                                                     echo $key['min'] . ' - ' . $key['max'];
-                                                } else if ($key['normal'] != '') {
+                                                } else if ($key['normal'] != '' && $key['inputType'] == 'select') {
                                                     echo $key['normal'];
                                                 } else {
                                                     echo '<i>-</i>';
@@ -164,9 +210,9 @@ $sess = $session->get('adminId');
                                                 ?>
                                             </td>
                                             <td style="max-width: 150px !important">
-                                                <?php if ($key['min'] != '' && $key['min'] != '' && $key['min'] != '0') {
+                                                <?php if ($key['min'] != '' && $key['min'] != null && $key['inputType'] == 'input') {
                                                     echo 'x < ' . $key['min'] . '; x > ' . $key['max'];
-                                                } else if ($key['abnormal'] != '') {
+                                                } else if ($key['abnormal'] != '' && $key['inputType'] == 'select') {
                                                     echo $key['abnormal'];
                                                 } else {
                                                     echo '<i>-</i>';
@@ -268,7 +314,12 @@ $sess = $session->get('adminId');
                             <div class="col-md-6 h-100">
                                 <div class="valueDefault w-100">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <img src="<?= base_url() ?>/img/logo-act.png" alt="Image" class="img-thumbnail">
+                                        <img src="<?= base_url() ?>/img/img-alt.png" alt="Image" :class="assetData.photo == null || assetData.photo == '' ? 'mt-1 m-0' : 'd-none'" style="width: 200px !important; height: 200px !important;">
+                                        <!-- <div :class="((assetData.photo == null || assetData.photo == '') ? 'd-none' : '')">
+                                        </div> -->
+                                        <!-- <div :class="((assetData.photo != null && assetData.photo != '') ? '' : 'd-none')">
+                                            </div> -->
+                                        <img :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important;">
                                     </div>
                                 </div>
                                 <div>
@@ -276,6 +327,15 @@ $sess = $session->get('adminId');
                                         <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" id="logo" accept="image/png, image/jpeg, image/gif" />
                                     </div>
                                 </div>
+                                <template v-if="assetData.photo != null && assetData.photo != ''">
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <label class="ml-1 c-switch c-switch-pill c-switch-label c-switch-opposite-danger m-0">
+                                            <input type="checkbox" id="deleteAssetPhoto" name="deleteAssetPhoto" class="c-switch-input" @change="deleteAssetPhoto = $event.target.checked">
+                                            <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                        </label>
+                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="If asset photo exist, you can turn switch button to delete the photo."></i></label>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -297,7 +357,7 @@ $sess = $session->get('adminId');
                                     <div class="form-group">
                                         <form method="post" enctype="multipart/form-data">
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="parameter">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="parameter"></i></label>
+                                                <label class="col-sm-3" for="parameter">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for your parameter."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <input type="text" class="form-control parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameterName" :required="true">
                                                     <div class="invalid-feedback">
@@ -306,7 +366,7 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
+                                                <label class="col-sm-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Type input for your parameter."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control type" name="type" placeholder="Select Type">
                                                         <option value="" selected disabled>Select Type</option>
@@ -321,21 +381,21 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
+                                                <label class="col-sm-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Min value when input type is 'input'."></i></label>
                                                 <input type="number" class="form-control col-sm-9 min" name="min" placeholder="Min Value" v-model="param.min">
                                                 <div class="invalid-feedback">
                                                     Field cannot be empty.
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
+                                                <label class="col-sm-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Max value when input type is 'input'"></i></label>
                                                 <input type="number" class="form-control col-sm-9 max" name="max" placeholder="Max Value" v-model="param.max">
                                                 <div class="invalid-feedback">
                                                     Field cannot be empty.
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
+                                                <label class="col-sm-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Normal value when input type is 'select'"></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple></select>
                                                     <div class="invalid-feedback">
@@ -344,7 +404,7 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
+                                                <label class="col-sm-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Abormal value when input type is 'select'"></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple></select>
                                                     <div class="invalid-feedback">
@@ -353,14 +413,14 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div :class="((param.inputType == 'input') || (param.inputType == 'select') ? 'row mb-3' : 'd-none')">
-                                                <label class="col-sm-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
+                                                <label class="col-sm-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Unit Of Measure of your parameter."></i></label>
                                                 <input type="text" class="form-control col-sm-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
                                                 <div class="invalid-feedback">
                                                     Field cannot be empty.
                                                 </div>
                                             </div>
                                             <div :class="((param.inputType == 'select') || (param.inputType == 'checkbox') ? 'row mb-3' : 'd-none')">
-                                                <label class="col-sm-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
+                                                <label class="col-sm-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Option value for your parameter."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
                                                     <div class="invalid-feedback">
@@ -369,7 +429,7 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
+                                                <label class="col-sm-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Status parameter you have."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control showOn" name="showOn" id="showOn" multiple>
                                                         <option value="Running">Running</option>
@@ -382,11 +442,11 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
+                                                <label class="col-sm-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description of parameter."></i></label>
                                                 <textarea class="form-control col-sm-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
+                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Image of parameter."></i></label>
                                                 <div class="col-9 p-0">
                                                     <input type="file" class="filepond mt-2 mb-2 w-100" name="photoParam" id="photoParam" />
                                                 </div>
@@ -401,7 +461,7 @@ $sess = $session->get('adminId');
                                                             <input type="checkbox" id="deletePhoto" name="deletePhoto" class="c-switch-input" @change="deletePhoto = $event.target.checked">
                                                             <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                                         </label>
-                                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="if parameter photo exist, you can turn on witch button to delete the photo"></i></label>
+                                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="If parameter photo exist, you can turn switch button to delete the photo."></i></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -581,8 +641,8 @@ $sess = $session->get('adminId');
                     </div>
                 </div>
 
-                <!-- modal preview location -->
-                <div class="modal fade" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true"  >
+                <!-- modal preview image -->
+                <div class="modal fade pr-0" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
                     <div class="modal-dialog modal-fs" role="document">
                         <div class="modal-content">
                             <div class="d-flex justify-content-end p-3">
@@ -598,6 +658,123 @@ $sess = $session->get('adminId');
                         </div>
                     </div>
                 </div>
+                <!-- modal preview change -->
+                <div class="modal fade pr-0" id="modalChange" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTagTitle">Detail Change Log</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mt-2">
+                                    <h6>Changes On March 12, 2021 by <b class="text-info">Rizal Zaelani</b></h6>
+                                </div>
+                                <div class="mt-4">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Property Name</th>
+                                                <th>Old Value</th>
+                                                <th>New Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php $length = count($old);
+                                            foreach ($old as $key => $val) : ?>
+                                                <?php
+                                                if ($val == $new[$key]) { ?>
+                                                    <tr>
+                                                        <td><?= $key ?></td>
+                                                        <td style="max-width: 200px !important" class="new"><?= $val ?></td>
+                                                        <td style="max-width: 200px !important" class="new"><?= $new[$key] ?></td>
+                                                    </tr>
+                                                <?php } else { ?>
+                                                    <tr>
+                                                        <td><?= $key ?></td>
+                                                        <td style="max-width: 200px !important" class="old"><?= $val ?></td>
+                                                        <td style="max-width: 200px !important" class="old"><?= $new[$key] ?></td>
+                                                    </tr>
+                                                <?php } ?>
+                                            <?php endforeach; ?>
+                                            <!-- <tr>
+                                                <td>Asset Name</td>
+                                                <td class="old">Apar</td>
+                                                <td class="new">Apar New</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Asset Number</td>
+                                                <td>xapar001</td>
+                                                <td>xapar002</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Photo</td>
+                                                <td>xapar001</td>
+                                                <td>xapar002</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Description</td>
+                                                <td>Description</td>
+                                                <td>Description xapar002</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Manual</td>
+                                                <td>0</td>
+                                                <td>0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Type</td>
+                                                <td>Weekly</td>
+                                                <td>Weekly</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Frequency</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Weeks</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Weekdays</td>
+                                                <td>Su,Mo</td>
+                                                <td>Su,Mo,Tu</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Days</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Asset Status</td>
+                                                <td>Running</td>
+                                                <td>Running</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tag</td>
+                                                <td>APAR</td>
+                                                <td>APAR,UNIT</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tag Location</td>
+                                                <td>Ashilo</td>
+                                                <td>Ashilo,SR 2 - Elektrik</td>
+                                            </tr> -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -608,28 +785,22 @@ $sess = $session->get('adminId');
                     <h5><b>Change Log</b></h5>
                 </div>
                 <div class="table-responsive w-100 mt-2 col-12">
-                    <table class="table table-hover">
+                    <table class="table table-hover nowrap">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Date</th>
-                                <th>Asset</th>
-                                <th>Number</th>
-                                <th>Tag</th>
-                                <th>Location</th>
-                                <th>Frequency</th>
-                                <th>Description</th>
+                                <th>Activity</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php for ($i = 1; $i < 6; $i++) { ?>
                                 <tr>
                                     <td>13-02-2021 12.30.00</td>
-                                    <td>log asset</td>
-                                    <td>log number</td>
-                                    <td>log tag</td>
-                                    <td>log location</td>
-                                    <td>log frequency</td>
-                                    <td>log description</td>
+                                    <td>Update Asset</td>
+                                    <td>
+                                        <button @click="modalChange()" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>
+                                    </td>
                                 </tr>
                             <?php } ?>
                         </tbody>
@@ -1094,7 +1265,7 @@ $sess = $session->get('adminId');
                 <table class="table table-hover w-100 display nowrap" id="tableParameter">
                     <thead class="bg-primary">
                         <tr>
-                            <th>#</th>
+                            <!-- <th>#</th> -->
                             <th>Parameter</th>
                             <th>Description</th>
                             <th>Normal</th>
@@ -1106,22 +1277,22 @@ $sess = $session->get('adminId');
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr v-for="(items, i) in params" :key="i">
+                        <tr v-for="(items, i) in params" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
+                            <td v-if="items.max != null && items.inputType == 'input'">
                                 {{ items.min + ' - ' + items.max }}
                             </td>
-                            <td v-else-if="items.normal != ''" style="max-height: 150px !important;">
+                            <td v-else-if="items.normal != '' && items.inputType == 'select'" style="max-height: 150px !important;">
                                 {{ items.normal }}
                             </td>
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
+                            <td v-if="items.min != null && items.inputType == 'input'">
                                 {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
-                            <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.abnormal != '' && items.inputType == 'select'" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
                             <td v-else>
@@ -1146,19 +1317,19 @@ $sess = $session->get('adminId');
                         <tr v-for="(items, i) in parameter" :key="i">
                             <td>{{ items.parameterName}}</td>
                             <td>{{ items.description}}</td>
-                            <td v-if="items.max != null && items.max != '' && items.max != '0'">
+                            <td v-if="items.max != null && items.max != '' && items.inputType == 'input'">
                                 {{ items.min + ' - ' + items.max }}
                             </td>
-                            <td v-else-if="items.normal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.normal != '' && items.inputType == 'select'" style="max-width: 150px !important">
                                 {{ items.normal }}
                             </td>
                             <td v-else>
                                 <i>-</i>
                             </td>
-                            <td v-if="items.min != null && items.min != '' && items.min != '0'">
+                            <td v-if="items.min != null && items.min != '' && items.inputType == 'input'">
                                 {{ 'x < ' + items.min + '; x > ' + items.max }}
                             </td>
-                            <td v-else-if="items.abnormal != ''" style="max-width: 150px !important">
+                            <td v-else-if="items.abnormal != '' && items.inputType == 'select'" style="max-width: 150px !important">
                                 {{ items.abnormal }}
                             </td>
                             <td v-else>
@@ -1177,14 +1348,14 @@ $sess = $session->get('adminId');
                             <td v-if="items.status == 'old'">
                                 <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
                             </td>
-                            <td v-else>
+                            <td v-else-if="items.status == 'updated'">
                                 <i class="text-warning"><span class="badge badge-warning text-white">Updated</span></i>
                             </td>
                             <td style="min-width: 90px !important">
                                 <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(i); checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(i)"><i class="fa fa-trash"></i></button>
                             </td>
-                        </tr> -->
+                        </tr>
                         <!-- <template v-if="tempParameterGroupData != ''" v-for="(valGP, keyGP, iGP) in tempParameterGroupData">
                                 <template v-for="(val, key) in valGP">
                                     <template v-if="key == 0 & keyGP != val.parameterName">
@@ -1235,18 +1406,18 @@ $sess = $session->get('adminId');
                                         </tr>
                                 </template>
                             </template> -->
-                        <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
+                        <!-- <template v-for="(valGP, keyGP, iGP) in parameterGroupData">
                                 <template v-for="(val, key) in valGP">
                                     <template v-if="key == 0 & keyGP != val.parameterName">
                                         <tr>
-                                            <!-- <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td> -->
+                                            <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">{{ iGP+1 }}</td>
                                             <td :rowspan="valGP.length + 1" class="text-center" style="vertical-align: text-top!important;">#</td>
                                             <th :colspan="8">{{ keyGP.replace(/#$/, "") }}</th>
                                         </tr>
                                     </template>
                                     <tr>
                                         <template v-if="key == 0 & keyGP == val.parameterName">
-                                            <!-- <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td> -->
+                                            <td style="vertical-align: text-top !important;">{{ iGP + 1 }}</td>
                                             <td style="vertical-align: text-top !important;">#</td>
                                         </template>
                                         <td>{{ (val.parameterName.includes("#") ? val.parameterName.replace(keyGP, "") : val.parameterName) }}</td>
@@ -1296,7 +1467,7 @@ $sess = $session->get('adminId');
                                         </td>
                                     </tr>
                                 </template>
-                        </template>
+                        </template> -->
                     </tbody>
                 </table>
             </div>
@@ -1327,6 +1498,8 @@ $sess = $session->get('adminId');
                 var checkTabParameter = ref(false);
                 var checkTabSetting = ref(false);
                 var assetData = reactive(<?= json_encode($assetData); ?>);
+                var assetPhoto = ref("");
+                var deleteAssetPhoto = ref(false);
                 var parameter = reactive(<?= json_encode($parameter); ?>);
                 var compareParameter = reactive(<?= json_encode($parameter); ?>);
                 var deletedParameter = ref([]);
@@ -1385,12 +1558,12 @@ $sess = $session->get('adminId');
                 var tempParameterGroupData = ref("");
                 var allParameter = [];
                 var parameterGroupData = ref("");
-                
+
                 var tempPhoto = ref('');
                 var params = ref([]);
                 var paramPhoto = ref("");
                 var deletePhoto = ref(false);
-                var pathParamPhoto = ref("../uploads/Asset/file"+"<?= $sess ?>"+"/");
+                var pathParamPhoto = ref("../uploads/Asset/file" + "<?= $sess ?>" + "/");
                 var importList = reactive({});
                 var tableImportParam = ref("");
                 var listNewParam = ref([]);
@@ -1551,135 +1724,7 @@ $sess = $session->get('adminId');
                     }
                 };
 
-                function editExistParameter(keyGP, key) {
-                    this.deletePhoto = ref(false);
-                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
-                    this.myModal.show();
-
-                    $('#normal').find('option').remove();
-                    $('#abnormal').find('option').remove();
-                    $('#imgParam').remove();
-
-                    this.paramPhoto = ref("");
-                    $('#photoParam').filepond('removeFiles');
-                    FilePond.destroy(document.querySelector('#photoParam'));
-                    if (this.parameterGroupData[keyGP][key].photo != '' && this.parameterGroupData[keyGP][key].photo != undefined) {
-                        let url = URL.createObjectURL(this.parameter[index].photo)
-                        const inputElement = document.querySelector('#photoParam');
-                        var photoEdit = {
-                            acceptedFileTypes: ['image/png', 'image/jpeg'],
-                            allowFilePoster: true,
-                            allowImagePreview: true,
-                            imagePreviewMaxHeight: 200,
-                            allowImageCrop: true,
-                            allowMultiple: false,
-                            credits: false,
-                            styleLoadIndicatorPosition: 'center bottom',
-                            styleProgressIndicatorPosition: 'right bottom',
-                            styleButtonRemoveItemPosition: 'left bottom',
-                            styleButtonProcessItemPosition: 'right bottom',
-                            files: [{
-                                source: url,
-                                options: {
-                                    type: 'local',
-                                    file: this.parameterGroupData[keyGP][key].photo,
-                                    metadata: {
-                                        poster: ''
-                                    }
-                                }
-                            }]
-                        };
-                        let pond = FilePond.create(inputElement, photoEdit);
-                        pond.on('addfile', (error, file) => {
-                            v.paramPhoto = file.file;
-                        })
-                        pond.on('removefile', (error, file) => {
-                            v.paramPhoto = ref("");
-                        })
-                    }else{
-                        var filepondParam = {
-                            acceptedFileTypes: ['image/png', 'image/jpeg'],
-                            allowFilePoster: true,
-                            allowImagePreview: true,
-                            imagePreviewMaxHeight: 200,
-                            allowImageCrop: true,
-                            allowMultiple: false,
-                            credits: false,
-                            styleLoadIndicatorPosition: 'center bottom',
-                            styleProgressIndicatorPosition: 'right bottom',
-                            styleButtonRemoveItemPosition: 'left bottom',
-                            styleButtonProcessItemPosition: 'right bottom',
-                        };
-
-                        let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
-                        pond.on('addfile', (error, file) => {
-                            v.paramPhoto = file.file;
-                        })
-                        pond.on('removefile', (error, file) => {
-                            v.paramPhoto = ref("");
-                        })
-                    }
-                    
-                    let data = this.parameterGroupData[keyGP][key];
-                    this.param.parameterId = data.parameterId;
-                    this.param.sortId = data.sortId;
-                    this.param.parameterName = data.parameterName;
-                    this.param.photo = data.photo;
-                    this.param.photo1 = data.photo1;
-                    this.param.photo2 = data.photo2;
-                    this.param.photo3 = data.photo3;
-                    this.param.description = data.description;
-                    if (data.uom != "") {
-                        this.param.uom = data.uom;
-                    } else {
-                        this.param.uom = "";
-                    }
-                    this.param.max = data.max;
-                    this.param.min = data.min;
-                    this.param.normal = data.normal;
-                    this.param.abnormal = data.abnormal;
-                    this.param.option = data.option;
-                    this.param.inputType = data.inputType;
-                    this.param.showOn = data.showOn;
-                    this.param.keyGP = keyGP;
-                    this.param.key = key;
-                    this.param.deletePhoto = data.deletePhoto;
-                    if (!this.param.deletePhoto) {
-                        $('#deletePhoto').prop('checked', false);
-                    }
-
-                    if (this.param.photo1 != "" && !this.param.deletePhoto && this.param.photo1 != null) {
-                        $('#previewImg').show();
-                        $('#preview').append("<img class='img-thumbnail' id='imgParam' style='height:150px; cursor: pointer' src='" + this.param.photo1 + "' alt=''  onclick='modalPreviewImg()' data-toggle='tooltip' title='click to preview this image'>");
-                    } else if (this.param.photo1 == "" || this.param.photo1 == null || this.param.deletePhoto) {
-                        $('#previewImg').hide();
-                    }
-
-                    if (v.param.inputType != '') {
-                        $('.type').val(v.param.inputType).trigger("change");
-                    }
-
-                    if (v.param.normal != '' || v.param.abnormal != '') {
-                        $lengthNormal = v.param.normal.split(",").length;
-                        $lengthAbnormal = v.param.abnormal.split(",").length;
-                        if ($lengthNormal > 0) {
-                            var dataNormal = v.param.normal.split(",");
-                            for (let index = 0; index < dataNormal.length; index++) {
-                                $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
-                            }
-                        }
-                        if ($lengthAbnormal > 0) {
-                            var dataAbnormal = v.param.abnormal.split(",");
-                            for (let index = 0; index < dataAbnormal.length; index++) {
-                                $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
-                            }
-                        }
-                    }
-                    if (this.param.showOn != '') {
-                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
-                    }
-                }
-                // function editExistParameter(index) {
+                // function editExistParameter(keyGP, key) {
                 //     this.deletePhoto = ref(false);
                 //     this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 //     this.myModal.show();
@@ -1691,7 +1736,7 @@ $sess = $session->get('adminId');
                 //     this.paramPhoto = ref("");
                 //     $('#photoParam').filepond('removeFiles');
                 //     FilePond.destroy(document.querySelector('#photoParam'));
-                //     if (this.parameter[index].photo != '' && this.parameter[index].photo != undefined) {
+                //     if (this.parameterGroupData[keyGP][key].photo != '' && this.parameterGroupData[keyGP][key].photo != undefined) {
                 //         let url = URL.createObjectURL(this.parameter[index].photo)
                 //         const inputElement = document.querySelector('#photoParam');
                 //         var photoEdit = {
@@ -1710,7 +1755,7 @@ $sess = $session->get('adminId');
                 //                 source: url,
                 //                 options: {
                 //                     type: 'local',
-                //                     file: this.parameter[index].photo,
+                //                     file: this.parameterGroupData[keyGP][key].photo,
                 //                     metadata: {
                 //                         poster: ''
                 //                     }
@@ -1747,30 +1792,60 @@ $sess = $session->get('adminId');
                 //             v.paramPhoto = ref("");
                 //         })
                 //     }
-                    
 
-                //     this.param.parameterId = this.parameter[index].parameterId;
-                //     this.param.sortId = this.parameter[index].sortId;
-                //     this.param.parameterName = this.parameter[index].parameterName;
-                //     this.param.photo = this.parameter[index].photo;
-                //     this.param.photo1 = this.parameter[index].photo1;
-                //     this.param.photo2 = this.parameter[index].photo2;
-                //     this.param.photo3 = this.parameter[index].photo3;
-                //     this.param.description = this.parameter[index].description;
-                //     if (this.parameter[index].uom != "") {
-                //         this.param.uom = this.parameter[index].uom;
-                //     } else {
-                //         this.param.uom = "";
-                //     }
-                //     this.param.min = this.parameter[index].min;
-                //     this.param.max = this.parameter[index].max;
-                //     this.param.normal = this.parameter[index].normal;
-                //     this.param.abnormal = this.parameter[index].abnormal;
-                //     this.param.option = this.parameter[index].option;
-                //     this.param.inputType = this.parameter[index].inputType;
-                //     this.param.showOn = this.parameter[index].showOn;
-                //     this.param.i = index;
-                //     this.param.deletePhoto = this.parameter[index].deletePhoto;
+                //     let data = this.parameterGroupData[keyGP][key];
+                //     // this.param = {
+                //     //     parameterId: this.parameterGroupData[keyGP][key].parameterId,
+                //     //     sortId: this.parameterGroupData[keyGP][key].sortId,
+                //     //     parameterName: this.parameterGroupData[keyGP][key].parameterName,
+                //     //     photo: this.parameterGroupData[keyGP][key].photo,
+                //     //     photo1: this.parameterGroupData[keyGP][key].photo1,
+                //     //     photo2: this.parameterGroupData[keyGP][key].photo2,
+                //     //     photo3: this.parameterGroupData[keyGP][key].photo3,
+                //     //     description: this.parameterGroupData[keyGP][key].description,
+                //     //     max: this.parameterGroupData[keyGP][key].max,
+                //     //     min: this.parameterGroupData[keyGP][key].min,
+                //     //     normal: this.parameterGroupData[keyGP][key].normal,
+                //     //     abnormal: this.parameterGroupData[keyGP][key].abnormal,
+                //     //     option: this.parameterGroupData[keyGP][key].option,
+                //     //     inputType: this.parameterGroupData[keyGP][key].inputType,
+                //     //     showOn: this.parameterGroupData[keyGP][key].showOn,
+                //     //     deletePhoto: this.parameterGroupData[keyGP][key].deletePhoto,
+                //     //     keyGP: this.parameterGroupData[keyGP][key].parameterName.includes("#") ? this.parameterGroupData[keyGP][key].parameterName.split("#")[0] + "#" : this.parameterGroupData[keyGP][key].parameterName,
+                //     //     key: key
+                //     // }
+                //     // if (data.uom != "") {
+                //     //     this.param.uom = this.parameterGroupData[keyGP][key].uom;
+                //     // } else {
+                //     //     this.param.uom = "";
+                //     // }
+                //     this.allParameter[0].forEach((el, i)=> {
+                //         if (el.parameterId == data.parameterId) {
+                //             this.param.parameterId = el.parameterId;
+                //             this.param.sortId = el.sortId;
+                //             this.param.parameterName = el.parameterName;
+                //             this.param.photo = el.photo;
+                //             this.param.photo1 = el.photo1;
+                //             this.param.photo2 = el.photo2;
+                //             this.param.photo3 = el.photo3;
+                //             this.param.description = el.description;
+                //             if (data.uom != "") {
+                //                 this.param.uom = el.uom;
+                //             } else {
+                //                 this.param.uom = "";
+                //             }
+                //             this.param.max = el.max;
+                //             this.param.min = el.min;
+                //             this.param.normal = el.normal;
+                //             this.param.abnormal = el.abnormal;
+                //             this.param.option = el.option;
+                //             this.param.inputType = el.inputType;
+                //             this.param.showOn = el.showOn;
+                //             this.param.deletePhoto = el.deletePhoto;
+                //             this.param.keyGP = el.parameterName.includes("#") ? el.parameterName.split("#")[0] + "#" : el.parameterName;
+                //         }
+                //     });
+
                 //     if (!this.param.deletePhoto) {
                 //         $('#deletePhoto').prop('checked', false);
                 //     }
@@ -1807,307 +1882,134 @@ $sess = $session->get('adminId');
                 //     }
                 // }
 
-                function updateExistParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
-                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
-                    let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
-                    let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
-                    let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
-                    let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
-                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: "Invalid value!",
-                            icon: 'error'
-                        })
+                function editExistParameter(index) {
+                    this.deletePhoto = ref(false);
+                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                    this.myModal.show();
 
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
+                    $('#imgParam').remove();
 
-                        //remove invalid class
-                        // input type
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
-                                $('.min').removeClass('is-invalid');
-                            }
-                            if (this.param.max != "" || this.param.max != null) {
-                                $('.max').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "" || this.param.uom != null) {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal != "") {
-                                $('#normal').removeClass('is-invalid');
-                            }
-                            if (this.param.abnormal != "") {
-                                $('#abnormal').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "") {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        //end remove invalid class
-
-                        //add invalid class
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
-                                $('.min').addClass('is-invalid');
-                            }
-                            if (this.param.max == "" || this.param.max == null) {
-                                $('.max').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "" || this.param.uom == null) {
-                                $('.uom').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal == "") {
-                                $('#normal').addClass('is-invalid');
-                            }
-                            if (this.param.abnormal == "") {
-                                $('#abnormal').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "") {
-                                $('.uom').addClass('is-invalid');
-                            }
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-                    } else {
-                        if (this.param.parameterName != '') {
-                            $('.parameter').removeClass('is-invalid');
-                        }
-                        if (this.param.inputType != '') {
-                            $('.type').removeClass('is-invalid');
-                        }
-
-                        //remove invalid class
-                        // input type
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
-                                $('.min').removeClass('is-invalid');
-                            }
-                            if (this.param.max != "" || this.param.max != null) {
-                                $('.max').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "" || this.param.uom != null) {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal != "") {
-                                $('#normal').removeClass('is-invalid');
-                            }
-                            if (this.param.abnormal != "") {
-                                $('#abnormal').removeClass('is-invalid');
-                            }
-                            if (this.param.uom != "") {
-                                $('.uom').removeClass('is-invalid');
-                            }
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option != "") {
-                                $('#option').removeClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn != '') {
-                            $('.showOn').removeClass('is-invalid');
-                        }
-
-                        //end remove invalid class
-
-                        //add invalid class
-                        if (this.param.parameterName == '') {
-                            $('.parameter').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == '') {
-                            $('.type').addClass('is-invalid');
-                        }
-                        if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
-                                $('.min').addClass('is-invalid');
-                            }
-                            if (this.param.max == "" || this.param.max == null) {
-                                $('.max').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "" || this.param.uom == null) {
-                                $('.uom').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'select') {
-                            if (this.param.normal == "") {
-                                $('#normal').addClass('is-invalid');
-                            }
-                            if (this.param.abnormal == "") {
-                                $('#abnormal').addClass('is-invalid');
-                            }
-                            if (this.param.uom == "") {
-                                $('.uom').addClass('is-invalid');
-                            }
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        } else if (this.param.inputType == 'checkbox') {
-                            if (this.param.option == "") {
-                                $('#option').addClass('is-invalid');
-                            }
-                        }
-
-                        if (this.param.showOn == '') {
-                            $('.showOn').addClass('is-invalid');
-                        }
-                        
-                        // index = this.param.i;
-                        let keyGP = this.param.keyGP;
-                        let key = this.param.key;
-                        // this.parameterGroupData[keyGP][key] = {
-                        //     parameterId: this.param.parameterId,
-                        //     sortId: this.param.sortId,
-                        //     parameterName: this.param.parameterName,
-                        //     photo: this.paramPhoto,
-                        //     photo1: this.param.photo1,
-                        //     photo2: this.param.photo2,
-                        //     photo3: this.param.photo3,
-                        //     description: this.param.description,
-                        //     uom: this.param.uom,
-                        //     min: this.param.min,
-                        //     max: this.param.max,
-                        //     normal: this.param.normal,
-                        //     abnormal: this.param.abnormal,
-                        //     option: this.param.option,
-                        //     inputType: this.param.inputType,
-                        //     showOn: this.param.showOn,
-                        //     keyGP: keyGP,
-                        //     key: key,
-                        //     deletePhoto: this.deletePhoto 
-                        // }
-
-                        let compare = "";
-                        let edited = _.omit(this.param, ['keyGP', 'key', 'status', 'i']);
-                        
-                        this.compareParameter.forEach((el, i) => {
-                            if (el.parameterId === this.param.parameterId) {
-                                compare = _.omit(el, ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
-                            }
-                        });
-
-                        let check = _.isEqual(compare, edited);
-                        console.log(check);
-                        let lengthEdited = this.editedParameter.length;
-                        if (check) {
-                            for (let i = 0; i < lengthEdited; i++) {
-                                // console.log(this.editedParameter[i].parameterId);
-                                let isEditedParam = this.editedParameter[i].parameterId
-                                if (isEditedParam == this.param.parameterId) {
-                                    this.param.status = 'old';
-                                    return this.editedParameter.splice(i, 1);
-                                }
-                            }
-                            this.param.status = 'old';
-                        } else {
-                            setTimeout(() => {
-                                for (let i = 0; i < lengthEdited; i++) {
-                                    // console.log(this.editedParameter[i].parameterId);
-                                    let isEditedParam = this.editedParameter[i].parameterId
-                                    if (isEditedParam == this.param.parameterId) {
-                                        return this.editedParameter.splice(i, 1);
+                    this.paramPhoto = ref("");
+                    $('#photoParam').filepond('removeFiles');
+                    FilePond.destroy(document.querySelector('#photoParam'));
+                    if (this.parameter[index].photo != '' && this.parameter[index].photo != undefined) {
+                        let url = URL.createObjectURL(this.parameter[index].photo)
+                        const inputElement = document.querySelector('#photoParam');
+                        var photoEdit = {
+                            acceptedFileTypes: ['image/png', 'image/jpeg'],
+                            allowFilePoster: true,
+                            allowImagePreview: true,
+                            imagePreviewMaxHeight: 200,
+                            allowImageCrop: true,
+                            allowMultiple: false,
+                            credits: false,
+                            styleLoadIndicatorPosition: 'center bottom',
+                            styleProgressIndicatorPosition: 'right bottom',
+                            styleButtonRemoveItemPosition: 'left bottom',
+                            styleButtonProcessItemPosition: 'right bottom',
+                            files: [{
+                                source: url,
+                                options: {
+                                    type: 'local',
+                                    file: this.parameter[index].photo,
+                                    metadata: {
+                                        poster: ''
                                     }
                                 }
-                            }, 2000);
-                            this.param.status = 'updated';
-                            this.editedParameter.push(this.param);
-                        }
-
-                        this.allParameter[0].forEach((el, i) => {
-                            if (el.parameterId === this.param.parameterId) {
-                                this.allParameter[0][i] = this.param
-                            }
-                        });
-
-                        console.log(allParameter[0]);
-                        this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
-                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                        });
-
-                        // let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
-                        // let edited = _.omit(this.parameter[index], ['i']);
-
-                        // const {
-                        //     assetId,
-                        //     createdAt,
-                        //     deletedAt,
-                        //     updatedAt,
-                        //     ...newParam
-                        // } = this.compareParameter[index];
-                        // const {
-                        //     i,
-                        //     photo,
-                        //     ...newEdited
-                        // } = this.parameter[index];
-                        // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
-
-                        this.myModal.hide();
-                        this.deletePhoto = ref(false);
-
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            iconColor: 'white',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
-                            customClass: {
-                                popup: 'colored-toast'
-                            },
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
+                            }]
+                        };
+                        let pond = FilePond.create(inputElement, photoEdit);
+                        pond.on('addfile', (error, file) => {
+                            v.paramPhoto = file.file;
                         })
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Successfully Modify Parameter'
+                        pond.on('removefile', (error, file) => {
+                            v.paramPhoto = ref("");
+                        })
+                    } else {
+                        var filepondParam = {
+                            acceptedFileTypes: ['image/png', 'image/jpeg'],
+                            allowFilePoster: true,
+                            allowImagePreview: true,
+                            imagePreviewMaxHeight: 200,
+                            allowImageCrop: true,
+                            allowMultiple: false,
+                            credits: false,
+                            styleLoadIndicatorPosition: 'center bottom',
+                            styleProgressIndicatorPosition: 'right bottom',
+                            styleButtonRemoveItemPosition: 'left bottom',
+                            styleButtonProcessItemPosition: 'right bottom',
+                        };
+
+                        let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                        pond.on('addfile', (error, file) => {
+                            v.paramPhoto = file.file;
+                        })
+                        pond.on('removefile', (error, file) => {
+                            v.paramPhoto = ref("");
                         })
                     }
+
+
+                    this.param.parameterId = this.parameter[index].parameterId;
+                    this.param.sortId = this.parameter[index].sortId;
+                    this.param.parameterName = this.parameter[index].parameterName;
+                    this.param.photo = this.parameter[index].photo;
+                    this.param.photo1 = this.parameter[index].photo1;
+                    this.param.photo2 = this.parameter[index].photo2;
+                    this.param.photo3 = this.parameter[index].photo3;
+                    this.param.description = this.parameter[index].description;
+                    if (this.parameter[index].uom != "") {
+                        this.param.uom = this.parameter[index].uom;
+                    } else {
+                        this.param.uom = "";
+                    }
+                    this.param.min = this.parameter[index].min;
+                    this.param.max = this.parameter[index].max;
+                    this.param.normal = this.parameter[index].normal;
+                    this.param.abnormal = this.parameter[index].abnormal;
+                    this.param.option = this.parameter[index].option;
+                    this.param.inputType = this.parameter[index].inputType;
+                    this.param.showOn = this.parameter[index].showOn;
+                    this.param.i = index;
+                    this.param.deletePhoto = this.parameter[index].deletePhoto;
+                    if (!this.param.deletePhoto) {
+                        $('#deletePhoto').prop('checked', false);
+                    }
+
+                    if (this.param.photo1 != "" && !this.param.deletePhoto && this.param.photo1 != null) {
+                        $('#previewImg').show();
+                        $('#preview').append("<img class='img-thumbnail' id='imgParam' style='height:150px; cursor: pointer' src='" + this.param.photo1 + "' alt=''  onclick='modalPreviewImg()' data-toggle='tooltip' title='click to preview this image'>");
+                    } else if (this.param.photo1 == "" || this.param.photo1 == null || this.param.deletePhoto) {
+                        $('#previewImg').hide();
+                    }
+
+                    if (v.param.inputType != '') {
+                        $('.type').val(v.param.inputType).trigger("change");
+                    }
+
+                    if (v.param.normal != '' || v.param.abnormal != '') {
+                        $lengthNormal = v.param.normal.split(",").length;
+                        $lengthAbnormal = v.param.abnormal.split(",").length;
+                        if ($lengthNormal > 0) {
+                            var dataNormal = v.param.normal.split(",");
+                            for (let index = 0; index < dataNormal.length; index++) {
+                                $('#normal').append(`<option class="optNormal" value="` + dataNormal[index] + `" selected>` + dataNormal[index] + `</option>`);
+                            }
+                        }
+                        if ($lengthAbnormal > 0) {
+                            var dataAbnormal = v.param.abnormal.split(",");
+                            for (let index = 0; index < dataAbnormal.length; index++) {
+                                $('#abnormal').append(`<option class="optAbnormal" value="` + dataAbnormal[index] + `" selected>` + dataAbnormal[index] + `</option>`);
+                            }
+                        }
+                    }
+                    if (this.param.showOn != '') {
+                        $('#showOn').val(this.param.showOn.split(",")).trigger('change');
+                    }
                 }
+
                 // function updateExistParameter() {
                 //     let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
                 //     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
@@ -2295,34 +2197,82 @@ $sess = $session->get('adminId');
                 //         if (this.param.showOn == '') {
                 //             $('.showOn').addClass('is-invalid');
                 //         }
-                        
-                //         index = this.param.i;
-                //         this.parameter[index] = {
-                //             parameterId: this.param.parameterId,
-                //             sortId: this.param.sortId,
-                //             parameterName: this.param.parameterName,
-                //             photo: this.paramPhoto,
-                //             photo1: this.param.photo1,
-                //             photo2: this.param.photo2,
-                //             photo3: this.param.photo3,
-                //             description: this.param.description,
-                //             uom: this.param.uom,
-                //             min: this.param.min,
-                //             max: this.param.max,
-                //             normal: this.param.normal,
-                //             abnormal: this.param.abnormal,
-                //             option: this.param.option,
-                //             inputType: this.param.inputType,
-                //             showOn: this.param.showOn,
-                //             i: index,
-                //             deletePhoto: this.deletePhoto 
-                //         }
-                //         let lengthEdited = this.editedParameter.length;
 
-                //         let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
-                //         let edited = _.omit(this.parameter[index], ['i']);
+                //         // index = this.param.i;
+                //         let keyGP = this.param.keyGP;
+                //         let key = this.param.key;
+                //         // this.parameterGroupData[keyGP][key] = {
+                //         //     parameterId: this.param.parameterId,
+                //         //     sortId: this.param.sortId,
+                //         //     parameterName: this.param.parameterName,
+                //         //     photo: this.paramPhoto,
+                //         //     photo1: this.param.photo1,
+                //         //     photo2: this.param.photo2,
+                //         //     photo3: this.param.photo3,
+                //         //     description: this.param.description,
+                //         //     uom: this.param.uom,
+                //         //     min: this.param.min,
+                //         //     max: this.param.max,
+                //         //     normal: this.param.normal,
+                //         //     abnormal: this.param.abnormal,
+                //         //     option: this.param.option,
+                //         //     inputType: this.param.inputType,
+                //         //     showOn: this.param.showOn,
+                //         //     keyGP: keyGP,
+                //         //     key: key,
+                //         //     deletePhoto: this.deletePhoto 
+                //         // }
+
+                //         // this.param.keyGP = this.param.parameterName.includes("#") ? this.param.parameterName.split("#")[0] + "#" : this.param.parameterName;
+
+                //         let compare = "";
+                //         let edited = _.omit(this.param, ['keyGP', 'key', 'status', 'i']);
+
+                //         this.compareParameter.forEach((el, i) => {
+                //             if (el.parameterId === this.param.parameterId) {
+                //                 compare = _.omit(el, ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                //             }
+                //         });
 
                 //         let check = _.isEqual(compare, edited);
+                //         let lengthEdited = this.editedParameter.length;
+                //         if (check) {
+                //             for (let i = 0; i < lengthEdited; i++) {
+                //                 // console.log(this.editedParameter[i].parameterId);
+                //                 let isEditedParam = this.editedParameter[i].parameterId
+                //                 if (isEditedParam == this.param.parameterId) {
+                //                     this.param.status = 'old';
+                //                     return this.editedParameter.splice(i, 1);
+                //                 }
+                //             }
+                //             this.param.status = 'old';
+                //         } else {
+                //             setTimeout(() => {
+                //                 for (let i = 0; i < lengthEdited; i++) {
+                //                     // console.log(this.editedParameter[i].parameterId);
+                //                     let isEditedParam = this.editedParameter[i].parameterId
+                //                     if (isEditedParam == this.param.parameterId) {
+                //                         return this.editedParameter.splice(i, 1);
+                //                     }
+                //                 }
+                //             }, 2000);
+                //             this.param.status = 'updated';
+                //             this.editedParameter.push(this.param);
+                //         }
+
+                //         this.allParameter[0].forEach((el, i) => {
+                //             if (el.parameterId === this.param.parameterId) {
+                //                 this.allParameter[0][i] = this.param
+                //             }
+                //         });
+                //         this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
+                //             return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                //         });
+
+
+                //         // let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                //         // let edited = _.omit(this.parameter[index], ['i']);
+
                 //         // const {
                 //         //     assetId,
                 //         //     createdAt,
@@ -2359,110 +2309,25 @@ $sess = $session->get('adminId');
                 //             icon: 'success',
                 //             title: 'Successfully Modify Parameter'
                 //         })
-                //         if (check) {
-                //             for (let i = 0; i < lengthEdited; i++) {
-                //                 // console.log(this.editedParameter[i].parameterId);
-                //                 let idEditedParam = this.editedParameter[i].parameterId
-                //                 if (idEditedParam == this.parameter[index].parameterId) {
-                //                     this.parameter[index].status = 'old';
-                //                     return this.editedParameter.splice(i, 1);
-                //                 }
-                //             }
-                //             this.parameter[index].status = 'old';
-                //         } else {
-                //             setTimeout(() => {
-                //                 for (let i = 0; i < lengthEdited; i++) {
-                //                     // console.log(this.editedParameter[i].parameterId);
-                //                     let idEditedParam = this.editedParameter[i].parameterId
-                //                     if (idEditedParam == this.parameter[index].parameterId) {
-                //                         return this.editedParameter.splice(i, 1);
-                //                     }
-                //                 }
-                //             }, 2000);
-                //             this.editedParameter.push(this.parameter[index]);
-                //             this.parameter[index].status = 'updated';
-                //         }
                 //     }
                 // }
-
-                function addParameter() {
-                    this.paramPhoto = ref("");
-                    FilePond.destroy(document.querySelector('#photoParam'));
-                    FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
-                    filepondParam = {
-                        acceptedFileTypes: ['image/png', 'image/jpeg'],
-                        allowFilePoster: true,
-                        allowImagePreview: true,
-                        imagePreviewMaxHeight: 200,
-                        allowImageCrop: true,
-                        allowMultiple: false,
-                        credits: false,
-                        styleLoadIndicatorPosition: 'center bottom',
-                        styleProgressIndicatorPosition: 'right bottom',
-                        styleButtonRemoveItemPosition: 'left bottom',
-                        styleButtonProcessItemPosition: 'right bottom',
-                    };
-                    
-                    let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
-                    pond.on('addfile', (error, file) => {
-                        v.paramPhoto = file.file
-                    })
-                    pond.on('removefile', (error, file) => {
-                        v.paramPhoto = ref("");
-                    })
-
-                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
-                    this.myModal.show();
-
-                    $('#normal').find('option').remove();
-                    $('#abnormal').find('option').remove();
-
-                    this.param.parameterId = uuidv4();
-                    this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
-                    this.param.photo = '';
-                    this.param.photo1 = '';
-                    this.param.photo2 = '';
-                    this.param.photo3 = '';
-                    this.param.description = '';
-                    this.param.uom = '';
-                    this.param.min = null;
-                    this.param.max = null;
-                    this.param.normal = '';
-                    this.param.abnormal = '';
-                    this.param.option = '';
-                    this.param.inputType = '';
-                    this.param.showOn = '';
-                    this.param.i = null;
-                    this.param.deletePhoto = false;
-
-                    $('#addParameterModal').modal('hide');
-                    $('#previewImg').hide();
-
-                    $('.type').val('').trigger("change");
-                    $('#showOn').val('').trigger('change');
-                    $('#normal').val('').trigger('change');
-                    $('#abnormal').val('').trigger('change');
-
-                    $('#imgParam').remove();
-                    $('.optNormal').remove();
-                    $('.optAbnormal').remove();
-
-                    $('.parameter').removeClass('is-invalid');
-                    $('.type').removeClass('is-invalid');
-                    $('.showOn').removeClass('is-invalid');
-                };
-
-                function addTempParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                function updateExistParameter() {
+                    let min = ((this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
                     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
                     let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
                     let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
                     if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
-                        swal.fire({
-                            title: 'Invalid Value!',
+                        const swalWithBootstrapButtons = swal.mixin({
+                            customClass: {
+                                confirmButton: 'btn btn-danger',
+                            },
+                            buttonsStyling: false
+                        })
+                        swalWithBootstrapButtons.fire({
+                            title: 'Failed!',
+                            text: "Invalid value!",
                             icon: 'error'
                         })
 
@@ -2476,7 +2341,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2518,7 +2383,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2560,7 +2425,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2602,7 +2467,345 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
+                                $('.min').addClass('is-invalid');
+                            }
+                            if (this.param.max == "" || this.param.max == null) {
+                                $('.max').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "" || this.param.uom == null) {
+                                $('.uom').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal == "") {
+                                $('#normal').addClass('is-invalid');
+                            }
+                            if (this.param.abnormal == "") {
+                                $('#abnormal').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "") {
+                                $('.uom').addClass('is-invalid');
+                            }
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+
+                        index = this.param.i;
+                        this.parameter[index] = {
+                            parameterId: this.param.parameterId,
+                            sortId: this.param.sortId,
+                            parameterName: this.param.parameterName,
+                            photo: this.paramPhoto,
+                            photo1: this.param.photo1,
+                            photo2: this.param.photo2,
+                            photo3: this.param.photo3,
+                            description: this.param.description,
+                            uom: this.param.uom,
+                            min: this.param.min,
+                            max: this.param.max,
+                            normal: this.param.normal,
+                            abnormal: this.param.abnormal,
+                            option: this.param.option,
+                            inputType: this.param.inputType,
+                            showOn: this.param.showOn,
+                            i: index,
+                            deletePhoto: this.deletePhoto
+                        }
+                        let lengthEdited = this.editedParameter.length;
+
+                        let compare = _.omit(this.compareParameter[index], ['assetId', 'createdAt', 'updatedAt', 'deletedAt']);
+                        let edited = _.omit(this.parameter[index], ['i']);
+
+                        let check = _.isEqual(compare, edited);
+                        // const {
+                        //     assetId,
+                        //     createdAt,
+                        //     deletedAt,
+                        //     updatedAt,
+                        //     ...newParam
+                        // } = this.compareParameter[index];
+                        // const {
+                        //     i,
+                        //     photo,
+                        //     ...newEdited
+                        // } = this.parameter[index];
+                        // let checkIsEqual = isEqual(JSON.stringify(newParam), JSON.stringify(newEdited))
+
+                        this.myModal.hide();
+                        this.deletePhoto = ref(false);
+
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            iconColor: 'white',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            },
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Successfully Modify Parameter'
+                        })
+                        if (check) {
+                            for (let i = 0; i < lengthEdited; i++) {
+                                // console.log(this.editedParameter[i].parameterId);
+                                let idEditedParam = this.editedParameter[i].parameterId
+                                if (idEditedParam == this.parameter[index].parameterId) {
+                                    this.parameter[index].status = 'old';
+                                    return this.editedParameter.splice(i, 1);
+                                }
+                            }
+                            this.parameter[index].status = 'old';
+                        } else {
+                            setTimeout(() => {
+                                for (let i = 0; i < lengthEdited; i++) {
+                                    // console.log(this.editedParameter[i].parameterId);
+                                    let idEditedParam = this.editedParameter[i].parameterId
+                                    if (idEditedParam == this.parameter[index].parameterId) {
+                                        return this.editedParameter.splice(i, 1);
+                                    }
+                                }
+                            }, 2000);
+                            this.editedParameter.push(this.parameter[index]);
+                            this.parameter[index].status = 'updated';
+                        }
+                    }
+                }
+
+                function addParameter() {
+                    this.paramPhoto = ref("");
+                    FilePond.destroy(document.querySelector('#photoParam'));
+                    FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
+                    filepondParam = {
+                        acceptedFileTypes: ['image/png', 'image/jpeg'],
+                        allowFilePoster: true,
+                        allowImagePreview: true,
+                        imagePreviewMaxHeight: 200,
+                        allowImageCrop: true,
+                        allowMultiple: false,
+                        credits: false,
+                        styleLoadIndicatorPosition: 'center bottom',
+                        styleProgressIndicatorPosition: 'right bottom',
+                        styleButtonRemoveItemPosition: 'left bottom',
+                        styleButtonProcessItemPosition: 'right bottom',
+                    };
+
+                    let pond = FilePond.create(document.querySelector('#photoParam'), filepondParam);
+                    pond.on('addfile', (error, file) => {
+                        v.paramPhoto = file.file
+                    })
+                    pond.on('removefile', (error, file) => {
+                        v.paramPhoto = ref("");
+                    })
+
+                    this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
+                    this.myModal.show();
+
+                    $('#normal').find('option').remove();
+                    $('#abnormal').find('option').remove();
+
+                    this.param.parameterId = uuidv4();
+                    this.param.sortId = $('#tableParameter tbody tr').length + 1,
+                        this.param.parameterName = '';
+                    this.param.photo = '';
+                    this.param.photo1 = '';
+                    this.param.photo2 = '';
+                    this.param.photo3 = '';
+                    this.param.description = '';
+                    this.param.uom = '';
+                    this.param.min = null;
+                    this.param.max = null;
+                    this.param.normal = '';
+                    this.param.abnormal = '';
+                    this.param.option = '';
+                    this.param.inputType = '';
+                    this.param.showOn = '';
+                    this.param.i = null;
+                    this.param.deletePhoto = false;
+
+                    $('#addParameterModal').modal('hide');
+                    $('#previewImg').hide();
+
+                    $('.type').val('').trigger("change");
+                    $('#showOn').val('').trigger('change');
+                    $('#normal').val('').trigger('change');
+                    $('#abnormal').val('').trigger('change');
+
+                    $('#imgParam').remove();
+                    $('.optNormal').remove();
+                    $('.optAbnormal').remove();
+
+                    $('.parameter').removeClass('is-invalid');
+                    $('.type').removeClass('is-invalid');
+                    $('.showOn').removeClass('is-invalid');
+                };
+
+                function addTempParameter() {
+                    let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
+                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                    let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
+                    let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
+                    let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
+                    let option = ((this.param.option == "") && ((this.param.inputType == 'select') || this.param.inputType == 'checkbox')) ? true : false;
+                    if (this.param.parameterName == '' || this.param.inputType == '' || this.param.showOn == '' || min == true || max == true || uom == true || normal == true || abnormal == true || option == true) {
+                        swal.fire({
+                            title: 'Invalid Value!',
+                            icon: 'error'
+                        })
+
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+
+                        //remove invalid class
+                        // input type
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min != null) {
+                                $('.min').removeClass('is-invalid');
+                            }
+                            if (this.param.max != "" || this.param.max != null) {
+                                $('.max').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "" || this.param.uom != null) {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal != "") {
+                                $('#normal').removeClass('is-invalid');
+                            }
+                            if (this.param.abnormal != "") {
+                                $('#abnormal').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "") {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        //end remove invalid class
+
+                        //add invalid class
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min == null) {
+                                $('.min').addClass('is-invalid');
+                            }
+                            if (this.param.max == "" || this.param.max == null) {
+                                $('.max').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "" || this.param.uom == null) {
+                                $('.uom').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal == "") {
+                                $('#normal').addClass('is-invalid');
+                            }
+                            if (this.param.abnormal == "") {
+                                $('#abnormal').addClass('is-invalid');
+                            }
+                            if (this.param.uom == "") {
+                                $('.uom').addClass('is-invalid');
+                            }
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option == "") {
+                                $('#option').addClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn == '') {
+                            $('.showOn').addClass('is-invalid');
+                        }
+                    } else {
+                        if (this.param.parameterName != '') {
+                            $('.parameter').removeClass('is-invalid');
+                        }
+                        if (this.param.inputType != '') {
+                            $('.type').removeClass('is-invalid');
+                        }
+
+                        //remove invalid class
+                        // input type
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min != null) {
+                                $('.min').removeClass('is-invalid');
+                            }
+                            if (this.param.max != "" || this.param.max != null) {
+                                $('.max').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "" || this.param.uom != null) {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'select') {
+                            if (this.param.normal != "") {
+                                $('#normal').removeClass('is-invalid');
+                            }
+                            if (this.param.abnormal != "") {
+                                $('#abnormal').removeClass('is-invalid');
+                            }
+                            if (this.param.uom != "") {
+                                $('.uom').removeClass('is-invalid');
+                            }
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        } else if (this.param.inputType == 'checkbox') {
+                            if (this.param.option != "") {
+                                $('#option').removeClass('is-invalid');
+                            }
+                        }
+
+                        if (this.param.showOn != '') {
+                            $('.showOn').removeClass('is-invalid');
+                        }
+
+                        //end remove invalid class
+
+                        //add invalid class
+                        if (this.param.parameterName == '') {
+                            $('.parameter').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == '') {
+                            $('.type').addClass('is-invalid');
+                        }
+                        if (this.param.inputType == 'input') {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2636,7 +2839,7 @@ $sess = $session->get('adminId');
 
                         this.param.photo = this.paramPhoto;
                         this.params.push(this.param);
-                        this.allParameter[0].push(this.param);
+                        // this.allParameter[0].push(this.param); 
                         this.param = reactive({
                             parameterId: uuidv4(),
                             sortId: $('#tableParameter tbody tr').length + 2,
@@ -2655,13 +2858,13 @@ $sess = $session->get('adminId');
                             inputType: '',
                             showOn: '',
                         })
-                        this.tempParameterGroupData = _.groupBy(this.params, function(val) {
-                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                        });
-                        this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
-                            return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                        });
-                        
+                        // this.tempParameterGroupData = _.groupBy(this.params, function(val) {
+                        //     return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        // });
+                        // this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
+                        //     return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
+                        // });
+
                         $('#photoParam').filepond('removeFiles');
                         $('.type').val('').trigger("change");
                         $('#showOn').val('').trigger('change');
@@ -2799,7 +3002,7 @@ $sess = $session->get('adminId');
                 };
 
                 function updateTempParameter() {
-                    let min = ((this.param.min == "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
+                    let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -2828,7 +3031,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2870,7 +3073,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -2912,7 +3115,7 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min != "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
                             if (this.param.max != "" || this.param.max != null) {
@@ -2954,7 +3157,7 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min == "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
                             if (this.param.max == "" || this.param.max == null) {
@@ -3399,6 +3602,9 @@ $sess = $session->get('adminId');
                         formdata.append('assetId', this.assetData.assetId);
                         formdata.append('assetName', this.assetData.assetName);
                         formdata.append('assetNumber', this.assetData.assetNumber);
+                        formdata.append('deleteAssetPhoto', this.deleteAssetPhoto);
+                        formdata.append('assetPhoto', this.assetPhoto);
+                        formdata.append('photo', this.assetData.photo);
                         formdata.append('latitude', this.assetData.latitude);
                         formdata.append('longitude', this.assetData.longitude);
                         formdata.append('schManual', this.assetData.schManual);
@@ -3652,8 +3858,10 @@ $sess = $session->get('adminId');
                 function btnCancelModalParam() {
                     this.param.parameterId = uuidv4();
                     this.param.sortId = $('#tableParameter tbody tr').length + 1,
-                    this.param.parameterName = '';
+                        this.param.parameterName = '';
                     this.param.photo = '';
+                    this.param.photo1 = '';
+                    this.param.photo2 = '';
                     this.param.photo3 = '';
                     this.param.description = '';
                     this.param.uom = '';
@@ -3664,7 +3872,9 @@ $sess = $session->get('adminId');
                     this.param.option = '';
                     this.param.inputType = '';
                     this.param.showOn = '';
-                    this.param.i = null;
+                    // this.param.i = null;
+                    this.param.keyGP = '';
+                    this.param.key = '';
 
                     $('#addParameterModal').modal('hide');
                     $('#previewImg').hide();
@@ -3824,6 +4034,11 @@ $sess = $session->get('adminId');
                     return checkIsEqual;
                 }
 
+                function modalChange() {
+                    this.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
+                    this.myModal.show();
+                }
+
                 onMounted(() => {
                     FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
                     if (assetData.schMonthlyWeekDays != "" && assetData.schType == "Monthly" && assetData.schWeeks != "") {
@@ -3845,6 +4060,27 @@ $sess = $session->get('adminId');
                             return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
                         });
                     }
+
+                    let assetPhotoPond = {
+                        acceptedFileTypes: ['image/png', 'image/jpeg'],
+                        allowImagePreview: true,
+                        imagePreviewMaxHeight: 200,
+                        allowImageCrop: true,
+                        allowMultiple: false,
+                        credits: false,
+                        styleLoadIndicatorPosition: 'center bottom',
+                        styleProgressIndicatorPosition: 'right bottom',
+                        styleButtonRemoveItemPosition: 'left bottom',
+                        styleButtonProcessItemPosition: 'right bottom',
+                    };
+                    let assetPhoto1 = FilePond.create(document.querySelector('#logo'), assetPhotoPond);
+                    assetPhoto1.on('addfile', (error, file) => {
+                        v.assetPhoto = file.file
+                    })
+                    assetPhoto1.on('removefile', (error, file) => {
+                        v.assetPhoto = ref("");
+                    })
+
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
                     let dataAssetDesc = assetData.description;
@@ -3902,8 +4138,12 @@ $sess = $session->get('adminId');
                     file,
                     submited,
 
+                    modalChange,
+
                     checked,
                     assetData,
+                    deleteAssetPhoto,
+                    assetPhoto,
                     descJson,
                     parameter,
                     compareParameter,
@@ -4039,6 +4279,14 @@ $sess = $session->get('adminId');
             $('#fullPreview').append("<img id='fullImg' src='" + v.param.photo1 + "' alt='img'>");
         }
 
+        function modalImgAsset() {
+            $('#fullImg').remove();
+            this.myModal = new coreui.Modal(document.getElementById('modalPreviewImg'), {});
+            this.myModal.show();
+            $('#fullPreview').append("<img id='fullImg' src='" + v.assetData.photo + "' alt='img'>");
+        }
+
+
         $(function() {
             $('tbody').sortable({
                 cursor: "move",
@@ -4135,21 +4383,6 @@ $sess = $session->get('adminId');
             v.assetTagging.assetTaggingtype = data;
         })
 
-        $(document).ready(function() {
-            mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
-            const map = new mapboxgl.Map({
-                container: 'mapDetail', // container ID
-                style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                center: [v.assetData.longitude, v.assetData.latitude], // starting position [lng, lat]
-                zoom: 14, // starting zoom
-            });
-            map.addControl(new mapboxgl.FullscreenControl());
-            map.resize();
-            const marker = new mapboxgl.Marker()
-                .setLngLat([v.assetData.longitude, v.assetData.latitude])
-                .addTo(map);
-        })
-
         // map tagging
         $(document).ready(function() {
             mapboxgl.accessToken = 'pk.eyJ1Ijoicml6YWx6YWVsYW5pIiwiYSI6ImNrdDRpbXhxeDAyangybnF5djR4b3k2aTAifQ.iyKzoo6ca1BdaOtcaEShCw';
@@ -4197,37 +4430,6 @@ $sess = $session->get('adminId');
             }
             marker.on('dragend', onDragEnd);
         })
-
-        $(document).ready(function() {
-            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
-            let pond = $('#logo').filepond({
-                acceptedFileTypes: ['image/png', 'image/jpeg'],
-                allowImagePreview: true,
-                imagePreviewMaxHeight: 200,
-                allowImageCrop: true,
-                allowMultiple: false,
-                credits: false,
-                styleLoadIndicatorPosition: 'center bottom',
-                styleProgressIndicatorPosition: 'right bottom',
-                styleButtonRemoveItemPosition: 'left bottom',
-                styleButtonProcessItemPosition: 'right bottom',
-            });
-        })
-        // $(document).ready(function() {
-        //     FilePond.registerPlugin(FilePondPluginFileValidateType);
-        //     let pond = $('#photoParam').filepond({
-        //         acceptedFileTypes: ['image/png', 'image/jpeg'],
-        //         allowImagePreview: true,
-        //         imagePreviewMaxHeight: 200,
-        //         allowImageCrop: true,
-        //         allowMultiple: false,
-        //         credits: false,
-        //         styleLoadIndicatorPosition: 'center bottom',
-        //         styleProgressIndicatorPosition: 'right bottom',
-        //         styleButtonRemoveItemPosition: 'left bottom',
-        //         styleButtonProcessItemPosition: 'right bottom',
-        //     });
-        // })
 
         // import parameter
         $(document).ready(function() {
@@ -4344,27 +4546,31 @@ $sess = $session->get('adminId');
                     },
                     {
                         data: "max",
-                        render: function(type, data, row, meta){
-                            if (row.max != '') {
+                        render: function(type, data, row, meta) {
+                            if (row.max != null && row.normal == '' && row.inputType == 'input') {
                                 if (row.flipMax && row.flipMin) {
-                                    return '<div>'+row.min + ' - ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                    return '<div>' + row.min + ' - ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                                 }
                                 return row.min + ' - ' + row.max
-                            }else{
+                            } else if (row.normal != '') {
                                 return row.normal
+                            } else {
+                                return '-';
                             }
                         }
                     },
                     {
                         data: "min",
-                        render: function(type, data, row, meta){
-                            if (row.min != '') {
+                        render: function(type, data, row, meta) {
+                            if (row.min != null && row.abnormal == '' && row.inputType == 'input') {
                                 if (row.flipMax && row.flipMin) {
-                                    return '<div>x < ' + row.min + '; x > ' + row.max +'<br><span class="text-success">Reversed value</span></div>'
+                                    return '<div>x < ' + row.min + '; x > ' + row.max + '<br><span class="text-success">Reversed value</span></div>'
                                 }
                                 return 'x < ' + row.min + '; x > ' + row.max
-                            }else{
+                            } else if (row.abnormal != '') {
                                 return row.abnormal
+                            } else {
+                                return '-';
                             }
                         }
                     },
