@@ -24,6 +24,14 @@
         min-height: 100vh;
         background-color: rgba(0, 0, 0, 0.8) !important;
     }
+
+    .new {
+        background-color: #DFFFE6 !important;
+    }
+
+    .old {
+        background-color: #FFE6DF !important;
+    }
 </style>
 <?= $this->endSection(); ?>
 
@@ -38,6 +46,36 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'Last');
 $session = \Config\Services::session();
 $sess = $session->get('adminId');
+$new = [
+    'assetName'     => 'APAR X01',
+    'assetNumber'   => 'xapar01',
+    'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
+    'description'   => 'Description',
+    'schManual'     => '0',
+    'schType'       => 'Weekly',
+    'schFrequency'  => '1',
+    'schWeeks'      => '',
+    'schWeekDays'   => 'Su,Mo',
+    'schDays'       => '',
+    'assetStatusName' => 'Running',
+    'tagName'       => 'APAR,UNIT',
+    'tagLocationName' => 'Ashilo,AREA X - 1A'
+];
+$old = [
+    'assetName'     => 'APAR X01',
+    'assetNumber'   => 'xaparx01',
+    'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
+    'description'   => 'Description Apar x01',
+    'schManual'     => '0',
+    'schType'       => 'Weekly',
+    'schFrequency'  => '1',
+    'schWeeks'      => '',
+    'schWeekDays'   => 'Su,Mo,Tu',
+    'schDays'       => '',
+    'assetStatusName' => 'Running',
+    'tagName'       => 'APAR,UNIT,Segitiga Apar',
+    'tagLocationName' => 'Ashilo'
+];
 ?>
 <div class="row" id="app">
     <div class="col-12">
@@ -48,17 +86,20 @@ $sess = $session->get('adminId');
                         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" id="detail_tab" @click="checkTabDetail = true;  checkTabParameter = false;  checkTabSetting = false;">
                                 <svg class="c-icon">
                                     <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-list-rich"></use>
-                                </svg> Detail <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read equipment data, edit, and delete the data. And also you can read the log of changes that have occurred to the equipment data.</div>"></i></a></li>
+                                </svg> Detail <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Contains brief data about assets. You can view asset data and data change log.</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#parameter" role="tab" aria-controls="parameter" id="parameter_tab" @click="checkTabDetail = false;  checkTabParameter = true;  checkTabSetting = false;">
                                 <svg class="c-icon">
                                     <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
-                                </svg> Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>On this tab, you can read the parameter data of an equipment</div>"></i></a></li>
+                                </svg> Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Contains parameter data of an asset. You can set the order of the parameters for the assets you own.</div>"></i></a></li>
                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" id="setting_tab" @click="checkTabDetail = false;  checkTabParameter = false;  checkTabSetting = true;">
                                 <svg class="c-icon">
                                     <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-cog"></use>
-                                </svg> Setting <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>In this tab, you can change the settings on an equipment</div>"></i></a></li>
+                                </svg> Setting <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-html="true" title="<div class='tooltipClass'>Contains all data from assets. You can change all the data about the assets you own.</div>"></i></a></li>
                         <li class="nav-item ml-auto">
-                            <a href="<?= base_url('/Asset'); ?>" class="btn btn-sm btn-success" style="display: flex;"><i class="fa fa-arrow-left"></i> Back</a>
+                            <h5 class="header-icon">
+                                <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                            </h5>
+                            <!-- <a href="<?= base_url('/Asset'); ?>" class="btn btn-sm btn-success" style="display: flex;"><i class="fa fa-arrow-left"></i> Back</a> -->
                         </li>
                     </ul>
                 </div>
@@ -122,7 +163,7 @@ $sess = $session->get('adminId');
                                 </div>
                                 <div :class="((assetData.photo != null && assetData.photo != '') ? '' : 'd-none')">
                                     </div> -->
-                                <img :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important;">
+                                <img onclick="modalImgAsset()" :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important; cursor: pointer;">
                             </div>
                         </div>
                     </div>
@@ -292,7 +333,7 @@ $sess = $session->get('adminId');
                                             <input type="checkbox" id="deleteAssetPhoto" name="deleteAssetPhoto" class="c-switch-input" @change="deleteAssetPhoto = $event.target.checked">
                                             <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                         </label>
-                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="if asset photo exist, you can turn switch button to delete the photo"></i></label>
+                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="If asset photo exist, you can turn switch button to delete the photo."></i></label>
                                     </div>
                                 </template>
                             </div>
@@ -316,7 +357,7 @@ $sess = $session->get('adminId');
                                     <div class="form-group">
                                         <form method="post" enctype="multipart/form-data">
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="parameter">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="parameter"></i></label>
+                                                <label class="col-sm-3" for="parameter">Parameter <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Name for your parameter."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <input type="text" class="form-control parameter" name="parameter" placeholder="Parameter Name" v-model="param.parameterName" :required="true">
                                                     <div class="invalid-feedback">
@@ -325,7 +366,7 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="type"></i></label>
+                                                <label class="col-sm-3" for="type">Type <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Type input for your parameter."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control type" name="type" placeholder="Select Type">
                                                         <option value="" selected disabled>Select Type</option>
@@ -340,21 +381,21 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="min"></i></label>
+                                                <label class="col-sm-3" for="min">Min <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Min value when input type is 'input'."></i></label>
                                                 <input type="number" class="form-control col-sm-9 min" name="min" placeholder="Min Value" v-model="param.min">
                                                 <div class="invalid-feedback">
                                                     Field cannot be empty.
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'input' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="max"></i></label>
+                                                <label class="col-sm-3" for="max">Max <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Max value when input type is 'input'"></i></label>
                                                 <input type="number" class="form-control col-sm-9 max" name="max" placeholder="Max Value" v-model="param.max">
                                                 <div class="invalid-feedback">
                                                     Field cannot be empty.
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="normal"></i></label>
+                                                <label class="col-sm-3" for="normal">Normal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Normal value when input type is 'select'"></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control normalAbnormal normal" name="normal" id="normal" multiple></select>
                                                     <div class="invalid-feedback">
@@ -363,7 +404,7 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div :class="param.inputType == 'select' ? 'row mb-3' : 'd-none'">
-                                                <label class="col-sm-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="abnormal"></i></label>
+                                                <label class="col-sm-3" for="abnormal">Abnormal <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Abormal value when input type is 'select'"></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control normalAbnormal abnormal" name="abnormal" id="abnormal" multiple></select>
                                                     <div class="invalid-feedback">
@@ -372,14 +413,14 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div :class="((param.inputType == 'input') || (param.inputType == 'select') ? 'row mb-3' : 'd-none')">
-                                                <label class="col-sm-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="uom"></i></label>
+                                                <label class="col-sm-3" for="uom">Unit Of Measure <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Unit Of Measure of your parameter."></i></label>
                                                 <input type="text" class="form-control col-sm-9 uom" name="uom" placeholder="Unit Of Measure" v-model="param.uom">
                                                 <div class="invalid-feedback">
                                                     Field cannot be empty.
                                                 </div>
                                             </div>
                                             <div :class="((param.inputType == 'select') || (param.inputType == 'checkbox') ? 'row mb-3' : 'd-none')">
-                                                <label class="col-sm-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="option"></i></label>
+                                                <label class="col-sm-3">Option <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Option value for your parameter."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <input class="form-control" type="text" name="option" id="option" v-model="param.option" placeholder="Option Value">
                                                     <div class="invalid-feedback">
@@ -388,7 +429,7 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
+                                                <label class="col-sm-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Status parameter you have."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control showOn" name="showOn" id="showOn" multiple>
                                                         <option value="Running">Running</option>
@@ -401,11 +442,11 @@ $sess = $session->get('adminId');
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="description"></i></label>
+                                                <label class="col-sm-3" for="description">Description <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Description of parameter."></i></label>
                                                 <textarea class="form-control col-sm-9 description" rows="9" name="description" placeholder="Description of parameter" v-model="param.description"></textarea>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="photo"></i></label>
+                                                <label class="col-3" for="photo">Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Image of parameter."></i></label>
                                                 <div class="col-9 p-0">
                                                     <input type="file" class="filepond mt-2 mb-2 w-100" name="photoParam" id="photoParam" />
                                                 </div>
@@ -420,7 +461,7 @@ $sess = $session->get('adminId');
                                                             <input type="checkbox" id="deletePhoto" name="deletePhoto" class="c-switch-input" @change="deletePhoto = $event.target.checked">
                                                             <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                                         </label>
-                                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="if parameter photo exist, you can turn on witch button to delete the photo"></i></label>
+                                                        <label class="ml-2 mb-0" for="showOn">Delete Photo <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="If parameter photo exist, you can turn switch button to delete the photo."></i></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -600,8 +641,8 @@ $sess = $session->get('adminId');
                     </div>
                 </div>
 
-                <!-- modal preview location -->
-                <div class="modal fade" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
+                <!-- modal preview image -->
+                <div class="modal fade pr-0" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
                     <div class="modal-dialog modal-fs" role="document">
                         <div class="modal-content">
                             <div class="d-flex justify-content-end p-3">
@@ -617,6 +658,123 @@ $sess = $session->get('adminId');
                         </div>
                     </div>
                 </div>
+                <!-- modal preview change -->
+                <div class="modal fade pr-0" id="modalChange" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTagTitle">Detail Change Log</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mt-2">
+                                    <h6>Changes On March 12, 2021 by <b class="text-info">Rizal Zaelani</b></h6>
+                                </div>
+                                <div class="mt-4">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Property Name</th>
+                                                <th>Old Value</th>
+                                                <th>New Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php $length = count($old);
+                                            foreach ($old as $key => $val) : ?>
+                                                <?php
+                                                if ($val == $new[$key]) { ?>
+                                                    <tr>
+                                                        <td><?= $key ?></td>
+                                                        <td style="max-width: 200px !important" class="new"><?= $val ?></td>
+                                                        <td style="max-width: 200px !important" class="new"><?= $new[$key] ?></td>
+                                                    </tr>
+                                                <?php } else { ?>
+                                                    <tr>
+                                                        <td><?= $key ?></td>
+                                                        <td style="max-width: 200px !important" class="old"><?= $val ?></td>
+                                                        <td style="max-width: 200px !important" class="old"><?= $new[$key] ?></td>
+                                                    </tr>
+                                                <?php } ?>
+                                            <?php endforeach; ?>
+                                            <!-- <tr>
+                                                <td>Asset Name</td>
+                                                <td class="old">Apar</td>
+                                                <td class="new">Apar New</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Asset Number</td>
+                                                <td>xapar001</td>
+                                                <td>xapar002</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Photo</td>
+                                                <td>xapar001</td>
+                                                <td>xapar002</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Description</td>
+                                                <td>Description</td>
+                                                <td>Description xapar002</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Manual</td>
+                                                <td>0</td>
+                                                <td>0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Type</td>
+                                                <td>Weekly</td>
+                                                <td>Weekly</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Frequency</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Weeks</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Weekdays</td>
+                                                <td>Su,Mo</td>
+                                                <td>Su,Mo,Tu</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Schedule Days</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Asset Status</td>
+                                                <td>Running</td>
+                                                <td>Running</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tag</td>
+                                                <td>APAR</td>
+                                                <td>APAR,UNIT</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tag Location</td>
+                                                <td>Ashilo</td>
+                                                <td>Ashilo,SR 2 - Elektrik</td>
+                                            </tr> -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -627,28 +785,22 @@ $sess = $session->get('adminId');
                     <h5><b>Change Log</b></h5>
                 </div>
                 <div class="table-responsive w-100 mt-2 col-12">
-                    <table class="table table-hover">
+                    <table class="table table-hover nowrap">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Date</th>
-                                <th>Asset</th>
-                                <th>Number</th>
-                                <th>Tag</th>
-                                <th>Location</th>
-                                <th>Frequency</th>
-                                <th>Description</th>
+                                <th>Activity</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php for ($i = 1; $i < 6; $i++) { ?>
                                 <tr>
                                     <td>13-02-2021 12.30.00</td>
-                                    <td>log asset</td>
-                                    <td>log number</td>
-                                    <td>log tag</td>
-                                    <td>log location</td>
-                                    <td>log frequency</td>
-                                    <td>log description</td>
+                                    <td>Update Asset</td>
+                                    <td>
+                                        <button @click="modalChange()" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>
+                                    </td>
                                 </tr>
                             <?php } ?>
                         </tbody>
@@ -3882,6 +4034,11 @@ $sess = $session->get('adminId');
                     return checkIsEqual;
                 }
 
+                function modalChange() {
+                    this.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
+                    this.myModal.show();
+                }
+
                 onMounted(() => {
                     FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
                     if (assetData.schMonthlyWeekDays != "" && assetData.schType == "Monthly" && assetData.schWeeks != "") {
@@ -3923,7 +4080,7 @@ $sess = $session->get('adminId');
                     assetPhoto1.on('removefile', (error, file) => {
                         v.assetPhoto = ref("");
                     })
-                    
+
                     let dataAssetName = assetData.assetName;
                     let dataAssetNumber = assetData.assetNumber;
                     let dataAssetDesc = assetData.description;
@@ -3980,6 +4137,8 @@ $sess = $session->get('adminId');
                     myModal,
                     file,
                     submited,
+
+                    modalChange,
 
                     checked,
                     assetData,
@@ -4119,6 +4278,14 @@ $sess = $session->get('adminId');
             this.myModal.show();
             $('#fullPreview').append("<img id='fullImg' src='" + v.param.photo1 + "' alt='img'>");
         }
+
+        function modalImgAsset() {
+            $('#fullImg').remove();
+            this.myModal = new coreui.Modal(document.getElementById('modalPreviewImg'), {});
+            this.myModal.show();
+            $('#fullPreview').append("<img id='fullImg' src='" + v.assetData.photo + "' alt='img'>");
+        }
+
 
         $(function() {
             $('tbody').sortable({

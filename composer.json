@@ -11,7 +11,9 @@
 		"box/spout": "^3.3",
 		"dompdf/dompdf": "^1.0",
 		"firebase/php-jwt": "^5.4",
-		"pear/http_request2": "^2.5"
+		"pear/http_request2": "^2.5",
+		"influxdb/influxdb-php": "^1.15",
+		"influxdata/influxdb-client-php": "^2.4"
 	},
 	"require-dev": {
 		"fakerphp/faker": "^1.9",

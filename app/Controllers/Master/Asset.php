@@ -465,6 +465,10 @@ class Asset extends BaseController
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
 		$tag = $post['tag'];
+		$adminId = $this->session->get('adminId');
+
+		$beforeAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+		$beforeParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
 
 		if (isset($post['assetId'])) {
 			// new tags and tag location
@@ -539,21 +543,45 @@ class Asset extends BaseController
 					$path = str_replace(base_url() . '/', "", $post['photo']);
 					unlink($path);
 				}
-			}else{
+			} else {
 				$check = $post['deleteAssetPhoto'] == 'true' ? true : false;
 				if ($check) {
 					$dataAsset['photo'] = null;
 					$path = str_replace(base_url() . '/', "", $post['photo']);
 					unlink($path);
-				}else{
+				} else {
 					$dataAsset['photo'] = $post['photo'];
 				}
 				if ($post['photo'] == 'null') {
 					$dataAsset['photo'] = null;
 				}
 			}
+			// asset status
+			$assetStatusId = $post['assetStatusId'];
+			$assetStatus = $assetStatusModel->where('assetStatusId', $assetStatusId)->get()->getResult();
+			$lengthAssetStatus = count($assetStatus);
+			if ($lengthAssetStatus < 1) {
+				$dataStatus = array(
+					'assetStatusId' => $post['assetStatusId'],
+					'assetstatusName' => $post['assetStatusName']
+				);
+				$assetStatusModel->insert($dataStatus);
+				$dataAsset['assetStatusId'] = $post['assetStatusId'];
+				// $dataAssetStatus = array(
+				// 	'assetStatusId' => $post['assetStatusId']
+				// );
+				// $assetModel->update($assetId, $dataAssetStatus);
+				// echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataStatus));
+			} else {
+				$dataAsset['assetStatusId'] = $post['assetStatusId'];
+				// $dataAssetStatus = array(
+				// 	'assetStatusId' => $post['assetStatusId'],
+				// );
+				// $assetModel->update($assetId, $dataAssetStatus);
+				// echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
+			}
 			$assetModel->update($assetId, $dataAsset);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
+			// echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
 
 			// taglocation
 			$tagLocation = explode(",", $post['locationId']);
@@ -592,29 +620,6 @@ class Asset extends BaseController
 				}
 			} else {
 				$assetTagModel->deleteById($assetId);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
-			}
-
-			// asset status
-			$assetStatusId = $post['assetStatusId'];
-			$assetStatus = $assetStatusModel->where('assetStatusId', $assetStatusId)->get()->getResult();
-			$lengthAssetStatus = count($assetStatus);
-			if ($lengthAssetStatus < 1) {
-				$dataStatus = array(
-					'assetStatusId' => $post['assetStatusId'],
-					'assetstatusName' => $post['assetStatusName']
-				);
-				$assetStatusModel->insert($dataStatus);
-				$dataAssetStatus = array(
-					'assetStatusId' => $post['assetStatusId']
-				);
-				$assetModel->update($assetId, $dataAssetStatus);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataStatus));
-			} else {
-				$dataAssetStatus = array(
-					'assetStatusId' => $post['assetStatusId'],
-				);
-				$assetModel->update($assetId, $dataAssetStatus);
 				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 			}
 
@@ -813,6 +818,30 @@ class Asset extends BaseController
 					}
 				}
 			}
+
+			// $afterAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+			// $afterParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+
+			// $strbefore = json_encode($beforeAsset);
+			// $strafter = json_encode($afterAsset);
+
+			// $strbeforeP = json_encode($beforeParameter);
+			// $strafterP = json_encode($afterParameter);
+
+			// $objbeforeP = json_decode($strbeforeP);
+			// $objafterP = json_decode($strafterP);
+			// if ($objbeforeP == $objafterP) {
+			// 	echo 'sama';
+			// }else{
+			// 	echo 'tidak sama';
+			// }
+			// $objbefore = json_decode($strbefore)[0];
+			// $objafter = json_decode($strafter)[0];
+			// if ($objbefore == $objafter) {
+			// 	echo 'sama';
+			// } else {
+			// 	echo 'tidak sama';
+			// }
 		} else {
 			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
 		}
