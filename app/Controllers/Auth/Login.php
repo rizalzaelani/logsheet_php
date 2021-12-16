@@ -4,6 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
 use App\Models\ApplicationSettingModel;
+use App\Models\Influx\LogActivityModel;
 use App\Models\TagLocationModel;
 use App\Models\TagModel;
 use App\Models\USMAN\UserModel;
@@ -195,28 +196,10 @@ class Login extends BaseController
     public function testMail()
     {
         try {
-            $message = file_get_contents(base_url()."/assets/Mail/forgotPassword.txt");
-            // $message = readfile('assets/Mail/forgotPassword.txt');
+            $logActModel = new LogActivityModel();
+            $logActModel->writeLog();
 
-            // // str_replace("{{linkBtnReset}}",(site_url("forgotPassword") . "?secret=" . $resData->data->token), $message)
-
-            // $email = \Config\Services::email();
-
-            // $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
-            // $email->setTo("barry.naz.zul@gmail.com");
-            // $email->setSubject('Test Logsheet Mail');
-            // $email->setMessage($message); //your message here
-            // $email->setMailType("html");
-
-            // // $email->setCC('another@emailHere'); //CC
-            // // $email->setBCC('thirdEmail@emialHere'); // and BCC
-            // // $filename = '/img/yourPhoto.jpg'; //you can use the App patch 
-            // // $email->attach($filename);
-
-            // $email->send();
-            // $email->printDebugger(['headers']);
-
-            echo "Success";
+            echo "Success - " . microtime(true);
         } catch (Exception $e) {
             echo "<pre />";
             print_r($e);

@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Api;
 
+use App\Models\ApplicationSettingModel;
 use App\Models\USMAN\UserModel;
 use CodeIgniter\RESTful\ResourceController;
 use Firebase\JWT\JWT;
@@ -46,6 +47,9 @@ class Login extends ResourceController
             $expire     = $issuedAt->modify('+' . getenv("JWT_TIME_TO_LIVE") . ' minutes')->getTimestamp();
             $serverName = getenv("DOMAIN_NAME");
 
+            $appSettingModel = new ApplicationSettingModel();
+            $appSetting = $appSettingModel->where("userId", $data->data->adminId)->get()->getRowArray();
+            
             $jwtPayload = [
                 'iss'  => $serverName,                       // Issuer
                 'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
@@ -60,7 +64,7 @@ class Login extends ResourceController
                     "group" => $data->data->group,
                     "appId" => $data->data->appId,
                     "appCode" => $data->data->appCode,
-                    "adminId" => $data->data->adminId,
+                    "adminId" => $data->data->adminId
                 )
             ];
             
@@ -78,7 +82,8 @@ class Login extends ResourceController
                         "email" => $data->data->email,
                         "parameter" => json_decode($data->data->parameter ?? "{}"),
                         "group" => $data->data->group,
-                    )
+                    ),
+                    "application" => $appSetting
                 ]
             ], 200);
         }
