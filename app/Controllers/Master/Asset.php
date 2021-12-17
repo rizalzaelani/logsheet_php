@@ -10,6 +10,7 @@ use App\Models\TagModel;
 use App\Models\TagLocationModel;
 use App\Models\AssetStatusModel;
 use App\Models\AssetTagModel;
+use App\Models\Influx\LogActivityModel;
 use App\Models\ParameterModel;
 use App\Models\Wizard\TransactionModel;
 use CodeIgniter\API\ResponseTrait;
@@ -18,6 +19,7 @@ use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
+use DateTime;
 use Exception;
 
 class Asset extends BaseController
@@ -35,6 +37,38 @@ class Asset extends BaseController
 		if (!checkRoleList("MASTER.ASSET.VIEW")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
+		$influxModel = new LogActivityModel();
+		$adminId = $this->session->get('adminId');
+		$username = $this->session->get('name');
+		$activity = 'Update Asset oke';
+
+		$body = [
+			'data_before' => [
+				'assetName' => 'APAR X01',
+				'assetNumber' => 'xapar01',
+				'description' => 'Description APAR X01'
+			],
+			'data_after' => [
+				'assetName' => 'APAR X01',
+				'assetNumber' => 'xapar01',
+				'description' => 'Description APAR X01'
+			]
+		];
+
+		// $influxModel->writeLog(json_encode($body), $activity, $adminId, $username, 'null');
+
+		$data = [
+			'data_before' => [
+				'assetName' => 'Apar',
+				'assetNumber' => 'xapar01',
+				'description' => 'description Apar',
+			],
+			'data_after' => [
+				'assetName' => 'Apar 01',
+				'assetNumber' => 'xapar01',
+				'description' => 'description Apar x01',
+			]
+		];
 
 		$data['title'] = 'Asset';
 		$data['subtitle'] = 'Asset';
@@ -79,9 +113,9 @@ class Asset extends BaseController
 
 		$filtTag = $_POST["columns"][1]["search"]["value"] ?? '';
 		$filtLoc = $_POST["columns"][2]["search"]["value"] ?? '';
-		
-		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
-		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
+
+		if ($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
+		if ($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
 
 		$list = $DTModel->datatable($where);
 		$output = array(
@@ -93,6 +127,29 @@ class Asset extends BaseController
 			'message' => 'success'
 		);
 		echo json_encode($output);
+	}
+
+	public function changelog()
+	{
+		$influxModel = new LogActivityModel();
+
+		$post = $this->request->getPost();
+		$datestart = $post['start'];
+		$dateend = $post['end'];
+		$activity = "Update Asset";
+
+		// $data = $influxModel->readLog(strtotime($datestart), strtotime($dateend), $activity);
+		// $logactivity = [];
+		// foreach ($data->each() as $record) {
+		// 	// var_dump($record->values);
+		// 	array_push($logactivity, $record->values);
+		// }
+
+		// return $this->response->setJSON(array(
+		// 	'status' => 200,
+		// 	'message' => 'Success get data',
+		// 	'data' => $logactivity
+		// ));
 	}
 
 	public function add()

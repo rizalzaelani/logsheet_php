@@ -46,35 +46,37 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'Last');
 $session = \Config\Services::session();
 $sess = $session->get('adminId');
-$new = [
-    'assetName'     => 'APAR X01',
-    'assetNumber'   => 'xapar01',
-    'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
-    'description'   => 'Description',
-    'schManual'     => '0',
-    'schType'       => 'Weekly',
-    'schFrequency'  => '1',
-    'schWeeks'      => '',
-    'schWeekDays'   => 'Su,Mo',
-    'schDays'       => '',
-    'assetStatusName' => 'Running',
-    'tagName'       => 'APAR,UNIT',
-    'tagLocationName' => 'Ashilo,AREA X - 1A'
-];
-$old = [
-    'assetName'     => 'APAR X01',
-    'assetNumber'   => 'xaparx01',
-    'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
-    'description'   => 'Description Apar x01',
-    'schManual'     => '0',
-    'schType'       => 'Weekly',
-    'schFrequency'  => '1',
-    'schWeeks'      => '',
-    'schWeekDays'   => 'Su,Mo,Tu',
-    'schDays'       => '',
-    'assetStatusName' => 'Running',
-    'tagName'       => 'APAR,UNIT,Segitiga Apar',
-    'tagLocationName' => 'Ashilo'
+$datachangelog = [
+    'data_before' => [
+        'assetName'     => 'APAR X01',
+        'assetNumber'   => 'xapar01',
+        'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
+        'description'   => 'Description',
+        'schManual'     => '0',
+        'schType'       => 'Weekly',
+        'schFrequency'  => '1',
+        'schWeeks'      => '',
+        'schWeekDays'   => 'Su,Mo',
+        'schDays'       => '',
+        'assetStatusName' => 'Running',
+        'tagName'       => 'APAR,UNIT',
+        'tagLocationName' => 'Ashilo,AREA X - 1A'
+    ],
+    'data_after' => [
+        'assetName'     => 'APAR X01',
+        'assetNumber'   => 'xaparx01',
+        'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
+        'description'   => 'Description Apar x01',
+        'schManual'     => '0',
+        'schType'       => 'Weekly',
+        'schFrequency'  => '1',
+        'schWeeks'      => '',
+        'schWeekDays'   => 'Su,Mo,Tu',
+        'schDays'       => '',
+        'assetStatusName' => 'Running',
+        'tagName'       => 'APAR,UNIT,Segitiga Apar',
+        'tagLocationName' => 'Ashilo'
+    ]
 ];
 ?>
 <div class="row" id="app">
@@ -682,88 +684,24 @@ $old = [
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php $length = count($old);
-                                            foreach ($old as $key => $val) : ?>
-                                                <?php
-                                                if ($val == $new[$key]) { ?>
-                                                    <tr>
-                                                        <td><?= $key ?></td>
-                                                        <td style="max-width: 200px !important" class="new"><?= $val ?></td>
-                                                        <td style="max-width: 200px !important" class="new"><?= $new[$key] ?></td>
-                                                    </tr>
-                                                <?php } else { ?>
-                                                    <tr>
-                                                        <td><?= $key ?></td>
-                                                        <td style="max-width: 200px !important" class="old"><?= $val ?></td>
-                                                        <td style="max-width: 200px !important" class="old"><?= $new[$key] ?></td>
-                                                    </tr>
-                                                <?php } ?>
-                                            <?php endforeach; ?>
-                                            <!-- <tr>
-                                                <td>Asset Name</td>
-                                                <td class="old">Apar</td>
-                                                <td class="new">Apar New</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Asset Number</td>
-                                                <td>xapar001</td>
-                                                <td>xapar002</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Photo</td>
-                                                <td>xapar001</td>
-                                                <td>xapar002</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Description</td>
-                                                <td>Description</td>
-                                                <td>Description xapar002</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Schedule Manual</td>
-                                                <td>0</td>
-                                                <td>0</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Schedule Type</td>
-                                                <td>Weekly</td>
-                                                <td>Weekly</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Schedule Frequency</td>
-                                                <td>1</td>
-                                                <td>1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Schedule Weeks</td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Schedule Weekdays</td>
-                                                <td>Su,Mo</td>
-                                                <td>Su,Mo,Tu</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Schedule Days</td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Asset Status</td>
-                                                <td>Running</td>
-                                                <td>Running</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Tag</td>
-                                                <td>APAR</td>
-                                                <td>APAR,UNIT</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Tag Location</td>
-                                                <td>Ashilo</td>
-                                                <td>Ashilo,SR 2 - Elektrik</td>
-                                            </tr> -->
+                                            <template v-if="changelog != ''">
+                                                <template v-for="(val, i) in changelog.data_before">
+                                                    <template v-if="val == changelog.data_after[i]">
+                                                        <tr>
+                                                            <td>{{ _.startCase(i) }}</td>
+                                                            <td style="max-width: 200px !important">{{ val }}</td>
+                                                            <td style="max-width: 200px !important">{{ changelog.data_after[i] }}</td>
+                                                        </tr>
+                                                    </template>
+                                                    <template v-else>
+                                                        <tr>
+                                                            <td>{{ _.startCase(i) }}</td>
+                                                            <td style="max-width: 200px !important" class="old">{{ val }}</td>
+                                                            <td style="max-width: 200px !important" class="new">{{ changelog.data_after[i] }}</td>
+                                                        </tr>
+                                                    </template>
+                                                </template>
+                                            </template>
                                         </tbody>
                                     </table>
                                 </div>
@@ -781,11 +719,17 @@ $old = [
         <!-- change log -->
         <div :class="checkTabDetail == true ? 'card card-main' : 'd-none'" id="cardChangeLog">
             <div class="row">
-                <div class="mt-2 col-12">
+                <div class="mt-2 col-12 d-flex justify-content-between align-items-center">
                     <h5><b>Change Log</b></h5>
+                    <div>
+                        <div class="p-0" id="rangechangelog" style="cursor: pointer; padding: 5px 10px; width: 100%">
+                            <i class="fa fa-calendar"></i>&nbsp;
+                            <span></span> <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
                 </div>
                 <div class="table-responsive w-100 mt-2 col-12">
-                    <table class="table table-hover nowrap">
+                    <table class="table table-hover nowrap" id="tableChangeLog">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Date</th>
@@ -794,15 +738,32 @@ $old = [
                             </tr>
                         </thead>
                         <tbody>
-                            <?php for ($i = 1; $i < 6; $i++) { ?>
-                                <tr>
-                                    <td>13-02-2021 12.30.00</td>
-                                    <td>Update Asset</td>
-                                    <td>
-                                        <button @click="modalChange()" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>
-                                    </td>
-                                </tr>
-                            <?php } ?>
+                            <tr>
+                                <td>
+                                    12 Dec 2021 15:39:45
+                                </td>
+                                <td>
+                                    Update Asset
+                                </td>
+                                <td>
+                                    <button @click="modalChange()" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>
+                                </td>
+                            </tr>
+                            <template v-if="changelog.length">
+                                <template v-for="(val, i) in changelog">
+                                    <tr>
+                                        <td>
+                                            {{ momentchangelog(val._time) }}
+                                        </td>
+                                        <td>
+                                            {{ val.activity }}
+                                        </td>
+                                        <td>
+                                            <button @click="modalChange(i)" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </template>
                         </tbody>
                     </table>
                 </div>
@@ -1494,6 +1455,11 @@ $old = [
         const v = Vue.createApp({
             el: '#app',
             setup() {
+                const start = moment().subtract(6, 'days');
+                const end = moment();
+
+                var changelog = <?= json_encode($datachangelog) ?>;
+
                 var checkTabDetail = ref(true);
                 var checkTabParameter = ref(false);
                 var checkTabSetting = ref(false);
@@ -1584,6 +1550,10 @@ $old = [
                 }
 
                 var descJson = reactive(assetData.descriptionJson);
+
+                function momentchangelog(date) {
+                    return moment(date).format("YYYY MMM DD H:mm:ss")
+                }
 
                 function modalAddTag() {
                     this.myModal = new coreui.Modal(document.getElementById('modalAddTag'));
@@ -4037,6 +4007,25 @@ $old = [
                 function modalChange() {
                     this.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
                     this.myModal.show();
+                    // console.log(this.changelog[0]._value);
+                }
+
+                const cb = (start, end) => {
+                    $('#rangechangelog span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
+                    $('#rangechangelog').on('apply.daterangepicker', function(ev, picker) {
+                        v.start = picker.startDate.format("YYYY-MM-DD H:mm:ss")
+                        v.end = picker.endDate.format("YYYY-MM-DD H:mm:ss")
+                        let formdata = new FormData();
+                        formdata.append('start', v.start);
+                        formdata.append('end', v.end);
+                        axios({
+                            url: '<?= base_url('/Asset/changelog') ?>',
+                            method: 'POST',
+                            data: formdata
+                        }).then((res) => {
+                            console.log(res);
+                        })
+                    })
                 }
 
                 onMounted(() => {
@@ -4127,9 +4116,40 @@ $old = [
                             }
                         }
                     })
+
+                    $('#rangechangelog').daterangepicker({
+                        startDate: start,
+                        endDate: end,
+                        ranges: {
+                            'Today': [moment(), moment()],
+                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                            'This Month': [moment().startOf('month'), moment().endOf('month')],
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        }
+                    }, cb);
+                    cb(start, end);
+
+                    let formdata = new FormData();
+                    formdata.append('start', start);
+                    formdata.append('end', end);
+                    axios({
+                        url: '<?= base_url('/Asset/changelog') ?>',
+                        method: 'POST',
+                        data: formdata
+                    }).then((res) => {
+                        let rsp = res.data;
+                        if (rsp.status == 200) {
+                            // v.changelog = rsp.data;
+                        }
+                    })
                 });
 
                 return {
+                    changelog,
+                    momentchangelog,
+
                     checkTabDetail,
                     checkTabParameter,
                     checkTabSetting,
@@ -4208,7 +4228,10 @@ $old = [
                     isEqualParam,
                     parameterGroupData,
                     tempParameterGroupData,
-                    allParameter
+                    allParameter,
+                    cb,
+                    start,
+                    end,
                 }
             },
             computed: {
