@@ -37,8 +37,11 @@ $routes->post('/Login/auth', 'Auth/Login::auth');
 $routes->get('/logout', 'Auth/Login::logout');
 $routes->get('/login/testMail', 'Auth/Login::testMail');
 $routes->get('/login/testTelegram', 'Auth/Login::testTelegram');
-$routes->get('/forgotPassword', 'Auth/Login::forgotPassword');
-$routes->post('/forgotPassword/sendMail', 'Auth/Login::sendMailForgotPassword');
+
+$routes->get('/resetPassword/(:any)', 'Auth\ResetPassword::index/$1');
+$routes->get('/forgotPassword', 'Auth/ResetPassword::forgotPassword');
+$routes->post('/forgotPassword/sendMail', 'Auth/ResetPassword::sendMailForgotPassword');
+$routes->post('/resetPassword', 'Auth/ResetPassword::doResetPassword');
 
 $routes->get('/register', 'Auth/Register::index');
 $routes->post('/register/doRegister', 'Auth/Register::doRegister');
