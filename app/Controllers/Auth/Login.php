@@ -8,7 +8,9 @@ use App\Models\Influx\LogActivityModel;
 use App\Models\TagLocationModel;
 use App\Models\TagModel;
 use App\Models\USMAN\UserModel;
+use DateTimeImmutable;
 use Exception;
+use Firebase\JWT\JWT;
 
 class Login extends BaseController
 {
@@ -63,36 +65,46 @@ class Login extends BaseController
                         $dataArr = $data->data;
                         $dataArr->password = $password;
 
-                        $appSettingModel = new ApplicationSettingModel();
-                        $appSetting = $appSettingModel->where("userId", $dataArr->adminId)->get()->getRowArray();
-                        if (empty($appSetting)) {
-                            $this->response->setCookie('appName', "", 60 * 60 * 24 * 365, '', '/logsheet');
-                            $this->response->setCookie('appLogoLight', "", 60 * 60 * 24 * 365, '', '/logsheet');
-                            $this->response->setCookie('appLogoDark', "", 60 * 60 * 24 * 365, '', '/logsheet');
-                            $this->response->setCookie('appLogoIcon', "", 60 * 60 * 24 * 365, '', '/logsheet');
+                        if ($dataArr->email_valid == 0) {
+                            return $this->response->setJSON(array(
+                                'status' => 400,
+                                'message' => 'Email is Not Verified',
+                                'email' => $email,
+                                'userId' => $dataArr->userId,
+                                'data' => []
+                            ), 200);
                         } else {
-                            $this->response->setCookie('appName', $appSetting["appName"], 60 * 60 * 24 * 365, '', '/logsheet');
-                            $this->response->setCookie('appLogoLight', $appSetting["appLogoLight"], 60 * 60 * 24 * 365, '', '/logsheet');
-                            $this->response->setCookie('appLogoDark', $appSetting["appLogoDark"], 60 * 60 * 24 * 365, '', '/logsheet');
-                            $this->response->setCookie('appLogoIcon', $appSetting["appLogoIcon"], 60 * 60 * 24 * 365, '', '/logsheet');
+                            $appSettingModel = new ApplicationSettingModel();
+                            $appSetting = $appSettingModel->where("userId", $dataArr->adminId)->get()->getRowArray();
+                            if (empty($appSetting)) {
+                                $this->response->setCookie('appName', "", 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoLight', "", 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoDark', "", 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoIcon', "", 60 * 60 * 24 * 365, '', '/logsheet');
+                            } else {
+                                $this->response->setCookie('appName', $appSetting["appName"], 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoLight', $appSetting["appLogoLight"], 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoDark', $appSetting["appLogoDark"], 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoIcon', $appSetting["appLogoIcon"], 60 * 60 * 24 * 365, '', '/logsheet');
+                            }
+                            $tagModel = new TagModel();
+                            $tagLocModel = new TagLocationModel();
+
+                            $tagData = $tagModel->getAll(["userId" => $dataArr->adminId]);
+                            $tagLocData = $tagLocModel->getAll(["userId" => $dataArr->adminId]);
+
+                            $session->set((array) $dataArr);
+                            $this->response->setCookie('clientToken', "active", 3600);
+
+                            return $this->response->setJSON(array(
+                                'status' => 200,
+                                'message' => 'Success Login',
+                                'data' => [
+                                    'tagData' => $tagData,
+                                    'tagLocationData' => $tagLocData
+                                ]
+                            ), 200);
                         }
-                        $tagModel = new TagModel();
-                        $tagLocModel = new TagLocationModel();
-
-                        $tagData = $tagModel->getAll(["userId" => $dataArr->adminId]);
-                        $tagLocData = $tagLocModel->getAll(["userId" => $dataArr->adminId]);
-
-                        $session->set((array) $dataArr);
-                        $this->response->setCookie('clientToken', "active", 3600);
-
-                        return $this->response->setJSON(array(
-                            'status' => 200,
-                            'message' => 'Success Login',
-                            'data' => [
-                                'tagData' => $tagData,
-                                'tagLocationData' => $tagLocData
-                            ]
-                        ), 200);
                     }
                 } else {
                     return $this->response->setJSON(array(
@@ -108,6 +120,65 @@ class Login extends BaseController
                 ], 500);
             }
         }
+    }
+
+    public function sendMailVerification()
+    {
+        $isValid = $this->validate([
+            'email' => 'required',
+            'userId' => 'required',
+        ]);
+
+        if (!$isValid) {
+            return $this->response->setJSON([
+                'status' => 400,
+                'error' => true,
+                'message' => "Invalid Data",
+                'data' => $this->validator->getErrors()
+            ], 400);
+        }
+
+        $email = $this->request->getVar("email");
+        $userId = $this->request->getVar("userId");
+
+        $issuedAt   = new DateTimeImmutable();
+        $expire     = $issuedAt->modify('+10 years')->getTimestamp();
+        $serverName = getenv("DOMAIN_NAME");
+        $jwtPayload = [
+            'iss'  => $serverName,                       // Issuer
+            'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
+            'nbf'  => $issuedAt->getTimestamp(),         // Not before
+            'exp'  => $expire,                           // Expire
+            'email' => $email,
+            'data' => [
+                'email' => $email,
+                'userId' => $userId,
+            ]
+        ];
+
+        $jwt = JWT::encode($jwtPayload, getenv("JWT_SECRET_KEY_MAIL_VERIFY"));
+
+        $linkReset = site_url("verifyMail/") . $jwt;
+        $message = file_get_contents(base_url() . "/assets/Mail/verifyMail.txt");
+
+        $message = str_replace("{{linkBtn}}", $linkReset, $message);
+        $message = str_replace("{{emailAddress}}", $email, $message);
+
+        $mailService = \Config\Services::email();
+
+        $mailService->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
+        $mailService->setTo($email);
+        $mailService->setSubject('Verify your Logsheet Digital Account');
+        $mailService->setMessage($message);
+        $mailService->setMailType("html");
+
+        $mailService->send();
+
+        return $this->response->setJSON([
+            'status' => 200,
+            'message' => "Success Send Verification email",
+            'data' => []
+        ], 200);
     }
 
     public function logout()
