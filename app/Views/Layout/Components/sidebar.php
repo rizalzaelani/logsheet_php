@@ -2,7 +2,7 @@
     <div class="c-sidebar-brand d-md-down-none m-1">
         <img src="<?= get_cookie("appLogoLight") ?? base_url('/img/logo-act.png') ?>" height="40" width="162" class="c-sidebar-brand-full">
         <img src="<?= get_cookie("appLogoDark") ?? base_url('/img/logo-act-dark.png') ?>" height="40" width="162" class="c-sidebar-brand-full-dark">
-        <img class="c-sidebar-brand-minimized" src="<?= base_url('/img/logo-act-min.png') ?>" width="40" height="38" alt="">
+        <img class="c-sidebar-brand-minimized" src="<?= get_cookie("appLogoIcon") ?? base_url('/img/logo-act-min.png') ?>" width="40" height="38" alt="">
     </div>
     <ul class="c-sidebar-nav ps ps--active-y">
         <?php if (checkRoleList("DASHBOARD.VIEW")) : ?>
