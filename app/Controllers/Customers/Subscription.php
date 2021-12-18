@@ -235,6 +235,8 @@ class Subscription extends BaseController
 
     public function invoiceUpgrade()
     {
+        $email = \Config\Services::email();
+
         $subscriptionModel = new SubscriptionModel();
         $transactionModel = new TransactionModel();
         $kledoModel = new kledoModel();
@@ -329,30 +331,41 @@ class Subscription extends BaseController
                     'activeFrom'    => $nowDate->format("Y-m-d 00:00:00"),
                     'activeTo'      => $expDate->modify("+" . str_replace("-", " ", $package->period))->format("Y-m-d 23:59:59")
                 ];
-                $transactionModel->insert($transaction);
+                // $transactionModel->insert($transaction);
             }
 
+            $message = file_get_contents("assets/Mail/subscription.txt");
+            $transdate = date("Y-m-d H:i:s");
+            $refnumber = $dataInvoice['ref_number'];
+            $transdesc = $transaction['description'];
+            $transprice = $package->packagePrice->price;
+            $transdiscount = '0%';
+            $transtax = '0';
+            $transtotal = $package->packagePrice->price;
 
+            $message = str_replace("{{trans_date}}", $transdate, $message);
+            $message = str_replace("{{ref_number}}", $refnumber, $message);
+            $message = str_replace("{{trans_desc}}", $transdesc, $message);
+            $message = str_replace("{{trans_price}}", 'Rp. ' . $transprice, $message);
+            $message = str_replace("{{trans_discount}}", $transdiscount, $message);
+            $message = str_replace("{{trans_tax}}", 'Rp. ' . $transtax, $message);
+            $message = str_replace("{{trans_total}}", 'Rp. ' . $transtotal, $message);
+
+            $subject = 'Invoice for order #' . $dataInvoice['ref_number'];
+            $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
+            $email->setTo('zaelanirizal.rz@gmail.com');
+            $email->setSubject($subject);
+            $email->setMessage($message);
+            $email->setMailType("html");
+            $email->send();
+            $email->printDebugger(['headers']);
+            die();
 
             return $this->response->setJSON([
                 'status' => 200,
                 'message' => 'Success add invoice',
                 'data' => []
             ], 200);
-
-            // $data = array(
-            //     'title' => "Payment",
-            //     'subtitle' => 'Payment'
-            // );
-            // $data["breadcrumbs"] = [
-            //     [
-            //         "title"    => "Home",
-            //         "link"    => "Dashboard"
-            //     ]
-            // ];
-
-
-            // return $this->template->render('Customers/Billing/payment', $data);
         } catch (Exception $e) {
             return $this->response->setJSON([
                 'status' => 500,
