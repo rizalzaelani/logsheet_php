@@ -330,7 +330,7 @@
 			var tag = <?= json_encode($tag) ?>;
 			var tagLocation = <?= json_encode($tagLocation) ?>;
 
-			var table = null;
+			var table = ref("");
 
 			var dataTransaction = ref("");
 			var dataFinding = ref("");
@@ -381,7 +381,7 @@
 								title: "There's No Data"
 							})
 						}
-						table = $('#dtTransaction').DataTable({
+						this.table = $('#dtTransaction').DataTable({
 							dom: "t<'mt-2 d-flex justify-content-between align-items-center' <i><p>>",
 							ordering: false,
 							scrollX: true,
@@ -497,7 +497,7 @@
 								title: "There's No Data"
 							})
 						}
-						table = $('#dtFinding').DataTable({
+						this.table = $('#dtFinding').DataTable({
 							dom: "t<'mt-2 d-flex justify-content-between align-items-center' <i><p>>",
 							ordering: false,
 							scrollX: true,
@@ -622,7 +622,7 @@
 								title: "There's No Data"
 							})
 						}
-						table = $('#dtSchedule').DataTable({
+						this.table = $('#dtSchedule').DataTable({
 							dom: "t<'mt-2 d-flex justify-content-between align-items-center' <i><p>>",
 							scrollX: true,
 							scrollY: "400px",

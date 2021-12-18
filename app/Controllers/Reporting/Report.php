@@ -10,12 +10,13 @@ class Report extends BaseController
 {
 	public function index()
 	{
-        if(!checkRoleList("REPORT.RAWDATA.VIEW")){
-            return View('errors/customError', ['ErrorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("REPORT.RAWDATA.VIEW")) {
+			return View('errors/customError', ['ErrorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$tagModel = new TagModel();
 		$tagLocationModel = new TagLocationModel();
+		$adminId = $this->session->get('adminId');
 		$data = array(
 			'title' => 'Report',
 			'subtitle' => 'Export Data Application Logsheet Digital'
@@ -32,8 +33,8 @@ class Report extends BaseController
 			],
 		];
 
-		$tag = $tagModel->getAll();
-		$tagLocation = $tagLocationModel->getAll();
+		$tag = $tagModel->getAll(['userid' => $adminId]);
+		$tagLocation = $tagLocationModel->getAll(['userId' => $adminId]);
 
 		$data['tag'] = $tag;
 		$data['tagLocation'] = $tagLocation;
