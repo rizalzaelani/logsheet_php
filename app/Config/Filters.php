@@ -35,7 +35,7 @@ class Filters extends BaseConfig
 		'before' => [
 			// 'honeypot',
 			// 'csrf',
-			'AuthFilter' => ['except' => ['/', 'api/*', 'Login', 'Login/*', '/logout', 'forgotPassword', 'forgotPassword/*', 'resetPassword', 'resetPassword/*', 'register', 'register/*', 'scheduleTrx/*', 'Wizard', 'Wizard/*']]
+			'AuthFilter' => ['except' => ['/', 'api/*', 'Login', 'Login/*', '/logout', 'forgotPassword', 'forgotPassword/*', 'resetPassword', 'resetPassword/*', 'register', 'register/*', 'verifyMail', 'verifyMail/*', 'scheduleTrx/*', 'Wizard', 'Wizard/*']]
 		],
 		'after'  => [
 			'toolbar',

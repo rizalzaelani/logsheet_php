@@ -39,12 +39,12 @@ function getSignedJWTForUser(string $email)
     return $jwt;
 }
 
-function getJWTData(string $encodedToken){
-    $key = Services::getSecretKey();
+function getJWTData(string $encodedToken, $key = ""){
+    if($key == "") $key = Services::getSecretKey();
     $decodedToken = JWT::decode($encodedToken, $key, ['HS256']);
-    $email = ($decodedToken->data->email ?? "");
+    $email = ($decodedToken->email ?? "");
     if($email == ""){
         throw new Exception('User does not exist for specified username');
     }
-    return $decodedToken->data;
+    return $decodedToken->data ?? [];
 }

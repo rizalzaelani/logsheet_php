@@ -73,7 +73,7 @@
                                         <input class="form-control" name="email" type="email" placeholder="Email" v-model="email">
                                     </div>
                                     <div class="invalid-feedback-password" :class="emailErr ? '' : 'd-none'">{{emailErr}}</div>
-                                    <button class="btn btn-info w-100 mt-4" type="submit" v-html="submitBtn"></button>
+                                    <button class="btn btn-info w-100 mt-4" type="submit" v-html="submitBtn" :disabled="submitBtn.includes('Processing')"></button>
 
                                     <div class="w-100 text-center mt-4">
                                         <a href="<?= site_url() ?>" class="text-info font-weight-500">Go back to the sign in page</a>

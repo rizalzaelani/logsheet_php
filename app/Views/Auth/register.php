@@ -49,7 +49,7 @@
             <div class="col-sm-10">
                 <div class="card-group">
                     <div class="card card-main">
-                        <div class="card-body p-4 p-sm-5">
+                        <div class="card-body p-4 p-sm-5" :class="formPos == 3 ? 'd-flex align-items-center flex-row' : ''">
                             <form v-on:submit.prevent="">
                                 <template v-if="formPos <= 2">
                                     <h2>Sign Up</h2>
@@ -146,33 +146,12 @@
                                     </span>
                                 </div>
                                 <div id="preview" :class="formPos == 3 ? '' : 'd-none'">
-                                    <table class="table table-sm">
-                                        <tr>
-                                            <th>App Name</th>
-                                            <th style="width: 5px">:</th>
-                                            <td>Logsheet Digital 01</td>
-                                        </tr>
-                                        <tr>
-                                            <th>App Code</th>
-                                            <th>:</th>
-                                            <td>logsheet-digital-01</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Email</th>
-                                            <th>:</th>
-                                            <td>admin@gmail.com</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Full Name</th>
-                                            <th>:</th>
-                                            <td>Andrianto</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Phone Number</th>
-                                            <th>:</th>
-                                            <td>+627368751834</td>
-                                        </tr>
-                                    </table>
+                                    <div class="text-center">
+                                        <h4 class="mb-4">Verification email has been sent</h4>
+                                        <p>We've sent it to your email address {{registerData.email}}. If it doesn't arrive soon, check your spam folder or <a href="" class="text-info">send the email again</a></p>
+                                        <p>Click on the link you received in the email address to finish the registration</p>
+                                        <a href="<?= site_url() ?>" class="text-info font-weight-500">Go back to the sign in page</a>
+                                    </div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-3">
                                     <button type="button" class="btn btn-secondary text-center px-3" :class="formPos == 2 ? '' : 'd-none'" @click="formPos = 1">Back</button>
@@ -254,8 +233,8 @@
                     if (registerData.fullname && registerData.noTelp && registerData.email && registerData.password && registerData.confirmPass && registerData.company && registerData.city && registerData.postalCode && registerData.country) {
                         let formData = new FormData();
                         formData.append("fullname", registerData.fullname);
-                        formData.append("noTelp", registerData.noTelp);
                         formData.append("email", registerData.email);
+                        formData.append("noTelp", registerData.noTelp);
                         formData.append("password", registerData.password);
                         formData.append("appName", registerData.appName);
                         formData.append("company", registerData.company);
@@ -273,10 +252,18 @@
                                     Swal.fire({
                                         title: "Success registered new account",
                                         icon: 'success',
-                                    }).then((sres) => {
-                                        localStorage.setItem("userId", JSON.stringify(resData));
-                                        // window.location.href = "<?= base_url() ?>/wizard";
-                                    })
+                                    });
+                                    formPos.value = 3;
+                                    registerData.fullname = "";
+                                    registerData.email = "";
+                                    registerData.noTelp = "";
+                                    registerData.password = "";
+                                    registerData.confirmPass = "";
+                                    registerData.appName = "";
+                                    registerData.company = "";
+                                    registerData.city = "";
+                                    registerData.postalCode = "";
+                                    registerData.country = "";
                                 } else if (resData.status == 400) {
                                     Swal.fire({
                                         icon: 'warning',

@@ -4,7 +4,10 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
 use App\Models\USMAN\AppsModel;
+use App\Models\USMAN\HttpRequest2Model;
+use DateTimeImmutable;
 use Exception;
+use Firebase\JWT\JWT;
 use HTTP_Request2;
 use HTTP_Request2_Exception;
 
@@ -37,11 +40,10 @@ class Register extends BaseController
             return $this->response->setJSON([
                 'status' => 400,
                 'error' => true,
-                'message' => $this->validator->getErrors(),
-                'data' => []
+                'message' => "Invalid Data",
+                'data' => $this->validator->getErrors()
             ], 400);
         }
-        
 
         $param["name"] = $this->request->getVar('appName');
         $param["code"] = str_replace(" ", "-", strtolower($param["name"]));
@@ -61,7 +63,7 @@ class Register extends BaseController
         $param['parameter[country]'] = $this->request->getVar('country');
         $param['parameter[tag]'] = "";
         $param['parameter[tagLocation]'] = "";
-        
+
         $param['group'] = "Superadmin";
         $param['role'] = '[{"code":"APPLICATION.ASSETSTATUS.DELETE","name":"DELETE","description":null,"parent1":"SETTING","parent2":"Application","type":"client"},{"code":"APPLICATION.ASSETSTATUS.MODIFY","name":"MODIFY","description":null,"parent1":"SETTING","parent2":"Application","type":"client"},{"code":"APPLICATION.ASSETSTATUS.RESTORE","name":"RESTORE","description":null,"parent1":"SETTING","parent2":"Application","type":"client"},{"code":"APPLICATION.MODIFY","name":"MODIFY","description":null,"parent1":"SETTING","parent2":"Application","type":"client"},{"code":"APPLICATION.VIEW","name":"VIEW","description":null,"parent1":"SETTING","parent2":"Application","type":"client"},{"code":"DASHBOARD.VIEW","name":"VIEW","description":null,"parent1":"DASHBOARD","parent2":null,"type":"client"},{"code":"FINDING.CLOSE","name":"CLOSE","description":null,"parent1":"FINDING","parent2":null,"type":"client"},{"code":"FINDING.DETAIL.LIST.VIEW","name":"LIST PARAMETER","description":null,"parent1":"FINDING","parent2":null,"type":"client"},{"code":"FINDING.DETAIL.VIEW","name":"DETAIL","description":null,"parent1":"FINDING","parent2":null,"type":"client"},{"code":"FINDING.LOG.ADD","name":"CREATE","description":null,"parent1":"FINDING","parent2":"TIMELINE","type":"client"},{"code":"FINDING.LOG.LIST","name":"VIEW","description":null,"parent1":"FINDING","parent2":"TIMELINE","type":"client"},{"code":"FINDING.OPEN","name":"OPEN","description":null,"parent1":"FINDING","parent2":null,"type":"client"},{"code":"FINDING.VIEW","name":"VIEW","description":null,"parent1":"FINDING","parent2":null,"type":"client"},{"code":"LOGACTIVITY.VIEW","name":"VIEW","description":null,"parent1":"LOG ACTIVITY","parent2":null,"type":"client"},{"code":"MASTER.ASSET.ADD","name":"CREATE","description":null,"parent1":"ASSET","parent2":"MASTER","type":"client"},{"code":"MASTER.ASSET.DELETE","name":"REMOVE","description":null,"parent1":"ASSET","parent2":"MASTER","type":"client"},{"code":"MASTER.ASSET.DETAIL","name":"DETAIL","description":null,"parent1":"ASSET","parent2":"MASTER","type":"client"},{"code":"MASTER.ASSET.PARAMETER.IMPORT.SAMPLE","name":"IMPORT PARAMETER","description":null,"parent1":"ASSET","parent2":"MASTER","type":"client"},{"code":"MASTER.ASSET.PARAMETER.SORT","name":"SORTING PARAMETER","description":null,"parent1":"ASSET","parent2":"MASTER","type":"client"},{"code":"MASTER.ASSET.UPDATE","name":"MODIFY","description":null,"parent1":"ASSET","parent2":"MASTER","type":"client"},{"code":"MASTER.ASSET.VIEW","name":"VIEW","description":null,"parent1":"ASSET","parent2":"MASTER","type":"client"},{"code":"MASTER.TAG.ADD","name":"CREATE","description":null,"parent1":"TAG","parent2":"MASTER","type":"client"},{"code":"MASTER.TAG.DELETE","name":"REMOVE","description":null,"parent1":"TAG","parent2":"MASTER","type":"client"},{"code":"MASTER.TAG.IMPORT","name":"IMPORT","description":null,"parent1":"TAG","parent2":"MASTER","type":"client"},{"code":"MASTER.TAG.UPDATE","name":"MODIFY","description":null,"parent1":"TAG","parent2":"MASTER","type":"client"},{"code":"MASTER.TAG.VIEW","name":"VIEW","description":null,"parent1":"TAG","parent2":"MASTER","type":"client"},{"code":"MASTER.TAGLOCATION.ADD","name":"CREATE","description":null,"parent1":"TAG LOCATION","parent2":"MASTER","type":"client"},{"code":"MASTER.TAGLOCATION.DELETE","name":"REMOVE","description":null,"parent1":"TAG LOCATION","parent2":"MASTER","type":"client"},{"code":"MASTER.TAGLOCATION.DETAIL","name":"DETAIL","description":null,"parent1":"TAG LOCATION","parent2":"MASTER","type":"client"},{"code":"MASTER.TAGLOCATION.IMPORT","name":"IMPORT","description":null,"parent1":"TAG LOCATION","parent2":"MASTER","type":"client"},{"code":"MASTER.TAGLOCATION.UPDATE","name":"MODIFY","description":null,"parent1":"TAG LOCATION","parent2":"MASTER","type":"client"},{"code":"MASTER.TAGLOCATION.VIEW","name":"VIEW","description":null,"parent1":"TAG LOCATION","parent2":"MASTER","type":"client"},{"code":"NOTIFICATION.ADD","name":"CREATE","description":null,"parent1":"SETTING","parent2":"NOTIFICATION","type":"client"},{"code":"NOTIFICATION.DELETE","name":"DELETE","description":null,"parent1":"SETTING","parent2":"NOTIFICATION","type":"client"},{"code":"NOTIFICATION.MODIFY","name":"MODIFY","description":null,"parent1":"SETTING","parent2":"NOTIFICATION","type":"client"},{"code":"NOTIFICATION.MODIFY.STATUS","name":"PAUSE","description":null,"parent1":"SETTING","parent2":"NOTIFICATION","type":"client"},{"code":"NOTIFICATION.RESTORE","name":"RESTORE","description":null,"parent1":"SETTING","parent2":"NOTIFICATION","type":"client"},{"code":"NOTIFICATION.VIEW","name":"VIEW","description":null,"parent1":"SETTING","parent2":"NOTIFICATION","type":"client"},{"code":"REPORT.ASSET.DETAIL","name":"DETAIL","description":null,"parent1":"ASSET","parent2":"REPORT","type":"client"},{"code":"REPORT.ASSET.VIEW","name":"VIEW","description":null,"parent1":"ASSET","parent2":"REPORT","type":"client"},{"code":"REPORT.RAWDATA.VIEW","name":"RAWDATA","description":null,"parent1":"REPORT","parent2":null,"type":"client"},{"code":"ROLE.ADD","name":"CREATE","description":null,"parent1":"USER MANAGEMENT","parent2":"ROLE","type":"client"},{"code":"ROLE.DELETE","name":"DELETE","description":null,"parent1":"USER MANAGEMENT","parent2":"ROLE","type":"client"},{"code":"ROLE.DETAIL.VIEW","name":"DETAIL","description":null,"parent1":"USER MANAGEMENT","parent2":"ROLE","type":"client"},{"code":"ROLE.MODIFY","name":"MODIFY","description":null,"parent1":"USER MANAGEMENT","parent2":"ROLE","type":"client"},{"code":"ROLE.VIEW","name":"VIEW","description":null,"parent1":"USER MANAGEMENT","parent2":"ROLE","type":"client"},{"code":"SCHEDULE.ADD","name":"ADD","description":null,"parent1":"SETTING","parent2":"SCHEDULE","type":"client"},{"code":"SCHEDULE.IMPORT","name":"IMPORT","description":null,"parent1":"SETTING","parent2":"SCHEDULE","type":"client"},{"code":"SCHEDULE.LIST","name":"LIST","description":null,"parent1":"SETTING","parent2":"SCHEDULE","type":"client"},{"code":"SCHEDULE.VIEW","name":"VIEW","description":null,"parent1":"SETTING","parent2":"SCHEDULE","type":"client"},{"code":"TRX.APPROVE","name":"APPROVE","description":null,"parent1":"TRANSACTION","parent2":null,"type":"client"},{"code":"TRX.DETAIL.VIEW","name":"DETAIL","description":null,"parent1":"TRANSACTION","parent2":null,"type":"client"},{"code":"TRX.VIEW","name":"VIEW","description":null,"parent1":"TRANSACTION","parent2":null,"type":"client"},{"code":"USER.ADD","name":"CREATE","description":null,"parent1":"USER MANAGEMENT","parent2":"USER","type":"client"},{"code":"USER.DELETE","name":"DELETE","description":null,"parent1":"USER MANAGEMENT","parent2":"USER","type":"client"},{"code":"USER.MODIFY","name":"MODIFY","description":null,"parent1":"USER MANAGEMENT","parent2":"USER","type":"client"},{"code":"USER.VIEW","name":"VIEW","description":null,"parent1":"USER MANAGEMENT","parent2":"USER","type":"client"},{"code":"VERSIONAPPS.DELETE","name":"REMOVE","description":null,"parent1":"SETTING","parent2":"VERSION APP","type":"client"},{"code":"VERSIONAPPS.DETAIL","name":"DETAIL","description":null,"parent1":"SETTING","parent2":"VERSION APP","type":"client"},{"code":"VERSIONAPPS.DOWNLOAD","name":"DOWNLOAD","description":null,"parent1":"SETTING","parent2":"VERSION APP","type":"client"},{"code":"VERSIONAPPS.RELEASE","name":"RELEASE","description":null,"parent1":"SETTING","parent2":"VERSION APP","type":"client"},{"code":"VERSIONAPPS.UPDATE","name":"MODIFY","description":null,"parent1":"SETTING","parent2":"VERSION APP","type":"client"},{"code":"VERSIONAPPS.VIEW","name":"VIEW","description":null,"parent1":"SETTING","parent2":"VERSION APP","type":"client"}]';
         $param['roleGroup[Superadmin]'] = getenv("ROLELIST");
@@ -69,7 +71,7 @@ class Register extends BaseController
         try {
             $appModel = new AppsModel();
             $dataRes = $appModel->createApps($param);
-            
+
             $data = $dataRes['data'];
             if ($dataRes['error']) {
                 return $this->response->setJSON(array(
@@ -78,18 +80,95 @@ class Register extends BaseController
                     'data' => $data
                 ), isset($data->message) ? 400 : 500);
             } else {
+                $issuedAt   = new DateTimeImmutable();
+                $expire     = $issuedAt->modify('+10 years')->getTimestamp();
+                $serverName = getenv("DOMAIN_NAME");
+                $jwtPayload = [
+                    'iss'  => $serverName,                       // Issuer
+                    'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
+                    'nbf'  => $issuedAt->getTimestamp(),         // Not before
+                    'exp'  => $expire,                           // Expire
+                    'email' => $param["email"],
+                    'data' => [
+                        'email' => $param["email"],
+                        'userId' => $data->data->userId,
+                    ]
+                ];
+
+                $jwt = JWT::encode($jwtPayload, getenv("JWT_SECRET_KEY_MAIL_VERIFY"));
+
+                $linkReset = site_url("verifyMail/") . $jwt;
+                $message = file_get_contents(base_url() . "/assets/Mail/verifyMail.txt");
+
+                $message = str_replace("{{linkBtn}}", $linkReset, $message);
+                $message = str_replace("{{emailAddress}}", $param['email'], $message);
+
+                $email = \Config\Services::email();
+
+                $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
+                $email->setTo($param['email']);
+                $email->setSubject('Verify your Logsheet Digital Account');
+                $email->setMessage($message);
+                $email->setMailType("html");
+
+                $email->send();
+
                 return $this->response->setJSON([
                     'status' => 200,
                     'message' => "Success Create App",
                     'data' => $data
                 ], 200);
             }
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return $this->response->setJSON([
                 'status' => 500,
                 'message' => $e->getMessage(),
                 'data' => $e
             ], 500);
         }
+    }
+
+    public function verifyMail($token = "")
+    {
+        $dataView = array(
+            'title' => 'Verift Email | Logsheet Digital',
+            'subtitle' => 'Logsheet Digital'
+        );
+
+        try {
+            $data = JWT::decode($token, getenv('JWT_SECRET_KEY_MAIL_VERIFY'), ['HS256']);
+
+            if ($data->iss !== getenv("DOMAIN_NAME")) {
+                $dataView["titleVerified"] = "Invalid Token";
+                $dataView["messageVerified"] = "An error occured trying to verify your account. the access token for Logsheet Digital email verification is invalid and may need to <a href='' class='text-info'>re-authorized</a>.";
+            }
+
+            try {
+                $hr2Model = new HttpRequest2Model();
+
+                helper('JWTAuth');
+                $jwtData = getJWTData($token, getenv('JWT_SECRET_KEY_MAIL_VERIFY'));
+
+                $urlReq = env("usmanURL") . "api/users/validate_email";
+                $dataRes = $hr2Model->doRequest($urlReq, "post", ["userId" => $jwtData->userId]);
+
+                $resData = $dataRes['data'];
+                if ($dataRes['error']) {
+                    $dataView["titleVerified"] = "Error Occured";
+                    $dataView["messageVerified"] = $resData->message ?? $dataRes['message'];
+                } else {
+                    $dataView["titleVerified"] = "Verified";
+                    $dataView["messageVerified"] = "You have successfully verified your account, now sign in with your new account.";
+                }
+            } catch (Exception $e) {
+                $dataView["titleVerified"] = "Error Occured";
+                $dataView["messageVerified"] = $e->getMessage();
+            }
+        } catch (Exception $e) {
+            $dataView["titleVerified"] = "Invalid Token";
+            $dataView["messageVerified"] = "An error occured trying to verify your account. the access token for Logsheet Digital email verification is invalid and may need to <a href='' class='text-info'>re-authorized</a>.";
+        }
+
+        return $this->template->render('Auth/verifyMail', $dataView);
     }
 }

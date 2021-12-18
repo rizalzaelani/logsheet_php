@@ -56,7 +56,7 @@
                                 <img src="<?= base_url('/img/logo-act.png') ?>" width="120">
                                 <a href="<?= site_url("register") ?>" class="h6 mb-0 text-muted font-weight-500 text-decoration-none">Sign Up</a>
                             </div>
-                            <form class="mt-3 mt-sm-5" action="<?= base_url() ?>/Login/auth" method="POST" ref="form" @submit.prevent="login">
+                            <form class="mt-3 mt-sm-5" :class="verifyEmail ? 'd-none' : ''" action="<?= base_url() ?>/Login/auth" method="POST" ref="form" @submit.prevent="login">
                                 <h2>Sign In</h2>
                                 <p class="text-medium-emphasis text-muted">Sign In to continue to Losheet Application</p>
                                 <div class="input-group mt-3" :class="emailErr ? 'invalid-value' : ''">
@@ -97,13 +97,23 @@
                                 <div class="d-flex justify-content-center mt-3">
                                     <div class="g-recaptcha" name="captcha" data-sitekey="<?= env('site_key') ?>"></div>
                                 </div>
-                                <button class="btn btn-info w-100 mt-4" type="submit" v-html="loginBtn"></button>
+                                <button class="btn btn-info w-100 mt-4" type="submit" v-html="loginBtn" :disabled="loginBtn.includes('Processing')"></button>
 
                                 <div class="d-block d-sm-none w-100 text-center mt-4">
                                     <span class="text-muted font-weight-500">New to Logsheet Digital? </span>
                                     <a href="<?= site_url("register") ?>" class="text-info font-weight-500"> Sign Up</a>
                                 </div>
                             </form>
+                            <template v-if="verifyEmail">
+                                <div class="d-flex align-items-center" style="height: 85%;">
+                                    <div class="w-100 text-center">
+                                        <h4 class="mb-4">Please Verify Your Email Address</h4>
+                                        <!-- <p>We noticed your email address has not been verified. By doing so, you will receive important </p> -->
+                                        <p>Your email address must be verified before you can sign in. We've been send verification to your email when registration completed. <br />or <a href="javascript:;" @click="sendVerifyEmail()" class="text-info">Send the verification again</a></p>
+                                    </div>
+                                </div>
+                                <div class="w-100 text-center"><a href="javascript:;" @click="verifyEmail = false;" class="text-info font-weight-500">Go back to the sign in page</a></div>
+                            </template>
                         </div>
                     </div>
                     <div class="card card-main d-md-down-none d-flex flex-row align-items-center">
@@ -123,6 +133,7 @@
     <script type="text/javascript" src="<?= base_url() ?>/vendors/sweetalert2/sweetalert2.all.min.js"></script>
     <script type="text/javascript" src="<?= base_url() ?>/vendors/select2/js/select2.full.js"></script>
     <script type="text/javascript" src="<?= base_url() ?>/js/main.js"></script>
+    <script type="text/javascript" src="<?= base_url() ?>/js/string-manipulation.js"></script>
 
     <script src='https://www.google.com/recaptcha/api.js' async defer></script>
     <script>
@@ -135,6 +146,11 @@
                 var form = ref(null);
                 var loginBtn = ref('<i class="fas fa-sign-in-alt"></i> Sign In');
                 var showPassword = ref(false);
+
+                var verifyEmail = ref(false);
+
+                var userIdVE = ref('');
+                var emailVE = ref('');
 
                 var email = ref('');
                 var emailErr = ref(null);
@@ -175,10 +191,17 @@
                                         window.location.href = location.protocol + "//" + location.host + returnUrl;
                                     }
                                 } else if (resData.status == 400) {
-                                    Toast.fire({
-                                        icon: 'warning',
-                                        title: resData.message
-                                    });
+                                    if (resData.email) {
+                                        userIdVE.value = resData.userId;
+                                        emailVE.value = resData.email;
+
+                                        verifyEmail.value = true;
+                                    } else {
+                                        Toast.fire({
+                                            icon: 'warning',
+                                            title: resData.message
+                                        });
+                                    }
                                     loginBtn.value = '<i class="fas fa-sign-in-alt"></i> Sign In';
                                     password.value = '';
                                     grecaptcha.reset();
@@ -208,6 +231,69 @@
                     }
                 }
 
+                const sendVerifyEmail = () => {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Wait a minutes',
+                        text: "Please don't leave this page",
+                        allowOutsideClick: false,
+                        showConfirmButton: false
+                    })
+                    axios({
+                            url: '<?= base_url("login/sendMailVerification") ?>',
+                            data: {
+                                email: emailVE.value,
+                                userId: userIdVE.value,
+                            },
+                            method: 'POST'
+                        }).then((res) => {
+                            let resData = res.data;
+                            if (resData.status == 200) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Verification have been send to your email',
+                                    text: "Click on the link you received in the email address to finish the verification"
+                                });
+                            } else if (resData.status == 400) {
+                                if (!isNullEmptyOrUndefined(resData.data) & typeof(resData.data) == "object") {
+
+                                    let outAlert = `<ul class="list-group">`;
+                                    for (let r in resData.data) {
+                                        outAlert += `<li class="list-group-item list-group-item-warning">${resData.data[r]}</li>`;
+                                    }
+                                    outAlert += `</ul>`;
+
+                                    Swal.fire({
+                                        title: resData.message,
+                                        icon: resData.alertType ?? 'warning',
+                                        html: outAlert
+                                    })
+                                } else {
+                                    Swal.fire({
+                                        title: CapitalizeEachWords(resData.alertType),
+                                        text: resData.message,
+                                        icon: resData.alertType ?? 'warning',
+                                    })
+                                }
+                            } else {
+                                Swal.fire({
+                                    title: resData.status,
+                                    icon: resData.alertType ?? 'error',
+                                    text: resData.message
+                                });
+                            }
+                        })
+                        .catch((rej) => {
+                            if (rej.throw) {
+                                throw new Error(rej.message);
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: rej.message
+                            });
+                        });
+                }
+
                 Vue.onMounted(() => {
                     //
                 });
@@ -215,12 +301,14 @@
                 return {
                     form,
                     loginBtn,
+                    verifyEmail,
                     showPassword,
                     email,
                     emailErr,
                     password,
                     passwordErr,
-                    login
+                    login,
+                    sendVerifyEmail
                 }
             }
         }).mount('#app');

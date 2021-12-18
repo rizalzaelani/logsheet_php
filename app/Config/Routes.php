@@ -37,14 +37,16 @@ $routes->post('/Login/auth', 'Auth/Login::auth');
 $routes->get('/logout', 'Auth/Login::logout');
 $routes->get('/login/testMail', 'Auth/Login::testMail');
 $routes->get('/login/testTelegram', 'Auth/Login::testTelegram');
+$routes->post('/login/sendMailVerification', 'Auth/Login::sendMailVerification');
 
 $routes->get('/resetPassword/(:any)', 'Auth\ResetPassword::index/$1');
 $routes->get('/forgotPassword', 'Auth/ResetPassword::forgotPassword');
 $routes->post('/forgotPassword/sendMail', 'Auth/ResetPassword::sendMailForgotPassword');
 $routes->post('/resetPassword', 'Auth/ResetPassword::doResetPassword');
 
-$routes->get('/register', 'Auth/Register::index');
-$routes->post('/register/doRegister', 'Auth/Register::doRegister');
+$routes->get('/register', 'Auth\Register::index');
+$routes->get('/verifyMail/(:any)', 'Auth\Register::verifyMail/$1');
+$routes->post('/register/doRegister', 'Auth\Register::doRegister');
 
 $routes->get('/Wizard', 'Wizard/Wizard::index');
 $routes->post('/Wizard/getInvoice', 'Wizard/Wizard::getInvoice');
