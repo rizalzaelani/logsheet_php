@@ -13,7 +13,7 @@
 		"firebase/php-jwt": "^5.4",
 		"pear/http_request2": "^2.5",
 		"influxdb/influxdb-php": "^1.15",
-		"influxdata/influxdb-client-php": "^2.4"
+		"crodas/influx-php": "*"
 	},
 	"require-dev": {
 		"fakerphp/faker": "^1.9",

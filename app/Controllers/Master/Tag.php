@@ -189,9 +189,9 @@ class Tag extends BaseController
         $file = $this->request->getFile('fileImportTag');
         if ($file) {
             $newName = "doc" . time();
-            $file->move('../uploads', $newName);
+            $file->move('upload/', $newName);
             $reader = ReaderEntityFactory::createXLSXReader();
-            $reader->open('../uploads/' . $newName);
+            $reader->open('upload/' . $newName);
             $dataImport = [];
             foreach ($reader->getSheetIterator() as $sheet) {
                 $numrow = 1;
@@ -209,7 +209,7 @@ class Tag extends BaseController
                     $numrow++;
                 }
             }
-            unlink('../uploads/' . $newName);
+            unlink('upload/' . $newName);
             if ($dataImport) {
                 return $this->response->setJSON(array('status' => 'success', 'message' => '', 'data' => $dataImport));
             } else {

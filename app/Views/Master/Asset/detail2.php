@@ -46,38 +46,6 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'Last');
 $session = \Config\Services::session();
 $sess = $session->get('adminId');
-$datachangelog = [
-    'data_before' => [
-        'assetName'     => 'APAR X01',
-        'assetNumber'   => 'xapar01',
-        'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
-        'description'   => 'Description',
-        'schManual'     => '0',
-        'schType'       => 'Weekly',
-        'schFrequency'  => '1',
-        'schWeeks'      => '',
-        'schWeekDays'   => 'Su,Mo',
-        'schDays'       => '',
-        'assetStatusName' => 'Running',
-        'tagName'       => 'APAR,UNIT',
-        'tagLocationName' => 'Ashilo,AREA X - 1A'
-    ],
-    'data_after' => [
-        'assetName'     => 'APAR X01',
-        'assetNumber'   => 'xaparx01',
-        'photo'         => 'http://localhost:8080/upload/Asset/filexxxxx/IMG_78928592.png',
-        'description'   => 'Description Apar x01',
-        'schManual'     => '0',
-        'schType'       => 'Weekly',
-        'schFrequency'  => '1',
-        'schWeeks'      => '',
-        'schWeekDays'   => 'Su,Mo,Tu',
-        'schDays'       => '',
-        'assetStatusName' => 'Running',
-        'tagName'       => 'APAR,UNIT,Segitiga Apar',
-        'tagLocationName' => 'Ashilo'
-    ]
-];
 ?>
 <div class="row" id="app">
     <div class="col-12">
@@ -672,7 +640,7 @@ $datachangelog = [
                             </div>
                             <div class="modal-body">
                                 <div class="mt-2">
-                                    <h6>Changes On March 12, 2021 by <b class="text-info">Rizal Zaelani</b></h6>
+                                    <h6>Changes {{ momentchangelog(dataChangeLog.time) }} by <b class="text-info">{{ dataChangeLog.username }}</b></h6>
                                 </div>
                                 <div class="mt-4">
                                     <table class="table">
@@ -685,19 +653,86 @@ $datachangelog = [
                                         </thead>
                                         <tbody>
                                             <template v-if="changelog != ''">
-                                                <template v-for="(val, i) in changelog.data_before">
-                                                    <template v-if="val == changelog.data_after[i]">
+                                                <template v-for="(val, i) in dataAB.data_before">
+                                                    <template v-if="val == dataAB.data_after[i]">
                                                         <tr>
                                                             <td>{{ _.startCase(i) }}</td>
-                                                            <td style="max-width: 200px !important">{{ val }}</td>
-                                                            <td style="max-width: 200px !important">{{ changelog.data_after[i] }}</td>
+                                                            <!-- <td style="max-width: 200px !important">{{ val }}</td> -->
+                                                            <template v-if="IsJson(val)">
+                                                                <td style="max-width: 200px !important">
+                                                                    <div v-for="(value, key) in JSON.parse(val)">
+                                                                        <div class="row">
+                                                                            <div class="col-4">
+                                                                                <b>{{value.key}}</b>
+                                                                            </div>
+                                                                            <div class="col-8">
+                                                                                : {{value.value}}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td style="max-width: 200px !important">{{ val }}</td>
+                                                            </template>
+                                                            <template v-if="IsJson(dataAB.data_after[i])">
+                                                                <td style="max-width: 200px !important">
+                                                                    <div v-for="(value, key) in JSON.parse(dataAB.data_after[i])">
+                                                                        <div class="row">
+                                                                            <div class="col-4">
+                                                                                <b>{{value.key}}</b>
+                                                                            </div>
+                                                                            <div class="col-8">
+                                                                                : {{value.value}}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td>
+                                                            </template>
+                                                            <!-- <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td> -->
                                                         </tr>
                                                     </template>
                                                     <template v-else>
                                                         <tr>
                                                             <td>{{ _.startCase(i) }}</td>
-                                                            <td style="max-width: 200px !important" class="old">{{ val }}</td>
-                                                            <td style="max-width: 200px !important" class="new">{{ changelog.data_after[i] }}</td>
+                                                            <!-- <td style=" max-width: 200px !important" class="old">{{ val }}</td> -->
+                                                            <template v-if="IsJson(val)">
+                                                                <td style="max-width: 200px !important" class="old">
+                                                                    <div v-for="(value, key) in JSON.parse(val)">
+                                                                        <div class="row">
+                                                                            <div class="col-4">
+                                                                                <b>{{value.key}}</b>
+                                                                            </div>
+                                                                            <div class="col-8">
+                                                                                : {{value.value}}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td style="max-width: 200px !important" class="old">{{ val }}</td>
+                                                            </template>
+                                                            <template v-if="IsJson(dataAB.data_after[i])">
+                                                                <td style="max-width: 200px !important" class="new">
+                                                                    <div v-for="(value, key) in JSON.parse(dataAB.data_after[i])">
+                                                                        <div class="row">
+                                                                            <div class="col-4">
+                                                                                <b>{{value.key}}</b>
+                                                                            </div>
+                                                                            <div class="col-8">
+                                                                                : {{value.value}}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td style="max-width: 200px !important" class="new">{{ dataAB.data_after[i] }}</td>
+                                                            </template>
                                                         </tr>
                                                     </template>
                                                 </template>
@@ -738,22 +773,11 @@ $datachangelog = [
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    12 Dec 2021 15:39:45
-                                </td>
-                                <td>
-                                    Update Asset
-                                </td>
-                                <td>
-                                    <button @click="modalChange()" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>
-                                </td>
-                            </tr>
                             <template v-if="changelog.length">
                                 <template v-for="(val, i) in changelog">
                                     <tr>
                                         <td>
-                                            {{ momentchangelog(val._time) }}
+                                            {{ momentchangelog(val.time) }}
                                         </td>
                                         <td>
                                             {{ val.activity }}
@@ -1458,7 +1482,10 @@ $datachangelog = [
                 const start = moment().subtract(6, 'days');
                 const end = moment();
 
-                var changelog = <?= json_encode($datachangelog) ?>;
+                var tableChangeLog = ref("");
+                var changelog = ref("");
+                var dataChangeLog = ref("");
+                var dataAB = ref("");
 
                 var checkTabDetail = ref(true);
                 var checkTabParameter = ref(false);
@@ -1552,7 +1579,7 @@ $datachangelog = [
                 var descJson = reactive(assetData.descriptionJson);
 
                 function momentchangelog(date) {
-                    return moment(date).format("YYYY MMM DD H:mm:ss")
+                    return moment(date).format("DD MMM YYYY H:mm:ss")
                 }
 
                 function modalAddTag() {
@@ -4004,10 +4031,33 @@ $datachangelog = [
                     return checkIsEqual;
                 }
 
-                function modalChange() {
+                function IsJson(str) {
+                    let item = "";
+                    try {
+                        item = JSON.parse(str);
+                    } catch (e) {
+                        return false;
+                    }
+                    if (typeof item === "object") {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+
+                function modalChange(i) {
                     this.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
                     this.myModal.show();
-                    // console.log(this.changelog[0]._value);
+
+                    this.dataChangeLog = this.changelog[i];
+
+                    let before = _.omit((JSON.parse(this.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
+                    let after = _.omit((JSON.parse(this.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
+
+                    let data = [];
+                    data['data_before'] = before;
+                    data['data_after'] = after;
+                    this.dataAB = data
                 }
 
                 const cb = (start, end) => {
@@ -4016,6 +4066,7 @@ $datachangelog = [
                         v.start = picker.startDate.format("YYYY-MM-DD H:mm:ss")
                         v.end = picker.endDate.format("YYYY-MM-DD H:mm:ss")
                         let formdata = new FormData();
+                        formdata.append('assetId', v.assetData.assetId);
                         formdata.append('start', v.start);
                         formdata.append('end', v.end);
                         axios({
@@ -4023,7 +4074,16 @@ $datachangelog = [
                             method: 'POST',
                             data: formdata
                         }).then((res) => {
-                            console.log(res);
+                            let rsp = res.data;
+                            if (rsp.status == 200) {
+                                v.changelog = rsp.data
+                            } else {
+                                swal.fire({
+                                    icon: 'error',
+                                    title: rsp.message
+                                })
+                            }
+                            // console.log(res);
                         })
                     })
                 }
@@ -4132,8 +4192,9 @@ $datachangelog = [
                     cb(start, end);
 
                     let formdata = new FormData();
-                    formdata.append('start', start);
-                    formdata.append('end', end);
+                    formdata.append('assetId', assetData.assetId);
+                    formdata.append('start', moment(start).format("YYYY-MM-DD H:mm:ss"));
+                    formdata.append('end', moment(end).format("YYYY-MM-DD H:mm:ss"));
                     axios({
                         url: '<?= base_url('/Asset/changelog') ?>',
                         method: 'POST',
@@ -4141,13 +4202,20 @@ $datachangelog = [
                     }).then((res) => {
                         let rsp = res.data;
                         if (rsp.status == 200) {
-                            // v.changelog = rsp.data;
+                            if (rsp.data.length) {
+                                v.changelog = rsp.data;
+                            }
                         }
                     })
                 });
 
                 return {
+                    tableChangeLog,
+                    IsJson,
+                    IsJsonString,
                     changelog,
+                    dataChangeLog,
+                    dataAB,
                     momentchangelog,
 
                     checkTabDetail,
