@@ -15,6 +15,11 @@
         border-left: 6px solid #2196F3;
     }
 
+    .success {
+        background-color: #dbf2e3;
+        border-left: 6px solid #28623c;
+    }
+
     .rotate {
         -moz-transition: all .1s linear;
         -webkit-transition: all .1s linear;
@@ -45,6 +50,11 @@
                     <h5 class="header-icon">
                         <a href="<?= base_url('/Subscription') ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
                     </h5>
+                </div>
+                <div class="success py-2 my-2">
+                    <p class="mx-2 mb-0">
+                        Email invoice has been send to your email, please check your inbox or open spam email.
+                    </p>
                 </div>
                 <div style="border: 1px solid #f0f0f0 !important;">
                     <div>

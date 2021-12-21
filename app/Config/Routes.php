@@ -224,6 +224,8 @@ $routes->post('/invoiceUpgrade', 'Customers/Subscription::invoiceUpgrade');
 $routes->get('/Subscription/invoice/(:any)', 'Customers\Subscription::invoice/$1');
 $routes->post('/Subscription/downloadInvoice', 'Customers\Subscription::downloadInvoice');
 
+$routes->post('/Subscription/confirmation', 'Customers\Subscription::confirmation');
+
 $routes->get('/Subscription/renew', 'Customers/Subscription::renew');
 $routes->post('/invoiceRenew', 'Customers/Subscription::invoiceRenew');
 

@@ -196,11 +196,13 @@ $session = \Config\Services::session();
                                     data: "paidDate",
                                     name: "paidDate",
                                     render: function(data, type, row, meta) {
-                                        if (data == null && row.cancelDate == null) {
+                                        if (data == null && row.cancelDate == null && row.attachment == null) {
                                             return '<span class="badge badge-danger text-uppercase">Unpaid</span>'
                                         } else if (data == null && row.cancelDate != null) {
                                             return '<span class="badge badge-warning text-white text-uppercase">Cancelled</span>'
-                                        } else {
+                                        } else if(data == null && row.cancelDate == null && row.attachment != null){
+                                            return '<span class="badge badge-primary text-uppercase">Waiting</span>'
+                                        }else{
                                             return '<span class="badge badge-success text-uppercase">Paid</span>'
                                         }
                                     }
