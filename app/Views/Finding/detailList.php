@@ -12,7 +12,7 @@
             <div class="d-flex justify-content-between my-1">
                 <h4><?= $title ?></h4>
                 <h5 class="header-icon">
-                    <a href="<?= base_url("Transaction") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                    <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("Transaction") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
                 </h5>
             </div>
 

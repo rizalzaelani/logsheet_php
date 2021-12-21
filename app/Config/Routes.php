@@ -217,6 +217,7 @@ $routes->get('/role/detail', 'UserRole/Role::detail');
 $routes->get('/role/groupList', 'UserRole/Role::groupList');
 $routes->get('/role/roleList', 'UserRole/Role::roleList');
 $routes->post('/role/saveGroup', 'UserRole/Role::saveGroup');
+$routes->post('/role/deleteGroup', 'UserRole/Role::deleteGroup');
 
 $routes->get('/Subscription', 'Customers/Subscription::index');
 $routes->add('/Subscription/datatable', 'Customers/Subscription::datatable');

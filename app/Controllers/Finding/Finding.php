@@ -14,9 +14,9 @@ class Finding extends BaseController
 {
 	public function index()
 	{
-        if(!checkRoleList("FINDING.VIEW")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("FINDING.VIEW")) {
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$data = array(
 			'title' => 'Finding',
@@ -28,22 +28,22 @@ class Finding extends BaseController
 
 	public function detailList()
 	{
-        if(!checkRoleList("FINDING.DETAIL.LIST.VIEW")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("FINDING.DETAIL.LIST.VIEW")) {
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$scheduleTrxId = $this->request->getVar("scheduleTrxId") ?? "";
 
-		if($scheduleTrxId == ""){
-            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>site_url("Finding")]);
+		if ($scheduleTrxId == "") {
+			return View('errors/customError', ["errorCode" => 404, "errorMessage" => "Sorry, Page Requested Not Found", "returnLink" => site_url("Finding")]);
 		}
 
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
 
 		$getSchedule = $scheduleTrxModel->getById($scheduleTrxId);
-		if(empty($getSchedule)){
-            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>site_url("Finding")]);
+		if (empty($getSchedule)) {
+			return View('errors/customError', ["errorCode" => 404, "errorMessage" => "Sorry, Page Requested Not Found", "returnLink" => site_url("Finding")]);
 		}
 
 		$data["scheduleTrxData"] = $getSchedule;
@@ -71,9 +71,9 @@ class Finding extends BaseController
 
 	public function detail()
 	{
-        if(!checkRoleList("FINDING.DETAIL.VIEW")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("FINDING.DETAIL.VIEW")) {
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$data = array(
 			'title' => 'Detail Finding',
@@ -85,7 +85,7 @@ class Finding extends BaseController
 
 		$checkFinding = $findingModel->getById($findingId);
 		if (empty($checkFinding)) {
-            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>$_SERVER['HTTP_REFERER']]);
+			return View('errors/customError', ["errorCode" => 404, "errorMessage" => "Sorry, Page Requested Not Found", "returnLink" => $_SERVER['HTTP_REFERER']]);
 		}
 
 		$data["findingData"] = $checkFinding;
@@ -114,7 +114,7 @@ class Finding extends BaseController
 	{
 		$request = \Config\Services::request();
 
-        if(!checkRoleList("FINDING.VIEW")){
+		if (!checkRoleList("FINDING.VIEW")) {
 			echo json_encode(array(
 				"draw" => $request->getPost('draw'),
 				"recordsTotal" => 0,
@@ -123,7 +123,7 @@ class Finding extends BaseController
 				'status' => 403,
 				'message' => "You don't have access to this page"
 			));
-        }
+		}
 
 		$table = 'vw_scheduleTrx';
 		$column_order = array('scheduleFrom', 'assetName', 'assetNumber', 'tagName', 'tagLocationName', 'condition', 'scheduleTrxId');
@@ -140,10 +140,10 @@ class Finding extends BaseController
 		$filtTag = $_POST["columns"][3]["search"]["value"] ?? '';
 		$filtLoc = $_POST["columns"][4]["search"]["value"] ?? '';
 		$filtCond = $_POST["columns"][0]["search"]["value"] ?? '';
-		
-		if($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
-		if($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
-		if($filtCond != '') $where["condition"] = $filtCond;
+
+		if ($filtTag != '') $where["find_in_set_multiple('$filtTag', tagId)"] = null;
+		if ($filtLoc != '') $where["find_in_set_multiple('$filtLoc', tagLocationId)"] = null;
+		if ($filtCond != '') $where["condition"] = $filtCond;
 
 		$list = $DTModel->datatable($where);
 		$output = array(
@@ -159,9 +159,9 @@ class Finding extends BaseController
 
 	public function issue()
 	{
-        if(!checkRoleList("FINDING.OPEN")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
-        }
+		if (!checkRoleList("FINDING.OPEN")) {
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
 
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
@@ -174,9 +174,10 @@ class Finding extends BaseController
 
 		$checkTrx = $trxModel->where('trxId', $trxId)->get()->getRowArray();
 		if (empty($checkTrx)) {
-            return View('errors/customError', ["errorCode"=>404,"errorMessage"=>"Sorry, Page Requested Not Found","returnLink"=>$_SERVER['HTTP_REFERER']]);
+			return View('errors/customError', ["errorCode" => 404, "errorMessage" => "Sorry, Page Requested Not Found", "returnLink" => $_SERVER['HTTP_REFERER']]);
 		}
 
+		$sendNotif = false;
 		try {
 			$checkFinding = $findingModel->where("trxId", $trxId)->get()->getRowArray();
 			$findingId = uuidv4();
@@ -190,17 +191,17 @@ class Finding extends BaseController
 					"openedBy" => $this->session->get("name"),
 					"findingPriority" => "Low"
 				);
-				
+
 				$dataInsertLog = array(
 					"findingLogId" => null,
 					"findingId" => $findingId,
 					"notes" => "Finding Opened By " . ($this->session->get("name")),
 					"createdBy" => $this->session->get("name")
 				);
-				
+
 				$findingModel->insert($dtInsertFinding);
 				$findingLogModel->insert($dataInsertLog);
-				
+				$sendNotif = true;
 			} else {
 				$findingId = $checkFinding["findingId"];
 				$condition = $checkFinding["condition"];
@@ -226,6 +227,12 @@ class Finding extends BaseController
 
 			$scheduleTrxModel->update($checkTrx["scheduleTrxId"], ["condition" => $scheduleCond]);
 
+			if($sendNotif){
+				$checkFinding = $findingModel->getById($findingId);
+				$this->sendMail($findingId, "Follow Up Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding);
+				$this->sendTelegram($findingId, "open", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
+			}
+
 			return redirect()->to("/Finding/detail?findingId=" . $findingId);
 		} catch (Exception $e) {
 			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
@@ -234,13 +241,13 @@ class Finding extends BaseController
 
 	public function closeFinding()
 	{
-        if(!checkRoleList("FINDING.CLOSE")){
+		if (!checkRoleList("FINDING.CLOSE")) {
 			return $this->response->setJSON([
 				'status' => 403,
-                'message' => "Sorry, You don't have access",
+				'message' => "Sorry, You don't have access",
 				'data' => []
 			], 403);
-        }
+		}
 
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
@@ -251,7 +258,7 @@ class Finding extends BaseController
 
 		$findingId = $this->request->getVar('findingId') ?? '';
 
-		$checkFinding = $findingModel->where("findingId", $findingId)->get()->getRowArray();
+		$checkFinding = $findingModel->getById($findingId);
 		if (empty($checkFinding)) {
 			return $this->response->setJSON([
 				'status' => 404,
@@ -266,14 +273,14 @@ class Finding extends BaseController
 				"closedBy" => $this->session->get("name"),
 				"condition" => "Closed"
 			);
-				
+
 			$dataInsertLog = array(
 				"findingLogId" => null,
 				"findingId" => $findingId,
 				"notes" => "Finding Closed By " . ($this->session->get("name")),
 				"createdBy" => $this->session->get("name")
 			);
-			
+
 			$findingModel->update($findingId, $dtUpdateFinding);
 			$findingLogModel->insert($dataInsertLog);
 
@@ -306,6 +313,11 @@ class Finding extends BaseController
 
 			$scheduleTrxModel->update($checkTrx["scheduleTrxId"], ["condition" => $scheduleCond]);
 
+			$findingLogModel = new FindingLogModel();
+			$findingLogData = $findingLogModel->where("findingId", $findingId)->orderBy("createdAt", "asc")->get()->getResultArray();
+			$this->sendMail($findingId, "Close Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding, $findingLogData);
+			$this->sendTelegram($findingId, "close", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
+
 			return $this->response->setJSON([
 				'status' => 200,
 				'message' => "Finding Successfully Closed",
@@ -322,13 +334,13 @@ class Finding extends BaseController
 
 	public function getFindingLog()
 	{
-        if(!checkRoleList("FINDING.LOG.LIST")){
-            return $this->response->setJson([
-                'status' => 403,
-                'message' => "Sorry, You don't have access",
-                'data' => []
-            ], 403);
-        }
+		if (!checkRoleList("FINDING.LOG.LIST")) {
+			return $this->response->setJson([
+				'status' => 403,
+				'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+		}
 
 		$isValid = $this->validate([
 			'findingId' => 'required',
@@ -355,13 +367,13 @@ class Finding extends BaseController
 
 	public function addFindingLog()
 	{
-        if(!checkRoleList("FINDING.LOG.ADD")){
-            return $this->response->setJson([
-                'status' => 403,
-                'message' => "Sorry, You don't have access",
-                'data' => []
-            ], 403);
-        }
+		if (!checkRoleList("FINDING.LOG.ADD")) {
+			return $this->response->setJson([
+				'status' => 403,
+				'message' => "Sorry, You don't have access",
+				'data' => []
+			], 403);
+		}
 
 		$isValid = $this->validate([
 			'findingId' => 'required',
@@ -412,6 +424,131 @@ class Finding extends BaseController
 				'message' => $e->getMessage(),
 				'data' => []
 			]);
+		}
+	}
+
+	private function sendMail($findingId, $title, $dateTime, $by, array $dt, array $dtTimeline = [])
+	{
+		try {
+			$type = (strpos(strtolower($title), 'close') ? 'Close' : 'Follow Up');
+			$notifModel = new \App\Models\NotificationModel();
+			$mailToArr = $notifModel->getAll(["deletedAt IS NULL" => null, "status" => "active", "type" => "email", "FIND_IN_SET('" . ($type == "Close" ? "Closed" : "Open") . " Finding', `trigger`) > 0" => null]);
+			if (!empty($mailToArr)) {
+				$link = site_url("/Finding/detail?findingId=" . $findingId);
+				$message = file_get_contents(base_url() . "/assets/Mail/finding.txt");
+
+				$message = str_replace("{{linkFinding}}", $link, $message);
+				$message = str_replace("{{title}}", $title, $message);
+				$message = str_replace("{{type}}", $type, $message);
+				$message = str_replace("{{dateTime}}", date("Y M d H:i:s", strtotime($dateTime)), $message);
+				$message = str_replace("{{by}}", $by, $message);
+
+				$message = str_replace("{{assetName}}", $dt['assetName'], $message);
+				$message = str_replace("{{assetNumber}}", $dt['assetNumber'], $message);
+				$message = str_replace("{{parameterName}}", $dt['parameterName'], $message);
+				$message = str_replace("{{description}}", $dt['description'], $message);
+				$message = str_replace("{{uom}}", $dt['uom'], $message);
+				$message = str_replace("{{value}}", $dt['value'], $message);
+
+				$tag = '';
+				if ($dt['tagName'] != '-') {
+					$assetTagValue = (array_values(array_unique(explode(",", $dt['tagName']))));
+					$length = count($assetTagValue);
+					for ($i = 0; $i < $length; $i++) {
+						$tag .= '<span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">' . $assetTagValue[$i] . '</span>';
+					}
+				} else {
+					$tag = "-";
+				}
+
+				$location = '';
+				if ($dt['tagLocationName'] != '-') {
+					$assetTagValue = (array_values(array_unique(explode(",", $dt['tagLocationName']))));
+					$length = count($assetTagValue);
+					for ($i = 0; $i < $length; $i++) {
+						$location .= '<span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">' . $assetTagValue[$i] . '</span>';
+					}
+				} else {
+					$location = "-";
+				}
+
+				$message = str_replace("{{tag}}", $tag, $message);
+				$message = str_replace("{{location}}", $location, $message);
+
+				$normal = '';
+				$abnormal = '';
+				if (empty($dt["option"])) {
+					$normal = (empty($dt["min"]) && empty($dt["max"]) ? "(Any)" : (empty($dt["min"]) ? ('<' . $dt["max"]) : (empty($dt["max"]) ? ('>' . $dt["min"]) : ($dt["min"] . ' - ' . $dt["max"]))));
+					$abnormal = (empty($dt["min"]) && empty($dt["max"]) ? "(Any)" : ((!empty($dt["min"]) ? ('x < ' . $dt["min"] . '; ') : '') . (!empty($dt["max"]) ? ('x > ' . $dt["max"]) : '')));
+				} else {
+					$normal = empty($dt["normal"]) ? "(Empty)" : $dt["normal"];
+					$abnormal = empty($dt["abnormal"]) ? "(Empty)" : $dt["abnormal"];
+				}
+
+				$message = str_replace("{{normal}}", $normal, $message);
+				$message = str_replace("{{abnormal}}", $abnormal, $message);
+
+				if (!empty($dtTimeline)) {
+					$msgTL = file_get_contents(base_url() . "/assets/Mail/findingTimeline.txt");
+
+					$listTL = "";
+					foreach ($dtTimeline as $key => $row) {
+						$dateTL = date("Y M d H:i:s", strtotime($row['createdAt']));
+						$colorTL = "tl-item dot-" . ($key == 0 ? "primary" : (($key + 1) == count($dtTimeline) ? "danger" : "success"));
+						$listTL .= <<<HTML
+							<li class="$colorTL" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial,'helvetica neue',helvetica,sans-serif;line-height:21px;Margin-bottom:15px;color:#333;font-size:14px;list-style:none;margin:auto;margin-left:40px;min-height:50px;padding:0 0 30 30;position:relative">
+								<div class="item-detail" style="color:#7f7f7f;font-size:12px">$dateTL</div>
+								<div class="item-title font-weight-bold mb-2">{$row["createdBy"]}</div>
+								<div class="item-notes" style="color:#7f7f7f;font-size:12.5px">{$row["notes"]}</div>
+							</li>
+						HTML;
+					}
+
+					$msgTL = str_replace("{{listTimeline}}", $listTL, $msgTL);
+					$message = str_replace("{{findingTimeline}}", $msgTL, $message);
+				} else {
+					$message = str_replace("{{findingTimeline}}", "", $message);
+				}
+
+				// send mail
+				$mailService = \Config\Services::email();
+
+				$mailService->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
+				$mailService->setTo(implode(",", array_column($mailToArr, "value")));
+				$mailService->setSubject($title . " " . $dt['parameterName']);
+				$mailService->setMessage($message);
+				$mailService->setMailType("html");
+
+				$mailService->send();
+
+				return implode(array_column($mailToArr, "value"));
+			} else {
+				return "fail";
+			}
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	private function sendTelegram($findingId, $type, $by, $dateTime, $parameterName)
+	{
+		try {
+			$notifModel = new \App\Models\NotificationModel();
+			$dtNotif = $notifModel->getAll(["deletedAt IS NULL" => null, "status" => "active", "type" => "telegram", "FIND_IN_SET('" . ($type == "Close" ? "Closed" : "Open") . " Finding', `trigger`) > 0" => null]);
+			if (!empty($dtNotif)) {
+				$bot = new \TelegramBot\Api\BotApi(env('botTelegramToken'));
+				foreach($dtNotif as $row){
+					try {
+						$bot->sendMessage($row["value"], $by . ($type == "close" ? " Closed " : " Follow Up New ") . "Finding " . $parameterName . " at " . date("Y M d H:i:s", strtotime($dateTime)) . "\n\nMore Details : " . site_url("/Finding/detail?findingId=" . $findingId));
+					} catch (Exception $er){
+						continue;
+					}
+				}
+
+				return "success";
+			}
+		} catch (Exception $e) {
+			return $e;
 		}
 	}
 }

@@ -157,7 +157,7 @@
 
                     <?php if (checkRoleList("ROLE.ADD,ROLE.MODIFY")) : ?>
                         <div class="d-flex justify-content-start">
-                            <button type="button" class="btn btn-outline-dark mr-2" @click="window.location.href = '<?= site_url('role') ?>'"><i class="fa fa-times"></i> Cancel</button>
+                            <a href="<?= site_url('role') ?>" class="btn btn-outline-dark mr-2"><i class="fa fa-times"></i> Cancel</a>
                             <?php if (checkRoleList("ROLE.DELETE") && !empty($groupData ?? [])) : ?>
                                 <button type="button" class="btn btn-danger mr-2" @click="deleteRole()"><i class="fa fa-times"></i> Delete</button>
                             <?php endif; ?>

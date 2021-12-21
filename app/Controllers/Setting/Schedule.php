@@ -120,8 +120,10 @@ class Schedule extends BaseController
                 "condition"     => "Normal",
             );
 
-            if ($row["adviceDate"]) {
+            if (!empty($row["adviceDate"])) {
                 $dtSAMTemp["adviceDate"] = date("Y-m-d 00:00:00", strtotime($row["adviceDate"]));
+            } else {
+                $dtSAMTemp["adviceDate"] = null;
             }
 
             array_push($dataInsertSchAM, $dtSAMTemp);

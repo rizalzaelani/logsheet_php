@@ -12,13 +12,13 @@
                 <div class="dt-search-input">
                     <div class="input-container">
                         <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
-                        <input name="dt-search" class="material-input" type="text" data-target="#tableEq" placeholder="Search Data Asset" />
+                        <input name="dt-search" class="material-input" type="text" data-target="#tableNotification" placeholder="Search Data Asset" />
                     </div>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <h4><?= $title ?></h4>
                     <h5 class="header-icon">
-                        <a href="javascript:;" class="dt-search" data-target="#tableEq"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+                        <a href="javascript:;" class="dt-search" data-target="#tableNotification"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
                             <?php if (checkRoleList("NOTIFICATION.ADD")) : ?>
@@ -26,7 +26,7 @@
                             <?php endif; ?>
                             <a class="dropdown-item" href="javascript:;" @click="showTrash = !showTrash"><i class="far fa-trash-alt mr-2"></i> {{ showTrash ? 'Hide Trash' : 'Show Trash' }}</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="javascript:;" @click="reloadTable()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
+                            <a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
                         </div>
                     </h5>
                 </div>
@@ -138,7 +138,7 @@
     let v = Vue.createApp({
         el: '#app',
         setup() {
-            var table;
+            const table = Vue.ref();
             const notifData = Vue.reactive([]);
             const notifForm = Vue.reactive({
                 type: 'email',
@@ -147,14 +147,10 @@
             const notifFormErr = Vue.reactive({});
             const showTrash = Vue.ref(false);
 
-            const reloadTable = () => {
-                table.draw();
-            }
-
             const getData = () => {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        table = await $('#tableNotification').DataTable({
+                        table.value = await $('#tableNotification').DataTable({
                             drawCallback: function(settings) {
                                 $(document).ready(function() {
                                     $('[data-toggle="tooltip"]').tooltip();
@@ -342,7 +338,7 @@
                                     icon: 'success'
                                 });
 
-                                table.draw();
+                                table.value.draw();
                             })
                             .catch((rej) => {
                                 if (rej.throw) {
@@ -399,7 +395,7 @@
                                         notifFormErr.value = null;
                                         notifFormErr.trigger = null;
 
-                                        table.draw();
+                                        table.value.draw();
                                     })
                                     .catch((rej) => {
                                         if (rej.throw) {
@@ -455,7 +451,7 @@
                                         notifFormErr.value = null;
                                         notifFormErr.trigger = null;
 
-                                        table.draw();
+                                        table.value.draw();
                                     })
                                     .catch((rej) => {
                                         if (rej.throw) {
@@ -503,7 +499,7 @@
                                         notifFormErr.value = null;
                                         notifFormErr.trigger = null;
 
-                                        table.draw();
+                                        table.value.draw();
                                     })
                                     .catch((rej) => {
                                         if (rej.throw) {
@@ -526,21 +522,29 @@
             Vue.watch(
                 showTrash,
                 (state, prevState) => {
-                    table.ajax.url("<?= base_url('/Notification/datatable') ?>?deleted=" + (showTrash.value == true ? '1' : '0')).load();
+                    table.value.ajax.url("<?= base_url('/Notification/datatable') ?>?deleted=" + (showTrash.value == true ? '1' : '0')).load();
                 }
             )
 
             Vue.onMounted(() => {
                 getData();
+
+                let search = $(".dt-search-input input[data-target='#tableNotification']");
+                search.unbind().bind("keypress", function(e) {
+                    if (e.which == 13 || e.keyCode == 13) {
+                        let searchData = search.val();
+                        table.value.search(searchData).draw();
+                    }
+                });
             })
 
             return {
+                table,
                 notifData,
                 notifForm,
                 notifFormErr,
                 showTrash,
                 detailNotif,
-                reloadTable,
 
                 <?= (checkRoleList("NOTIFICATION.ADD") ? "showNotifModal," : "") ?>
                 <?= (checkRoleList("NOTIFICATION.MODIFY.STATUS") ? "changeStatus," : "") ?>

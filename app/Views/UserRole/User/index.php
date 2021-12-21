@@ -146,7 +146,7 @@
 	let v = Vue.createApp({
 		el: '#app',
 		setup() {
-			const table = null;
+			const table = Vue.ref();
 			const tagData = <?= json_encode($tagData) ?>;
 			const tagLocData = <?= json_encode($tagLocationData) ?>;
 			var userData = Vue.reactive([]);
@@ -156,7 +156,7 @@
 			const getData = () => {
 				return new Promise(async (resolve, reject) => {
 					try {
-						this.table = await $('#tableUser').DataTable({
+						table.value = await $('#tableUser').DataTable({
 							processing: true,
 							scrollY: "calc(100vh - 272px)",
 							responsive: true,
@@ -434,7 +434,7 @@
 				search.unbind().bind("keypress", function(e) {
 					if (e.which == 13 || e.keyCode == 13) {
 						let searchData = search.val();
-						table.search(searchData).draw();
+						table.value.search(searchData).draw();
 					}
 				});
 

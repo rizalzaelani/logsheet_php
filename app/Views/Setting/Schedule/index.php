@@ -194,8 +194,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success"><i class="far fa-file-excel"></i> Template</button>
-                        <!-- <button type="button" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> Submit</button> -->
+                        <a href="<?= base_url("download/ImportScheduleManual.xlsx") ?>" target="_blank" class="btn btn-success"><i class="far fa-file-excel"></i> Template</a>
                     </div>
                 </div>
             </div>

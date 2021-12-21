@@ -12,7 +12,7 @@
                 <div class="d-flex justify-content-between align-items-center mt-1 mb-2">
                     <h4><?= $title ?></h4>
                     <h5 class="header-icon">
-                        <a href="<?= $_SERVER['HTTP_REFERER'] ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
+                        <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("detailList?scheduleTrxId=". $findingData["scheduleTrxId"]) ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
                     </h5>
                 </div>
                 <table class="table mt-2">
