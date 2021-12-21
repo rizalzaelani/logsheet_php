@@ -160,7 +160,7 @@
 
 				<?php if (checkRoleList("ROLE.DETAIL.VIEW")) : ?>
 					$(document).on('click', '#tableRole tbody tr', function() {
-						window.location.href = "<?= site_url('role/detail') ?>?groupId=" + $(this).attr("data-id");
+						if($(this).attr("data-id")) window.location.href = "<?= site_url('role/detail') ?>?groupId=" + $(this).attr("data-id");
 					});
 				<?php endif; ?>
 			});

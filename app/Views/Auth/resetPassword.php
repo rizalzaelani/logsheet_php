@@ -132,7 +132,7 @@
                 const confPass = ref('');
                 const passwordErr = ref(null);
                 const confPassErr = ref(null);
-                
+
                 const showPassword = ref(null);
                 const showConfPassword = ref(null);
 
@@ -151,11 +151,17 @@
                                 let resData = res.data;
                                 if (resData.status == 200) {
                                     Swal.fire({
-                                        title: resData.status,
+                                        title: "Reset Password Successfully",
                                         icon: 'success',
                                         text: resData.message,
                                         timer: 3000
                                     }).then(() => {
+                                        Swal.fire({
+                                            title: "Redirecting to Login Page",
+                                            icon: "info",
+                                            showCancelButton: false,
+                                            showConfirmButton: false
+                                        });
                                         location.href = "<?= base_url() ?>";
                                     });
                                 } else if (resData.status == 400) {

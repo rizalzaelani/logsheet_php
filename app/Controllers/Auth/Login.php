@@ -194,8 +194,8 @@ class Login extends BaseController
     public function testMail()
     {
         try {
-            $logActModel = new LogActivityModel();
-            $logActModel->writeLog();
+            // $logActModel = new LogActivityModel();
+            // $logActModel->writeLog();
 
             echo "Success - " . microtime(true);
         } catch (Exception $e) {

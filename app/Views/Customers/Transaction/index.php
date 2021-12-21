@@ -238,7 +238,7 @@ $session = \Config\Services::session();
             onMounted(() => {
                 GetData();
                 $(document).on('click', '#tableTrx tbody tr', function() {
-                    window.location.href = "<?= site_url('Invoice/detail') ?>/" + $(this).attr("data-id");
+                    if($(this).attr("data-id")) window.location.href = "<?= site_url('Invoice/detail') ?>/" + $(this).attr("data-id");
                 });
 
 

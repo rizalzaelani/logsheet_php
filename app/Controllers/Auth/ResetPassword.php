@@ -63,7 +63,7 @@ class ResetPassword extends BaseController
             } else {
                 return $this->response->setJSON([
                     'status' => 200,
-                    'message' => "Success Reset Password, Please Try it on Login Page",
+                    'message' => "Your Password is changed, Please Try it on Login Page",
                     'data' => $resData
                 ], 200);
             }

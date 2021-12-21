@@ -55,6 +55,8 @@ $routes->post('/Wizard/Invoice/download', 'Wizard/Wizard::download');
 
 $routes->get('/Dashboard', 'Dashboard/Dashboard::index');
 
+$routes->get('/service/getTagTagLoc', 'Dashboard/Dashboard::getTagTagLoc');
+
 $routes->get('/Company', 'Master/Company::index');
 $routes->get('/AdminData', 'Master/AdminData::index');
 $routes->get('/Operation', 'Master/Operation::index');
@@ -200,6 +202,8 @@ $routes->add('/Schedule/datatable', 'Setting/Schedule::datatable');
 $routes->post('/Schedule/updateSchedule', 'Setting/Schedule::updateSchedule');
 $routes->post('/Schedule/schJson', 'Setting/Schedule::schJson');
 $routes->post('/Schedule/checkAssetId', 'Setting/Schedule::checkAssetId');
+
+$routes->add('/Account', 'Setting/Account::index');
 
 $routes->get('/user', 'UserRole/User::index');
 $routes->get('/user/userList', 'UserRole/User::userList');

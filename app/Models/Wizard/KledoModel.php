@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 use HTTP_Request2;
 use HTTP_Request2_Exception;
 
-class kledoModel extends Model
+class KledoModel extends Model
 {
     // Product
     function getProduct($data)

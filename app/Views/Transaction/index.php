@@ -150,9 +150,6 @@
 								<?php if (checkRoleList("TRX.DETAIL.VIEW")) : ?>
 									row.setAttribute("data-id", data.scheduleTrxId);
 									row.classList.add("cursor-pointer");
-									// row.setAttribute("data-toggle", "tooltip");
-									// row.setAttribute("data-html", "true");
-									// row.setAttribute("title", "<div>Click to go to asset detail</div>");
 								<?php endif; ?>
 							},
 						});
@@ -176,7 +173,7 @@
 
 				<?php if (checkRoleList("TRX.DETAIL.VIEW")) : ?>
 					$(document).on('click', '#tableTrx tbody tr', function() {
-						window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
+						if($(this).attr("data-id")) window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
 					});
 				<?php endif; ?>
 

@@ -29,7 +29,7 @@
                 <div class="card-body">
                     <ul class="nav nav-tabs w-100 d-flex flex-row align-items-center" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#calendarTab" role="tab" aria-controls="calendarTab" aria-selected="true">
+                            <a class="nav-link active" data-toggle="tab" @click="refreshCalendar()" href="#calendarTab" role="tab" aria-controls="calendarTab" aria-selected="true">
                                 <h5 class="mb-0">Calendar</h5>
                             </a>
                         </li>
@@ -482,7 +482,7 @@
 
                 const showModalAM = () => {
                     $('#tableAssetManual').dataTable().fnClearTable();
-                    if(assetManualData.length > 0) $('#tableAssetManual').dataTable().fnAddData(assetManualData);
+                    if (assetManualData.length > 0) $('#tableAssetManual').dataTable().fnAddData(assetManualData);
                     $("#modalAddSchManual").modal("show");
                 }
             <?php endif; ?>
@@ -831,6 +831,10 @@
                 <?php endif; ?>
             });
 
+            const refreshCalendar = () => {
+                window.dispatchEvent(new Event('resize'));
+            }
+
             return {
                 moment,
                 assetManualData,
@@ -839,6 +843,7 @@
                 formAM,
                 assetListEvent,
                 assetListEventTitle,
+                refreshCalendar,
 
                 <?= (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT") ? "showModalAM,adviceDateAM,changeCKAM,assetIdAM,getDataCKAM,dateRangeSchAM,nextFormAM,saveAddAM,addAdviceDate," : "") ?>
                 <?= (checkRoleList("SCHEDULE.ADD,SCHEDULE.IMPORT") ? "showModalIS," : "") ?>
