@@ -52,57 +52,14 @@ $session = \Config\Services::session();
                 <div class="dt-search-input">
                     <div class="input-container">
                         <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
-                        <input name="dt-search" class="material-input" type="text" data-target="#tableEq" placeholder="Search Data Transaction" />
+                        <input name="dt-search" class="material-input" type="text" data-target="#tableTrx" placeholder="Search Data Transaction" />
                     </div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <h4><?= $title ?></h4>
                     <h5 class="header-icon">
-                        <a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="filter"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
-                        <!-- <a href="javascript:;" onclick="table.ajax.reload();"><i class="fa fa-redo-alt" data-toggle="tooltip" title="Refresh"></i></a> -->
-                        <a href="javascript:;" class="dt-search" data-target="#tableEq"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
-                        <!-- <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="<?= base_url('/Asset/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Asset</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
-                            <a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="javascript:;" @click="draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
-                        </div> -->
+                        <a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                     </h5>
-                </div>
-                <div class="row mt-2 collapse" id="filterDT">
-                    <div class="col-4">
-                        <div class="form-group" id="filterNumber">
-                            <select class="form-control bg-transparent select2-multiple w-100 number" name="number" id="number" multiple="multiple">
-                                <option value="all">All</option>
-                                <option value="all">All</option>
-                                <option value="all">All</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <fieldset class="form-group">
-                            <div class="" id="filterUser">
-                                <select class="form-control bg-transparent select2-multiple w-100 user" name="user" id="user" multiple="multiple">
-                                    <option value="all">All</option>
-                                    <option value="all">All</option>
-                                    <option value="all">All</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group" id="filterstatus">
-                            <select class="form-control bg-transparent select2-multiple w-100 status" name="status" id="status" multiple="multiple">
-                                <option value="all">All</option>
-                                <option value="all">All</option>
-                                <option value="all">All</option>
-                                <option value="all">All</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
                 <div class="table-responsive w-100">
                     <table class="table table-hover w-100" id="tableTrx">
@@ -136,11 +93,12 @@ $session = \Config\Services::session();
     let v = Vue.createApp({
         el: '#app',
         setup() {
+            var table = ref("");
 
             function GetData() {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        this.table = await $('#tableTrx').DataTable({
+                        table.value = await $('#tableTrx').DataTable({
                             drawCallback: function(settings) {
                                 $(document).ready(function() {
                                     $('[data-toggle="tooltip"]').tooltip();
@@ -242,7 +200,14 @@ $session = \Config\Services::session();
                 $(document).on('click', '#tableTrx tbody tr', function() {
                     if($(this).attr("data-id")) window.location.href = "<?= site_url('Invoice/detail') ?>/" + $(this).attr("data-id");
                 });
-
+				
+				let search = $(".dt-search-input input[data-target='#tableTrx']");
+				search.unbind().bind("keypress", function(e) {
+					if (e.which == 13 || e.keyCode == 13) {
+						let searchData = search.val();
+						v.table.search(searchData).draw();
+					}
+				});
 
                 $('#number').select2({
                     theme: 'coreui',
@@ -261,6 +226,7 @@ $session = \Config\Services::session();
             return {
                 GetData,
                 formatNumber,
+                table
             }
         },
     }).mount('#app');
