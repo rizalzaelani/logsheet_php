@@ -18,8 +18,10 @@
     <link rel="stylesheet" href="css/bd-wizard.css">
 </head>
 <?php
-$lite = [10, 50, 150, 1500, 50];
-$pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
+$session = \Config\Services::session();
+$email      = $session->get('email');
+$name       = $session->get('name');
+$parameter  = json_decode($session->get('parameter'));
 ?>
 
 <body>
@@ -216,7 +218,7 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                         </div>
                         <!-- <p class="card-footer-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip </p> -->
                     </section>
-                    <h3>
+                    <!-- <h3>
                         <div class="media">
                             <div class="bd-wizard-step-icon d-flex justify-content-center align-items-center">
                                 <i class="cis cis-briefcase"></i>
@@ -231,7 +233,6 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                     </h3>
                     <section>
                         <div class="brand-wrapper">
-                            <!-- <img src="img/wizard/logo.svg" alt="logo" class="logo"> -->
                         </div>
                         <h5 class="section-heading">Enter Business Details</h5>
                         <div class="form-group">
@@ -259,7 +260,7 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                             <button class="btn btn-primary btnWizard mr-3" data-step="previous">Previous</button>
                             <button class="btn btn-primary btnWizard" id="btnPersonalData" data-step="next">Next</button>
                         </div>
-                    </section>
+                    </section> -->
                     <h3>
                         <div class="media">
                             <div class="bd-wizard-step-icon d-flex justify-content-center align-items-center">
@@ -331,25 +332,20 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="js/bd-wizard.js"></script>
     <script>
-        var lite = <?= json_encode($lite) ?>;
-        var pro = <?= json_encode($pro) ?>;
         var selectedPackage = "";
         var personalData = {
-            fullName: "",
-            companyName: "",
-            address: "",
-            typeCompany: "",
-            position: "",
-            numberEmployee: "",
-            email: "",
-            phoneNumber: "",
+            fullName: '<?= $name ?>',
+            companyName: '<?= $parameter->company ?>',
+            address: '<?= $parameter->city . ' ' . $parameter->postalCode . ', ' . $parameter->country ?>',
+            email: '<?= $email ?>',
+            phoneNumber: '<?= $parameter->noTelp ?>',
         };
         var package = <?= json_encode($package) ?>;
         var packageAll = <?= json_encode($packageAll) ?>;
         var packagePrice = <?= json_encode($packagePrice) ?>;
+        var selectedPrice = "";
         $('input[type="radio"][name="package"]').on('change', function() {
             let val = $(this).val();
             let lengthPackage = packageAll.length;
@@ -359,6 +355,176 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                     let selected = packageAll[i];
                     selectedPackage = selected;
                 }
+            }
+            let arrPrice = [];
+            for (let i = 0; i < packagePrice.length; i++) {
+                let packageId = packagePrice[i].packageId;
+                if (packageId == val) {
+                    let price = packagePrice[i];
+                    arrPrice.push(price);
+                }
+            }
+            selectedPrice = arrPrice;
+
+            $('#reviewChild').remove();
+            if (personalData.fullName == "" || personalData.companyName == "" || personalData.address == "" || personalData.email == "" || personalData.phoneNumber == "") {
+                $('#personalMessage').removeClass('d-none');
+                return;
+            } else {
+                $('#personalMessage').addClass('d-none');
+                var review = "";
+                var selectoption = "";
+                var period = "1-Month";
+                if (selectedPackage.packageGroupName == 'small') {
+                    review += `<div class="text-uppercase d-flex align-items-center justify-content-between my-4">
+                            <div>
+                                <b>Package Version </b><span class="ml-1 badge badge-info">` + selectedPackage.name + `</span>
+                            </div>
+                        </div>`;
+                } else if (selectedPackage.packageGroupName == 'professional') {
+                    review += `<div class="text-uppercase d-flex align-items-center justify-content-between my-4">
+                            <div>
+                                <b>Package Version </b><span class="ml-1 badge badge-warning text-white">` + selectedPackage.name + `</span>
+                            </div>
+                        </div>`;
+                } else {
+                    review += `<div class="text-uppercase d-flex align-items-center justify-content-between my-4">
+                            <div>
+                                <b>Package Version </b><span class="ml-1 badge badge-danger">` + selectedPackage.name + `</span>
+                            </div>
+                        </div>`;
+                }
+                review += `<p><i class='fa fa-check text-success'></i> <b class="text-uppercase"> ` + formatNumber(selectedPackage.assetMax) + `</b> Assets</p>`;
+                review += `<p><i class='fa fa-check text-success'></i> <b class="text-uppercase"> ` + formatNumber(selectedPackage.parameterMax) + `</b> Parameters</p>`;
+                review += `<p><i class='fa fa-check text-success'></i> <b class="text-uppercase"> ` + formatNumber(selectedPackage.tagMax) + `</b> Tags</p>`;
+                review += `<p><i class='fa fa-check text-success'></i> <b class="text-uppercase"> ` + formatNumber(selectedPackage.trxDailyMax) + `</b> Transactions / day </p>`;
+                review += `<p><i class='fa fa-check text-success'></i> <b class="text-uppercase"> ` + formatNumber(selectedPackage.userMax) + `</b> Users</p>`;
+                for (let b = 0; b < selectedPrice.length; b++) {
+                    selectoption += '<option value="' + selectedPrice[b].period + '">' + selectedPrice[b].period + '</option>'
+                }
+                var price = "";
+                let lengthPrice = packagePrice.length;
+                if (selectedPackage.packageGroupName == 'small') {
+                    price += `<div class="d-flex justify-content-start align-items-center">
+                            <div class="mr-2">
+                                <b class="text-uppercase">Package Version </b>
+                                <span class="text-uppercase ml-1 badge badge-info">` + selectedPackage.name + `</span>` + ' / ' + `
+                            </div>
+                            <div>
+                                <select id="month">` + selectoption + `</select>
+                            </div>
+                        </div>`
+                } else if (selectedPackage.packageGroupName == 'professional') {
+                    price += `<div class="d-flex justify-content-start align-items-center">
+                            <div class="mr-2">
+                                <b class="text-uppercase">Package Version </b>
+                                <span class="text-uppercase ml-1 badge badge-warning text-white">` + selectedPackage.name + `</span>` + ' / ' + `
+                            </div>
+                            <div>
+                                <select id="month">` + selectoption + `</select>
+                            </div>
+                        </div>`
+                } else {
+                    price += `<div class="d-flex justify-content-start align-items-center">
+                            <div class="mr-2">
+                                <b class="text-uppercase">Package Version </b>
+                                <span class="text-uppercase ml-1 badge badge-danger">` + selectedPackage.name + `</span>` + ' / ' + `
+                            </div>
+                            <div>
+                                <select id="month">` + selectoption + `</select>
+                            </div>
+                        </div>`
+                }
+                for (let i = 0; i < lengthPrice; i++) {
+                    if ((packagePrice[i].packageId == selectedPackage.packageId) && (packagePrice[i].period == period)) {
+                        price += `<div id="price"><b>Rp ` + formatNumber(packagePrice[i].price) + `</b></div>`;
+                    }
+                }
+                $('#review').append(`
+                        <div id="reviewChild">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card w-100 card-review h-100">
+                                        <div class="card-header lite">
+                                            <h5 class="mb-0">APPLICATION DETAILS</h5>
+                                        </div>
+                                        <div class="mt-2" style="padding: 0 1.25rem">
+                                            ` + review + `
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4 mb-2">
+                                <div class="col-12">
+                                    <div class="card w-100 card-review h-100">
+                                        <div class="card-header lite">
+                                            <h5 class="mb-0">BUSINESS DETAILS</h5>
+                                        </div>
+                                        <div class="mt-4" style="padding: 0 1.25rem">
+                                            <table>
+                                                <tr>
+                                                    <th><p>Full Name</p></th>
+                                                    <td><p>:</p></td>
+                                                    <td class="text-uppercase"><p>` + " " + personalData.fullName + `</p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th><p>Company Name</p></th>
+                                                    <td><p>:</p></td>
+                                                    <td class="text-uppercase"><p>` + " " + personalData.companyName + `</p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th><p>Address</p></th>
+                                                    <td><p>:</p></td>
+                                                    <td class="text-uppercase"><p>` + " " + personalData.address + `</p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th><p>Email</p></th>
+                                                    <td><p>:</p></td>
+                                                    <td class="text-uppercase"><p>` + " " + personalData.email + `</p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th><p>Phone Number</p></th>
+                                                    <td><p>:</p></td>
+                                                    <td class="text-uppercase"><p>` + " " + personalData.phoneNumber + `</p></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4 mb-2">
+                                <div class="col-12">
+                                    <div class="card w-100 card-review h-100">
+                                        <div class="card-header">
+                                            <h5 class="text-uppercase mb-0">payment details</h5>
+                                        </div>
+                                        <div class="mt-2" style="padding: 0 1.25rem" id="payment">
+                                            <div class="d-flex justify-content-between align-items-center my-4" id="paymentChild">
+                                                    ` + price + `
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `);
+                // wizard.steps('next');
+                $('#month').select2(({
+                    theme: 'coreui'
+                }))
+                $('#month').on('change', function() {
+                    month = $(this).val();
+                    $('#price').remove();
+                    var price = "";
+                    for (let i = 0; i < lengthPrice; i++) {
+                        if ((packagePrice[i].packageId == selectedPackage.packageId) && (packagePrice[i].period == month)) {
+                            price += `<div id="price"><b>Rp ` + formatNumber(packagePrice[i].price) + `</b></div>`;
+                        }
+                    }
+                    $('#paymentChild').append(`
+                            ` + price + `
+                        `)
+                })
             }
         })
 
@@ -412,7 +578,7 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                             localStorage.clear();
                             localStorage.setItem('invoice', JSON.stringify(res.data));
                             window.open('<?= base_url('Wizard/Invoice'); ?>' + '/' + rsp.data.ref_number);
-                            window.location.href = '<?= base_url() ?>';
+                            window.location.href = '<?= base_url('/Subscription') ?>';
                         }
                     })
                 } else {
@@ -437,31 +603,6 @@ $pro = ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited',];
                 }
             })
         })
-
-        function fullName(e) {
-            let val = e.value;
-            personalData.fullName = val;
-        }
-
-        function companyName(e) {
-            let val = e.value;
-            personalData.companyName = val;
-        }
-
-        function address(e) {
-            let val = e.value;
-            personalData.address = val;
-        }
-
-        function email(e) {
-            let val = e.value;
-            personalData.email = val;
-        }
-
-        function phoneNumber(e) {
-            let val = e.value;
-            personalData.phoneNumber = val;
-        }
     </script>
 </body>
 

@@ -334,7 +334,7 @@ class Subscription extends BaseController
                 $transactionModel->insert($transaction);
             }
 
-            $message = file_get_contents("assets/Mail/subscription.txt");
+            $message = file_get_contents(base_url() . "/assets/Mail/subscription.txt");
             $transdate = date("Y-m-d H:i:s");
             $refnumber = $dataInvoice['ref_number'];
             $transdesc = $transaction['description'];
