@@ -176,7 +176,7 @@
             }
 
             function payment() {
-                if (v.selected != '' && v.selectedPrice != '' && v.bank != '') {
+                if (v.selected != '' && v.selectedPrice != '' && v.bank != '' && v.price != '0' && v.price != 0) {
                     // v.selected.price = v.price;
                     v.selected.period = v.time;
                     v.selected.bank = v.bank;
@@ -201,7 +201,12 @@
                         }
                     })
                 } else {
-                    if (v.selected == '') {
+                    if(v.price == '0' || v.price == 0){
+                        return swal.fire({
+                            title: "You can't choose the free package.",
+                            icon: 'warning'
+                        })
+                    }else if (v.selected == '') {
                         return swal.fire({
                             title: 'Please Select Package',
                             icon: 'warning'
