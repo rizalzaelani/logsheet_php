@@ -28,7 +28,7 @@ class Subscription extends BaseController
         $adminId = $this->session->get('adminId');
         $dataSubscription   = $subscriptionModel->getByUser($adminId);
         $getSubscription = $subscriptionModel->getAllData(['userId' => $adminId, 'cancelDate' => null]);
-        $getTransaction    = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
+        $getTransaction    = $transactionModel->getByUser(['userId' => $adminId]);
         // d($transaction);
         // die();
         // $subscription = "";
@@ -56,7 +56,7 @@ class Subscription extends BaseController
                 if ($getTransaction[0]['paidDate'] == null && $getTransaction[0]['approvedDate'] == null) {
                     $transactionModel->update($transactionId, $duedate);
                 }
-                $transaction = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
+                $transaction = $transactionModel->getByUser(['userId' => $adminId]);
                 foreach ($transaction as $key => $value) {
                     foreach ($dataInvoice as $i => $val) {
                         if ($value['invoiceId'] == $val['id']) {

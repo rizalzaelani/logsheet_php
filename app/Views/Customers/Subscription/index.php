@@ -149,7 +149,7 @@ $session = \Config\Services::session();
                                     <template v-else-if="val.paidDate == null && val.approvedDate == null && val.attachment != null">
                                         <td class="text-primary text-uppercase"><span class="badge badge-primary text-white">Waiting</span></td>
                                     </template>
-                                    <template v-else-if="val.paidDate == null && val.approvedDate == null">
+                                    <template v-else-if="val.paidDate == null && val.approvedDate == null && val.cancelDate == null">
                                         <td class="text-danger text-uppercase"><span class="badge badge-danger">Unpaid</span></td>
                                     </template>
                                     <template v-else>
