@@ -130,23 +130,6 @@ class Asset extends BaseController
 		$username = $this->session->get('name');
 		$ipAddress = $this->request->getIPAddress();
 		$activity = 'Update Asset';
-		$from = new DateTime();
-		$to = new DateTime();
-		$datefrom = $from->format("Y-m-d");
-		$dateto = $to->format("Y-m-d H:i:s");
-
-		$body = [
-			'data_before' => [
-				'assetName' => 'APAR X01',
-				'assetNumber' => 'xapar01',
-				'description' => 'Description APAR X01'
-			],
-			'data_after' => [
-				'assetName' => 'APAR X01',
-				'assetNumber' => 'xapar01',
-				'description' => 'Description APAR X01'
-			]
-		];
 		try {
 			$data = $influxModel->getLogAsset($activity, $assetId, $datestart, $dateend);
 			return $this->response->setJSON(array(
@@ -895,13 +878,27 @@ class Asset extends BaseController
 				'data_before' => $beforeAsset[0],
 				'data_after' => $afterAsset[0]
 			];
+			$cekDescBefore = json_decode($body['data_before']['description']);
+			if ($cekDescBefore != null) {
+				$body['data_before']['description'] = json_decode($body['data_before']['description']);
+			}
+			$cekDescAfter = json_decode($body['data_after']['description']);
+			if ($cekDescAfter != null) {
+				$body['data_after']['description'] = json_decode($body['data_after']['description']);
+			}
+			$bodyP = [
+				'data_before' => $beforeParameter[0],
+				'data_after' => $afterParameter[0]
+			];
 
 			$adminId	= $this->session->get('adminId');
 			$username	= $this->session->get('name');
 			$ipAddress	= $this->request->getIPAddress();
-			$activity	= 'Update Asset';
+			$activity1	= 'Update Asset';
+			$activity2	= 'Update Parameter';
 
-			$influxModel->writeData($activity, $ipAddress, $adminId, $username, $assetId, json_encode($body));
+			$influxModel->writeData($activity1, $ipAddress, $adminId, $username, $assetId, json_encode($body));
+			// $influxModel->writeData($activity2, $ipAddress, $adminId, $username, $assetId, json_encode($bodyP));
 			// var_dump($beforeAsset);
 			// var_dump($afterAsset);
 

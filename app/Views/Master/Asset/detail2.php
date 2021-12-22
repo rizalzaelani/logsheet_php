@@ -658,9 +658,9 @@ $sess = $session->get('adminId');
                                                         <tr>
                                                             <td>{{ _.startCase(i) }}</td>
                                                             <!-- <td style="max-width: 200px !important">{{ val }}</td> -->
-                                                            <template v-if="IsJson(val)">
+                                                            <template v-if="IsArray(val)">
                                                                 <td style="max-width: 200px !important">
-                                                                    <div v-for="(value, key) in JSON.parse(val)">
+                                                                    <div v-for="(value, key) in val">
                                                                         <div class="row">
                                                                             <div class="col-4">
                                                                                 <b>{{value.key}}</b>
@@ -675,9 +675,9 @@ $sess = $session->get('adminId');
                                                             <template v-else>
                                                                 <td style="max-width: 200px !important">{{ val }}</td>
                                                             </template>
-                                                            <template v-if="IsJson(dataAB.data_after[i])">
+                                                            <template v-if="IsArray(dataAB.data_after[i])">
                                                                 <td style="max-width: 200px !important">
-                                                                    <div v-for="(value, key) in JSON.parse(dataAB.data_after[i])">
+                                                                    <div v-for="(value, key) in dataAB.data_after[i]">
                                                                         <div class="row">
                                                                             <div class="col-4">
                                                                                 <b>{{value.key}}</b>
@@ -699,9 +699,9 @@ $sess = $session->get('adminId');
                                                         <tr>
                                                             <td>{{ _.startCase(i) }}</td>
                                                             <!-- <td style=" max-width: 200px !important" class="old">{{ val }}</td> -->
-                                                            <template v-if="IsJson(val)">
+                                                            <template v-if="IsArray(val)">
                                                                 <td style="max-width: 200px !important" class="old">
-                                                                    <div v-for="(value, key) in JSON.parse(val)">
+                                                                    <div v-for="(value, key) in val">
                                                                         <div class="row">
                                                                             <div class="col-4">
                                                                                 <b>{{value.key}}</b>
@@ -716,9 +716,9 @@ $sess = $session->get('adminId');
                                                             <template v-else>
                                                                 <td style="max-width: 200px !important" class="old">{{ val }}</td>
                                                             </template>
-                                                            <template v-if="IsJson(dataAB.data_after[i])">
+                                                            <template v-if="IsArray(dataAB.data_after[i])">
                                                                 <td style="max-width: 200px !important" class="new">
-                                                                    <div v-for="(value, key) in JSON.parse(dataAB.data_after[i])">
+                                                                    <div v-for="(value, key) in dataAB.data_after[i]">
                                                                         <div class="row">
                                                                             <div class="col-4">
                                                                                 <b>{{value.key}}</b>
@@ -773,7 +773,7 @@ $sess = $session->get('adminId');
                             </tr>
                         </thead>
                         <tbody>
-                            <template v-if="changelog.length">
+                            <!-- <template v-if="changelog.length">
                                 <template v-for="(val, i) in changelog">
                                     <tr>
                                         <td>
@@ -787,7 +787,7 @@ $sess = $session->get('adminId');
                                         </td>
                                     </tr>
                                 </template>
-                            </template>
+                            </template> -->
                         </tbody>
                     </table>
                 </div>
@@ -4031,33 +4031,12 @@ $sess = $session->get('adminId');
                     return checkIsEqual;
                 }
 
-                function IsJson(str) {
-                    let item = "";
-                    try {
-                        item = JSON.parse(str);
-                    } catch (e) {
-                        return false;
-                    }
-                    if (typeof item === "object") {
+                function IsArray(str) {
+                    if (Array.isArray(str)) {
                         return true
                     } else {
                         return false
                     }
-                }
-
-                function modalChange(i) {
-                    this.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
-                    this.myModal.show();
-
-                    this.dataChangeLog = this.changelog[i];
-
-                    let before = _.omit((JSON.parse(this.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
-                    let after = _.omit((JSON.parse(this.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
-
-                    let data = [];
-                    data['data_before'] = before;
-                    data['data_after'] = after;
-                    this.dataAB = data
                 }
 
                 const cb = (start, end) => {
@@ -4077,6 +4056,8 @@ $sess = $session->get('adminId');
                             let rsp = res.data;
                             if (rsp.status == 200) {
                                 v.changelog = rsp.data
+                                v.tableChangeLog.clear();
+                                v.tableChangeLog.rows.add(v.changelog).draw();
                             } else {
                                 swal.fire({
                                     icon: 'error',
@@ -4204,6 +4185,31 @@ $sess = $session->get('adminId');
                         if (rsp.status == 200) {
                             if (rsp.data.length) {
                                 v.changelog = rsp.data;
+                                $(document).ready(function() {
+                                    v.tableChangeLog = $('#tableChangeLog').DataTable({
+                                        data: v.changelog,
+                                        columns: [{
+                                                data: "time",
+                                                name: "time",
+                                                render: function(data, type, row, meta) {
+                                                    return v.momentchangelog(data);
+                                                }
+                                            },
+                                            {
+                                                data: "activity",
+                                                name: "activity",
+                                            },
+                                            {
+                                                data: "assetId",
+                                                name: "assetId",
+                                                render: function(data, type, row, meta) {
+                                                    return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                                }
+                                            }
+                                        ],
+                                        order: [0, 'desc']
+                                    })
+                                })
                             }
                         }
                     })
@@ -4211,7 +4217,7 @@ $sess = $session->get('adminId');
 
                 return {
                     tableChangeLog,
-                    IsJson,
+                    IsArray,
                     IsJsonString,
                     changelog,
                     dataChangeLog,
@@ -4362,6 +4368,20 @@ $sess = $session->get('adminId');
             }
         }).mount('#app');
 
+        function modalChange(i) {
+            v.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
+            v.myModal.show();
+
+            v.dataChangeLog = v.changelog[i];
+
+            let before = _.omit((JSON.parse(v.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
+            let after = _.omit((JSON.parse(v.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
+
+            let data = [];
+            data['data_before'] = before;
+            data['data_after'] = after;
+            v.dataAB = data
+        }
 
         function modalPreviewImg() {
             $('#fullImg').remove();
