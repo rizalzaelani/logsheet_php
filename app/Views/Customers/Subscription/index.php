@@ -132,11 +132,9 @@ $session = \Config\Services::session();
                                 <th>Number</th>
                                 <th>Issue Date</th>
                                 <th>Description</th>
-                                <!-- <th>Period</th> -->
-                                <!-- <th>Paid</th> -->
-                                <!-- <th>Total</th> -->
+
                                 <th>Due on</th>
-                                <!-- <th>Action</th> -->
+
                             </tr>
                         </thead>
                         <tbody>
