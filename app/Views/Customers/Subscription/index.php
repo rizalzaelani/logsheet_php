@@ -143,11 +143,17 @@ $session = \Config\Services::session();
                             <template v-if="subscription">
                                 <tr v-for="(val, key) in transaction">
                                     <td class="d-none">{{ val.transactionId }}</td>
-                                    <template v-if="val.paidDate == null">
+                                    <template v-if="val.paidDate != null && val.approvedDate != null && val.attachment != null">
+                                        <td class="text-success text-uppercase"><span class="badge badge-success">Paid</span></td>
+                                    </template>
+                                    <template v-else-if="val.paidDate == null && val.approvedDate == null && val.attachment != null">
+                                        <td class="text-primary text-uppercase"><span class="badge badge-primary text-white">Waiting</span></td>
+                                    </template>
+                                    <template v-else-if="val.paidDate == null && val.approvedDate == null && val.cancelDate == null">
                                         <td class="text-danger text-uppercase"><span class="badge badge-danger">Unpaid</span></td>
                                     </template>
                                     <template v-else>
-                                        <td class="text-success text-uppercase"><span class="badge badge-success">Paid</span></td>
+                                        <td class="text-warning text-uppercase"><span class="badge badge-warning text-white">Cancelled</span></td>
                                     </template>
                                     <td><span class="text-info">{{ val.refNumber }}</span></td>
                                     <td>{{ moment2(val.issueDate) }}</td>
@@ -173,7 +179,7 @@ $session = \Config\Services::session();
         </div>
     </div>
     <!-- modal trx detail -->
-    <div class="modal fade" id="modalTrx" tabindex="-1" role="dialog" aria-labelledby="modalTrxTitle" aria-hidden="true" style="z-index: 3000;">
+    <div class="modal fade" id="modalTrx" tabindex="-1" role="dialog" aria-labelledby="modalTrxTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -187,11 +193,17 @@ $session = \Config\Services::session();
                         <div>
                             <h5>Status Invoice</h5>
                             <div>
-                                <div v-if="dataModal.paidDate == null">
+                                <div v-if="dataModal.paidDate != null && dataModal.approvedDate != null && dataModal.attachment != null">
+                                    <h5 class="text-success text-uppercase">Paid</h5>
+                                </div>
+                                <div v-else-if="dataModal.paidDate == null && dataModal.approvedDate == null && dataModal.attachment != null">
+                                    <h5 class="text-primary text-uppercase">Waiting</h5>
+                                </div>
+                                <div v-else-if="dataModal.paidDate == null && dataModal.approvedDate == null">
                                     <h5 class="text-danger text-uppercase">Unpaid</h5>
                                 </div>
                                 <div v-else>
-                                    <h5 class="text-success text-uppercase">Paid</h5>
+                                    <h5 class="text-warning text-uppercase">Cancelled</h5>
                                 </div>
                             </div>
                         </div>
@@ -358,11 +370,33 @@ $session = \Config\Services::session();
                 </div>
                 <div :class="dataModal.status == 1 ? 'modal-footer d-flex justify-content-between align-items-center' : 'modal-footer'">
                     <div :class="dataModal.status == 1 ? '' : 'd-none'">
-                        <button type="button" class="btn btn-success mr-1" @click="confirm(dataModal.transactionId)"><i class="fa fa-check"></i> Confirmation</button>
+                        <button type="button" class="btn btn-success mr-1" @click="confirm"><i class="fa fa-file-upload"></i> Upload</button>
                         <button type="button" class="btn btn-danger" @click="cancelUp(dataModal.transactionId)"><i class="fa fa-times"></i> Cancel Upgrade</button>
                     </div>
                     <div>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal upload attachment -->
+    <div class="modal fade" id="modalAttachment" tabindex="-1" role="dialog" aria-labelledby="modalAttachmentTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTrxTitle">Upload Proof of Payment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" class="filepond mt-2 mb-2 w-100" name="filepond" id="attach" accept="image/png, image/jpeg, image/gif" />
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button @click="send()" type="button" class="btn btn-success mr-1" data-dismiss="modal"><i class="fa fa-paper-plane"></i> Send</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                     </div>
                 </div>
             </div>
@@ -403,6 +437,8 @@ $session = \Config\Services::session();
             var duration = moment.duration(diffCD - 1000, 'milliseconds');
             var interval = 1000;
             var countdown = ref("");
+
+            var attachment = ref("");
 
             if (dueDate.length) {
                 setInterval(() => {
@@ -519,6 +555,42 @@ $session = \Config\Services::session();
                 })
             }
 
+            function confirm() {
+                let modalconfirm = new coreui.Modal(document.getElementById('modalAttachment'), {});
+                modalconfirm.show();
+            }
+
+            function send() {
+                if (this.attachment) {
+                    let formdata = new FormData();
+                    formdata.append('transactionId', this.dataModal.transactionId);
+                    formdata.append('attachment', this.attachment);
+                    axios({
+                        url: '<?= base_url('/Subscription/confirmation') ?>',
+                        method: 'POST',
+                        data: formdata
+                    }).then((res) => {
+                        let rsp = res.data;
+                        if (rsp.status == 200) {
+                            swal.fire({
+                                icon: 'success',
+                                title: rsp.message
+                            })
+                        } else {
+                            swal.fire({
+                                icon: 'error',
+                                title: rsp.message
+                            })
+                        }
+                    })
+                } else {
+                    swal.fire({
+                        icon: 'warning',
+                        title: 'Please include a picture!'
+                    })
+                }
+            }
+
             var getData = () => {
                 this.table = $('#tableSubs').DataTable({
                     processing: true,
@@ -587,10 +659,31 @@ $session = \Config\Services::session();
             }
 
             onMounted(() => {
+                FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
+                let attach = {
+                    acceptedFileTypes: ['image/png', 'image/jpeg'],
+                    allowImagePreview: true,
+                    imagePreviewMaxHeight: 200,
+                    allowImageCrop: true,
+                    allowMultiple: false,
+                    credits: false,
+                    styleLoadIndicatorPosition: 'center bottom',
+                    styleProgressIndicatorPosition: 'right bottom',
+                    styleButtonRemoveItemPosition: 'left bottom',
+                    styleButtonProcessItemPosition: 'right bottom',
+                };
+                let attachment = FilePond.create(document.querySelector('#attach'), attach);
+                attachment.on('addfile', (error, file) => {
+                    v.attachment = file.file
+                })
+                attachment.on('removefile', (error, file) => {
+                    v.attachment = ref("");
+                })
                 $('#bank').select2({
                     theme: 'coreui',
                     dropdownParent: $('#modalTrx'),
                 })
+
             })
 
             return {
@@ -618,7 +711,10 @@ $session = \Config\Services::session();
                 countdown,
                 now,
                 dd,
-                download
+                download,
+                confirm,
+                attachment,
+                send
             }
         },
     }).mount('#app');

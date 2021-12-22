@@ -200,7 +200,10 @@
                             window.open("<?= base_url('/Subscription/invoice'); ?>/"+v.selected.transactionId+"")
                             window.location.href = "<?= base_url('/Subscription'); ?>";
                         } else {
-
+                            swal.fire({
+                                icon: 'error',
+                                title: rsp.message
+                            })
                         }
                     })
                 } else {

@@ -14,6 +14,18 @@
         .card {
             border: 0px !important;
         }
+        .rotate {
+            -moz-transition: all .1s linear;
+            -webkit-transition: all .1s linear;
+            transition: all .1s linear;
+        }
+
+        a[aria-expanded='false']>.rotate {
+            -ms-transform: rotate(-90deg);
+            -moz-transform: rotate(-90deg);
+            -webkit-transform: rotate(-90deg);
+            transform: rotate(-90deg);
+        }
     </style>
     <?php if (isset($css)) : ?>
         <?php foreach ($css as $item) : ?>
@@ -38,10 +50,10 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div v-if="invoice[0].status_id == 1">
-                                        <h4 class="m-0 text-danger">Belum Dibayar</h4>
+                                        <h4 class="m-0 text-danger">Unpaid</h4>
                                     </div>
                                     <div v-else>
-                                        <h4 class="m-0 text-success">Lunas</h4>
+                                        <h4 class="m-0 text-success">Paid</h4>
                                     </div>
                                 </div>
                             </div>
@@ -166,6 +178,65 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row px-4 py-2">
+                        <div class="col">
+                            <div class="accordion" id="accordionExample">
+                                <div class="">
+                                    <div class="d-flex justify-content-start align-items-center" id="headingThree">
+                                        <a class="collapsed text-info decoration-none" type="button" data-toggle="collapse" data-target="#dataCollapse" aria-expanded="false" aria-controls="collapseThree">
+                                            <i class="fa fa-caret-down rotate mr-2" id="rotate"></i>How to make payment ?
+                                            <!-- <p class="m-0">How to make payment ?</p> -->
+                                        </a>
+                                    </div>
+                                    <div id="dataCollapse" class="collapse py-2" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                        <div class="py-2">
+                                            <div class="info py-2">
+                                                <p class="mx-2 mb-0"><strong>NOTE :</strong></p>
+                                                <p class="mx-2 mb-0">
+                                                    Please make payment only with the account number listed below and confirm payment after you make payment.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="py-2">
+                                            <b>Destination Bank</b>
+                                        </div>
+                                        <div class="my-2">
+                                            <select class="py-2" name="bank" id="bank">
+                                                <option selected disabled value="mandiri">MANDIRI, Account Number <b>1800010111674</b> PT. NOCOLA IOT SOLUTION</option>
+                                            </select>
+                                        </div>
+                                        <div class="py-2">
+                                            <b>ATM Transfer</b>
+                                        </div>
+                                        <div class="py-2">
+                                            <ol>
+                                                <li class="pb-2">Select the Transfer menu</li>
+                                                <li class="pb-2">Select the menu to Mandiri Account</li>
+                                                <li class="pb-2">Enter the destination account number (select True)</li>
+                                                <li class="pb-2">Enter the amount of money to be transferred (select True)</li>
+                                                <li class="pb-2">Pay attention to the transfer confirmation, if correct select True</li>
+                                                <li class="pb-2">The transaction has been completed, select Exit or press Cancel and then you can do confirmation.</li>
+                                            </ol>
+                                        </div>
+                                        <div class="py-2">
+                                            <b>Mobile Banking</b>
+                                        </div>
+                                        <div class="py-2">
+                                            <ol>
+                                                <li class="pb-2">Login to your mobile banking</li>
+                                                <li class="pb-2">Select the Transfer menu</li>
+                                                <li class="pb-2">Select the menu to Mandiri Account, if you have different bank account, choose transfer to another bank</li>
+                                                <li class="pb-2">Enter the destination account number (select True)</li>
+                                                <li class="pb-2">Enter the amount of money to be transferred (select True)</li>
+                                                <li class="pb-2">Pay attention to the transfer confirmation, if correct select True</li>
+                                                <li class="pb-2">The transaction has been completed, you can exit the application and do confirmation.</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -177,6 +248,7 @@
         <?php endforeach; ?>
     <?php endif; ?>
     <script>
+        const {onMounted} = Vue;
         let v = Vue.createApp({
             el: '#app',
             setup() {
@@ -206,6 +278,11 @@
                         }
                     })
                 }
+                onMounted(() => {
+                    $('#bank').select2({
+                        theme: 'coreui'
+                    })
+                })
                 return {
                     invoice,
                     dataInvoice,

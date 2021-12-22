@@ -2,6 +2,19 @@
 
 <?= $this->section('customStyles'); ?>
 <!-- Custom Style Css -->
+<style>
+    .modal-fs {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .modal-fs .modal-content {
+        min-height: 100vh;
+        background-color: rgba(0, 0, 0, 0.8) !important;
+    }
+</style>
 <?= $this->endSection(); ?>
 
 <?= $this->section('content') ?>
@@ -29,14 +42,17 @@
                         <div class="px-4 py-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div v-if="transaction[0].paidDate == null && transaction[0].cancelDate == null">
-                                        <h4 class="m-0 text-danger text-uppercase">Unpaid</h4>
+                                    <div v-if="transaction[0].paidDate != null && transaction[0].approvedDate != null && transaction[0].attachment != null">
+                                        <h4 class="m-0 text-success text-uppercase">Paid</h4>
+                                    </div>
+                                    <div v-else-if="transaction[0].paidDate == null && transaction[0].cancelDate == null && transaction[0].attachment != null">
+                                        <h4 class="m-0 text-primary text-uppercase">Waiting</h4>
                                     </div>
                                     <div v-else-if="transaction[0].paidDate == null && transaction[0].cancelDate != null">
                                         <h4 class="m-0 text-warning text-uppercase">Cancelled</h4>
                                     </div>
                                     <div v-else>
-                                        <h4 class="m-0 text-success text-uppercase">Paid</h4>
+                                        <h4 class="m-0 text-danger text-uppercase">Unpaid</h4>
                                     </div>
                                 </div>
                             </div>
@@ -177,6 +193,14 @@
                             </div>
                         </div>
                         <div style="border-top: 1px solid #f0f0f0;"></div>
+                        <template v-if="transaction[0].attachment != null">
+                            <div class="row px-4 py-2">
+                                <div class="col">
+                                    <label for="attachment">Attachment</label><br>
+                                    <img onclick="modalImgAttachment()" :src="transaction[0].attachment" alt="image" id="attachment" style="width: 200px; cursor: pointer">
+                                </div>
+                            </div>
+                        </template>
                         <div class="row px-4 py-2">
                             <div class="col">
                                 <label for="total">Total Dibayar</label>
@@ -193,6 +217,24 @@
                                 <button @click="approve()" class="btn btn-success"><i class="fa fa-check"></i> Approve</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal preview image -->
+    <div class="modal fade pr-0" id="modalPreviewImg" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
+        <div class="modal-dialog modal-fs" role="document">
+            <div class="modal-content">
+                <div class="d-flex justify-content-end p-3">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-white">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="fullPreview" class="d-flex justify-content-center aliign-items-center">
+
                     </div>
                 </div>
             </div>
@@ -296,7 +338,8 @@
                 formatNumber,
                 approve,
                 deleteTrx,
-                contact
+                contact,
+                modalImgAttachment
             };
             onMounted(() => {})
         },
@@ -307,5 +350,12 @@
         $('#approveDate').attr('min', min);
         $('#approveDate').attr('max', max);
     })
+
+    function modalImgAttachment() {
+        $('#fullImg').remove();
+        this.myModal = new coreui.Modal(document.getElementById('modalPreviewImg'), {});
+        this.myModal.show();
+        $('#fullPreview').append("<img id='fullImg' src='" + v.transaction[0].attachment + "' alt='img'>");
+    }
 </script>
 <?= $this->endSection(); ?>

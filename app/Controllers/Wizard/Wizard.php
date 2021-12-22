@@ -48,13 +48,15 @@ class Wizard extends BaseController
         $transactionModel = new TransactionModel();
         $kledoModel = new KledoModel();
 
+        $adminId = $this->session->get('adminId');
+
         $post = $this->request->getPost();
-        if ($post['package'] == "" || $post['fullName'] == "" || $post['companyName'] == "" || $post['email'] == "" || $post['phoneNumber'] == "") {
-            return $this->response->setJSON(array(
-                'status' => 500,
-                'message' => 'Bad Request!'
-            ), 500);
-        }
+        // if ($post['package'] == "" || $post['fullName'] == "" || $post['companyName'] == "" || $post['email'] == "" || $post['phoneNumber'] == "") {
+        //     return $this->response->setJSON(array(
+        //         'status' => 500,
+        //         'message' => 'Bad Request!'
+        //     ), 500);
+        // }
         try {
             $dateTime = new DateTime();
             $clone = new DateTime();
@@ -68,6 +70,10 @@ class Wizard extends BaseController
             $period = strtolower(str_replace("-", " ", $packagePrice['period']));
             $activeFrom = $dateTime->modify("+1 days")->format("Y-m-d 00:00:00");
             $expiredDate = $clone->modify("+" . $period)->format("Y-m-d 23:59:59");
+
+            // var_dump($package);
+            // var_dump($packagePrice);
+            // die();
 
             $product = [];
             if ($package) {
@@ -109,39 +115,6 @@ class Wizard extends BaseController
                         'data' => []
                     ));
                 }
-                $subscription = [
-                    'subscriptionId' => uuidv4(),
-                    'packageId'     => $packageId,
-                    'packagePriceId' => $packagePriceId,
-                    'userId'        => 1,
-                    'period'        => $packagePrice['period'],
-                    'assetMax'      => $package['assetMax'],
-                    'parameterMax'  => $package['parameterMax'],
-                    'tagMax'        => $package['tagMax'],
-                    'trxDailyMax'   => $package['trxDailyMax'],
-                    'userMax'       => $package['userMax'],
-                    'activeFrom'    => $activeFrom,
-                    'expiredDate'   => $expiredDate
-                ];
-                // $subscriptionModell->insert($subscription);
-
-                $transaction = [
-                    'transactionId' => null,
-                    'subscriptionId' => $subscription['subscriptionId'],
-                    'userId'        => 1,
-                    'period'        => $packagePrice['period'],
-                    'description'   => "free",
-                    'paymentTotal'  => $packagePrice['price'],
-                    'paymentMethod' => "-",
-                    'attachment'    => null,
-                    'issueDate'     => date("Y-m-d H:i:s"),
-                    'paidDate'      => date("Y-m-d H:i:s"),
-                    'approveDate'   => date("Y-m-d H:i:s"),
-                    'cancelDate'    => null,
-                    'activeFrom'    => $activeFrom,
-                    'activeTo'      => $expiredDate
-                ];
-                // $transactionModel->insert($transaction);
 
                 // Add Invoice
                 $date = new DateTime();
@@ -153,12 +126,12 @@ class Wizard extends BaseController
                     "include_tax"   => 0,
                     'term_id'       => 1,
                     'ref_number'    => "INVLD" . $contactId . time(),
-                    'memo'          => $package['description'],
+                    'memo'          => $package[0]['description'],
                     'attachment'    => ["https://kledo-live-user.s3.ap-southeast-1.amazonaws.com/rizal.api.kledo.com/finance/invoice/attachment/temp/211123/113415/Approve%20_%20Non%20Approve.png"],
                     'items'         => [[
                         'finance_account_id' => $product['id'],
                         'tax_id'            => null,
-                        'desc'              => $package['description'],
+                        'desc'              => $package[0]['description'],
                         'qty'               => 1,
                         'price'             => $packagePrice['price'],
                         'amount'            => $packagePrice['price'],
@@ -223,25 +196,86 @@ class Wizard extends BaseController
                     file_put_contents($path . $name, $base64_decode);
                     header("Content-type: application/pdf");
 
+                    $subsId = uuidv4();
+
+                    $subscription = [
+                        'subscriptionId' => $subsId,
+                        'packageId'     => $packageId,
+                        'packagePriceId' => $packagePriceId,
+                        'userId'        => $adminId,
+                        'period'        => $packagePrice['period'],
+                        'assetMax'      => $package[0]['assetMax'],
+                        'parameterMax'  => $package[0]['parameterMax'],
+                        'tagMax'        => $package[0]['tagMax'],
+                        'trxDailyMax'   => $package[0]['trxDailyMax'],
+                        'userMax'       => $package[0]['userMax'],
+                        'activeFrom'    => $activeFrom,
+                        'expiredDate'   => $expiredDate
+                    ];
+                    $subscriptionModell->insert($subscription);
+
+                    $dueDateTrx = new DateTime();
+                    $transaction = [
+                        'transactionId' => null,
+                        'subscriptionId' => $subsId,
+                        'packageId'     => $packageId,
+                        'packagePriceId' => $packagePriceId,
+                        'invoiceId'     => $dataInvoice->id,
+                        'refNumber'     => $dataInvoice->ref_number,
+                        'userId'        => $adminId,
+                        'period'        => $packagePrice['period'],
+                        'description'   => $package[0]['description'],
+                        'paymentTotal'  => $packagePrice['price'],
+                        // 'paymentMethod' => "-",
+                        'attachment'    => null,
+                        'issueDate'     => date("Y-m-d H:i:s"),
+                        'dueDate'       => $dueDateTrx->modify("+1 days")->format("Y-m-d H:i:s"),
+                        // 'approveDate'   => date("Y-m-d H:i:s"),
+                        'cancelDate'    => null,
+                        'activeFrom'    => $activeFrom,
+                        'activeTo'      => $expiredDate
+                    ];
+                    if ($packagePrice['price'] == '0' || $packagePrice['price'] == 0) {
+                        $transaction['paidDate']      = date("Y-m-d H:i:s");
+                        $transaction['approvedDate']  = date("Y-m-d H:i:s");
+                        $transaction['paymentMethod'] = 'free';
+                    } else {
+                        $transaction['paidDate']      = null;
+                        $transaction['approvedDate']  = null;
+                        $transaction['paymentMethod'] = 'Bank Transfer';
+                    }
+                    $transactionModel->insert($transaction);
+
+                    // send email
+                    $message = file_get_contents("assets/Mail/subscription.txt");
+                    $transdate = date("Y-m-d H:i:s");
+                    $refnumber = $dataInvoice->ref_number;
+                    $transdesc = $package[0]['description'];
+                    $transprice = $packagePrice['price'];
+                    $transdiscount = '0%';
+                    $transtax = '0';
+                    $transtotal = $items->price;
+
                     // send email
                     $email = \Config\Services::email();
 
-                    $subject = strtoupper("Invoice - " . $dataInvoice->ref_number);
-                    $message = "
-                            <p style='font-size: 14px;'>Yth. " . $dataInvoice->contact->name . "</p>
-                            <p style='font-size: 14px;'>Berikut adalah tagihan untuk pembelian dengan nomor invoice <b>" . $dataInvoice->ref_number . "</b> sebesar <b>Rp. " . number_format($dataInvoice->amount_after_tax) . "</b>.</p>
-                            <p style='font-size: 14px;'>Silahkan <a href=" . base_url() . ">klik disini</a> untuk login ke aplikasi Logsheet Digital.</p>
-                            <p style='font-size: 14px;'>Terimakasih atas kerjasamanya.</p>
-                            <p style='font-size: 14px;'>Nocola IOT Solution</p>
-                            <img src='https://kledo-live-user.s3.ap-southeast-1.amazonaws.com/rizal.api.kledo.com/invoice-logo.png'>
-                        ";
+                    $message = str_replace("{{trans_date}}", $transdate, $message);
+                    $message = str_replace("{{ref_number}}", $refnumber, $message);
+                    $message = str_replace("{{trans_desc}}", $transdesc, $message);
+                    $message = str_replace("{{trans_price}}", 'Rp. ' . number_format($transprice), $message);
+                    $message = str_replace("{{trans_discount}}", $transdiscount, $message);
+                    $message = str_replace("{{trans_tax}}", 'Rp. ' . number_format($transtax), $message);
+                    $message = str_replace("{{trans_total}}", 'Rp. ' . number_format($transtotal), $message);
 
-                    $email->setTo("zaelanirizal.rz@gmail.com");
-                    $email->setFrom("zaelanirizal.rz@gmail.com", "Rizal Zaelani International");
+                    $subject = 'Invoice for order #' . $dataInvoice->ref_number;
+                    $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
+                    $email->setTo($contact->email);
                     $email->setSubject($subject);
                     $email->setMessage($message);
                     $email->attach($path . $name);
+                    $email->setMailType("html");
                     $email->send();
+                    $email->printDebugger(['headers']);
                     unlink($path . $name);
 
                     return $this->response->setJSON(array(
@@ -293,6 +327,8 @@ class Wizard extends BaseController
     public function download()
     {
         $kledoModel = new KledoModel();
+        $email = \Config\Services::email();
+
         $post = $this->request->getPost('invoice');
         $data = json_decode($post)->data;
         $contact = $data->contact;
@@ -317,9 +353,9 @@ class Wizard extends BaseController
                 'price'             => $items->price,
                 'amount'            => $items->amount,
                 'discount_percent'  => $items->discount_percent,
-                'tax_percent'       => $tax->percent,
+                'tax_percent'       => null,
                 'tax_manual'        => 0,
-                'tax_title'         => $tax->name,
+                'tax_title'         => "",
             ]],
             'message'                       => $data->memo,
             'company_logo'                  => "https://kledo-live-user.s3.ap-southeast-1.amazonaws.com/rizal.api.kledo.com/invoice-logo.png",
@@ -335,6 +371,7 @@ class Wizard extends BaseController
             'invoice_lang_message'          => 'Description',
             'trans_type_title'              => 'Invoice',
         ];
+
         $resGenerate = $kledoModel->generateInvoice(json_encode($bodyGenerate));
         $base64 = base64_encode($resGenerate['data']);
         return $this->response->setJSON(array(

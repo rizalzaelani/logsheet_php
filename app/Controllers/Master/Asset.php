@@ -11,6 +11,7 @@ use App\Models\TagLocationModel;
 use App\Models\AssetStatusModel;
 use App\Models\AssetTagModel;
 use App\Models\Influx\LogActivityModel;
+use App\Models\Influx\LogModel;
 use App\Models\ParameterModel;
 use App\Models\Wizard\TransactionModel;
 use CodeIgniter\API\ResponseTrait;
@@ -37,24 +38,9 @@ class Asset extends BaseController
 		if (!checkRoleList("MASTER.ASSET.VIEW")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
-		$influxModel = new LogActivityModel();
-		$adminId = $this->session->get('adminId');
-		$username = $this->session->get('name');
-		$activity = 'Update Asset oke';
+		$influxModel = new LogModel();
 
-		$body = [
-			'data_before' => [
-				'assetName' => 'APAR X01',
-				'assetNumber' => 'xapar01',
-				'description' => 'Description APAR X01'
-			],
-			'data_after' => [
-				'assetName' => 'APAR X01',
-				'assetNumber' => 'xapar01',
-				'description' => 'Description APAR X01'
-			]
-		];
-
+		// $influxModel = new LogActivityModel();
 		// $influxModel->writeLog(json_encode($body), $activity, $adminId, $username, 'null');
 
 		$data = [
@@ -131,25 +117,41 @@ class Asset extends BaseController
 
 	public function changelog()
 	{
-		$influxModel = new LogActivityModel();
+		// $influxModel = new LogActivityModel();
+		$influxModel = new LogModel();
 
 		$post = $this->request->getPost();
 		$datestart = $post['start'];
 		$dateend = $post['end'];
+		$assetId = $post['assetId'];
 		$activity = "Update Asset";
 
+		$adminId = $this->session->get('adminId');
+		$username = $this->session->get('name');
+		$ipAddress = $this->request->getIPAddress();
+		$activity = 'Update Asset';
+		try {
+			$data = $influxModel->getLogAsset($activity, $assetId, $datestart, $dateend);
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message' => 'Success get data',
+				'data' => $data
+			));
+		} catch (Exception $e) {
+			return $this->response->setJSON(array(
+				'status' => 500,
+				'message' => $e->getMessage(),
+				'data' => ''
+			));
+		}
+
+		// $data = $influxModel->writeData($activity, $ipAddress, $adminId, $username, 'test76977-35353', json_encode($body));
 		// $data = $influxModel->readLog(strtotime($datestart), strtotime($dateend), $activity);
 		// $logactivity = [];
 		// foreach ($data->each() as $record) {
 		// 	// var_dump($record->values);
 		// 	array_push($logactivity, $record->values);
 		// }
-
-		// return $this->response->setJSON(array(
-		// 	'status' => 200,
-		// 	'message' => 'Success get data',
-		// 	'data' => $logactivity
-		// ));
 	}
 
 	public function add()
@@ -502,14 +504,15 @@ class Asset extends BaseController
 			], 403);
 		}
 
-		$assetModel = new AssetModel();
-		$tagModel = new TagModel();
-		$tagLocationModel = new TagLocationModel();
-		$assetTagLocationModel = new AssetTagLocationModel();
-		$assetTagModel = new AssetTagModel();
-		$assetStatusModel = new AssetStatusModel();
-		$assetTaggingModel = new AssetTaggingModel();
-		$parameterModel = new ParameterModel();
+		$assetModel			= new AssetModel();
+		$tagModel			= new TagModel();
+		$tagLocationModel	= new TagLocationModel();
+		$assetTagLocationModel	= new AssetTagLocationModel();
+		$assetTagModel		= new AssetTagModel();
+		$assetStatusModel	= new AssetStatusModel();
+		$assetTaggingModel	= new AssetTaggingModel();
+		$parameterModel		= new ParameterModel();
+		$influxModel		= new LogModel();
 
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
@@ -868,8 +871,36 @@ class Asset extends BaseController
 				}
 			}
 
-			// $afterAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
-			// $afterParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+			$afterAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+			$afterParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+
+			$body = [
+				'data_before' => $beforeAsset[0],
+				'data_after' => $afterAsset[0]
+			];
+			$cekDescBefore = json_decode($body['data_before']['description']);
+			if ($cekDescBefore != null) {
+				$body['data_before']['description'] = json_decode($body['data_before']['description']);
+			}
+			$cekDescAfter = json_decode($body['data_after']['description']);
+			if ($cekDescAfter != null) {
+				$body['data_after']['description'] = json_decode($body['data_after']['description']);
+			}
+			$bodyP = [
+				'data_before' => $beforeParameter[0],
+				'data_after' => $afterParameter[0]
+			];
+
+			$adminId	= $this->session->get('adminId');
+			$username	= $this->session->get('name');
+			$ipAddress	= $this->request->getIPAddress();
+			$activity1	= 'Update Asset';
+			$activity2	= 'Update Parameter';
+
+			$influxModel->writeData($activity1, $ipAddress, $adminId, $username, $assetId, json_encode($body));
+			// $influxModel->writeData($activity2, $ipAddress, $adminId, $username, $assetId, json_encode($bodyP));
+			// var_dump($beforeAsset);
+			// var_dump($afterAsset);
 
 			// $strbefore = json_encode($beforeAsset);
 			// $strafter = json_encode($afterAsset);
