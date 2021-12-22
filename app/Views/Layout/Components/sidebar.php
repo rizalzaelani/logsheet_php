@@ -96,6 +96,16 @@
         <?php if (checkRoleList("NOTIFICATION.VIEW,APPLICATION.VIEW,VERSIONAPPS.VIEW,SCHEDULE.VIEW")) : ?>
             <li class="c-sidebar-nav-title">SETTING</li>
 
+            <?php //if (checkRoleList("ACCOUNT.VIEW")) : ?>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link" href="<?= base_url('/Account') ?>">
+                        <svg class="c-sidebar-nav-icon">
+                            <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-user') ?>"></use>
+                        </svg> Account
+                    </a>
+                </li>
+            <?php //endif; ?>
+
             <?php if (checkRoleList("NOTIFICATION.VIEW")) : ?>
                 <li class="c-sidebar-nav-item">
                     <a class="c-sidebar-nav-link" href="<?= base_url('/Notification') ?>">

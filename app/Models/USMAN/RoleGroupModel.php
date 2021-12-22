@@ -176,7 +176,7 @@ class RoleGroupModel extends Model
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
 
-        $request->setUrl(env('usmanURL') . 'api/group/delete_group');
+        $request->setUrl(env('usmanURL') . 'api/groups/delete_group');
         $request->setMethod(HTTP_Request2::METHOD_POST);
         $request->setConfig(array(
             'follow_redirects' => TRUE

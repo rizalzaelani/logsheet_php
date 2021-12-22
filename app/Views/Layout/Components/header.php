@@ -45,7 +45,7 @@
                 <div class="dropdown-header bg-light py-2">
                     <strong class="text-uppercase"><?php $session = \Config\Services::session(); echo $session->get('name') ?></strong>
                 </div>
-                <a class="dropdown-item" href="javascript:;" data-target="#changePassModal" data-toggle="modal">
+                <a class="dropdown-item" href="<?= site_url("Account") ?>">
                     <svg class="c-icon mfe-2">
                         <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-user') ?>"></use>
                     </svg> Account
