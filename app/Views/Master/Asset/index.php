@@ -288,7 +288,7 @@
 				});
 
 				$(document).on('click', '#tableEq tbody tr', function() {
-					window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
+					if($(this).attr("data-id")) window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
 				});
 
 				$('#filtDTTag,#filtDTLoc').on('change', function() {

@@ -177,7 +177,7 @@
 
 				<?php if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : ?>
 					$(document).on('click', '#tableFinding tbody tr', function() {
-						window.location.href = "<?= site_url('Finding/detailList') ?>?scheduleTrxId=" + $(this).attr("data-id");
+						if($(this).attr("data-id")) window.location.href = "<?= site_url('Finding/detailList') ?>?scheduleTrxId=" + $(this).attr("data-id");
 					});
 				<?php endif; ?>
 

@@ -280,7 +280,7 @@
                 });
 
                 $(document).on('click', '#tableLocation tbody tr', function() {
-                    window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
+                    if($(this).attr("data-id")) window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
                 });
             });
 

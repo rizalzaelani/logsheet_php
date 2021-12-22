@@ -13,11 +13,31 @@
     <title><?= get_cookie("appName") ?? 'Nocola - Logsheet Digital' ?></title>
 
     <style type="text/css">
-
+        #changePassModal .table th,
+        #changePassModal .table td {
+            border-top: 0 !important;
+        }
     </style>
 
     <!-- Main styles for this application-->
-    <?php if (isset($css)) : ?>
+    <?php
+    $session = \Config\Services::session();
+
+    $userParam = json_decode($session->get("parameter"), true);
+    $userDt = array(
+        "email" => $session->get("email"),
+        "role" => $session->get("group"),
+        "fullname" => $userParam['fullname'],
+        "company" => $userParam['company'],
+        "city" => $userParam['city'],
+        "country" => $userParam['country'],
+        "postalCode" => $userParam['postalCode'],
+        "noTelp" => $userParam['noTelp'],
+        "tag" => $userParam['tag'],
+        "tagLocation" => $userParam['tagLocation'],
+    );
+
+    if (isset($css)) : ?>
         <?php foreach ($css as $item) : ?>
             <link href="<?= $item ?>" rel="stylesheet">
         <?php endforeach; ?>
@@ -44,14 +64,67 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Change Password</h5>
+                    <h5 class="modal-title">User Account</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="password">Current Password</label>
-                        <input class="form-control" type="password" name="currPass" placeholder="Enter your current Password">
-                    </div>
+                    <table class="table mt-2">
+                        <tr class="mt-1">
+                            <th style="width: 150px;">Fullname</th>
+                            <td style="width: 10px;">:</td>
+                            <td><?= $userDt["fullname"] ?? "-" ?></td>
+                        </tr>
+                        <tr class="mt-1">
+                            <th style="width: 150px;">Company</th>
+                            <td style="width: 10px;">:</td>
+                            <td><?= $userDt["company"] ?? "-" ?></td>
+                        </tr>
+                        <tr class="mt-1">
+                            <th style="width: 150px;">Email</th>
+                            <td style="width: 10px;">:</td>
+                            <td><?= $userDt["email"] ?? "-" ?></td>
+                        </tr>
+                        <tr class="mt-1">
+                            <th style="width: 150px;">Phone Number</th>
+                            <td style="width: 10px;">:</td>
+                            <td><?= $userDt["noTelp"] ?? "-" ?></td>
+                        </tr>
+                        <tr class="mt-1">
+                            <th style="width: 150px;">Address</th>
+                            <td style="width: 10px;">:</td>
+                            <td><?= $userDt["city"] . ' ' . $userDt['country'] . ', ' . $userDt['postalCode'] ?></td>
+                        </tr>
+                        <tr class="mt-1">
+                            <th style="width: 150px;">Tag</th>
+                            <td style="width: 10px;">:</td>
+                            <td>
+                                <?php
+                                if (!empty($userDt["tag"])) {
+                                    foreach ((explode(",", $userDt["tag"])) as $val) {
+                                        echo '<span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">' . $val . '</span>';
+                                    }
+                                } else {
+                                    echo "-";
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <tr class="mt-1">
+                            <th style="width: 150px;">Location</th>
+                            <td style="width: 10px;">:</td>
+                            <td>
+                                <?php
+                                if (!empty($userDt["tagLocation"])) {
+                                    foreach ((explode(",", $userDt["tag"])) as $val) {
+                                        echo '<span class="badge badge-primary p-1 mr-1" style="font-size: 13px;">' . $val . '</span>';
+                                    }
+                                } else {
+                                    echo "-";
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    </table>
                     <div class="row">
                         <div class="form-group mb-0 col-sm-6 mb-0">
                             <label for="password">New Password</label>
@@ -70,7 +143,7 @@
                     </span>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-dark ml-2" data-dismiss="modal" id="cancel"><i class="fa fa-times"></i> Cancel</button>
+                    <button type="button" class="btn btn-outline-dark ml-2" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                     <button type="button" class="btn btn-success ml-2" onclick="changePass()"><i class="fa fa-save"></i> Save</button>
                 </div>
             </div>

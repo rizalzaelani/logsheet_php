@@ -170,7 +170,7 @@
 				});
 
 				$(document).on('click', '#tableEq tbody tr', function() {
-					window.location.href = "<?= site_url('ReportingAsset/detail') ?>?assetId=" + $(this).attr("data-id");
+					if($(this).attr("data-id")) window.location.href = "<?= site_url('ReportingAsset/detail') ?>?assetId=" + $(this).attr("data-id");
 				});
 
 				$('#filtDTTag,#filtDTLoc').on('change', function() {

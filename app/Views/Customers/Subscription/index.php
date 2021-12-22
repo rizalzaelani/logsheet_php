@@ -733,15 +733,16 @@ $session = \Config\Services::session();
         });
         $(document).on('click', '#tableSubs tbody tr', function() {
             let trxId = $(this).attr("data-id");
-            v.myModal = new coreui.Modal(document.getElementById('modalTrx'), {});
-            v.myModal.show();
+            if(trxId){
+                v.myModal = new coreui.Modal(document.getElementById('modalTrx'), {});
+                v.myModal.show();
 
-            v.transaction.forEach((el, i) => {
-                if (el.transactionId == trxId) {
-                    v.dataModal = el;
-                }
-            });
-            // window.location.href = "<?= site_url('Invoice/detail') ?>/" + $(this).attr("data-id");
+                v.transaction.forEach((el, i) => {
+                    if (el.transactionId == trxId) {
+                        v.dataModal = el;
+                    }
+                });
+            }
         });
     })
 </script>

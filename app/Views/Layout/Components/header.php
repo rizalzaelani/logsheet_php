@@ -47,8 +47,8 @@
                 </div>
                 <a class="dropdown-item" href="javascript:;" data-target="#changePassModal" data-toggle="modal">
                     <svg class="c-icon mfe-2">
-                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-lock-locked') ?>"></use>
-                    </svg> Change Password
+                        <use xlink:href="<?= base_url('/icons/coreui/svg/free.svg#cil-user') ?>"></use>
+                    </svg> Account
                 </a>
                 <a class="dropdown-item" href="<?= base_url('/logout'); ?>">
                     <svg class="c-icon mfe-2">

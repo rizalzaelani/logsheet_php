@@ -439,7 +439,7 @@
 				});
 
 				$(document).on('click', '#tableUser tbody tr', function() {
-					detailUser($(this).attr("data-id"));
+					if($(this).attr("data-id")) detailUser($(this).attr("data-id"));
 				});
 
 				let tagS2 = $("select[name=tag]").select2({

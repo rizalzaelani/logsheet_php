@@ -213,29 +213,36 @@
             <?php if (checkRoleList("ROLE.ADD,ROLE.MODIFY")) : ?>
                 const saveRole = () => {
                     let roleChecked = getRoleChecked();
-                    let response = axios.post("<?= base_url('role/saveGroup') ?>", {
-                        "groupId": groupData.groupId ?? "",
-                        "name": groupData.name,
-                        "roleId": roleChecked.join(",")
-                    }).then((res) => {
-                        xhrThrowRequest(res)
-                            .then(() => {
-                                Swal.fire({
-                                    title: res.data.message,
-                                    icon: "success",
-                                    timer: 3000
-                                }).then(() => {
-                                    window.location.href = "<?= base_url("role") ?>";
+                    if (roleChecked.length < 1 || !groupData.name) {
+                        Swal.fire({
+                            title: "Make sure role name and role is not empty",
+                            icon: "warning"
+                        })
+                    } else {
+                        let response = axios.post("<?= base_url('role/saveGroup') ?>", {
+                            "groupId": groupData.groupId ?? "",
+                            "name": groupData.name,
+                            "roleId": roleChecked.join(",")
+                        }).then((res) => {
+                            xhrThrowRequest(res)
+                                .then(() => {
+                                    Swal.fire({
+                                        title: res.data.message,
+                                        icon: "success",
+                                        timer: 3000
+                                    }).then(() => {
+                                        window.location.href = "<?= base_url("role") ?>";
+                                    });
+                                })
+                                .catch((rej) => {
+                                    if (rej.throw) {
+                                        throw new Error(rej.message);
+                                    }
+                                    $('#slideApprove').removeClass('unlocked');
+                                    $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
                                 });
-                            })
-                            .catch((rej) => {
-                                if (rej.throw) {
-                                    throw new Error(rej.message);
-                                }
-                                $('#slideApprove').removeClass('unlocked');
-                                $('#slideApprove').html(`<i class="fa fa-check font-xl"></i>`);
-                            });
-                    });
+                        });
+                    }
                 }
             <?php endif; ?>
 
