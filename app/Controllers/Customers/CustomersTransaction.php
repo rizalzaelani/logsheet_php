@@ -23,7 +23,7 @@ class CustomersTransaction extends BaseController
         $subscriptionModel  = new SubscriptionModel();
         $transactionModel   = new TransactionModel();
         $packageModel       = new PackageModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
         $adminId = $this->session->get('adminId');
 
         $transaction        = $transactionModel->getAll(['userId' => $adminId, 'cancelDate' => null]);
@@ -91,7 +91,7 @@ class CustomersTransaction extends BaseController
         $transactionModel   = new TransactionModel();
         $packageModel       = new PackageModel();
         $packagePriceModel  = new PackagePriceModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
 
         $transaction        = $transactionModel->getById($trxId);
         $packageId          = $transaction[0]['packageId'];

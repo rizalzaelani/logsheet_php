@@ -3,7 +3,7 @@
 namespace App\Controllers\Customers;
 
 use App\Controllers\BaseController;
-use App\Models\Wizard\kledoModel;
+use App\Models\Wizard\KledoModel;
 use App\Models\Wizard\PackageModel;
 use App\Models\Wizard\PackagePriceModel;
 use App\Models\Wizard\SubscriptionModel;
@@ -23,7 +23,7 @@ class Subscription extends BaseController
         $subscriptionModel  = new SubscriptionModel();
         $transactionModel   = new TransactionModel();
         $packageModel       = new PackageModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
 
         $adminId = $this->session->get('adminId');
         $dataSubscription   = $subscriptionModel->getByUser($adminId);
@@ -239,7 +239,7 @@ class Subscription extends BaseController
 
         $subscriptionModel = new SubscriptionModel();
         $transactionModel = new TransactionModel();
-        $kledoModel = new kledoModel();
+        $kledoModel = new KledoModel();
 
         $adminId    = $this->session->get('adminId');
         $name       = $this->session->get('name');
@@ -377,7 +377,7 @@ class Subscription extends BaseController
     public function invoice($trxId)
     {
         $transactionModel   = new TransactionModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
         $adminId = $this->session->get('adminId');
 
         $dataTransaction    = $transactionModel->getByUser(['userId' => $adminId, 'transactionId' => $trxId]);
@@ -456,7 +456,7 @@ class Subscription extends BaseController
 
         $subscriptionModel  = new SubscriptionModel();
         $transactionModel   = new TransactionModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
 
         $adminId    = $this->session->get('adminId');
         $name       = $this->session->get('name');
@@ -595,7 +595,7 @@ class Subscription extends BaseController
 
     public function downloadInvoice()
     {
-        $kledoModel = new kledoModel();
+        $kledoModel = new KledoModel();
         $post = $this->request->getPost('transaction');
         $transaction = json_decode($post, true);
 
