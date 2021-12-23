@@ -26,7 +26,7 @@ class CustomersTransaction extends BaseController
         $kledoModel         = new KledoModel();
         $adminId = $this->session->get('adminId');
 
-        $transaction        = $transactionModel->getAll(['userId' => $adminId, 'cancelDate' => null]);
+        $transaction        = $transactionModel->getAll();
 
         $data = array(
             'title'     => "Transaction",
@@ -70,7 +70,7 @@ class CustomersTransaction extends BaseController
         $filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
         $filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
         $where = [
-            'userId' => $this->session->get("adminId"),
+            // 'userId' => $this->session->get("adminId"),
             'deletedAt' => null,
             // "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
         ];
