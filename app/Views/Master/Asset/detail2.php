@@ -628,7 +628,7 @@ $sess = $session->get('adminId');
                         </div>
                     </div>
                 </div>
-                <!-- modal preview change -->
+                <!-- modal preview change log -->
                 <div class="modal fade pr-0" id="modalChange" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                         <div class="modal-content">
@@ -654,7 +654,7 @@ $sess = $session->get('adminId');
                                         <tbody>
                                             <template v-if="changelog != ''">
                                                 <template v-for="(val, i) in dataAB.data_before">
-                                                    <template v-if="val == dataAB.data_after[i]">
+                                                    <template v-if="JSON.stringify(val) == JSON.stringify(dataAB.data_after[i])">
                                                         <tr>
                                                             <td>{{ _.startCase(i) }}</td>
                                                             <!-- <td style="max-width: 200px !important">{{ val }}</td> -->
@@ -673,8 +673,18 @@ $sess = $session->get('adminId');
                                                                 </td>
                                                             </template>
                                                             <template v-else>
-                                                                <td style="max-width: 200px !important">{{ val }}</td>
+                                                                <template v-if="isUrl(val)">
+                                                                    <td>
+                                                                        <img :src="val" alt="img" style="width: 200px"><br>
+                                                                        <a :href="val" target="_blank">Open In New Tab</a>
+                                                                    </td>
+                                                                </template>
+                                                                <template v-else>
+                                                                    <!-- <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td> -->
+                                                                    <td style="max-width: 200px !important">{{ val }}</td>
+                                                                </template>
                                                             </template>
+
                                                             <template v-if="IsArray(dataAB.data_after[i])">
                                                                 <td style="max-width: 200px !important">
                                                                     <div v-for="(value, key) in dataAB.data_after[i]">
@@ -690,7 +700,15 @@ $sess = $session->get('adminId');
                                                                 </td>
                                                             </template>
                                                             <template v-else>
-                                                                <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td>
+                                                                <template v-if="isUrl(dataAB.data_after[i])">
+                                                                    <td>
+                                                                        <img :src="dataAB.data_after[i]" alt="img" style="width: 200px"><br>
+                                                                        <a :href="dataAB.data_after[i]" target="_blank">Open In New Tab</a>
+                                                                    </td>
+                                                                </template>
+                                                                <template v-else>
+                                                                    <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td>
+                                                                </template>
                                                             </template>
                                                             <!-- <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td> -->
                                                         </tr>
@@ -714,7 +732,15 @@ $sess = $session->get('adminId');
                                                                 </td>
                                                             </template>
                                                             <template v-else>
-                                                                <td style="max-width: 200px !important" class="old">{{ val }}</td>
+                                                                <template v-if="isUrl(val)">
+                                                                    <td class="old">
+                                                                        File removed
+                                                                    </td>
+                                                                    <!-- <t/d><a :href="val" target="_blank">link</a></td> -->
+                                                                </template>
+                                                                <template v-else>
+                                                                    <td style="max-width: 200px !important" class="old">{{ val }}</td>
+                                                                </template>
                                                             </template>
                                                             <template v-if="IsArray(dataAB.data_after[i])">
                                                                 <td style="max-width: 200px !important" class="new">
@@ -731,7 +757,16 @@ $sess = $session->get('adminId');
                                                                 </td>
                                                             </template>
                                                             <template v-else>
-                                                                <td style="max-width: 200px !important" class="new">{{ dataAB.data_after[i] }}</td>
+                                                                <template v-if="isUrl(dataAB.data_after[i])">
+                                                                    <td class="new">
+                                                                        <img :src="dataAB.data_after[i]" alt="img" style="width: 200px"><br>
+                                                                        <a :href="dataAB.data_after[i]" target="_blank">Open In New Tab</a>
+                                                                    </td>
+                                                                </template>
+                                                                <template v-else>
+                                                                    <!-- <td style="max-width: 200px !important" class="old">{{ val }}</td> -->
+                                                                    <td style="max-width: 200px !important" class="new">{{ dataAB.data_after[i] }}</td>
+                                                                </template>
                                                             </template>
                                                         </tr>
                                                     </template>
@@ -768,6 +803,7 @@ $sess = $session->get('adminId');
                         <thead class="bg-primary">
                             <tr>
                                 <th>Date</th>
+                                <th>Username</th>
                                 <th>Activity</th>
                                 <th>Action</th>
                             </tr>
@@ -4039,6 +4075,17 @@ $sess = $session->get('adminId');
                     }
                 }
 
+                function isUrl(url) {
+                    let isValidUrl;
+                    try {
+                        isValidUrl = new URL(url);
+                    } catch (e) {
+                        return false;  
+                    }
+
+                    return true;
+                }
+
                 const cb = (start, end) => {
                     $('#rangechangelog span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
                     $('#rangechangelog').on('apply.daterangepicker', function(ev, picker) {
@@ -4196,6 +4243,10 @@ $sess = $session->get('adminId');
                                                 }
                                             },
                                             {
+                                                data: "username",
+                                                name: "username"
+                                            },
+                                            {
                                                 data: "activity",
                                                 name: "activity",
                                             },
@@ -4207,7 +4258,13 @@ $sess = $session->get('adminId');
                                                 }
                                             }
                                         ],
-                                        order: [0, 'desc']
+                                        order: [0, 'desc'],
+                                        columnDefs: [
+                                            {
+                                                targets: 3,
+                                                width: "10%"
+                                            }
+                                        ]
                                     })
                                 })
                             }
@@ -4218,6 +4275,7 @@ $sess = $session->get('adminId');
                 return {
                     tableChangeLog,
                     IsArray,
+                    isUrl,
                     IsJsonString,
                     changelog,
                     dataChangeLog,
