@@ -183,13 +183,6 @@ class Location extends BaseController
                 'data'   => ""
             ));
         }
-        // if ($json->tagLocationName != '') {
-
-        //     echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
-        // } else {
-        //     echo json_encode(array('status' => 'failed', 'message' => 'Field location name cannot be empty!'));
-        // }
-        // die();
     }
 
     public function update()
