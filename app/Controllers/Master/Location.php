@@ -4,12 +4,15 @@ namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
 use App\Models\AssetTagLocationModel;
+use App\Models\Influx\LogModel;
 use App\Models\TagLocationModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
+use DateTime;
+use Exception;
 
 class Location extends BaseController
 {
@@ -18,6 +21,15 @@ class Location extends BaseController
         if(!checkRoleList("MASTER.TAGLOCATION.VIEW")){
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
+
+        // $influxModel = new LogModel();
+        // $from = new DateTime();
+        // $to = new DateTime();
+        // $dateFrom = $from->format("Y-m-d H:i:s");
+        // $dateTo = $from->modify("+1 days")->format("Y-m-d H:i:s");
+        // $test = $influxModel->getAll($dateFrom, $dateFrom);
+        // d($test);
+        // die();
 
         $data = array(
             'title' => 'Tag Location',
@@ -138,9 +150,17 @@ class Location extends BaseController
             ], 403);
         }
 
-        $model = new TagLocationModel();
+        $model          = new TagLocationModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Add Tag Location';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
         $json = $this->request->getJSON();
-        if ($json->tagLocationName != '') {
+
+        try {
             $data = array(
                 'tagLocationName' => $json->tagLocationName,
                 'userId' => $this->session->get("adminId"),
@@ -149,11 +169,27 @@ class Location extends BaseController
                 'description' => $json->description
             );
             $model->insert($data);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
-        } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'Field location name cannot be empty!'));
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+
+            return $this->response->setJSON(array(
+                'status' => 200,
+                'message'=> 'You have successfully add data',
+                'data'   => $data
+            ));
+        } catch (Exception $e) {
+            return $this->response->setJSON(array(
+                'status' => $e->getCode(),
+                'message'=> $e->getMessage(),
+                'data'   => ""
+            ));
         }
-        die();
+        // if ($json->tagLocationName != '') {
+
+        //     echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+        // } else {
+        //     echo json_encode(array('status' => 'failed', 'message' => 'Field location name cannot be empty!'));
+        // }
+        // die();
     }
 
     public function update()
@@ -166,9 +202,17 @@ class Location extends BaseController
             ], 403);
         }
         $model = new TagLocationModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Update Tag Location';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
         $json = $this->request->getJSON();
-        $id = $json->tagLocationId;
-        if (isset($json)) {
+        $tagLocationId = $json->tagLocationId;
+
+        try {
             $data = array(
                 'userId' => $this->session->get('adminId'),
                 'tagLocationName' => $json->tagLocationName,
@@ -176,10 +220,21 @@ class Location extends BaseController
                 'longitude' => $json->longitude,
                 'description' => $json->description
             );
-            $model->update($id, $data);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $data));
+            $model->update($tagLocationId, $data);
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+
+            return $this->response->setJSON(array(
+                'status' => 200,
+                'message'=> 'You have successfully updated data',
+                'data'   => $data
+            ));
+        } catch (Exception $e) {
+            return $this->response->setJSON(array(
+                'status' => $e->getCode(),
+                'message'=> $e->getMessage(),
+                'data'   => ""
+            ));
         }
-        die();
     }
 
     public function delete()
@@ -194,16 +249,34 @@ class Location extends BaseController
 
         $locationModel = new TagLocationModel();
         $assetLocationModel = new AssetTagLocationModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Delete Tag Location';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
         $json = $this->request->getJSON();
         $tagLocationId = $json->tagLocationId;
-        if ($tagLocationId != '') {
+
+        try {
             $assetLocationModel->deleteTagLocationId($tagLocationId);
             $locationModel->delete($tagLocationId);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data', 'data' => $json));
-        } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
+    
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+
+            return $this->response->setJSON(array(
+                'status' => 200,
+                'message'=> 'You have successfully deleted data',
+                'data'   => $json
+            ));
+        } catch (Exception $e) {
+            return $this->response->setJSON(array(
+                'status' => $e->getCode(),
+                'message'=> $e->getMessage(),
+                'data'   => ""
+            ));
         }
-        die();
     }
 
     public function download()
@@ -211,8 +284,23 @@ class Location extends BaseController
         if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
+        $influxModel    = new LogModel();
 
-        return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/location.xlsx', null);
+        $activity       = 'Download Template Tag Location';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
+        $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+        try {
+            return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/location.xlsx', null);
+        } catch (Exception $e) {
+            return $this->response->setJSON(array(
+                'status' => $e->getCode(),
+                'message'=> $e->getMessage(),
+                'data'   => ""
+            ));
+        }
     }
     public function uploadFile()
     {
@@ -270,58 +358,94 @@ class Location extends BaseController
             ], 403);
         }
         $tagLocationModel = new TagLocationModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Import Tag Location';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
         $json = $this->request->getJSON();
         $dataLocation = $json->dataLocation;
         $length = count($dataLocation);
-        for ($i = 0; $i < $length; $i++) {
-            $data = [
-                'tagLocationId' => null,
-                'userId' => $this->session->get('adminId'),
-                'tagLocationName'   => $dataLocation[$i]->locationName,
-                'latitude'   => $dataLocation[$i]->latitude,
-                'longitude'   => $dataLocation[$i]->longitude,
-                'description'   => $dataLocation[$i]->description,
-            ];
-            $tagLocationModel->insert($data);
+
+        try {
+            for ($i = 0; $i < $length; $i++) {
+                $data = [
+                    'tagLocationId' => null,
+                    'userId' => $this->session->get('adminId'),
+                    'tagLocationName'   => $dataLocation[$i]->locationName,
+                    'latitude'   => $dataLocation[$i]->latitude,
+                    'longitude'   => $dataLocation[$i]->longitude,
+                    'description'   => $dataLocation[$i]->description,
+                ];
+                $tagLocationModel->insert($data);
+            }
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+
+            return $this->response->setJSON(array(
+                'status' => 200,
+                'message'=> 'You have successfully import data',
+                'data'   => $json
+            ));
+        } catch (Exception $e) {
+            return $this->response->setJSON(array(
+                'status' => $e->getCode(),
+                'message'=> $e->getMessage(),
+                'data'   => ""
+            ));
         }
-        echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
-        die();
     }
 
     public function exportExcel()
     {
         $tagLocationModel = new TagLocationModel();
-        $writer = WriterEntityFactory::createXLSXWriter();
-        $userId = $this->session->get('adminId');
-        $data = $tagLocationModel->where('userId', $userId)->findAll();
+        $influxModel    = new LogModel();
 
-        $writer->setShouldUseInlineStrings(true);
-        $header = ["No", "Tag Location", "Latitude", "Longitude", "Description"];
-        $styleHeader = (new StyleBuilder())
-            ->setCellAlignment(CellAlignment::CENTER)
-            ->setBackgroundColor(COLOR::YELLOW)
-            ->build();
-        $styleBody = (new StyleBuilder())
-            ->setCellAlignment(CellAlignment::LEFT)
-            ->build();
-        $dataArr = [];
+        $activity       = 'Export Tag Location';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
 
-        if (count($data)) {
-            foreach ($data as $key => $value) {
-                $arr = [$key + 1, $value['tagLocationName'], $value['latitude'], $value['longitude'], $value['description']];
-                array_push($dataArr, $arr);
+        try {
+            $writer = WriterEntityFactory::createXLSXWriter();
+            $userId = $this->session->get('adminId');
+            $data = $tagLocationModel->where('userId', $userId)->findAll();
+    
+            $writer->setShouldUseInlineStrings(true);
+            $header = ["No", "Tag Location", "Latitude", "Longitude", "Description"];
+            $styleHeader = (new StyleBuilder())
+                ->setCellAlignment(CellAlignment::CENTER)
+                ->setBackgroundColor(COLOR::YELLOW)
+                ->build();
+            $styleBody = (new StyleBuilder())
+                ->setCellAlignment(CellAlignment::LEFT)
+                ->build();
+            $dataArr = [];
+    
+            if (count($data)) {
+                foreach ($data as $key => $value) {
+                    $arr = [$key + 1, $value['tagLocationName'], $value['latitude'], $value['longitude'], $value['description']];
+                    array_push($dataArr, $arr);
+                }
             }
-        }
-        $fileName = "Tag Location - " . date("d M Y") . '.xlsx';
-        $writer->openToBrowser($fileName);
-
-        $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
-        $writer->addRow($rowFromValues);
-        foreach ($dataArr as $key => $value) {
-            $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+            $fileName = "Tag Location - " . date("d M Y") . '.xlsx';
+            $writer->openToBrowser($fileName);
+    
+            $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
             $writer->addRow($rowFromValues);
+            foreach ($dataArr as $key => $value) {
+                $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+                $writer->addRow($rowFromValues);
+            }
+            $writer->close();
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+        } catch (Exception $e) {
+            return $this->response->setJSON(array(
+                'status' => $e->getCode(),
+                'message'=> $e->getMessage(),
+                'data'   => ""
+            ));
         }
-        $writer->close();
-        die();
     }
 }
