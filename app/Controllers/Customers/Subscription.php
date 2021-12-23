@@ -23,12 +23,12 @@ class Subscription extends BaseController
         $subscriptionModel  = new SubscriptionModel();
         $transactionModel   = new TransactionModel();
         $packageModel       = new PackageModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
 
         $adminId = $this->session->get('adminId');
         $dataSubscription   = $subscriptionModel->getByUser($adminId);
         $getSubscription = $subscriptionModel->getAllData(['userId' => $adminId, 'cancelDate' => null]);
-        $getTransaction    = $transactionModel->getByUser(['userId' => $adminId]);
+        $getTransaction    = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
         // d($transaction);
         // die();
         // $subscription = "";
@@ -56,7 +56,7 @@ class Subscription extends BaseController
                 if ($getTransaction[0]['paidDate'] == null && $getTransaction[0]['approvedDate'] == null) {
                     $transactionModel->update($transactionId, $duedate);
                 }
-                $transaction = $transactionModel->getByUser(['userId' => $adminId]);
+                $transaction = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
                 foreach ($transaction as $key => $value) {
                     foreach ($dataInvoice as $i => $val) {
                         if ($value['invoiceId'] == $val['id']) {
@@ -239,7 +239,7 @@ class Subscription extends BaseController
 
         $subscriptionModel = new SubscriptionModel();
         $transactionModel = new TransactionModel();
-        $kledoModel = new kledoModel();
+        $kledoModel = new KledoModel();
 
         $adminId    = $this->session->get('adminId');
         $name       = $this->session->get('name');
@@ -353,7 +353,7 @@ class Subscription extends BaseController
 
             $subject = 'Invoice for order #' . $dataInvoice['ref_number'];
             $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
-            $email->setTo('zaelanirizal.rz@gmail.com');
+            $email->setTo($this->session->get('email'));
             $email->setSubject($subject);
             $email->setMessage($message);
             $email->setMailType("html");
@@ -377,7 +377,7 @@ class Subscription extends BaseController
     public function invoice($trxId)
     {
         $transactionModel   = new TransactionModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
         $adminId = $this->session->get('adminId');
 
         $dataTransaction    = $transactionModel->getByUser(['userId' => $adminId, 'transactionId' => $trxId]);
@@ -456,7 +456,7 @@ class Subscription extends BaseController
 
         $subscriptionModel  = new SubscriptionModel();
         $transactionModel   = new TransactionModel();
-        $kledoModel         = new kledoModel();
+        $kledoModel         = new KledoModel();
 
         $adminId    = $this->session->get('adminId');
         $name       = $this->session->get('name');
@@ -571,7 +571,7 @@ class Subscription extends BaseController
 
             $subject = 'Invoice for order #' . $dataInvoice['ref_number'];
             $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
-            $email->setTo('zaelanirizal.rz@gmail.com');
+            $email->setTo($this->session->get('email'));
             $email->setSubject($subject);
             $email->setMessage($message);
             $email->setMailType("html");
@@ -595,7 +595,7 @@ class Subscription extends BaseController
 
     public function downloadInvoice()
     {
-        $kledoModel = new kledoModel();
+        $kledoModel = new KledoModel();
         $post = $this->request->getPost('transaction');
         $transaction = json_decode($post, true);
 
