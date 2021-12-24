@@ -28,6 +28,7 @@ class Tag extends BaseController
         // $dateFrom = $from->format("Y-m-d H:i:s");
         // $dateTo = $from->modify("+1 days")->format("Y-m-d H:i:s");
         // $test = $influxModel->getAll($dateFrom, $dateFrom);
+        // d($this->request->getUserAgent());
         // d($test);
         // die();
 
@@ -97,7 +98,7 @@ class Tag extends BaseController
         $model = new TagModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Update Tag';
+        $activity       = 'Add Tag';
         $ipAddress      = $this->request->getIPAddress();
         $username       = $this->session->get('name');
         $userId         = $this->session->get('adminId');
@@ -113,7 +114,9 @@ class Tag extends BaseController
             );
             $model->insert($dt);
 
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            $dataInflux = $dt;
+
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
 
             return $this->response->setJSON([
                 'status' => 200,
@@ -181,6 +184,7 @@ class Tag extends BaseController
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
 
+        $data_before = $model->getById($tagId);
         try {
             $data = array(
                 'tagName' => $json->tagName,
@@ -188,7 +192,13 @@ class Tag extends BaseController
                 'description' => $json->description,
             );
             $model->update($tagId, $data);
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            
+            $data_after = $model->getById($tagId);
+            $dataInflux = [
+                'data_before' => $data_before,
+                'data_after' => $data_after
+            ];
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
 
             return $this->response->setJSON([
                 'status' => 200,
@@ -214,8 +224,8 @@ class Tag extends BaseController
             ], 403);
         }
 
-        $modelAssetTag = new AssetTagModel();
-        $modelTag = new TagModel();
+        $modelAssetTag  = new AssetTagModel();
+        $modelTag       = new TagModel();
         $influxModel    = new LogModel();
 
         $activity       = 'Delete Tag';
@@ -226,11 +236,14 @@ class Tag extends BaseController
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
 
+        $data_deleted = $modelTag->getById($tagId);
+
         try {
             $modelAssetTag->deleteByIdTag($tagId);
             $modelTag->delete($tagId);
 
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            $dataInflux = $data_deleted;
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
 
             return $this->response->setJSON([
                 'status' => 200,
@@ -335,6 +348,7 @@ class Tag extends BaseController
         $json = $this->request->getJSON();
         $dataTag = $json->dataTag;
         $length = count($dataTag);
+
         try {
             for ($i = 0; $i < $length; $i++) {
                 $data = [
@@ -345,7 +359,7 @@ class Tag extends BaseController
                 ];
                 $tagModel->insert($data);
             }
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataTag));
             return $this->response->setJSON([
                 'status' => 200,
                 'message' => "Success import data",
@@ -402,7 +416,7 @@ class Tag extends BaseController
                 $writer->addRow($rowFromValues);
             }
             $writer->close();
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data));
         } catch (Exception $e) {
             return $this->response->setJSON([
                 'status' => $e->getCode(),
