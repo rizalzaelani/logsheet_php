@@ -246,21 +246,14 @@
                             icon: 'success'
                         }).then(okay => {
                             if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                // location.reload();
-                                window.location.href = "<?= site_url('Location') ?>";
+                                $('#listImport').modal('hide');
+                                v.table.draw();
                             }
                         })
                     }else{
                         swal.fire({
                             icon: 'error',
-                            title: res.data.status
+                            title: res.data.message
                         })
                     }
                 })

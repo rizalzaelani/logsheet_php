@@ -169,7 +169,8 @@ class Location extends BaseController
                 'description' => $json->description
             );
             $model->insert($data);
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -205,6 +206,8 @@ class Location extends BaseController
         $json = $this->request->getJSON();
         $tagLocationId = $json->tagLocationId;
 
+        $data_before = $model->getById($tagLocationId);
+
         try {
             $data = array(
                 'userId' => $this->session->get('adminId'),
@@ -214,7 +217,13 @@ class Location extends BaseController
                 'description' => $json->description
             );
             $model->update($tagLocationId, $data);
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+
+            $data_after = $data;
+            $dataInflux = [
+                'data_before' => $data_before,
+                'data_after'  => $data_after
+            ];
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -252,11 +261,13 @@ class Location extends BaseController
         $json = $this->request->getJSON();
         $tagLocationId = $json->tagLocationId;
 
+        $data_deleted = $locationModel->getById($tagLocationId);
+
         try {
             $assetLocationModel->deleteTagLocationId($tagLocationId);
             $locationModel->delete($tagLocationId);
     
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data_deleted));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -374,7 +385,7 @@ class Location extends BaseController
                 ];
                 $tagLocationModel->insert($data);
             }
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataLocation));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -432,7 +443,7 @@ class Location extends BaseController
                 $writer->addRow($rowFromValues);
             }
             $writer->close();
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data));
         } catch (Exception $e) {
             return $this->response->setJSON(array(
                 'status' => $e->getCode(),
