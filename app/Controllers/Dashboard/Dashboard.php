@@ -4,6 +4,7 @@ namespace App\Controllers\Dashboard;
 
 use App\Controllers\BaseController;
 use App\Models\AssetModel;
+use App\Models\Influx\LogModel;
 use App\Models\ScheduleTrxModel;
 use App\Models\TagModel;
 use App\Models\TagLocationModel;
