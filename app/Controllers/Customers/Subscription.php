@@ -3,7 +3,7 @@
 namespace App\Controllers\Customers;
 
 use App\Controllers\BaseController;
-use App\Models\Wizard\kledoModel;
+use App\Models\Wizard\KledoModel;
 use App\Models\Wizard\PackageModel;
 use App\Models\Wizard\PackagePriceModel;
 use App\Models\Wizard\SubscriptionModel;
