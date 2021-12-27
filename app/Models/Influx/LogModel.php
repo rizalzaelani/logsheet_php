@@ -53,13 +53,10 @@ class LogModel
             ->getPoints();
     }
 
-    public function getAll($dateFrom, $dateTo)
+    public function getAll($userId)
     {
         $where = [
-            // "activity = '$activity'",
-            // "assetId = '$assetId'",
-            // "time >= '$dateFrom'",
-            "time <= '$dateTo'"
+            "userId = '$userId'"
         ];
 
         return $this->querybuilder()
