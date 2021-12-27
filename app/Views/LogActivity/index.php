@@ -73,12 +73,11 @@
 						infoEmpty: 'of 0 entries',
 					},
 					data: logActivity,
-					columns: [
-						{
+					columns: [{
 							data: 'time',
 							name: 'time',
 							render: function(data, type, row, meta) {
-								return moment(data).format("DD MMM YYYY H:mm:ss");
+								return moment(data).format("DD MMM YYYY hh:mm:ss");
 							}
 						},
 						{
@@ -94,7 +93,7 @@
 							name: 'activity'
 						},
 					],
-					order: [0, 'desc'],
+					order: [0, 'desc']
 				});
 			}
 

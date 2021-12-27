@@ -244,13 +244,13 @@ class Finding extends BaseController
 			}
 
 			$assetId = $dataUpdated['assetId'];
-			$activity	= 'Open Finding';
+			$activity	= 'Open finding';
 			sendLog($activity, $assetId, json_encode($dataUpdated));
 
 			if($sendNotif){
 				$checkFinding = $findingModel->getById($findingId);
-				// $this->sendMail($findingId, "Follow Up Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding);
-				// $this->sendTelegram($findingId, "open", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
+				$this->sendMail($findingId, "Follow Up Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding);
+				$this->sendTelegram($findingId, "open", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
 			}
 
 			
@@ -343,11 +343,11 @@ class Finding extends BaseController
 				$dataUpdated['description'] = json_decode($dataUpdated['description']);
 			}
 			$assetId = $dataUpdated['assetId'];
-			$activity	= 'Close Finding';
+			$activity	= 'Close finding';
 			sendLog($activity, $assetId, json_encode($dataUpdated));
 
-			// $this->sendMail($findingId, "Close Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding, $findingLogData);
-			// $this->sendTelegram($findingId, "close", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
+			$this->sendMail($findingId, "Close Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding, $findingLogData);
+			$this->sendTelegram($findingId, "close", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
 
 			return $this->response->setJSON([
 				'status' => 200,
@@ -453,7 +453,7 @@ class Finding extends BaseController
 			}
 			$dataInflux = json_encode($dataUpdated);
 
-			$activity	= 'Add Timeline';
+			$activity	= 'Add timeline';
 			sendLog($activity, $assetId, $dataInflux);
 
 			return $this->response->setJSON([

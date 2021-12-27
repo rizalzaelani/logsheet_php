@@ -59,7 +59,7 @@
                     <div class="d-flex justify-content-between mb-1">
                         <h4><?= $title ?></h4>
                         <h5 class="header-icon">
-                            <a href="<?= base_url('Asset'); ?>" class="btn btn-sm btn-success"><i class="fa fa-arrow-left"></i> Back</a>
+                            <a href="<?= $_SERVER['HTTP_REFERER'] ?? site_url("role") ?>" class="decoration-none"><i class="fa fa-arrow-left mr-1" title="Back"></i> Back</a>
                         </h5>
                     </div>
                     <div class="w-100 step-parent d-flex justify-content-between align-items-center py-4">

@@ -144,7 +144,7 @@ class Location extends BaseController
         $model          = new TagLocationModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Add Tag Location';
+        $activity       = 'Add tag location';
 
         $json = $this->request->getJSON();
 
@@ -207,7 +207,7 @@ class Location extends BaseController
                 'data_after'  => $data_after
             ];
 
-            $activity       = 'Update Tag Location';
+            $activity       = 'Update tag location';
             sendLog($activity, null, json_encode($dataInflux));
 
             return $this->response->setJSON(array(
@@ -247,7 +247,7 @@ class Location extends BaseController
             $assetLocationModel->deleteTagLocationId($tagLocationId);
             $locationModel->delete($tagLocationId);
     
-            $activity       = 'Delete Tag Location';
+            $activity       = 'Delete tag location';
             sendLog($activity, null, json_encode($data_deleted));
 
             return $this->response->setJSON(array(
@@ -270,7 +270,7 @@ class Location extends BaseController
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
-        $activity       = 'Download Template Tag Location';
+        $activity       = 'Download template tag location';
         sendLog($activity, null, null);
         try {
             return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/location.xlsx', null);
@@ -356,7 +356,7 @@ class Location extends BaseController
                 $tagLocationModel->insert($data);
             }
 
-            $activity       = 'Import Tag Location';
+            $activity       = 'Import tag location';
             sendLog($activity, null, json_encode($dataLocation));
 
             return $this->response->setJSON(array(
@@ -377,7 +377,7 @@ class Location extends BaseController
     {
         $tagLocationModel = new TagLocationModel();
 
-        $activity       = 'Export Tag Location';
+        $activity       = 'Export tag location';
 
         try {
             $writer = WriterEntityFactory::createXLSXWriter();

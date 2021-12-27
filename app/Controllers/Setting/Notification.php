@@ -103,7 +103,7 @@ class Notification extends BaseController
             }
 
             $notifModel->update($notifId, $dt);
-            $activity = 'Update List Notification';
+            $activity = 'Update list notification';
             sendLog($activity, null, json_encode($dt));
         } else {
             if (!checkRoleList("NOTIFICATION.ADD")) {
@@ -117,7 +117,7 @@ class Notification extends BaseController
             $dt["notificationId"] = null;
             $notifModel->insert($dt);
 
-            $activity       = 'Add List Notification';
+            $activity       = 'Add list notification';
             sendLog($activity, null, json_encode($dt));
         }
 
@@ -178,7 +178,7 @@ class Notification extends BaseController
             $notifModel->delete($notificationId, ($this->request->getVar("hard") == "1" ? true : false));
 
             $dataNotif = $notifModel->getById($notificationId);
-            $activity = 'Delete Notification';
+            $activity = 'Delete notification';
             sendLog($activity, null, json_encode($dataNotif));
 
             return $this->response->setJson([
@@ -211,7 +211,7 @@ class Notification extends BaseController
             $notifModel->update($notificationId, ["deletedAt" => null]);
 
             $dataNotif = $notifModel->getById($notificationId);
-            $activity = 'Restore Notification';
+            $activity = 'Restore notification';
             sendLog($activity, null, json_encode($dataNotif));
 
             return $this->response->setJson([

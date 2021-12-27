@@ -38,20 +38,6 @@ class Asset extends BaseController
 		if (!checkRoleList("MASTER.ASSET.VIEW")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
-
-		$data = [
-			'data_before' => [
-				'assetName' => 'Apar',
-				'assetNumber' => 'xapar01',
-				'description' => 'description Apar',
-			],
-			'data_after' => [
-				'assetName' => 'Apar 01',
-				'assetNumber' => 'xapar01',
-				'description' => 'description Apar x01',
-			]
-		];
-
 		$data['title'] = 'Asset';
 		$data['subtitle'] = 'Asset';
 		$data["breadcrumbs"] = [
@@ -119,14 +105,12 @@ class Asset extends BaseController
 		$datestart = $post['start'];
 		$dateend = $post['end'];
 		$assetId = $post['assetId'];
-		$activity = "Update Asset";
-
+		$activity = "Update asset";
 		$adminId = $this->session->get('adminId');
-		$username = $this->session->get('name');
-		$ipAddress = $this->request->getIPAddress();
-		$activity = 'Update Asset';
+		$activity = 'Update asset';
+
 		try {
-			$data = $influxModel->getLogAsset($activity, $assetId, $datestart, $dateend);
+			$data = $influxModel->getLogAsset($activity, $adminId, $assetId, $datestart, $dateend);
 			return $this->response->setJSON(array(
 				'status' => 200,
 				'message' => 'Success get data',
@@ -528,7 +512,6 @@ class Asset extends BaseController
 						'tagName' => json_decode($newTag[$i])->addTagName,
 						'description' => json_decode($newTag[$i])->addTagDesc
 					);
-					// var_dump($dataNewTag);
 					$tagModel->insert($dataNewTag);
 				}
 			}
@@ -613,18 +596,8 @@ class Asset extends BaseController
 				);
 				$assetStatusModel->insert($dataStatus);
 				$dataAsset['assetStatusId'] = $post['assetStatusId'];
-				// $dataAssetStatus = array(
-				// 	'assetStatusId' => $post['assetStatusId']
-				// );
-				// $assetModel->update($assetId, $dataAssetStatus);
-				// echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataStatus));
 			} else {
 				$dataAsset['assetStatusId'] = $post['assetStatusId'];
-				// $dataAssetStatus = array(
-				// 	'assetStatusId' => $post['assetStatusId'],
-				// );
-				// $assetModel->update($assetId, $dataAssetStatus);
-				// echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 			}
 			$assetModel->update($assetId, $dataAsset);
 			// echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
@@ -885,37 +858,10 @@ class Asset extends BaseController
 				'data_after' => $afterParameter[0]
 			];
 
-			$adminId	= $this->session->get('adminId');
-			$username	= $this->session->get('name');
-			$ipAddress	= $this->request->getIPAddress();
-			$activity1	= 'Update Asset';
-			$activity2	= 'Update Parameter';
+			$activity1	= 'Update asset';
+			$activity2	= 'Update parameter';
 
-			$influxModel->writeData($activity1, $ipAddress, $adminId, $username, $assetId, json_encode($body));
-			// $influxModel->writeData($activity2, $ipAddress, $adminId, $username, $assetId, json_encode($bodyP));
-			// var_dump($beforeAsset);
-			// var_dump($afterAsset);
-
-			// $strbefore = json_encode($beforeAsset);
-			// $strafter = json_encode($afterAsset);
-
-			// $strbeforeP = json_encode($beforeParameter);
-			// $strafterP = json_encode($afterParameter);
-
-			// $objbeforeP = json_decode($strbeforeP);
-			// $objafterP = json_decode($strafterP);
-			// if ($objbeforeP == $objafterP) {
-			// 	echo 'sama';
-			// }else{
-			// 	echo 'tidak sama';
-			// }
-			// $objbefore = json_decode($strbefore)[0];
-			// $objafter = json_decode($strafter)[0];
-			// if ($objbefore == $objafter) {
-			// 	echo 'sama';
-			// } else {
-			// 	echo 'tidak sama';
-			// }
+			sendLog($activity1, $assetId, json_encode($body));
 		} else {
 			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
 		}
@@ -1025,11 +971,17 @@ class Asset extends BaseController
 					'sortId' => $value[0]
 				);
 				$parameterModel->update($value[1], $dataSort);
+
 			}
+			$assetId = $json->assetId;
+			$activity = "Sorting parameter";
+			$adminId = $this->session->get('adminId');
+			$dtParameter = $parameterModel->getAll(['userId' => $adminId]);
+			sendLog($activity, $assetId, json_encode($dtParameter));
 			return $this->response->setJson([
 				'status' => 200,
 				'message' => "Successfully Updated Data",
-				'data' => []
+				'data' => $data
 			], 200);
 		} catch (Exception $e) {
 			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
@@ -1242,14 +1194,6 @@ class Asset extends BaseController
 					'schWeeks' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schWeeks : '',
 					'schDays' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schDays : '',
 				);
-				// schWeekDays
-				// $schWeekDays = explode(",", $dataAsset[$i]->schWeekDays);
-				// $arrWeekDays = [];
-				// foreach ($schWeekDays as $key => $val) {
-				// 	array_push($arrWeekDays, substr($val, 0, 2));
-				// }
-				// $strWeekDays = implode(",", $arrWeekDays);
-				// $dataInsert['schWeekDays'] = $strWeekDays;
 
 				// asset status
 				$status = $dataAsset[$i]->assetStatus;
@@ -1421,4 +1365,4 @@ class Asset extends BaseController
 		return true;
 	}
 }
-}
+

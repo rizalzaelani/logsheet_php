@@ -199,7 +199,7 @@ class Transaction extends BaseController
 
 		$dataUpdated = $scheduleTrxModel->getById($scheduleTrxId);
 		$assetId = $dataUpdated['assetId'];
-		$activity  = 'Approve Transaction';
+		$activity  = 'Approve transaction';
 
 		sendLog($activity, $assetId, json_encode($dataUpdated));
 

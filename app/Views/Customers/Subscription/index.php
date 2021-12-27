@@ -469,7 +469,7 @@ $session = \Config\Services::session();
 
             function upgrade() {
                 if (transaction.length) {
-                    if (transaction[0].paidDate == null) {
+                    if (transaction[0].paidDate == null && transaction[0].cancelDate == null) {
                         swal.fire({
                             icon: 'warning',
                             title: 'Please make a payment first or cancel the previous transaction',
@@ -482,7 +482,7 @@ $session = \Config\Services::session();
 
             function renew() {
                 if (transaction.length) {
-                    if (transaction[0].paidDate == null) {
+                    if (transaction[0].paidDate == null && transaction[0].cancelDate == null) {
                         swal.fire({
                             icon: 'warning',
                             title: 'Please make a payment first or cancel the previous transaction',
@@ -726,7 +726,7 @@ $session = \Config\Services::session();
         });
         $(document).on('click', '#tableSubs tbody tr', function() {
             let trxId = $(this).attr("data-id");
-            if(trxId){
+            if (trxId) {
                 v.myModal = new coreui.Modal(document.getElementById('modalTrx'), {});
                 v.myModal.show();
 

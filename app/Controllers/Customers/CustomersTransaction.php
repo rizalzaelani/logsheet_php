@@ -181,7 +181,7 @@ class CustomersTransaction extends BaseController
             $message = str_replace("{{ref_number}}", $refnumber, $message);
             $message = str_replace("{{trans_total}}", 'Rp. ' . number_format($trans_total), $message);
 
-            $subject = 'Payment approved for order #' . $dataTransaction[0]['refNumber'];
+            $subject = 'Payment for order #' . $dataTransaction[0]['refNumber'] . ' approved';
             $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
             $email->setTo($this->session->get('email'));
             $email->setSubject($subject);

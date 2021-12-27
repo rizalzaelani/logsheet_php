@@ -88,7 +88,7 @@ class Tag extends BaseController
         $model = new TagModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Add Tag';
+        $activity       = 'Add tag';
 
         $data = $this->request->getJSON();
 
@@ -162,7 +162,7 @@ class Tag extends BaseController
         $model = new TagModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Update Tag';
+        $activity       = 'Update tag';
 
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
@@ -211,7 +211,7 @@ class Tag extends BaseController
         $modelTag       = new TagModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Delete Tag';
+        $activity       = 'Delete tag';
 
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
@@ -246,7 +246,7 @@ class Tag extends BaseController
         }
         $influxModel    = new LogModel();
 
-        $activity       = 'Download Template Tag';
+        $activity       = 'Download template tag';
         $ipAddress      = $this->request->getIPAddress();
         $username       = $this->session->get('name');
         $userId         = $this->session->get('adminId');
@@ -318,7 +318,7 @@ class Tag extends BaseController
 
         $tagModel = new TagModel();
 
-        $activity       = 'Import Tag';
+        $activity       = 'Import tag';
 
         $json = $this->request->getJSON();
         $dataTag = $json->dataTag;
@@ -353,7 +353,7 @@ class Tag extends BaseController
     {
         $tagModel = new TagModel();
 
-        $activity       = 'Export Tag';
+        $activity       = 'Export tag';
 
         try {
             $writer = WriterEntityFactory::createXLSXWriter();
