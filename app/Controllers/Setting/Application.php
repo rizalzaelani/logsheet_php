@@ -111,10 +111,15 @@ class Application extends BaseController
 
             if (!empty($appSetting)) {
                 $appSettingModel->update($appSettingId, $data);
+                $activity = 'Update setting application';
+                sendLog($activity, null, json_encode($data));
             } else {
                 $data["appSettingId"] = null;
-
                 $appSettingModel->insert($data);
+
+                $activity = 'Add setting application';
+                sendLog($activity, null, json_encode($data));
+                
             }
 
             return $this->response->setJSON([
@@ -181,12 +186,21 @@ class Application extends BaseController
         try {
             if (!empty($dataInsert)) {
                 $assetStatusModel->insertBatch($dataInsert);
+
+                $activity = 'Add asset status';
+                sendLog($activity, null, json_encode($dataInsert));
             }
             if (!empty($dataUpdate)) {
                 $assetStatusModel->updateBatch($dataUpdate, "assetStatusId");
+
+                $activity = 'Update asset status';
+                sendLog($activity, null, json_encode($dataInsert));
             }
             if (!empty($deletedId)) {
                 $assetStatusModel->whereIn("assetStatusId", $deletedId)->delete();
+
+                $activity = 'Delete asset status';
+                sendLog($activity, null, json_encode($dataInsert));
             }
 
             return $this->response->setJSON([

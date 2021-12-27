@@ -240,6 +240,8 @@ class Role extends BaseController
                     'data' => $data
                 ), isset($data->message) ? 400 : 500);
             } else {
+                $activity = $groupId != "" ? 'Update role group' : 'Create role group';
+                sendLog($activity, null, json_encode($param));
                 return $this->response->setJSON([
                     'status' => 200,
                     'error' => true,
@@ -307,6 +309,8 @@ class Role extends BaseController
                     'data' => $dataResData
                 ), isset($dataResData->message) ? 400 : 500);
             } else {
+                $activity = 'Delete role group';
+                sendLog($activity, null, json_encode($param));
                 return $this->response->setJSON([
                     'status' => 200,
                     'error' => true,

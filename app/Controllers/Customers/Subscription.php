@@ -29,7 +29,7 @@ class Subscription extends BaseController
         $adminId = $this->session->get('adminId');
         $dataSubscription   = $subscriptionModel->getByUser($adminId);
         $subscription = $subscriptionModel->getAllData(['userId' => $adminId, 'cancelDate' => null]);
-        $getTransaction    = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
+        $getTransaction    = $transactionModel->getByUser(['userId' => $adminId]);
 
         $transaction = "";
 
@@ -55,7 +55,7 @@ class Subscription extends BaseController
                 if ($getTransaction[0]['paidDate'] == null && $getTransaction[0]['approvedDate'] == null) {
                     $transactionModel->update($transactionId, $duedate);
                 }
-                $transaction = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
+                $transaction = $transactionModel->getByUser(['userId' => $adminId]);
                 foreach ($transaction as $key => $value) {
                     foreach ($dataInvoice as $i => $val) {
                         if ($value['invoiceId'] == $val['id']) {
@@ -465,7 +465,10 @@ class Subscription extends BaseController
                 $transactionModel->insert($transaction);
             }
 
-            $message = file_get_contents(base_url() . "/assets/Mail/subscription.txt");
+            $activity = 'Upgrade package';
+            sendLog($activity, null, json_encode($transaction));
+
+            $message = file_get_contents(base_url() . "/assets/Mail/invoice.txt");
             $transdate = date("Y-m-d H:i:s");
             $refnumber = $dataInvoice['ref_number'];
             $transdesc = $transaction['description'];
@@ -473,6 +476,10 @@ class Subscription extends BaseController
             $transdiscount = '0%';
             $transtax = '0';
             $transtotal = $package->packagePrice->price;
+            $dateNow = new DateTime();
+            $bank_name = 'MANDIRI';
+            $rek_number = '1800010111674';
+            $rek_name = 'PT. NOCOLA IOT SOLUTION';
 
             $message = str_replace("{{trans_date}}", $transdate, $message);
             $message = str_replace("{{ref_number}}", $refnumber, $message);
@@ -481,6 +488,10 @@ class Subscription extends BaseController
             $message = str_replace("{{trans_discount}}", $transdiscount, $message);
             $message = str_replace("{{trans_tax}}", 'Rp. ' . number_format($transtax), $message);
             $message = str_replace("{{trans_total}}", 'Rp. ' . number_format($transtotal), $message);
+            $message = str_replace("{{date_now}}", $dateNow->format("Y"), $message);
+            $message = str_replace("{{BANK_NAME}}", $bank_name, $message);
+            $message = str_replace("{{REK_NUMBER}}", $rek_number, $message);
+            $message = str_replace("{{REK_NAME}}", $rek_name, $message);
 
             $subject = 'Invoice for order #' . $dataInvoice['ref_number'];
             $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
@@ -562,6 +573,7 @@ class Subscription extends BaseController
     {
         $transactionModel   = new TransactionModel();
         $transactionId = $this->request->getPost('transactionId');
+        $adminId = $this->session->get('adminId');
         if ($transactionId == '') {
             return $this->response->setJSON(array(
                 'status'    => 500,
@@ -574,6 +586,11 @@ class Subscription extends BaseController
             'cancelDate' => $date->format("Y-m-d H:i:s")
         ];
         $transactionModel->update($transactionId, $data);
+
+        $activity = 'Cancel upgrade/renew package';
+        $dataTrx = $transactionModel->getByUser(['userId' => $adminId, 'transactionId' => $transactionId]);
+        sendLog($activity, null, json_encode($dataTrx));
+
         return $this->response->setJSON(array(
             'status'    => 200,
             'message'   => 'Update package cancelled',
@@ -683,14 +700,21 @@ class Subscription extends BaseController
                 $transactionModel->insert($transaction);
             }
 
-            $message = file_get_contents("assets/Mail/subscription.txt");
+            $activity = 'Renew package';
+            sendLog($activity, null, json_encode($transaction));
+
+            $message = file_get_contents(base_url() . "/assets/Mail/invoice.txt");
             $transdate = date("Y-m-d H:i:s");
             $refnumber = $dataInvoice['ref_number'];
             $transdesc = $transaction['description'];
-            $transprice = $package->price;
+            $transprice = $package->packagePrice->price;
             $transdiscount = '0%';
             $transtax = '0';
-            $transtotal = $package->price;
+            $transtotal = $package->packagePrice->price;
+            $dateNow = new DateTime();
+            $bank_name = 'MANDIRI';
+            $rek_number = '1800010111674';
+            $rek_name = 'PT. NOCOLA IOT SOLUTION';
 
             $message = str_replace("{{trans_date}}", $transdate, $message);
             $message = str_replace("{{ref_number}}", $refnumber, $message);
@@ -699,6 +723,10 @@ class Subscription extends BaseController
             $message = str_replace("{{trans_discount}}", $transdiscount, $message);
             $message = str_replace("{{trans_tax}}", 'Rp. ' . number_format($transtax), $message);
             $message = str_replace("{{trans_total}}", 'Rp. ' . number_format($transtotal), $message);
+            $message = str_replace("{{date_now}}", $dateNow->format("Y"), $message);
+            $message = str_replace("{{BANK_NAME}}", $bank_name, $message);
+            $message = str_replace("{{REK_NUMBER}}", $rek_number, $message);
+            $message = str_replace("{{REK_NAME}}", $rek_name, $message);
 
             $subject = 'Invoice for order #' . $dataInvoice['ref_number'];
             $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
@@ -818,6 +846,11 @@ class Subscription extends BaseController
 
             $transactionModel->update($transactionId, $dataTransaction);
 
+            $activity = 'Confirm payment';
+            $adminId = $this->session->get('adminId');
+            $dataTrx = $transactionModel->getByUser(['userId' => $adminId, 'transactionId' => $transactionId]);
+            sendLog($activity, null, json_encode($dataTrx));
+
             return $this->response->setJSON([
                 'status' => 200,
                 'message' => 'Success Upload Attachment',
@@ -830,7 +863,5 @@ class Subscription extends BaseController
                 'data' => $e
             ], 500);
         }
-
-        die();
     }
 }

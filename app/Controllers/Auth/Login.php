@@ -103,8 +103,17 @@ class Login extends BaseController
                             $ipAddress      = $this->request->getIPAddress();
                             $username       = $this->session->get('name');
                             $userId         = $this->session->get('adminId');
+                            $userAgent      = $this->request->getUserAgent();
+                            $browser        = $userAgent->getBrowser() . ' ' . $userAgent->getVersion();
+                            $platform       = $userAgent->getPlatform();
+                            $isMobile       = $userAgent->isMobile();
+                            $arr            = [
+                                'browser' => $browser,
+                                'platform'=> $platform,
+                                'isMobile'=> $isMobile
+                            ];
 
-                            $LogModel = $logModel->writeData($activity, $ipAddress, $userId, $username, null, $user_agent->getAgentString());
+                            sendLog($activity, null, json_encode($arr));
 
                             return $this->response->setJSON(array(
                                 'status' => 200,

@@ -24,18 +24,8 @@ class Dashboard extends BaseController
 		$tagModel			= new TagModel();
 		$locationModel		= new TagLocationModel();
 		$scheduleTrxModel	= new ScheduleTrxModel();
-		// $transactionModel	= new TransactionModel();
 
 		$adminId = $this->session->get('adminId');
-		// $subscriptionData = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
-
-		// if (count($subscriptionData)) {
-		// 	if ($subscriptionData[0]['paidDate'] == null && $subscriptionData[0]['approvedDate'] == null) {
-		// 		return redirect()->to('/Subscription');
-		// 	}
-		// } else {
-		// 	return redirect()->to('/Wizard');
-		// }
 
 		$approvedAtNull = $scheduleTrxModel->getAll(['userId' => $adminId, 'approvedAt' => null]);
 		$approvedAtNotNull = $scheduleTrxModel->getAll(['userId' => $adminId, 'approvedAt !=' => null]);

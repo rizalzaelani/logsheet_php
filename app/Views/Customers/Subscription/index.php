@@ -132,7 +132,6 @@ $session = \Config\Services::session();
                                 <th>Number</th>
                                 <th>Issue Date</th>
                                 <th>Description</th>
-
                                 <th>Due on</th>
 
                             </tr>
@@ -156,18 +155,12 @@ $session = \Config\Services::session();
                                     <td><span class="text-info">{{ val.refNumber }}</span></td>
                                     <td>{{ moment2(val.issueDate) }}</td>
                                     <td>{{ val.description }}</td>
-                                    <!-- <td>{{ val.period }}</td> -->
-                                    <!-- <td>{{ moment2(val.paidDate) }}</td> -->
-                                    <!-- <td>Rp. {{ formatNumber(val.paymentTotal) }}</td> -->
                                     <td v-if="val.paidDate == null && val.cancelDate == null" class="text-danger">
                                         {{ countdown }}
                                     </td>
                                     <td v-else>
                                         0
                                     </td>
-                                    <!-- <td>
-                                        <a @click="modalTrx(val.transactionId)" class="btn btn-link text-primary decoration-none"><i class="fa fa-eye"></i></a>
-                                    </td> -->
                                 </tr>
                             </template>
                         </tbody>
@@ -573,6 +566,8 @@ $session = \Config\Services::session();
                             swal.fire({
                                 icon: 'success',
                                 title: rsp.message
+                            }).then((ok) => {
+                                location.reload();
                             })
                         } else {
                             swal.fire({
@@ -718,7 +713,7 @@ $session = \Config\Services::session();
     }).mount('#app');
     $(document).ready(function() {
         $('#tableSubs').DataTable({
-            order: [1, 'desc'],
+            order: [2, 'desc'],
             scrollX: true,
             columnDefs: [],
             'createdRow': function(row, data) {

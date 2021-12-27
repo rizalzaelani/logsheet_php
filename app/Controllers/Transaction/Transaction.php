@@ -37,7 +37,6 @@ class Transaction extends BaseController
 
 	public function detail()
 	{
-
 		if (!checkRoleList("TRX.DETAIL.VIEW")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
@@ -142,12 +141,6 @@ class Transaction extends BaseController
 		]);
 
 		$dateNow = new DateTime();
-		$logModel = new LogModel();
-
-		$activity       = 'Approve Transaction';
-		$ipAddress      = $this->request->getIPAddress();
-		$username       = $this->session->get('name');
-		$userId         = $this->session->get('adminId');
 
 		if (!$isValid) {
 			return $this->response->setJson([
@@ -206,7 +199,9 @@ class Transaction extends BaseController
 
 		$dataUpdated = $scheduleTrxModel->getById($scheduleTrxId);
 		$assetId = $dataUpdated['assetId'];
-		$logModel->writeData($activity, $ipAddress, $userId, $username, $assetId, json_encode($dataUpdated));
+		$activity  = 'Approve Transaction';
+
+		sendLog($activity, $assetId, json_encode($dataUpdated));
 
 		return $this->response->setJson([
 			'status' => 200,

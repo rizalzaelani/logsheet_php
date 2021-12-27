@@ -38,10 +38,6 @@ class Asset extends BaseController
 		if (!checkRoleList("MASTER.ASSET.VIEW")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
-		$influxModel = new LogModel();
-
-		// $influxModel = new LogActivityModel();
-		// $influxModel->writeLog(json_encode($body), $activity, $adminId, $username, 'null');
 
 		$data = [
 			'data_before' => [
@@ -117,7 +113,6 @@ class Asset extends BaseController
 
 	public function changelog()
 	{
-		// $influxModel = new LogActivityModel();
 		$influxModel = new LogModel();
 
 		$post = $this->request->getPost();
@@ -144,14 +139,6 @@ class Asset extends BaseController
 				'data' => ''
 			));
 		}
-
-		// $data = $influxModel->writeData($activity, $ipAddress, $adminId, $username, 'test76977-35353', json_encode($body));
-		// $data = $influxModel->readLog(strtotime($datestart), strtotime($dateend), $activity);
-		// $logactivity = [];
-		// foreach ($data->each() as $record) {
-		// 	// var_dump($record->values);
-		// 	array_push($logactivity, $record->values);
-		// }
 	}
 
 	public function add()
@@ -422,6 +409,13 @@ class Asset extends BaseController
 					}
 				}
 			}
+
+			$dtAsset = $assetModel->getAll(['assetId' => $assetId]);
+			$activity = "Add Asset";
+			if($this->isJson($dtAsset[0]['description'])){
+				$dtAsset[0]['description'] = json_decode($dtAsset[0]['description']);
+			}
+			sendLog($activity, $assetId, json_encode($dtAsset));
 		} else {
 			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
 		}
@@ -1415,4 +1409,16 @@ class Asset extends BaseController
 		}
 		$writer->close();
 	}
+
+	private function isJson(string $value)
+	{
+		try {
+			json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+		} catch (Exception $e) {
+			return false;
+		}
+	
+		return true;
+	}
+}
 }

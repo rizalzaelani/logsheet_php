@@ -24,15 +24,15 @@ class Notification extends BaseController
     {
         $request = \Config\Services::request();
 
-        if(!checkRoleList("NOTIFICATION.VIEW")){
-        	echo json_encode(array(
-        		"draw" => $request->getPost('draw'),
-        		"recordsTotal" => 0,
-        		"recordsFiltered" => 0,
-        		"data" => [],
-        		'status' => 403,
-        		'message' => "You don't have access to this page"
-        	));
+        if (!checkRoleList("NOTIFICATION.VIEW")) {
+            echo json_encode(array(
+                "draw" => $request->getPost('draw'),
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => [],
+                'status' => 403,
+                'message' => "You don't have access to this page"
+            ));
         }
 
         $table = "tblm_notification";
@@ -58,12 +58,12 @@ class Notification extends BaseController
 
     public function saveNotif()
     {
-        if(!checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY")){
-        	return $this->response->setJSON([
-        		'status' => 403,
+        if (!checkRoleList("NOTIFICATION.ADD,NOTIFICATION.MODIFY")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
         $isValid = $this->validate([
@@ -92,8 +92,9 @@ class Notification extends BaseController
         );
 
         $notifModel = new NotificationModel();
+
         if ($notifId != "") {
-            if(!checkRoleList("NOTIFICATION.MODIFY")){
+            if (!checkRoleList("NOTIFICATION.MODIFY")) {
                 return $this->response->setJSON([
                     'status' => 403,
                     'message' => "Sorry, You don't have access",
@@ -102,8 +103,10 @@ class Notification extends BaseController
             }
 
             $notifModel->update($notifId, $dt);
+            $activity = 'Update List Notification';
+            sendLog($activity, null, json_encode($dt));
         } else {
-            if(!checkRoleList("NOTIFICATION.ADD")){
+            if (!checkRoleList("NOTIFICATION.ADD")) {
                 return $this->response->setJSON([
                     'status' => 403,
                     'message' => "Sorry, You don't have access",
@@ -113,6 +116,9 @@ class Notification extends BaseController
 
             $dt["notificationId"] = null;
             $notifModel->insert($dt);
+
+            $activity       = 'Add List Notification';
+            sendLog($activity, null, json_encode($dt));
         }
 
         return $this->response->setJson([
@@ -124,12 +130,12 @@ class Notification extends BaseController
 
     public function changeStatus()
     {
-        if(!checkRoleList("NOTIFICATION.MODIFY.STATUS")){
-        	return $this->response->setJSON([
-        		'status' => 403,
+        if (!checkRoleList("NOTIFICATION.MODIFY.STATUS")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
         $notifModel = new NotificationModel();
@@ -137,6 +143,10 @@ class Notification extends BaseController
         $status = $this->request->getVar("status") ?? "active";
         if ($notificationId != '') {
             $notifModel->update($notificationId, ["status" => $status]);
+
+            $dataNotif = $notifModel->getById($notificationId);
+            $activity = 'Change status notification';
+            sendLog($activity, null, json_encode($dataNotif));
 
             return $this->response->setJson([
                 'status' => 200,
@@ -154,18 +164,22 @@ class Notification extends BaseController
 
     public function deleteNotif()
     {
-        if(!checkRoleList("NOTIFICATION.DELETE")){
-        	return $this->response->setJSON([
-        		'status' => 403,
+        if (!checkRoleList("NOTIFICATION.DELETE")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
         $notifModel = new NotificationModel();
         $notificationId = $this->request->getVar("notificationId");
         if ($notificationId != '') {
             $notifModel->delete($notificationId, ($this->request->getVar("hard") == "1" ? true : false));
+
+            $dataNotif = $notifModel->getById($notificationId);
+            $activity = 'Delete Notification';
+            sendLog($activity, null, json_encode($dataNotif));
 
             return $this->response->setJson([
                 'status' => 200,
@@ -183,18 +197,22 @@ class Notification extends BaseController
 
     public function restoreNotif()
     {
-        if(!checkRoleList("NOTIFICATION.RESTORE")){
-        	return $this->response->setJSON([
-        		'status' => 403,
+        if (!checkRoleList("NOTIFICATION.RESTORE")) {
+            return $this->response->setJSON([
+                'status' => 403,
                 'message' => "Sorry, You don't have access",
-        		'data' => []
-        	], 403);
+                'data' => []
+            ], 403);
         }
 
         $notifModel = new NotificationModel();
         $notificationId = $this->request->getVar("notificationId");
         if ($notificationId != '') {
             $notifModel->update($notificationId, ["deletedAt" => null]);
+
+            $dataNotif = $notifModel->getById($notificationId);
+            $activity = 'Restore Notification';
+            sendLog($activity, null, json_encode($dataNotif));
 
             return $this->response->setJson([
                 'status' => 200,

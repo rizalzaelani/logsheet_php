@@ -16,10 +16,6 @@ class CustomersTransaction extends BaseController
 {
     public function index()
     {
-        // if (!checkRoleList("DASHBOARD.VIEW")) {
-        // 	return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
-        // }
-
         $subscriptionModel  = new SubscriptionModel();
         $transactionModel   = new TransactionModel();
         $packageModel       = new PackageModel();
@@ -67,12 +63,8 @@ class CustomersTransaction extends BaseController
         $order = array('createdAt' => 'desc');
         $DTModel = new \App\Models\Wizard\DatatableWizardModel($table, $column_order, $column_search, $order);
 
-        $filtTag = explode(",", $_POST["columns"][2]["search"]["value"] ?? '');
-        $filtLoc = explode(",", $_POST["columns"][3]["search"]["value"] ?? '');
         $where = [
-            // 'userId' => $this->session->get("adminId"),
             'deletedAt' => null,
-            // "(concat(',', tagName, ',') IN concat(',', " . $filtTag . ", ',') OR concat(',', tagLocationName, ',') IN concat(',', " . $filtLoc . ", ','))" => null
         ];
         $list = $DTModel->datatable($where);
         $output = array(
@@ -143,6 +135,7 @@ class CustomersTransaction extends BaseController
             $packagePriceModel  = new PackagePriceModel();
             $transactionModel   = new TransactionModel();
             $subscriptionModel  = new SubscriptionModel();
+            $email = \Config\Services::email();
 
             $post = $this->request->getPost();
             $approveDate = $post['approveDate'];
@@ -180,6 +173,27 @@ class CustomersTransaction extends BaseController
                 'expiredDate'   => $dataTransaction[0]['activeTo'],
             ];
             $subscriptionModel->update($subscriptionId, $bodySubscription);
+
+            $message = file_get_contents("assets/Mail/approve.txt");
+            $refnumber = $dataTransaction[0]['refNumber'];
+            $trans_total = $dataPackagePrice[0]['price'];
+
+            $message = str_replace("{{ref_number}}", $refnumber, $message);
+            $message = str_replace("{{trans_total}}", 'Rp. ' . number_format($trans_total), $message);
+
+            $subject = 'Payment approved for order #' . $dataTransaction[0]['refNumber'];
+            $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
+            $email->setTo($this->session->get('email'));
+            $email->setSubject($subject);
+            $email->setMessage($message);
+            $email->setMailType("html");
+            $email->send();
+            $email->printDebugger(['headers']);
+
+            $activity = 'Approve payment ' . $refnumber;
+            $dtTrx = $transactionModel->getById($transactionId);
+
+            sendLog($activity, null, json_encode($dtTrx));
 
             return $this->response->setJSON(array(
                 'status' => 200,

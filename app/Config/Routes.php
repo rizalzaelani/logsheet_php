@@ -210,7 +210,7 @@ $routes->get('/user/userList', 'UserRole/User::userList');
 $routes->get('/user/getUserById', 'UserRole/User::getUserById');
 $routes->post('/user/saveUser', 'UserRole/User::saveUser');
 $routes->post('/user/deleteUser', 'UserRole/User::deleteUser');
-$routes->post('/user/changePassword', 'UserRole/User::changePassword');
+$routes->post('/user/changePassword', 'Setting/Account::changePassword');
 
 $routes->get('/role', 'UserRole/Role::index');
 $routes->get('/role/detail', 'UserRole/Role::detail');

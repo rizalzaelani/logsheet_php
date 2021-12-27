@@ -3,6 +3,8 @@
 namespace App\Controllers\Setting;
 
 use App\Controllers\BaseController;
+use App\Models\USMAN\UserModel;
+use Exception;
 
 class Account extends BaseController
 {
@@ -44,5 +46,74 @@ class Account extends BaseController
         );
 
         return $this->template->render('Setting/Account/index.php', $data);
+    }
+
+    public function changePassword()
+    {
+        $isValid = $this->validate([
+            'currentPassword' => 'required',
+            'newPassword' => 'required'
+        ]);
+
+        if (!$isValid) {
+            return $this->response->setJson([
+                'status' => 400,
+                'message' => "Data is Not Valid",
+                'data' => $this->validator->getErrors()
+            ], 400);
+        }
+
+        $currentPassword = $this->request->getVar("currentPassword");
+        $newPassword = $this->request->getVar("newPassword");
+
+        $userModel = new UserModel();
+
+        try {
+            $clientToken = get_cookie("clientToken");
+            if (!isset($clientToken) || $clientToken == null) {
+                $resRT = $userModel->refreshToken();
+                if ($resRT['error']) {
+                    return $this->response->setJSON(array(
+                        'status' => isset($resRT['data']->message) ? 400 : 500,
+                        'message' => $resRT['data']->message ?? $resRT['message'],
+                        'data' => $resRT['data']
+                    ), isset($resRT['data']->message) ? 400 : 500);
+                }
+            }
+
+            $param["current_password"] = $currentPassword;
+            $param["password"] = $newPassword;
+            $param["confirm_password"] = $newPassword;
+            $param["userId"] = $this->session->get("userId");
+
+            $dataRes = $userModel->changePassword($param);
+
+            $dataResData = $dataRes['data'];
+            if ($dataRes['error']) {
+                return $this->response->setJSON(array(
+                    'status' => isset($dataResData->message) ? 400 : 500,
+                    'message' => $dataResData->message ?? $dataRes['message'],
+                    'data' => $dataResData,
+                    'token' => $this->session->get("token"),
+                    'userId' => $this->session->get("userId")
+                ), isset($dataResData->message) ? 400 : 500);
+            } else {
+                $activity = 'Change password user';
+                sendLog($activity, null, json_encode($param));
+                return $this->response->setJSON([
+                    'status' => 200,
+                    'error' => true,
+                    'message' => "Success change password user",
+                    'data' => $dataResData->data ?? [],
+                    'dataParam' => $param
+                ], 200);
+            }
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => $e->getMessage(),
+                'data' => $e
+            ], 500);
+        }
     }
 }
