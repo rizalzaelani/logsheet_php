@@ -201,7 +201,7 @@ class Asset extends BaseController
 				->save($dirPhoto . '/' . $namePhoto);
 		}
 
-		if (isset($post['assetId'])) {
+		try {
 			$dirPath = 'upload/Asset';
 			$fileAsset = $this->request->getFile('photo');
 			$namePhoto = "";
@@ -396,14 +396,22 @@ class Asset extends BaseController
 
 			$dtAsset = $assetModel->getAll(['assetId' => $assetId]);
 			$activity = "Add Asset";
-			if($this->isJson($dtAsset[0]['description'])){
+			if ($this->isJson($dtAsset[0]['description'])) {
 				$dtAsset[0]['description'] = json_decode($dtAsset[0]['description']);
 			}
 			sendLog($activity, $assetId, json_encode($dtAsset));
-		} else {
-			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message' => 'Success add asset',
+				'data' => []
+			));
+		} catch (Exception $e) {
+			return $this->response->setJSON(array(
+				'status' => $e->getCode(),
+				'message' => $e->getMessage(),
+				'data' => []
+			));
 		}
-		die();
 	}
 
 	public function detail($assetId)
@@ -414,6 +422,7 @@ class Asset extends BaseController
 
 		$model = new AssetModel();
 		$assetTaggingModel = new AssetTaggingModel();
+		$parameterModel = new ParameterModel();
 
 		$adminId = $this->session->get('adminId');
 
@@ -461,6 +470,12 @@ class Asset extends BaseController
 			],
 		];
 
+		foreach ($assetParameter as $key => $value) {
+			if ($value['min'] != null) {
+				$assetParameter[$key]['min'] = (int) $value['min'];
+				$assetParameter[$key]['max'] = (int) $value['max'];
+			}
+		}
 		$data['parameter']		= $assetParameter;
 		$data['normal']			= $normal;
 		$data['abnormal']		= $abnormal;
@@ -469,6 +484,7 @@ class Asset extends BaseController
 		$data['locationData']	= $locationData;
 		$data['statusData']		= $statusData;
 		$data['tagging']		= $tagging;
+
 		return $this->template->render('Master/Asset/detail2', $data);
 	}
 
@@ -500,7 +516,7 @@ class Asset extends BaseController
 		$beforeAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
 		$beforeParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
 
-		if (isset($post['assetId'])) {
+		try {
 			// new tags and tag location
 			$newTag = $post['tag'];
 			if ($newTag != "") {
@@ -568,15 +584,15 @@ class Asset extends BaseController
 			);
 			if ($fileAsset != null) {
 				$dataAsset['photo'] = (base_url() . '/' . $dirPhoto . '/' . $namePhoto);
-				if ($post['photo'] != 'null') {
-					$path = str_replace(base_url(), "", $post['photo']);
+				if ($post['photo'] != 'null' && $post['photo'] != null && $post['photo'] != "") {
+					$path = str_replace(base_url() . '/', "", $post['photo']);
 					unlink($path);
 				}
 			} else {
 				$check = $post['deleteAssetPhoto'] == 'true' ? true : false;
 				if ($check) {
 					$dataAsset['photo'] = null;
-					$path = str_replace(base_url(), "", $post['photo']);
+					$path = str_replace(base_url() . '/', "", $post['photo']);
 					unlink($path);
 				} else {
 					$dataAsset['photo'] = $post['photo'];
@@ -600,7 +616,6 @@ class Asset extends BaseController
 				$dataAsset['assetStatusId'] = $post['assetStatusId'];
 			}
 			$assetModel->update($assetId, $dataAsset);
-			// echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
 
 			// taglocation
 			$tagLocation = explode(",", $post['locationId']);
@@ -615,11 +630,9 @@ class Asset extends BaseController
 						'tagLocationId' => $tagLocation[$i]
 					);
 					$assetTagLocationModel->insert($dataTagLocation);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 				}
 			} else {
 				$assetTagLocationModel->deleteById($assetId);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 			}
 
 			// tag
@@ -635,11 +648,9 @@ class Asset extends BaseController
 						'tagId' => $tag[$i]
 					);
 					$assetTagModel->insert($dataTag);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 				}
 			} else {
 				$assetTagModel->deleteById($assetId);
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 			}
 
 			// asset tagging
@@ -812,7 +823,6 @@ class Asset extends BaseController
 							'showOn'		=> json_decode($post['parameter'][$i])->showOn,
 						);
 						$parameterModel->insert($dataParam);
-						// var_dump($dataParam);
 					} else {
 						$dataParam = array(
 							'parameterId'	=> json_decode($post['parameter'][$i])->parameterId,
@@ -833,7 +843,6 @@ class Asset extends BaseController
 							'showOn'		=> json_decode($post['parameter'][$i])->showOn,
 						);
 						$parameterModel->insert($dataParam);
-						// var_dump($dataParam);
 					}
 				}
 			}
@@ -862,10 +871,18 @@ class Asset extends BaseController
 			$activity2	= 'Update parameter';
 
 			sendLog($activity1, $assetId, json_encode($body));
-		} else {
-			echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $post));
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message' => 'Success update data',
+				'data' => []
+			));
+		} catch (Exception $e) {
+			return $this->response->setJSON(array(
+				'status' => $e->getCode(),
+				'message' => $e->getMessage(),
+				'data' => []
+			));
 		}
-		die();
 	}
 
 	public function delete()
@@ -971,7 +988,6 @@ class Asset extends BaseController
 					'sortId' => $value[0]
 				);
 				$parameterModel->update($value[1], $dataSort);
-
 			}
 			$assetId = $json->assetId;
 			$activity = "Sorting parameter";
@@ -1361,8 +1377,7 @@ class Asset extends BaseController
 		} catch (Exception $e) {
 			return false;
 		}
-	
+
 		return true;
 	}
 }
-
