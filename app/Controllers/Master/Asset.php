@@ -55,6 +55,79 @@ class Asset extends BaseController
 		return $this->template->render('Master/Asset/index', $data);
 	}
 
+	public function detail($assetId)
+	{
+		if (!checkRoleList("MASTER.ASSET.DETAIL")) {
+			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
+		}
+
+		$model = new AssetModel();
+		$assetTaggingModel = new AssetTaggingModel();
+
+		$adminId = $this->session->get('adminId');
+
+		$assetData = $model->getById($assetId);
+		$assetParameter = $this->db->table('tblm_parameter')->where('assetId', $assetId)->orderBy('sortId', 'asc')->getWhere('deletedAt', null)->getResultArray();
+
+		// get value normal parameter
+		$paramNormal = $this->db->table('tblm_parameter')->select('normal')->get()->getResultArray();
+		$normalArray = [];
+		foreach ($paramNormal as $key => $value) {
+			array_push($normalArray, $value['normal']);
+		}
+		$normal = array_filter(array_unique(explode(",", implode(",", $normalArray))));
+
+		// get value abnormal parameter
+		$paramAbnormal = $this->db->table('tblm_parameter')->select('abnormal')->get()->getResultArray();
+		$abnormalArray = [];
+		foreach ($paramAbnormal as $key => $value) {
+			array_push($abnormalArray, $value['abnormal']);
+		}
+		$abnormal = array_filter(array_unique(explode(",", implode(",", $abnormalArray))));
+
+		$tagging = $assetTaggingModel->where('assetId', $assetId)->orderBy('assetTaggingtype', 'asc')->findAll();
+		$tagData = $this->db->table('tblm_tag')->where(['userId' => $adminId])->get()->getResult();
+		$statusData = $this->db->table('tblm_assetStatus')->where(['deletedAt' => null, 'userId' => $adminId])->get()->getResult();
+		$locationData = $this->db->table('tblm_tagLocation')->where(['userId' => $adminId])->get()->getResult();
+
+		$data = array(
+			'title' => 'Detail Asset',
+			'subtitle' => 'Detail',
+		);
+
+		$data["breadcrumbs"] = [
+			[
+				"title"	=> "Home",
+				"link"	=> "Dashboard"
+			],
+			[
+				"title"	=> "Asset",
+				"link"	=> "Asset"
+			],
+			[
+				"title"	=> "Detail",
+				"link"	=> "detail"
+			],
+		];
+
+		foreach ($assetParameter as $key => $value) {
+			if ($value['min'] != null) {
+				$assetParameter[$key]['min'] = (int) $value['min'];
+				$assetParameter[$key]['max'] = (int) $value['max'];
+			}
+		}
+		$data['parameter']		= $assetParameter;
+		$data['normal']			= $normal;
+		$data['abnormal']		= $abnormal;
+		$data['assetData']		= $assetData;
+		$data['tagData']		= $tagData;
+		$data['locationData']	= $locationData;
+		$data['statusData']		= $statusData;
+		$data['tagging']		= $tagging;
+
+		return $this->template->render('Master/Asset/detail2', $data);
+	}
+
 	public function datatable()
 	{
 		$request = \Config\Services::request();
@@ -426,80 +499,6 @@ class Asset extends BaseController
 				'data' => []
 			));
 		}
-	}
-
-	public function detail($assetId)
-	{
-		if (!checkRoleList("MASTER.ASSET.DETAIL")) {
-			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
-		}
-
-		$model = new AssetModel();
-		$assetTaggingModel = new AssetTaggingModel();
-		$parameterModel = new ParameterModel();
-
-		$adminId = $this->session->get('adminId');
-
-		$assetData = $model->getById($assetId);
-		$assetParameter = $this->db->table('tblm_parameter')->where('assetId', $assetId)->orderBy('sortId', 'asc')->getWhere('deletedAt', null)->getResultArray();
-
-		// get value normal parameter
-		$paramNormal = $this->db->table('tblm_parameter')->select('normal')->get()->getResultArray();
-		$normalArray = [];
-		foreach ($paramNormal as $key => $value) {
-			array_push($normalArray, $value['normal']);
-		}
-		$normal = array_filter(array_unique(explode(",", implode(",", $normalArray))));
-
-		// get value abnormal parameter
-		$paramAbnormal = $this->db->table('tblm_parameter')->select('abnormal')->get()->getResultArray();
-		$abnormalArray = [];
-		foreach ($paramAbnormal as $key => $value) {
-			array_push($abnormalArray, $value['abnormal']);
-		}
-		$abnormal = array_filter(array_unique(explode(",", implode(",", $abnormalArray))));
-
-		$tagging = $assetTaggingModel->where('assetId', $assetId)->orderBy('assetTaggingtype', 'asc')->findAll();
-		$tagData = $this->db->table('tblm_tag')->where(['userId' => $adminId])->get()->getResult();
-		$statusData = $this->db->table('tblm_assetStatus')->where(['deletedAt' => null, 'userId' => $adminId])->get()->getResult();
-		$locationData = $this->db->table('tblm_tagLocation')->where(['userId' => $adminId])->get()->getResult();
-
-		$data = array(
-			'title' => 'Detail Asset',
-			'subtitle' => 'Detail',
-		);
-
-		$data["breadcrumbs"] = [
-			[
-				"title"	=> "Home",
-				"link"	=> "Dashboard"
-			],
-			[
-				"title"	=> "Asset",
-				"link"	=> "Asset"
-			],
-			[
-				"title"	=> "Detail",
-				"link"	=> "detail"
-			],
-		];
-
-		foreach ($assetParameter as $key => $value) {
-			if ($value['min'] != null) {
-				$assetParameter[$key]['min'] = (int) $value['min'];
-				$assetParameter[$key]['max'] = (int) $value['max'];
-			}
-		}
-		$data['parameter']		= $assetParameter;
-		$data['normal']			= $normal;
-		$data['abnormal']		= $abnormal;
-		$data['assetData']		= $assetData;
-		$data['tagData']		= $tagData;
-		$data['locationData']	= $locationData;
-		$data['statusData']		= $statusData;
-		$data['tagging']		= $tagging;
-
-		return $this->template->render('Master/Asset/detail2', $data);
 	}
 
 	public function saveSetting()
@@ -1497,13 +1496,108 @@ class Asset extends BaseController
 		$dataAssetTag			= $assetTagModel->getAll(['assetId' => $assetId]);
 		$dataAssetTagLocation	= $assetTagLocationModel->getAll(['assetId' => $assetId]);
 
+		$photoAsset = "";
+		if (!empty($dataAsset)) {
+			foreach ($dataAsset as $key => $value) {
+				if ($value['photo'] != "" && $value['photo'] != null && $value['photo'] != "null") {
+
+					$str = str_replace(base_url() , "", $value['photo']);
+					$img1 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str);
+					$encode = base64_encode($img1);
+					$decode = base64_decode($encode);
+
+					$size = getimagesizefromstring($decode);
+					if (empty($size['mime']) || strpos($size['mime'], 'image/') !== 0) {
+						die('Base64 value is not a valid image');
+					}
+					$ext = substr($size['mime'], 6);
+					if (!in_array($ext, ['png', 'gif', 'jpeg'])) {
+						die('Unsupported image type');
+					}
+					$dirPath = "upload/Asset/file" . $adminId;
+					$filename = "IMG_" . $this->randomString() . '.' . "{$ext}";
+					$img_file = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename;
+					file_put_contents($img_file, $decode);
+					$photoAsset = base_url() . '/' . $dirPath . '/' . $filename;
+				}
+			}
+		}
+
 		if (count($dataParameter)) {
-			for ($i=0; $i < count($dataParameter); $i++) { 
-				$dataParameter[$i]['parameterId'] = uuidv4();
-				$dataParameter[$i]['assetId'] = $newAssetId;
-				$dataParameter[$i]['photo1'] = null;
-				$dataParameter[$i]['photo2'] = null;
-				$dataParameter[$i]['photo3'] = null;
+
+			foreach ($dataParameter as $key => $value) {
+				$dataParameter[$key]['parameterId'] = uuidv4();
+				$dataParameter[$key]['assetId'] = $newAssetId;
+				$photo1 = "";
+				$photo2 = "";
+				$photo3 = "";
+				if ($value['photo1'] != "" && $value['photo1'] != null && $value['photo1'] != "null" && $value['photo2'] != "" && $value['photo2'] != null && $value['photo2'] != "null" && $value['photo3'] != "" && $value['photo3'] != null && $value['photo3'] != "null") {
+
+					//PHOTO 1
+					$str1 = str_replace(base_url() , "", $value['photo1']);
+					$img1 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str1);
+					$encode1 = base64_encode($img1);
+					$decode1 = base64_decode($encode1);
+
+					$size1 = getimagesizefromstring($decode1);
+					if (empty($size1['mime']) || strpos($size1['mime'], 'image/') !== 0) {
+						die('Base64 value is not a valid image');
+					}
+					$ext1 = substr($size1['mime'], 6);
+					if (!in_array($ext1, ['png', 'gif', 'jpeg'])) {
+						die('Unsupported image type');
+					}
+
+					$dirPath = "upload/Asset/file" . $adminId;
+					$filename1 = "IMG_PARAM_H_" . $this->randomString() . '.' . "{$ext1}";
+					$img_file1 = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename1;
+					file_put_contents($img_file1, $decode1);
+					$photo1 = base_url() . '/' . $dirPath . '/' . $filename1;
+
+					//PHOTO 2
+					$str2 = str_replace(base_url() , "", $value['photo2']);
+					$img2 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str2);
+					$encode2 = base64_encode($img2);
+					$decode2 = base64_decode($encode2);
+
+					$size2 = getimagesizefromstring($decode2);
+					if (empty($size2['mime']) || strpos($size2['mime'], 'image/') !== 0) {
+						die('Base64 value is not a valid image');
+					}
+					$ext2 = substr($size2['mime'], 6);
+					if (!in_array($ext2, ['png', 'gif', 'jpeg'])) {
+						die('Unsupported image type');
+					}
+
+					$filename2 = "IMG_PARAM_M_" . $this->randomString() . '.' . "{$ext2}";
+					$img_file2 = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename2;
+					file_put_contents($img_file2, $decode2);
+					$photo2 = base_url() . '/' . $dirPath . '/' . $filename2;
+
+					//PHOTO 3
+					$str3 = str_replace(base_url() , "", $value['photo3']);
+					$img3 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str3);
+					$encode3 = base64_encode($img3);
+					$decode3 = base64_decode($encode3);
+
+					$size3 = getimagesizefromstring($decode3);
+					if (empty($size3['mime']) || strpos($size3['mime'], 'image/') !== 0) {
+						die('Base64 value is not a valid image');
+					}
+					$ext3 = substr($size['mime'], 6);
+					if (!in_array($ext3, ['png', 'gif', 'jpeg'])) {
+						die('Unsupported image type');
+					}
+
+					$filename3 = "IMG_PARAM_L_" . $this->randomString() . '.' . "{$ext3}";
+					$img_file3 = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename3;
+					file_put_contents($img_file3, $decode3);
+					$photo3 = base_url() . '/' . $dirPath . '/' . $filename3;
+
+					$dataParameter[$key]['photo1'] = $photo1 != "" ? $photo1 : null;
+					$dataParameter[$key]['photo2'] = $photo2 != "" ? $photo2 : null;
+					$dataParameter[$key]['photo3'] = $photo3 != "" ? $photo3 : null;
+				}
 			}
 		}
 		if (count($dataTagging)) {
@@ -1531,7 +1625,7 @@ class Asset extends BaseController
 			'userId'		=> $adminId,
 			'assetStatusId'	=> $dataAsset[0]['assetStatusId'],
 			'assetName'		=> $dataAsset[0]['assetName'] . ' Copy',
-			'photo'			=> null,
+			'photo'			=> $photoAsset != "" ? $photoAsset : null,
 			'description'	=> $dataAsset[0]['description'],
 			'schManual'		=> $dataAsset[0]['schManual'],
 			'schType'		=> $dataAsset[0]['schType'],
@@ -1540,6 +1634,7 @@ class Asset extends BaseController
 			'schWeekDays'	=> $dataAsset[0]['schWeekDays'],
 			'schDays'		=> $dataAsset[0]['schDays']
 		];
+
 		if (strpos($dataAsset[0]['assetNumber'], '_') !== false) {
 			$asset['assetNumber'] = explode("_", $dataAsset[0]['assetNumber'])[0] . '_' . $this->randomString();
 		}else{

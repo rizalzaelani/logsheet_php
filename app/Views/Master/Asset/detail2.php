@@ -1878,7 +1878,8 @@ $sess = $session->get('adminId');
                     let dt = "";
                     this.allParameter[0].forEach((val, i) => {
                         if (val.parameterId == parameterId) {
-                            dt = _.cloneDeep(v.allParameter[0][i]);
+                            // dt = _.cloneDeep(v.allParameter[0][i]);
+                            dt = {...toRaw(v.allParameter[0][i])}
                         }
                     });
 
@@ -2223,7 +2224,7 @@ $sess = $session->get('adminId');
                                 }
                             }, 2000);
                             this.param.status = 'updated';
-                            this.editedParameter.push(this.param);
+                            this.editedParameter.push({...toRaw(this.param)});
                         }
 
                         this.allParameter[0].forEach((el, i) => {
@@ -3423,9 +3424,6 @@ $sess = $session->get('adminId');
                                 // formdata.append('photo[]', item['photo']);
                                 formdata.append('photo' + item['parameterId'], this.params[k]['photo']);
                             });
-                            for (let index = 0; index < this.params.length; index++) {
-                                console.log(this.params[index]['photo']);
-                            }
                         } else {
                             formdata.append('parameter[]', this.params);
                         }
@@ -3443,7 +3441,7 @@ $sess = $session->get('adminId');
                             let editedParam = this.editedParameter;
                             editedParam.forEach((item, k) => {
                                 formdata.append('editedParameter[]', JSON.stringify(item))
-                                formdata.append('photo' + item['parameterId'], this.editedParameter[k]['photo']);
+                                formdata.append('photo' + item['parameterId'], v.editedParameter[k]['photo']);
                             })
                         } else {
                             formdata.append('editedParameter[]', "");
@@ -3659,25 +3657,42 @@ $sess = $session->get('adminId');
                 function duplicate(assetId) {
                     let formdata = new FormData();
                     formdata.append('assetId', assetId);
-                    axios({
-                        url: '<?= base_url('Asset/duplicate') ?>',
-                        method: 'POST',
-                        data: formdata
-                    }).then((res) => {
-                        let rsp = res.data;
-                        console.log(rsp);
-                        if (rsp.status == 200) {
-                            let data = rsp.data
-                            swal.fire({
-                                icon: 'success',
-                                title: res.data.message
-                            }).then((okay) => {
-                                window.location.href = '<?= base_url('Asset/detail') ?>' + '/' + data[0]['assetId'];
-                            })
-                        }else{
-                            swal.fire({
-                                icon: 'error',
-                                title: res.data.message
+                    const swalWithBootstrapButtons = swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-primary mr-1',
+                            cancelButton: 'btn btn-danger'
+                        },
+                        buttonsStyling: false
+                    })
+                    swalWithBootstrapButtons.fire({
+                        title: 'All data will be duplicated including images on assets and parameters. However, the asset name and asset number will be slightly changed from the original.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: '<i class="fa fa-times"></i> Cancel',
+                        confirmButtonText: '<i class="fa fa-copy"></i> Duplicate',
+                    }).then((ok) => {
+                        if (ok.isConfirmed) {
+                            axios({
+                                url: '<?= base_url('Asset/duplicate') ?>',
+                                method: 'POST',
+                                data: formdata
+                            }).then((res) => {
+                                let rsp = res.data;
+                                console.log(rsp);
+                                if (rsp.status == 200) {
+                                    let data = rsp.data
+                                    swal.fire({
+                                        icon: 'success',
+                                        title: res.data.message
+                                    }).then((okay) => {
+                                        window.location.href = '<?= base_url('Asset/detail') ?>' + '/' + data[0]['assetId'];
+                                    })
+                                }else{
+                                    swal.fire({
+                                        icon: 'error',
+                                        title: res.data.message
+                                    })
+                                }
                             })
                         }
                     })
