@@ -34,9 +34,10 @@ class LogModel
         return $this->db->getQueryBuilder();
     }
 
-    public function getLogAsset($activity, $userId, $assetId, $dateFrom, $dateTo)
+    public function getLogAsset($activity, $activity2, $userId, $assetId, $dateFrom, $dateTo)
     {
         $where = [
+            // "activity = '$activity' OR activity = '$activity2'",
             "activity = '$activity'",
             "userId = '$userId'",
             "assetId = '$assetId'",

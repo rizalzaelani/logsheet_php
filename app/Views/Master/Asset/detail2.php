@@ -127,13 +127,12 @@ $sess = $session->get('adminId');
                                         </tr>
                                     </template>
                                 </table>
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <button @click="duplicate(assetData.assetId)" class="btn btn-md btn-outline-primary"><i class="fa fa-copy"></i> Duplicate Asset</button>
+                                </div>
                             </div>
                             <div class="col-md-6 d-flex justify-content-center align-items-center imgMap">
                                 <img src="<?= base_url() ?>/img/img-alt.png" alt="Image" :class="assetData.photo == null || assetData.photo == '' ? 'mt-1 m-0' :'d-none'" style="width: 200px !important; height: 200px !important;">
-                                <!-- <div :class="((assetData.photo == null || assetData.photo == '') ? 'd-none' : '')">
-                                </div>
-                                <div :class="((assetData.photo != null && assetData.photo != '') ? '' : 'd-none')">
-                                    </div> -->
                                 <img onclick="modalImgAsset()" :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important; cursor: pointer;">
                             </div>
                         </div>
@@ -636,6 +635,7 @@ $sess = $session->get('adminId');
                         </div>
                     </div>
                 </div>
+
                 <!-- modal preview change log -->
                 <div class="modal fade pr-0" id="modalChange" tabindex="-1" role="dialog" aria-labelledby="modalPreview" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
@@ -791,6 +791,67 @@ $sess = $session->get('adminId');
                         </div>
                     </div>
                 </div>
+
+                <!-- modal preview parameter log -->
+                <!-- <div class="modal fade pr-0" id="modalChangeParam" tabindex="-1" role="dialog" aria-labelledby="modalPreviewParam" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalChangeParamTitle">Detail Change Log</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mt-2">
+                                    <h6>Changes {{ momentchangelog(dataChangeLog.time) }} by <b class="text-info">{{ dataChangeLog.username }}</b></h6>
+                                </div>
+                                <div class="mt-4">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                            <template v-if="changelog != ''">
+                                                <template v-if="Object.keys(dataAB.data_before).length > Object.keys(dataAB.data_after).length">
+                                                    <template v-for="(val, i) in dataAB.data_before">
+                                                        <a class="nav-link" :id="val.parameterId + '-tab'" data-toggle="pill" :href="'#' + val.parameterId" role="tab" :aria-controls="val.parameterId" aria-selected="true">{{ val.parameterName }}</a>
+                                                    </template>
+                                                </template>
+                                                <template v-else>
+                                                    <template v-for="(val, i) in dataAB.data_after">
+                                                        <a class="nav-link" :id="val.parameterId + '-tab'" data-toggle="pill" :href="('#' + val.parameterId)" role="tab" :aria-controls="val.parameterId" aria-selected="true">{{ val.parameterName }}</a>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="tab-content" id="v-pills-tabContent">
+                                            <template v-if="changelog != ''">
+                                                <template v-if="Object.keys(dataAB.data_before).length > Object.keys(dataAB.data_after).length">
+                                                    <template v-for="(val, i) in dataAB.data_before">
+                                                        <div class="tab-pane fade" :id="val.parameterId" role="tabpanel" :aria-labelledby="val.parameterId + '-tab'">{{val.parameterName}}</div>
+                                                    </template>
+                                                </template>
+                                                <template v-else>
+                                                    <template v-for="(val, i) in dataAB.data_after">
+                                                        <div class="tab-pane fade" :id="val.parameterId" role="tabpanel" :aria-labelledby="val.parameterId + '-tab'">{{val.parameterName}}</div>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
             </div>
         </div>
 
@@ -818,21 +879,6 @@ $sess = $session->get('adminId');
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- <template v-if="changelog.length">
-                                <template v-for="(val, i) in changelog">
-                                    <tr>
-                                        <td>
-                                            {{ momentchangelog(val.time) }}
-                                        </td>
-                                        <td>
-                                            {{ val.activity }}
-                                        </td>
-                                        <td>
-                                            <button @click="modalChange(i)" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </template> -->
                         </tbody>
                     </table>
                 </div>
@@ -1462,20 +1508,9 @@ $sess = $session->get('adminId');
                                         <td :class="!val.normal ? 'font-italic' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
                                         <td style="max-width: 160px !important;" :class="!val.option ? 'font-italic' : ''">{{ !val.option ? "(Empty)" :val.option }}</td>
                                     </template>
-                                    <template v-if="val.uom != ''">
-                                        <td>
-                                            {{ val.uom }}
-                                        </td>
-                                    </template>
-                                    <template v-else-if="val.option != ''">
-                                        <td style="max-width: 160px !important;">
-                                            {{ val.option }}
-                                        </td>
-                                    </template>
-                                    <template v-else>
-                                        <td>
-                                        </td>
-                                    </template>
+                                    <td style="max-width: 1 60px !important;">
+                                        {{ val.showOn }}
+                                    </td>
                                     <template v-if="val.status == 'old'">
                                         <td>
                                             <i class="text-success"><span class="badge badge-info text-white">Old</span></i>
@@ -1492,14 +1527,14 @@ $sess = $session->get('adminId');
                                         </td>
                                     </template>
                                     <td style="min-width: 90px !important">
-                                    <template v-if="val.status == 'New'">
-                                        <button id="tempEdit" class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key, val.parameterId);checkModalAdd = false; checkModalExist = false"><i class="fa fa-edit"></i></button>
-                                        <button id="tempDel" class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key, val.parameterId)"><i class="fa fa-trash"></i></button>
-                                    </template>
-                                    <template v-else>
-                                        <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(keyGP, key, val.parameterId);checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(keyGP, key, val.parameterId)"><i class="fa fa-trash"></i></button>
-                                    </template>
+                                        <template v-if="val.status == 'New'">
+                                            <button id="tempEdit" class="btn btn-sm btn-outline-success mr-1" @click="editTempParameter(keyGP, key, val.parameterId);checkModalAdd = false; checkModalExist = false"><i class="fa fa-edit"></i></button>
+                                            <button id="tempDel" class="btn btn-sm btn-outline-danger" @click="removeTempParameter(keyGP, key, val.parameterId)"><i class="fa fa-trash"></i></button>
+                                        </template>
+                                        <template v-else>
+                                            <button class="btn btn-sm btn-outline-success mr-1" @click="editExistParameter(keyGP, key, val.parameterId);checkModalAdd = false; checkModalExist = true"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" @click="removeExistParameter(keyGP, key, val.parameterId)"><i class="fa fa-trash"></i></button>
+                                        </template>
                                     </td>
                                 </tr>
                             </template>
@@ -2194,12 +2229,12 @@ $sess = $session->get('adminId');
                         if (result.isConfirmed) {
                             var lengthParams = v.parameter.length;
                             v.parameter.forEach((val, i) => {
-                                if(val.parameterId == parameterId){
+                                if (val.parameterId == parameterId) {
                                     v.parameter.splice(i, 1);
                                 }
                             })
                             v.allParameter[0].forEach((value, k) => {
-                                if(value.parameterId == parameterId){
+                                if (value.parameterId == parameterId) {
                                     v.allParameter[0].splice(k, 1);
                                 }
                             })
@@ -2548,8 +2583,10 @@ $sess = $session->get('adminId');
                     this.myModal.show();
                     let data = "";
                     this.allParameter[0].forEach((val, i) => {
-                        if(val.parameterId == parameterId){
-                            data = {...toRaw(this.allParameter[0][i])};
+                        if (val.parameterId == parameterId) {
+                            data = {
+                                ...toRaw(this.allParameter[0][i])
+                            };
                         }
                     })
 
@@ -2591,7 +2628,7 @@ $sess = $session->get('adminId');
                         pond.on('removefile', (error, file) => {
                             v.paramPhoto = ref("");
                         })
-                    }else{
+                    } else {
                         var filepondParam = {
                             acceptedFileTypes: ['image/png', 'image/jpeg'],
                             allowFilePoster: true,
@@ -2851,14 +2888,18 @@ $sess = $session->get('adminId');
                         this.param.status = 'New';
 
                         this.params.forEach((val, i) => {
-                            if(val.parameterId == this.param.parameterId){
-                                this.params[i] = {...toRaw(this.param)}
+                            if (val.parameterId == this.param.parameterId) {
+                                this.params[i] = {
+                                    ...toRaw(this.param)
+                                }
                             }
                         })
 
                         this.allParameter[0].forEach((val, i) => {
-                            if(val.parameterId == this.param.parameterId){
-                                this.allParameter[0][i] = {...toRaw(this.param)}
+                            if (val.parameterId == this.param.parameterId) {
+                                this.allParameter[0][i] = {
+                                    ...toRaw(this.param)
+                                }
                             }
                         })
 
@@ -2919,7 +2960,7 @@ $sess = $session->get('adminId');
                                     v.params.splice(k, 1);
                                     v.param.sortId = this.param.sortId - 1;
                                     v.allParameter[0].forEach((value, b) => {
-                                        if(val.parameterId == value.parameterId){
+                                        if (val.parameterId == value.parameterId) {
                                             v.allParameter[0].splice(b, 1);
                                         }
                                     })
@@ -3572,6 +3613,33 @@ $sess = $session->get('adminId');
                     }
                 }
 
+                function duplicate(assetId) {
+                    let formdata = new FormData();
+                    formdata.append('assetId', assetId);
+                    axios({
+                        url: '<?= base_url('Asset/duplicate') ?>',
+                        method: 'POST',
+                        data: formdata
+                    }).then((res) => {
+                        let rsp = res.data;
+                        console.log(rsp);
+                        if (rsp.status == 200) {
+                            let data = rsp.data
+                            swal.fire({
+                                icon: 'success',
+                                title: res.data.message
+                            }).then((okay) => {
+                                window.location.href = '<?= base_url('Asset/detail') ?>' + '/' + data[0]['assetId'];
+                            })
+                        }else{
+                            swal.fire({
+                                icon: 'error',
+                                title: res.data.message
+                            })
+                        }
+                    })
+                }
+
                 const addDescJson = async (e) => {
                     let checkKey = _.filter(descJson, {
                         key: e.value
@@ -3807,6 +3875,11 @@ $sess = $session->get('adminId');
                                                 name: "assetId",
                                                 render: function(data, type, row, meta) {
                                                     return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                                    // if (row.activity == 'Update asset' || row.activity == 'Update Asset') {
+                                                    //     return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                                    // }else{
+                                                    //     return '<button onclick="modalChangeParam('+meta.row+')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Hehe</button>'
+                                                    // }
                                                 }
                                             }
                                         ],
@@ -3914,6 +3987,7 @@ $sess = $session->get('adminId');
                     cb,
                     start,
                     end,
+                    duplicate
                 }
             },
             computed: {
@@ -3978,6 +4052,21 @@ $sess = $session->get('adminId');
 
         function modalChange(i) {
             v.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
+            v.myModal.show();
+
+            v.dataChangeLog = v.changelog[i];
+
+            let before = _.omit((JSON.parse(v.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
+            let after = _.omit((JSON.parse(v.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
+
+            let data = [];
+            data['data_before'] = before;
+            data['data_after'] = after;
+            v.dataAB = data
+        }
+
+        function modalChangeParam(i) {
+            v.myModal = new coreui.Modal(document.getElementById('modalChangeParam'), {});
             v.myModal.show();
 
             v.dataChangeLog = v.changelog[i];

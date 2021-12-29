@@ -22,6 +22,7 @@ use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
 use DateTime;
 use Exception;
+use Faker\Provider\Uuid;
 
 class Asset extends BaseController
 {
@@ -108,9 +109,10 @@ class Asset extends BaseController
 		$activity = "Update asset";
 		$adminId = $this->session->get('adminId');
 		$activity = 'Update asset';
+		$activity2 = 'Update parameter';
 
 		try {
-			$data = $influxModel->getLogAsset($activity, $adminId, $assetId, $datestart, $dateend);
+			$data = $influxModel->getLogAsset($activity, $activity2, $adminId, $assetId, $datestart, $dateend);
 			return $this->response->setJSON(array(
 				'status' => 200,
 				'message' => 'Success get data',
@@ -181,9 +183,16 @@ class Asset extends BaseController
 		$assetTaggingModel = new AssetTaggingModel();
 		$parameterModel = new ParameterModel();
 
+		$adminId = $this->session->get('adminId');
+
+		
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
-
+		
+		$checkAssetNumber = $assetModel->getAll(['userId' => $adminId, 'assetNumber' => $post['assetNumber']]);
+		if (count($checkAssetNumber)) {
+			$post['assetNumber'] = $post['assetNumber'] . '_' . $this->randomString();
+		}
 		$dirPath = 'upload/Asset';
 		$fileAsset = $this->request->getFile('photo');
 		$namePhoto = "";
@@ -253,6 +262,7 @@ class Asset extends BaseController
 							'description'	=> json_decode($post['tag'][$i])->addTagDesc,
 						);
 						$tagModel->insert($dataAddTag);
+						sendLog("Add tag", $assetId, json_encode($dataAddTag));
 					}
 				}
 			}
@@ -269,6 +279,7 @@ class Asset extends BaseController
 							'description'		=> json_decode($post['location'][$i])->addLocationDesc,
 						);
 						$tagLocationModel->insert($dataAddLocation);
+						sendLog("Add tag", $assetId, json_encode($dataAddLocation));
 					}
 				}
 			}
@@ -354,6 +365,7 @@ class Asset extends BaseController
 						$dataParam = array(
 							'parameterId'	=> json_decode($post['parameter'][$i])->parameterId,
 							'assetId'		=> $assetId,
+							'userId'		=> $adminId,
 							'sortId'		=> $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
 							'photo1'		=> base_url() . '/' . $dirPhoto . '/' . $name1,
@@ -374,6 +386,7 @@ class Asset extends BaseController
 						$dataParam = array(
 							'parameterId'	=> json_decode($post['parameter'][$i])->parameterId,
 							'assetId'		=> $assetId,
+							'userId'		=> $adminId,
 							'sortId'		=> $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
 							'photo1'		=> '',
@@ -513,8 +526,17 @@ class Asset extends BaseController
 		$tag = $post['tag'];
 		$adminId = $this->session->get('adminId');
 
+		$checkAssetNumber = $assetModel->getAll(['userId' => $adminId, 'assetNumber' => $post['assetNumber']]);
 		$beforeAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
-		$beforeParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+		$beforeParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId'], 'deletedAt' => null]);
+
+		if (count($checkAssetNumber)) {
+			foreach ($checkAssetNumber as $key => $value) {
+				if (!($value['assetId'] == $post['assetId'])) {
+					$post['assetNumber'] = $post['assetNumber'] . '_' . $this->randomString();
+				}
+			}
+		}
 
 		try {
 			// new tags and tag location
@@ -529,6 +551,7 @@ class Asset extends BaseController
 						'description' => json_decode($newTag[$i])->addTagDesc
 					);
 					$tagModel->insert($dataNewTag);
+					sendLog("Add tag", $assetId, json_encode($dataNewTag));
 				}
 			}
 
@@ -545,6 +568,7 @@ class Asset extends BaseController
 						'description' => json_decode($newTagLocation[$i])->addLocationDesc,
 					);
 					$tagLocationModel->insert($dataNewTagLocation);
+					sendLog("Add tag location", $assetId, json_encode($dataNewTag));
 				}
 			}
 
@@ -571,7 +595,6 @@ class Asset extends BaseController
 				'assetId'		=> $post['assetId'],
 				'assetName'		=> $post['assetName'],
 				'assetNumber'	=> $post['assetNumber'],
-				// 'photo'			=> $post['assetNumber'],
 				'description'	=> $post['assetDesc'],
 				'schManual'		=> $post['schManual'],
 				'schType'		=> $post['schType'],
@@ -848,12 +871,17 @@ class Asset extends BaseController
 			}
 
 			$afterAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
-			$afterParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId']]);
+			$afterParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $post['assetId'], 'deletedAt' => null]);
 
 			$body = [
 				'data_before' => $beforeAsset[0],
 				'data_after' => $afterAsset[0]
 			];
+			$bodyParameter = [
+				'data_before' => $beforeParameter,
+				'data_after' => $afterParameter
+			];
+
 			$cekDescBefore = json_decode($body['data_before']['description']);
 			if ($cekDescBefore != null) {
 				$body['data_before']['description'] = json_decode($body['data_before']['description']);
@@ -862,15 +890,12 @@ class Asset extends BaseController
 			if ($cekDescAfter != null) {
 				$body['data_after']['description'] = json_decode($body['data_after']['description']);
 			}
-			$bodyP = [
-				'data_before' => $beforeParameter[0],
-				'data_after' => $afterParameter[0]
-			];
 
 			$activity1	= 'Update asset';
 			$activity2	= 'Update parameter';
 
 			sendLog($activity1, $assetId, json_encode($body));
+			sendLog($activity2, $assetId, json_encode($bodyParameter));
 			return $this->response->setJSON(array(
 				'status' => 200,
 				'message' => 'Success update data',
@@ -933,8 +958,8 @@ class Asset extends BaseController
 							'no' => $numrow + 1,
 							'parameterName' => $row->getCellAtIndex(1)->getValue(),
 							'description' => $row->getCellAtIndex(2)->getValue(),
-							'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? $row->getCellAtIndex(4)->getValue() : $row->getCellAtIndex(3)->getValue(),
-							'min' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() == true ? $row->getCellAtIndex(3)->getValue() : $row->getCellAtIndex(4)->getValue(),
+							'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? ($row->getCellAtIndex(4)->getValue() == "" ? null : $row->getCellAtIndex(4)->getValue()) : ($row->getCellAtIndex(3)->getValue() == "" ? null : $row->getCellAtIndex(3)->getValue()),
+							'min' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() == true ? ($row->getCellAtIndex(3)->getValue() == "" ? null : $row->getCellAtIndex(3)->getValue()) : ($row->getCellAtIndex(4)->getValue() == "" ? null : $row->getCellAtIndex(4)->getValue()),
 							'normal' => $row->getCellAtIndex(5)->getValue(),
 							'abnormal' => $row->getCellAtIndex(6)->getValue(),
 							'option' => $row->getCellAtIndex(8)->getValue(),
@@ -1370,6 +1395,99 @@ class Asset extends BaseController
 		$writer->close();
 	}
 
+	public function duplicate()
+	{
+		$assetModel = new AssetModel();
+		$assetTaggingModel = new AssetTaggingModel();
+		$assetTagModel = new AssetTagModel();
+		$assetTagLocationModel = new AssetTagLocationModel();
+		$parameterModel = new ParameterModel();
+
+		$assetId = $this->request->getPost('assetId');
+		$adminId = $this->session->get('adminId');
+
+		$newAssetId = uuidv4();
+
+		$dataAsset				= $assetModel->getAll(['assetId' => $assetId]);
+		$dataTagging 			= $assetTaggingModel->getAll(['assetId' => $assetId]);
+		$dataParameter			= $parameterModel->getAll(['assetId' => $assetId, 'deletedAt' => null]);
+		$dataAssetTag			= $assetTagModel->getAll(['assetId' => $assetId]);
+		$dataAssetTagLocation	= $assetTagLocationModel->getAll(['assetId' => $assetId]);
+
+		if (count($dataParameter)) {
+			for ($i=0; $i < count($dataParameter); $i++) { 
+				$dataParameter[$i]['parameterId'] = uuidv4();
+				$dataParameter[$i]['assetId'] = $newAssetId;
+				$dataParameter[$i]['photo1'] = null;
+				$dataParameter[$i]['photo2'] = null;
+				$dataParameter[$i]['photo3'] = null;
+			}
+		}
+		if (count($dataTagging)) {
+			for ($a=0; $a < count($dataTagging); $a++) { 
+				$dataTagging[$a]['assetTaggingId'] = uuidv4();
+				$dataTagging[$a]['assetId'] = $newAssetId;
+				$dataTagging[$a]['userId'] = $adminId;
+			}
+		}
+		if (count($dataAssetTag)) {
+			for ($b=0; $b < count($dataAssetTag); $b++) { 
+				$dataAssetTag[$b]['assetTagId'] = uuidv4();
+				$dataAssetTag[$b]['assetId'] = $newAssetId;
+			}
+		}
+		if (count($dataAssetTagLocation)) {
+			for ($b=0; $b < count($dataAssetTagLocation); $b++) { 
+				$dataAssetTagLocation[$b]['assetTagLocationId'] = uuidv4();
+				$dataAssetTagLocation[$b]['assetId'] = $newAssetId;
+			}
+		}
+
+		$asset = [
+			'assetId'		=> $newAssetId,
+			'userId'		=> $adminId,
+			'assetStatusId'	=> $dataAsset[0]['assetStatusId'],
+			'assetName'		=> $dataAsset[0]['assetName'] . ' Copy',
+			'photo'			=> null,
+			'description'	=> $dataAsset[0]['description'],
+			'schManual'		=> $dataAsset[0]['schManual'],
+			'schType'		=> $dataAsset[0]['schType'],
+			'schFrequency'	=> $dataAsset[0]['schFrequency'],
+			'schWeeks'		=> $dataAsset[0]['schWeeks'],
+			'schWeekDays'	=> $dataAsset[0]['schWeekDays'],
+			'schDays'		=> $dataAsset[0]['schDays']
+		];
+		if (strpos($dataAsset[0]['assetNumber'], '_') !== false) {
+			$asset['assetNumber'] = explode("_", $dataAsset[0]['assetNumber'])[0] . '_' . $this->randomString();
+		}else{
+			$asset['assetNumber'] = explode("_", $dataAsset[0]['assetNumber'])[0] . '_' . $this->randomString();
+		}
+
+		try {
+
+			$assetModel->insert($asset);
+			$parameterModel->insertBatch($dataParameter);
+			$assetTaggingModel->insertBatch($dataTagging);
+			$assetTagModel->insertBatch($dataAssetTag);
+			$assetTagLocationModel->insertBatch($dataAssetTagLocation);
+
+			$dt = $assetModel->getAll(['userId' => $adminId, 'assetId' => $newAssetId]);
+
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message'=> 'Success duplicate data',
+				'data' => $dt
+			));
+		} catch (Exception $e) {
+			return $this->response->setJSON(array(
+				'status' => $e->getCode(),
+				'message'=> $e->getMessage(),
+				'data' => []
+			));
+		}
+
+	}
+
 	private function isJson(string $value)
 	{
 		try {
@@ -1379,5 +1497,17 @@ class Asset extends BaseController
 		}
 
 		return true;
+	}
+
+	private function randomString() {
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$randomString = '';
+		$n = 5;
+		for ($i = 0; $i < $n; $i++) {
+			$index = rand(0, strlen($characters) - 1);
+			$randomString .= $characters[$index];
+		}
+	  
+		return $randomString;
 	}
 }
