@@ -23,6 +23,7 @@ use Box\Spout\Common\Entity\Style\Color;
 use DateTime;
 use Exception;
 use Faker\Provider\Uuid;
+use PHPUnit\Framework\Constraint\IsJson;
 
 class Asset extends BaseController
 {
@@ -920,15 +921,86 @@ class Asset extends BaseController
 			], 403);
 		}
 
-		$model = new AssetModel();
+		$assetModel = new AssetModel();
+		$parameterModel = new ParameterModel();
+		$assetTagModel = new AssetTagModel();
+		$assetTagLocationModel = new AssetTagLocationModel();
+		$assetTaggingModel = new AssetTaggingModel();
+
+		$adminId = $this->session->get('adminId');
 		$json  = $this->request->getJSON();
-		if (!empty($json->assetId)) {
-			$model->delete($json->assetId);
-			echo json_encode(array('status' => 'success', 'message' => 'success delete data', 'data' => $json));
-		} else {
-			echo json_encode(array('status' => 'error', 'message' => 'Bad Request!', 'data' => $json));
+		$assetId = $json->assetId;
+
+		$dataAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $assetId]);
+		$dataParameter = $parameterModel->getAll(['userId' => $adminId, 'assetId' => $assetId, 'deletedAt' => null]);
+		$dataAssetTag = $assetTagModel->getAll(['assetId' => $assetId]);
+		$dataAssetTagLocation = $assetTagLocationModel->getAll(['assetId' => $assetId]);
+		$dataAssetTagging = $assetTaggingModel->getAll(['assetId' => $assetId]);
+
+		if (empty($dataAsset)) {
+			return $this->response->setJSON(array(
+				'status' => 404,
+				'message'=> 'Data not found',
+				'data' => []
+			));
 		}
-		die();
+
+		try {
+
+			if (!empty($dataParameter)) {
+				foreach ($dataParameter as $key => $value) {
+					$parameterModel->delete(['parameterId' => $value['parameterId']]);
+					if ($value['photo1'] != "" && $value['photo1'] != null && $value['photo1'] != "null" && $value['photo2'] != "" && $value['photo2'] != null && $value['photo2'] != "null" && $value['photo3'] != "" && $value['photo3'] != null && $value['photo3'] != "null") {
+						$path1 = str_replace(base_url() . '/', "", $value['photo1']);
+						$path2 = str_replace(base_url() . '/', "", $value['photo2']);
+						$path3 = str_replace(base_url() . '/', "", $value['photo3']);
+						unlink($path1);
+						unlink($path2);
+						unlink($path3);
+					}
+				}
+			}
+
+			if (!empty($dataAssetTag)) {
+				foreach ($dataAssetTag as $key => $value) {
+					$assetTagModel->delete(['assetTagId' => $value['assetTagId']]);
+				}
+			}
+
+			if (!empty($dataAssetTagLocation)) {
+				foreach ($dataAssetTagLocation as $key => $value) {
+					$assetTagLocationModel->delete(['assetTagLocationId' => $value['assetTagLocationId']]);
+				}
+			}
+
+			if (!empty($dataAssetTagging)) {
+				foreach ($dataAssetTagging as $key => $value) {
+					$assetTaggingModel->delete(['assetTaggingId' => $value['assetTaggingId']]);
+				}
+			}
+
+			$assetModel->delete(['assetId' => $assetId]);
+
+			if ($this->isJson($dataAsset[0]['description'])) {
+				$dataAsset[0]['description'] = json_decode($dataAsset[0]['description']);
+			}
+			if ($dataAsset[0]['photo'] != null && $dataAsset[0]['photo'] != "" && $dataAsset[0]['photo'] != 'null') {
+				$path = str_replace(base_url() . '/', "", $dataAsset[0]['photo']);
+				unlink($path);
+			}
+			sendLog('Delete asset', $assetId, json_encode($dataAsset));
+			return $this->response->setJSON(array(
+				'status' => 200,
+				'message'=> 'Success delete data',
+				'data' => []
+			));
+		} catch (Exception $e) {
+			return $this->response->setJSON(array(
+				'status' => $e->getCode(),
+				'message'=> $e->getMessage(),
+				'data' => []
+			));
+		}
 	}
 
 	public function downloadSampleParameter()
@@ -1472,7 +1544,10 @@ class Asset extends BaseController
 			$assetTagLocationModel->insertBatch($dataAssetTagLocation);
 
 			$dt = $assetModel->getAll(['userId' => $adminId, 'assetId' => $newAssetId]);
-
+			if ($this->isJson($dt[0]['description'])) {
+				$dt[0]['description'] = json_decode($dt[0]['description']);
+			}
+			sendLog('Duplicate asset', $newAssetId, json_encode($dt));
 			return $this->response->setJSON(array(
 				'status' => 200,
 				'message'=> 'Success duplicate data',

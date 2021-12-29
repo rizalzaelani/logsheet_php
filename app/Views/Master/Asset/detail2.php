@@ -32,6 +32,49 @@
     .old {
         background-color: #FFE6DF !important;
     }
+    .btn-group-fab {
+    position: fixed;
+    width: 50px;
+    height: auto;
+    right: 20px; bottom: 20px;
+    }
+    .btn-group-fab div {
+    position: relative; width: 100%;
+    height: auto;
+    }
+    .btn-group-fab .btn {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50%;
+    display: block;
+    margin-bottom: 4px;
+    width: 40px; height: 40px;
+    margin: 4px auto;
+    }
+    .btn-group-fab .btn-main {
+    width: 50px; height: 50px;
+    right: 50%; margin-right: -25px;
+    z-index: 9;
+    }
+    .btn-group-fab .btn-sub {
+    bottom: 0; z-index: 8;
+    right: 50%;
+    margin-right: -20px;
+    -webkit-transition: all 2s;
+    transition: all 0.5s;
+    }
+    .btn-group-fab.active .btn-sub:nth-child(2) {
+    bottom: 60px;
+    }
+    .btn-group-fab.active .btn-sub:nth-child(3) {
+    bottom: 110px;
+    }
+    .btn-group-fab.active .btn-sub:nth-child(4) {
+    bottom: 160px;
+    }
+    .btn-group-fab .btn-sub:nth-child(5) {
+    bottom: 210px;
+    }
 </style>
 <?= $this->endSection(); ?>
 
@@ -127,9 +170,10 @@ $sess = $session->get('adminId');
                                         </tr>
                                     </template>
                                 </table>
-                                <div class="d-flex justify-content-start align-items-center">
+                                <!-- <div class="d-flex justify-content-between align-items-center">
                                     <button @click="duplicate(assetData.assetId)" class="btn btn-md btn-outline-primary"><i class="fa fa-copy"></i> Duplicate Asset</button>
-                                </div>
+                                    <button @click="deleteAsset(assetData.assetId)" class="btn btn-md btn-outline-danger"><i class="fa fa-trash"></i> Delete</button>
+                                </div> -->
                             </div>
                             <div class="col-md-6 d-flex justify-content-center align-items-center imgMap">
                                 <img src="<?= base_url() ?>/img/img-alt.png" alt="Image" :class="assetData.photo == null || assetData.photo == '' ? 'mt-1 m-0' :'d-none'" style="width: 200px !important; height: 200px !important;">
@@ -1543,6 +1587,15 @@ $sess = $session->get('adminId');
                 </table>
             </div>
         </div>
+        <div :class="checkTabDetail == true ? '' : 'd-none'">
+            <div class="btn-group-fab" role="group" aria-label="FAB Menu">
+                <div>
+                    <button type="button" class="btn btn-main btn-success has-tooltip" data-placement="left" title="Menu"> <i class="fa fa-bars"></i> </button>
+                    <button @click="deleteAsset()" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Delete Asset"> <i class="fa fa-trash"></i> </button>
+                    <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Duplicate Asset"> <i class="fa fa-copy"></i> </button>
+                </div>
+            </div>
+        </div>
         <div :class="((checkTabSetting == true) || (checkTabParameter == true && parameter.length > 0) ? 'btn-fab' : 'd-none')" aria-label="fab">
             <div>
                 <button type="button" id="btnSaveSetting" @click="checkTabSetting == true ? btnSaveSetting() : btnSaveSorting()" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="top" title="Save Changes">
@@ -1666,7 +1719,7 @@ $sess = $session->get('adminId');
                 var descJson = reactive(assetData.descriptionJson);
 
                 function momentchangelog(date) {
-                    return moment(date).format("DD MMM YYYY H:mm:ss")
+                    return moment(date).format("DD MMM YYYY hh:mm:ss")
                 }
 
                 function modalAddTag() {
@@ -3450,7 +3503,7 @@ $sess = $session->get('adminId');
                     })
                     swalWithBootstrapButtons.fire({
                         title: 'Area you sure?',
-                        text: 'You will delete this data!.',
+                        text: "You can't restore this data!",
                         icon: 'warning',
                         showCancelButton: true,
                         cancelButtonText: '<i class="fa fa-times"></i> Cancel',
@@ -3460,37 +3513,27 @@ $sess = $session->get('adminId');
                             axios.post("<?= base_url('Asset/delete'); ?>", {
                                 assetId: this.assetData.assetId
                             }).then(res => {
-                                if (res.data.status == 'success') {
-                                    swalWithBootstrapButtons.fire({
-                                        title: 'Success!',
-                                        text: 'You have successfully deleted this data.',
+                                let rsp = res.data;
+                                if (rsp.status == 200) {
+                                    swal.fire({
+                                        title: rsp.message,
                                         icon: 'success',
-                                        allowOutsideClick: false
                                     }).then(okay => {
                                         if (okay) {
-                                            swal.fire({
-                                                title: 'Please Wait!',
-                                                text: 'Redirect..',
-                                                onOpen: function() {
-                                                    swal.showLoading()
-                                                }
-                                            })
+                                            // swal.fire({
+                                            //     title: 'Please Wait!',
+                                            //     text: 'Redirect..',
+                                            //     onOpen: function() {
+                                            //         swal.showLoading()
+                                            //     }
+                                            // })
                                             window.location.href = "<?= base_url('Asset'); ?>"
                                         }
                                     })
-                                } else if (res.code == 500) {
-                                    const swalWithBootstrapButtons = swal.mixin({
-                                        customClass: {
-                                            confirmButton: 'btn btn-success mr-1',
-                                            cancelButton: 'btn btn-danger'
-                                        },
-                                        buttonsStyling: false
-                                    })
-                                    swalWithBootstrapButtons.fire({
-                                        title: 'Failed!',
-                                        text: 'Bad Request!',
+                                } else{
+                                    swal.fire({
+                                        title: rsp.message,
                                         icon: 'error',
-                                        allowOutsideClick: false
                                     })
                                 }
                             })
@@ -4795,5 +4838,13 @@ $sess = $session->get('adminId');
             v.assetData.assetStatusId = id;
             v.assetData.assetStatusName = text;
         })
+
+        // fab button
+        $(function() {
+            $('.btn-group-fab').on('click', '.btn', function() {
+                $('.btn-group-fab').toggleClass('active');
+            });
+            $('has-tooltip').tooltip();
+        });
     </script>
     <?= $this->endSection(); ?>;

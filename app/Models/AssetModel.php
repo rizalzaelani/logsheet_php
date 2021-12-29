@@ -14,7 +14,7 @@ class AssetModel extends Model
     protected $createdField     = 'createdAt';
     protected $updatedField     = 'updatedAt';
     protected $deletedField     = 'deletedAt';
-    protected $useSoftDeletes   = true;
+    // protected $useSoftDeletes   = true;
 
     public function getById($assetId)
     {

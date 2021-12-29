@@ -14,8 +14,6 @@ class LogActivity extends BaseController
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
-		$logModel = new LogModel();
-
 		$data = array(
 			'title' => 'Log Activity',
 			'subtitle' => 'Log Activity Users'
@@ -32,47 +30,43 @@ class LogActivity extends BaseController
 			],
 		];
 
-		$userId = $this->session->get('adminId');
-		$logActivity = $logModel->getAll($userId);
-		$data['logActivity'] = json_encode($logActivity);
-
 		return $this->template->render('LogActivity/index', $data);
 	}
 
 	public function getLogActivity()
 	{
 		// if(!checkRoleList("ROLE.VIEW")){
-        // 	return $this->response->setJSON([
-        // 		'status' => 403,
-        //         'message' => "Sorry, You don't have access",
-        // 		'data' => []
-        // 	], 403);
-        // }
+		// 	return $this->response->setJSON([
+		// 		'status' => 403,
+		//         'message' => "Sorry, You don't have access",
+		// 		'data' => []
+		// 	], 403);
+		// }
 
-        try {
+		try {
 			$userId = $this->session->get('adminId');
 			$logModel = new LogModel();
 			$logActivity = $logModel->getAll($userId);
 
-            if (empty($logActivity)) {
-                return $this->response->setJSON(array(
-                    'status' => 500,
-                    'message' => 'Bad Request!',
-                    'data' => $logActivity
-                ), 500);
-            } else {
-                return $this->response->setJSON([
-                    'status' => 200,
-                    'message' => "Success Get Log Activity",
-                    'data' => $logActivity ?? []
-                ], 200);
-            }
-        } catch (Exception $e) {
-            return $this->response->setJSON([
-                'status' => 500,
-                'message' => $e->getMessage(),
-                'data' => $e
-            ], 500);
-        }
+			if (empty($logActivity)) {
+				return $this->response->setJSON(array(
+					'status' => 500,
+					'message' => 'Bad Request!',
+					'data' => $logActivity
+				), 500);
+			} else {
+				return $this->response->setJSON([
+					'status' => 200,
+					'message' => "Success Get Log Activity",
+					'data' => $logActivity ?? []
+				], 200);
+			}
+		} catch (Exception $e) {
+			return $this->response->setJSON([
+				'status' => 500,
+				'message' => $e->getMessage(),
+				'data' => $e
+			], 500);
+		}
 	}
 }
