@@ -4127,14 +4127,14 @@ $sess = $session->get('adminId');
             $('#fullImg').remove();
             this.myModal = new coreui.Modal(document.getElementById('modalPreviewImg'), {});
             this.myModal.show();
-            $('#fullPreview').append("<img id='fullImg' src='" + v.param.photo1 + "' alt='img'>");
+            $('#fullPreview').append("<img id='fullImg' src='" + v.param.photo1 + "' alt='img' style='height: 500px'>");
         }
 
         function modalImgAsset() {
             $('#fullImg').remove();
             this.myModal = new coreui.Modal(document.getElementById('modalPreviewImg'), {});
             this.myModal.show();
-            $('#fullPreview').append("<img id='fullImg' src='" + v.assetData.photo + "' alt='img'>");
+            $('#fullPreview').append("<img id='fullImg' src='" + v.assetData.photo + "' alt='img' style='height: 500px'>");
         }
 
 

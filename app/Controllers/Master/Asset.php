@@ -390,9 +390,9 @@ class Asset extends BaseController
 							'userId'		=> $adminId,
 							'sortId'		=> $i + 1,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo1'		=> '',
-							'photo2'		=> '',
-							'photo3'		=> '',
+							'photo1'		=> null,
+							'photo2'		=> null,
+							'photo3'		=> null,
 							'description'	=> json_decode($post['parameter'][$i])->description,
 							'uom'			=> json_decode($post['parameter'][$i])->uom,
 							'min'			=> json_decode($post['parameter'][$i])->min,
@@ -704,6 +704,17 @@ class Asset extends BaseController
 			if ($post['deletedParameter'] != "") {
 				$deletedParameter = explode(",", $post['deletedParameter']);
 				foreach ($deletedParameter as $val) {
+					$dataParameterDel = $parameterModel->getAll(['assetId' => $assetId, 'parameterId' => $val, 'deletedAt' => null]);
+					foreach ($dataParameterDel as $key => $value) {
+						if ($value['photo1'] != "" && $value['photo1'] != null && $value['photo1'] != "null" && $value['photo2'] != "" && $value['photo2'] != null && $value['photo2'] != "null" && $value['photo3'] != "" && $value['photo3'] != null && $value['photo3'] != "null") {
+							$path1 = str_replace(base_url() . '/', "", $value['photo1']);
+							$path2 = str_replace(base_url() . '/', "", $value['photo2']);
+							$path3 = str_replace(base_url() . '/', "", $value['photo3']);
+							unlink($path1);
+							unlink($path2);
+							unlink($path3);
+						}
+					}
 					$parameterModel->where(['assetId' => $assetId, 'parameterId' => $val])->delete();
 				}
 			}
@@ -772,9 +783,9 @@ class Asset extends BaseController
 							'parameterId'		=> $dataEdited->parameterId,
 							'sortId'			=> $dataEdited->sortId,
 							'parameterName'		=> $dataEdited->parameterName,
-							'photo1'			=> $dataEdited->deletePhoto == true ? '' : $dataEdited->photo1,
-							'photo2'			=> $dataEdited->deletePhoto == true ? '' : $dataEdited->photo2,
-							'photo3'			=> $dataEdited->deletePhoto == true ? '' : $dataEdited->photo3,
+							'photo1'			=> $dataEdited->deletePhoto == true ? null : $dataEdited->photo1,
+							'photo2'			=> $dataEdited->deletePhoto == true ? null : $dataEdited->photo2,
+							'photo3'			=> $dataEdited->deletePhoto == true ? null : $dataEdited->photo3,
 							'description'		=> $dataEdited->description,
 							'uom'				=> $dataEdited->uom,
 							'min'				=> $dataEdited->min,
@@ -853,9 +864,9 @@ class Asset extends BaseController
 							'assetId'		=> $assetId,
 							'sortId'		=> (json_decode($post['parameter'][$i])->sortId) == "null" ? null : json_decode($post['parameter'][$i])->sortId,
 							'parameterName' => json_decode($post['parameter'][$i])->parameterName,
-							'photo1'		=> '',
-							'photo2'		=> '',
-							'photo3'		=> '',
+							'photo1'		=> null,
+							'photo2'		=> null,
+							'photo3'		=> null,
 							'description'	=> json_decode($post['parameter'][$i])->description,
 							'uom'			=> json_decode($post['parameter'][$i])->uom,
 							'min'			=> json_decode($post['parameter'][$i])->min,
