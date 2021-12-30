@@ -12,6 +12,12 @@
         /* vertical-align: middle !important; */
         text-align: left;
     }
+    /* table #tableChangeLogParam thead tr th{
+        vertical-align: middle !important;
+    }
+    table #tableChangeLogParam tbody tr td{
+        vertical-align: middle !important;
+    } */
 
     .modal-fs {
         width: 100%;
@@ -170,10 +176,6 @@ $sess = $session->get('adminId');
                                         </tr>
                                     </template>
                                 </table>
-                                <!-- <div class="d-flex justify-content-between align-items-center">
-                                    <button @click="duplicate(assetData.assetId)" class="btn btn-md btn-outline-primary"><i class="fa fa-copy"></i> Duplicate Asset</button>
-                                    <button @click="deleteAsset(assetData.assetId)" class="btn btn-md btn-outline-danger"><i class="fa fa-trash"></i> Delete</button>
-                                </div> -->
                             </div>
                             <div class="col-md-6 d-flex justify-content-center align-items-center imgMap">
                                 <img src="<?= base_url() ?>/img/img-alt.png" alt="Image" :class="assetData.photo == null || assetData.photo == '' ? 'mt-1 m-0' :'d-none'" style="width: 200px !important; height: 200px !important;">
@@ -183,8 +185,9 @@ $sess = $session->get('adminId');
                     </div>
                     <!-- tab parameter -->
                     <div class=" tab-pane" id="parameter" role="tabpanel">
-                        <div class="table-responsive mt-2">
-                            <table class="table dt-responsive table-hover" id="tableParam" style="width: 100%">
+                        <h5 class="pt-3 pb-2 m-0"><b>Sorting Parameter</b></h5>
+                        <div class="table-responsive w-100 mt-2">
+                            <table class="table dt-responsive table-hover w-100" id="tableParam">
                                 <thead>
                                     <tr class="bg-primary text-center">
                                         <th>Parameter</th>
@@ -837,8 +840,8 @@ $sess = $session->get('adminId');
                 </div>
 
                 <!-- modal preview parameter log -->
-                <!-- <div class="modal fade pr-0" id="modalChangeParam" tabindex="-1" role="dialog" aria-labelledby="modalPreviewParam" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                <div class="modal fade pr-0" id="modalChangeParam" tabindex="-1" role="dialog" aria-labelledby="modalPreviewParam" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="modalChangeParamTitle">Detail Change Log</h5>
@@ -851,51 +854,279 @@ $sess = $session->get('adminId');
                                     <h6>Changes {{ momentchangelog(dataChangeLog.time) }} by <b class="text-info">{{ dataChangeLog.username }}</b></h6>
                                 </div>
                                 <div class="mt-4">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                            <template v-if="changelog != ''">
-                                                <template v-if="Object.keys(dataAB.data_before).length > Object.keys(dataAB.data_after).length">
-                                                    <template v-for="(val, i) in dataAB.data_before">
-                                                        <a class="nav-link" :id="val.parameterId + '-tab'" data-toggle="pill" :href="'#' + val.parameterId" role="tab" :aria-controls="val.parameterId" aria-selected="true">{{ val.parameterName }}</a>
+                                        <div class="table-responsive w-100">
+                                            <table class="table display nowrap" id="tableChangeLogParam">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Parameter</th>
+                                                        <th>Description</th>
+                                                        <th>Input Type</th>
+                                                        <th>Normal</th>
+                                                        <th>Abnormal</th>
+                                                        <th>Option</th>
+                                                        <th>Max</th>
+                                                        <th>Min</th>
+                                                        <th>Uom</th>
+                                                        <th>Show On</th>
+                                                        <th>Photo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template v-for="(val, i) in parameterGroupChangeLog">
+                                                        <template v-if="val.length == 1">
+                                                            <template v-for="(value, b) in val">
+                                                                <tr>
+                                                                    <td>{{value.parameterName}}</td>
+                                                                    <td>{{value.description}}</td>
+                                                                    <td>{{value.inputType}}</td>
+                                                                    <td>{{value.normal}}</td>
+                                                                    <td>{{value.abnormal}}</td>
+                                                                    <td>{{value.option}}</td>
+                                                                    <td>{{value.max}}</td>
+                                                                    <td>{{value.min}}</td>
+                                                                    <td>{{value.uom}}</td>
+                                                                    <td>{{value.showOn}}</td>
+                                                                </tr>
+                                                            </template>
+                                                        </template>
+                                                        <template v-else>
+                                                                <tr>
+                                                                    <template v-if="val[0].parameterName != val[1].parameterName">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].parameterName}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].parameterName}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].parameterName}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].parameterName}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].description != val[1].description">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].description}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].description}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].description}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].description}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].inputType != val[1].inputType">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].inputType}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].inputType}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].inputType}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].inputType}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].normal != val[1].normal">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].normal}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].normal}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].normal}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].normal}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].abnormal != val[1].abnormal">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].abnormal}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].abnormal}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].abnormal}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].abnormal}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].option != val[1].option">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].option}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].option}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].option}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].option}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].max != val[1].max">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].max}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].max}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].max}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].max}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].min != val[1].min">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].min}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].min}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].min}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].min}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].uom != val[1].uom">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].uom}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].uom}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].uom}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].uom}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].showOn != val[1].showOn">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].showOn}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].showOn}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                {{val[0].showOn}}
+                                                                            </div>
+                                                                            <div>
+                                                                                {{val[1].showOn}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-if="val[0].photo1 != val[1].photo1">
+                                                                        <td>
+                                                                            <div class="old p-1">
+                                                                                {{val[0].photo1}}
+                                                                            </div>
+                                                                            <div class="new p-1">
+                                                                                {{val[1].photo1}}
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            <div>
+                                                                                <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
+                                                                                <a :href="val[0].photo1" target="_blank">Open new tab</a>
+                                                                            </div>
+                                                                            <div>
+                                                                                <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
+                                                                                <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                            </div>
+                                                                        </td>
+                                                                    </template>
+                                                                </tr>
+                                                        </template>
                                                     </template>
-                                                </template>
-                                                <template v-else>
-                                                    <template v-for="(val, i) in dataAB.data_after">
-                                                        <a class="nav-link" :id="val.parameterId + '-tab'" data-toggle="pill" :href="('#' + val.parameterId)" role="tab" :aria-controls="val.parameterId" aria-selected="true">{{ val.parameterName }}</a>
-                                                    </template>
-                                                </template>
-                                            </template>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="tab-content" id="v-pills-tabContent">
-                                            <template v-if="changelog != ''">
-                                                <template v-if="Object.keys(dataAB.data_before).length > Object.keys(dataAB.data_after).length">
-                                                    <template v-for="(val, i) in dataAB.data_before">
-                                                        <div class="tab-pane fade" :id="val.parameterId" role="tabpanel" :aria-labelledby="val.parameterId + '-tab'">{{val.parameterName}}</div>
-                                                    </template>
-                                                </template>
-                                                <template v-else>
-                                                    <template v-for="(val, i) in dataAB.data_after">
-                                                        <div class="tab-pane fade" :id="val.parameterId" role="tabpanel" :aria-labelledby="val.parameterId + '-tab'">{{val.parameterName}}</div>
-                                                    </template>
-                                                </template>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    </div>
                                 </div>
-
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
                             </div>
                         </div>
                     </div>
-                </div> -->
-
-
+                </div>
             </div>
         </div>
 
@@ -1626,6 +1857,8 @@ $sess = $session->get('adminId');
                 var changelog = ref("");
                 var dataChangeLog = ref("");
                 var dataAB = ref("");
+                var parameterChangeLog = reactive([]);
+                var parameterGroupChangeLog = reactive([]);
 
                 var checkTabDetail = ref(true);
                 var checkTabParameter = ref(false);
@@ -3118,12 +3351,6 @@ $sess = $session->get('adminId');
                         if (checkCoordinat.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid') && checkCoordinat.assetTaggingtype == 'coordinat') {
                             $('#valCoordinate').removeClass('is-invalid');
                         }
-                        // if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid') && this.assetTagging.assetTaggingtype == 'uhf') {
-                        //     $('#valUhf').removeClass('is-invalid');
-                        // }
-                        // if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
-                        //     $('#taggingType').removeClass('is-invalid');
-                        // }
 
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
@@ -3188,13 +3415,6 @@ $sess = $session->get('adminId');
                         if (checkCoordinat.assetTaggingValue == '' && checkCoordinat.assetTaggingtype == 'coordinat') {
                             $('#valCoordinate').addClass('is-invalid');
                         }
-                        // if (this.assetTagging.assetTaggingValue == '' && this.assetTagging.assetTaggingtype == 'uhf') {
-                        //     $('#valUhf').addClass('is-invalid');
-                        // }
-
-                        // if (this.assetTagging.assetTaggingtype == '' || this.assetTagging.assetTaggingtype == null) {
-                        //     $('#taggingType').addClass('is-invalid');
-                        // }
                         //end tagging
                         if ($('#tableParameter tbody tr').length < 1) {
                             $('#cardParameter').addClass('card-border');
@@ -3231,13 +3451,6 @@ $sess = $session->get('adminId');
                         if (checkCoordinat.assetTaggingValue != '' && $('#valCoordinate').hasClass('is-invalid')) {
                             $('#valCoordinate').removeClass('is-invalid');
                         }
-                        // if (this.assetTagging.assetTaggingValue != '' && $('#valUhf').hasClass('is-invalid')) {
-                        //     $('#valUhf').removeClass('is-invalid');
-                        // }
-
-                        // if (this.assetTagging.assetTaggingtype != '' || this.assetTagging.assetTaggingtype != null && $('#taggingType').hasClass('is-invalid')) {
-                        //     $('#taggingType').removeClass('is-invalid');
-                        // }
                         if ($('#tableParameter tbody tr').length >= 1) {
                             $('#cardParameter').removeClass('card-border');
                             $('#cardParameter').removeClass('is-invalid');
@@ -3518,13 +3731,6 @@ $sess = $session->get('adminId');
                                         icon: 'success',
                                     }).then(okay => {
                                         if (okay) {
-                                            // swal.fire({
-                                            //     title: 'Please Wait!',
-                                            //     text: 'Redirect..',
-                                            //     onOpen: function() {
-                                            //         swal.showLoading()
-                                            //     }
-                                            // })
                                             window.location.href = "<?= base_url('Asset'); ?>"
                                         }
                                     })
@@ -3592,7 +3798,6 @@ $sess = $session->get('adminId');
                 };
 
                 function insertParam() {
-                    // let lengthParam = v.listNewParam.length;
                     var uniqParam = _.uniqBy(v.listNewParam, 'no');
                     if (uniqParam.length) {
                         for (let b = 0; b < uniqParam.length; b++) {
@@ -3666,7 +3871,7 @@ $sess = $session->get('adminId');
                     })
                     swalWithBootstrapButtons.fire({
                         title: 'All data will be duplicated including images on assets and parameters. However, the asset name and asset number will be slightly changed from the original.',
-                        icon: 'warning',
+                        icon: 'info',
                         showCancelButton: true,
                         cancelButtonText: '<i class="fa fa-times"></i> Cancel',
                         confirmButtonText: '<i class="fa fa-copy"></i> Duplicate',
@@ -3760,6 +3965,48 @@ $sess = $session->get('adminId');
                     return true;
                 }
 
+                function DTChangeLog(changelog){
+                    $('#tableChangeLog').DataTable({
+                        data: changelog,
+                        columns: [{
+                                data: "time",
+                                name: "time",
+                                render: function(data, type, row, meta) {
+                                    return v.momentchangelog(data);
+                                }
+                            },
+                            {
+                                data: "ip",
+                                name: "ip"
+                            },
+                            {
+                                data: "username",
+                                name: "username"
+                            },
+                            {
+                                data: "activity",
+                                name: "activity",
+                            },
+                            {
+                                data: "assetId",
+                                name: "assetId",
+                                render: function(data, type, row, meta) {
+                                    if (row.activity == 'Update asset') {
+                                        return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                    }else{
+                                        return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                    }
+                                }
+                            }
+                        ],
+                        order: [0, 'desc'],
+                        columnDefs: [{
+                            targets: 4,
+                            width: "10%"
+                        }]
+                    })
+                }
+
                 const cb = (start, end) => {
                     $('#rangechangelog span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
                     $('#rangechangelog').on('apply.daterangepicker', function(ev, picker) {
@@ -3806,7 +4053,6 @@ $sess = $session->get('adminId');
                         allParameter.push(parameter)
                     }
                     if (allParameter.length) {
-                        // parameterGroupData.value = "yes";
                         parameterGroupData.value = _.groupBy(allParameter[0], function(val) {
                             return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
                         });
@@ -3904,51 +4150,10 @@ $sess = $session->get('adminId');
                     }).then((res) => {
                         let rsp = res.data;
                         if (rsp.status == 200) {
-                            if (rsp.data.length) {
-                                v.changelog = rsp.data;
-                                $(document).ready(function() {
-                                    v.tableChangeLog = $('#tableChangeLog').DataTable({
-                                        data: v.changelog,
-                                        columns: [{
-                                                data: "time",
-                                                name: "time",
-                                                render: function(data, type, row, meta) {
-                                                    return v.momentchangelog(data);
-                                                }
-                                            },
-                                            {
-                                                data: "ip",
-                                                name: "ip"
-                                            },
-                                            {
-                                                data: "username",
-                                                name: "username"
-                                            },
-                                            {
-                                                data: "activity",
-                                                name: "activity",
-                                            },
-                                            {
-                                                data: "assetId",
-                                                name: "assetId",
-                                                render: function(data, type, row, meta) {
-                                                    return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                                                    // if (row.activity == 'Update asset' || row.activity == 'Update Asset') {
-                                                    //     return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                                                    // }else{
-                                                    //     return '<button onclick="modalChangeParam('+meta.row+')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Hehe</button>'
-                                                    // }
-                                                }
-                                            }
-                                        ],
-                                        order: [0, 'desc'],
-                                        columnDefs: [{
-                                            targets: 4,
-                                            width: "10%"
-                                        }]
-                                    })
-                                })
-                            }
+                            v.changelog = rsp.data;
+                            $(document).ready(function() {
+                                v.tableChangeLog = v.DTChangeLog(v.changelog);
+                            })
                         }
                     })
                 });
@@ -3962,6 +4167,8 @@ $sess = $session->get('adminId');
                     dataChangeLog,
                     dataAB,
                     momentchangelog,
+                    parameterChangeLog,
+                    parameterGroupChangeLog,
 
                     checkTabDetail,
                     checkTabParameter,
@@ -4045,7 +4252,8 @@ $sess = $session->get('adminId');
                     cb,
                     start,
                     end,
-                    duplicate
+                    duplicate,
+                    DTChangeLog
                 }
             },
             computed: {
@@ -4112,7 +4320,7 @@ $sess = $session->get('adminId');
             v.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
             v.myModal.show();
 
-            v.dataChangeLog = v.changelog[i];
+            v.dataChangeLog = {...v.changelog[i]};
 
             let before = _.omit((JSON.parse(v.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
             let after = _.omit((JSON.parse(v.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
@@ -4127,15 +4335,26 @@ $sess = $session->get('adminId');
             v.myModal = new coreui.Modal(document.getElementById('modalChangeParam'), {});
             v.myModal.show();
 
-            v.dataChangeLog = v.changelog[i];
+            v.dataChangeLog = {...v.changelog[i]};
 
             let before = _.omit((JSON.parse(v.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
             let after = _.omit((JSON.parse(v.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
 
             let data = [];
-            data['data_before'] = before;
-            data['data_after'] = after;
-            v.dataAB = data
+            data['data_before'] = Object.values(before);
+            data['data_after'] = Object.values(after);
+            v.dataAB = data;
+            v.parameterChangeLog = [];
+            v.dataAB.data_before.forEach((val, i) => {
+                v.parameterChangeLog.push(val)
+            });
+            v.dataAB.data_after.forEach((val, i) => {
+                v.parameterChangeLog.push(val)
+            });
+
+            v.parameterGroupChangeLog = _.groupBy(v.parameterChangeLog, function(val) {
+                return val.parameterId;
+            });
         }
 
         function modalPreviewImg() {

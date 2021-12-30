@@ -109,8 +109,8 @@ class Login extends BaseController
                             $isMobile       = $userAgent->isMobile();
                             $arr            = [
                                 'browser' => $browser,
-                                'platform'=> $platform,
-                                'isMobile'=> $isMobile
+                                'platform' => $platform,
+                                'isMobile' => $isMobile
                             ];
 
                             sendLog($activity, null, json_encode($arr));
@@ -206,6 +206,17 @@ class Login extends BaseController
         $session->destroy();
         $this->response->deleteCookie('clientToken');
         delete_cookie("clientToken");
+
+        $userAgent  = $this->request->getUserAgent();
+        $browser    = $userAgent->getBrowser() . ' ' . $userAgent->getVersion();
+        $platform   = $userAgent->getPlatform();
+        $isMobile   = $userAgent->isMobile();
+        $data = [
+            'browser'   => $browser,
+            'platform'  => $platform,
+            'isMobile'  => $isMobile
+        ];
+        sendLog('Log out application', null, json_encode($data));
 
         return redirect()->to(base_url());
     }

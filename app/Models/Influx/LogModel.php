@@ -37,8 +37,8 @@ class LogModel
     public function getLogAsset($activity, $activity2, $userId, $assetId, $dateFrom, $dateTo)
     {
         $where = [
-            // "activity = '$activity' OR activity = '$activity2'",
-            "activity = '$activity'",
+            "activity = '$activity' OR activity = '$activity2'",
+            // "activity = '$activity'",
             "userId = '$userId'",
             "assetId = '$assetId'",
             "time >= '$dateFrom'",
