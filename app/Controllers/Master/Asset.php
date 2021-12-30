@@ -592,14 +592,14 @@ class Asset extends BaseController
 			if ($fileAsset != null) {
 				$dataAsset['photo'] = (base_url() . '/' . $dirPhoto . '/' . $namePhoto);
 				if ($post['photo'] != 'null') {
-					$path = str_replace(base_url() . '/', "", $post['photo']);
+					$path = str_replace(base_url(), "", $post['photo']);
 					unlink($path);
 				}
 			} else {
 				$check = $post['deleteAssetPhoto'] == 'true' ? true : false;
 				if ($check) {
 					$dataAsset['photo'] = null;
-					$path = str_replace(base_url() . '/', "", $post['photo']);
+					$path = str_replace(base_url(), "", $post['photo']);
 					unlink($path);
 				} else {
 					$dataAsset['photo'] = $post['photo'];

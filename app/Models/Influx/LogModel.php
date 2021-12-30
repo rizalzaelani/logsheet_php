@@ -53,6 +53,25 @@ class LogModel
             ->getPoints();
     }
 
+    public function getAll($dateFrom, $dateTo)
+    {
+        $where = [
+            // "activity = '$activity'",
+            // "assetId = '$assetId'",
+            // "time >= '$dateFrom'",
+            "time <= '$dateTo'"
+        ];
+
+        return $this->querybuilder()
+            ->from('logsheet_logactivity')
+            ->select('*')
+            ->where($where)
+            // ->limit(5)
+            ->orderBy('time', 'desc')
+            ->getResultSet()
+            ->getPoints();
+    }
+
     public function writeData($activity, $ip, $userId, $username, $assetId, $data)
     {
         $now = new DateTime();

@@ -5,6 +5,7 @@ namespace App\Controllers\Auth;
 use App\Controllers\BaseController;
 use App\Models\ApplicationSettingModel;
 use App\Models\Influx\LogActivityModel;
+use App\Models\Influx\LogModel;
 use App\Models\TagLocationModel;
 use App\Models\TagModel;
 use App\Models\USMAN\UserModel;
@@ -51,9 +52,11 @@ class Login extends BaseController
                 $url = env('captcha_url') . '?secret=' . urlencode($secret_key) .  '&response=' . urlencode($captcha);
                 $response_captcha = file_get_contents($url);
                 $response_captcha_key = json_decode($response_captcha, true);
+                $user_agent = $this->request->getUserAgent();
 
                 if ($response_captcha_key['success']) {
                     $userModel = new UserModel();
+                    $logModel = new LogModel();
                     $dataRes = $userModel->clientAuth($params);
 
                     $data = $dataRes['data'];
@@ -96,6 +99,13 @@ class Login extends BaseController
 
                             $session->set((array) $dataArr);
                             $this->response->setCookie('clientToken', "active", 3600);
+
+                            $activity       = 'Sign in to application';
+                            $ipAddress      = $this->request->getIPAddress();
+                            $username       = $this->session->get('name');
+                            $userId         = $this->session->get('adminId');
+
+                            $LogModel = $logModel->writeData($activity, $ipAddress, $userId, $username, null, $user_agent->getAgentString());
 
                             return $this->response->setJSON(array(
                                 'status' => 200,

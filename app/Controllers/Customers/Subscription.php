@@ -24,14 +24,13 @@ class Subscription extends BaseController
         $transactionModel   = new TransactionModel();
         $packageModel       = new PackageModel();
         $kledoModel         = new KledoModel();
+        $packagePriceModel  = new PackagePriceModel();
 
         $adminId = $this->session->get('adminId');
         $dataSubscription   = $subscriptionModel->getByUser($adminId);
-        $getSubscription = $subscriptionModel->getAllData(['userId' => $adminId, 'cancelDate' => null]);
+        $subscription = $subscriptionModel->getAllData(['userId' => $adminId, 'cancelDate' => null]);
         $getTransaction    = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
-        // d($transaction);
-        // die();
-        // $subscription = "";
+
         $transaction = "";
 
         $dataGet = [
@@ -97,17 +96,149 @@ class Subscription extends BaseController
             $packageId = $dataSubscription[0]['packageId'];
             $packageData = $packageModel->getById($packageId);
             $package = $packageData;
+        }else{
+            $dateTime   = new DateTime();
+            $clone      = new DateTime();
+
+            $packageName = 'free';
+            $getPackage = $packageModel->getByName(['name' => $packageName]);
+            $packageData = $getPackage[0];
+            $getPackagePrice = $packagePriceModel->getById(['packageId' => $packageData['packageId']]);
+            $packagePrice = $getPackagePrice[0];
+            $packagePriceId = $packagePrice['packagePriceId'];
+
+            $bodyCheckContact = [
+                'search' => $this->session->get('name')
+            ];
+            $checkContact = $kledoModel->getContact(http_build_query($bodyCheckContact));
+            $contact = "";
+            if (!$checkContact['error']) {
+                $resData = json_decode($checkContact['data']);
+                if (count($resData->data->data)) {
+                    $contact = $resData->data->data[0];
+                }else{
+                    // add contact to kledo
+                    $parameter = json_decode($this->session->get('parameter'));
+                    $address = $parameter->city . ' ' . $parameter->postalCode . ', ' . $parameter->country;
+                    $bodyAddContact = [
+                        'name'                  => $this->session->get('name'),
+                        'company'               => $parameter->company,
+                        'address'               => $address,
+                        'phone'                 => $parameter->noTelp,
+                        'email'                 => $this->session->get('email'),
+                        'type_id'               => 3,
+                        'shipping_address'      => $address,
+                        'receivable_account_id' => 21,
+                        'payable_account_id'    => 81,
+                        'group_id'              => null,
+                        'npwp'                  => ""
+                    ];
+                    $addContactRes = $kledoModel->addContact(json_encode($bodyAddContact));
+                    $resContact = json_decode($addContactRes['data']);
+                    $contact = $resContact->data;
+                }
+            }
+
+            // get product from kledo
+            $bodyProduct = [
+                'search' => 'Logsheet Digital'
+            ];
+            $resGetProduct = $kledoModel->getProduct(http_build_query($bodyProduct, ""));
+            if ($resGetProduct['error'] == false) {
+                $resData = json_decode($resGetProduct['data'], true);
+                if ($resData['success']) {
+                    $product = $resData['data']['data'][0];
+                }
+            }
+
+
+            // create invoice to kledo
+            $dueDateInv = new DateTime();
+            $body = [
+                'trans_date'    => date("Y-m-d"),
+                'due_date'      => $dueDateInv->modify("+1 days")->format("Y-m-d"),
+                'contact_id'    => $contact->id,
+                'status_id'     => 1,
+                "include_tax"   => 0,
+                'term_id'       => 1,
+                'ref_number'    => "INVLD" . $contact->id . time(),
+                'memo'          => $packageData['description'],
+                'attachment'    => ["https://kledo-live-user.s3.ap-southeast-1.amazonaws.com/rizal.api.kledo.com/finance/invoice/attachment/temp/211123/113415/Approve%20_%20Non%20Approve.png"],
+                'items'         => [[
+                    'finance_account_id' => $product['id'],
+                    'tax_id'            => null,
+                    'desc'              => $packageData['description'],
+                    'qty'               => 1,
+                    'price'             => $packagePrice['price'],
+                    'amount'            => $packagePrice['price'],
+                    'price_after_tax'   => 0,
+                    'amount_after_tax'  => 0,
+                    'tax_manual'        => 0,
+                    'discount_percent'  => 0,
+                    'unit_id'           => 2
+                ]]
+            ];
+            $addInvoiceRes =  $kledoModel->addInvoice(json_encode($body));
+            $resInvoice = json_decode($addInvoiceRes['data']);
+            $dataInvoice = "";
+            if ($resInvoice->success) {
+                $dataInvoice = $resInvoice->data;
+            }
+
+            $activeFrom = $dateTime->format("Y-m-d H:i:s");
+            $expiredDate = $clone->modify("+1 Month")->format("Y-m-d H:i:s");
+            $subsId = uuidv4();
+            $bodySubscription = [
+                'subscriptionId' => $subsId,
+                'packageId'     => $packageData['packageId'],
+                'packagePriceId' => $packagePriceId,
+                'userId'        => $this->session->get('adminId'),
+                'period'        => $packagePrice['period'],
+                'assetMax'      => $packageData['assetMax'],
+                'parameterMax'  => $packageData['parameterMax'],
+                'tagMax'        => $packageData['tagMax'],
+                'trxDailyMax'   => $packageData['trxDailyMax'],
+                'userMax'       => $packageData['userMax'],
+                'activeFrom'    => $activeFrom,
+                'expiredDate'   => $expiredDate
+            ];
+            $subscriptionModel->insert($bodySubscription);
+            $dueDateTrx = new DateTime();
+            $transaction = [
+                'transactionId' => null,
+                'subscriptionId' => $subsId,
+                'packageId'     => $packageData['packageId'],
+                'packagePriceId' => $packagePriceId,
+                'invoiceId'     => $dataInvoice->id,
+                'refNumber'     => $dataInvoice->ref_number,
+                'userId'        => $this->session->get('adminId'),
+                'period'        => $packagePrice['period'],
+                'description'   => $packageData['description'],
+                'paymentTotal'  => $packagePrice['price'],
+                'paymentMethod' => "free",
+                'attachment'    => 'free',
+                'issueDate'     => date("Y-m-d H:i:s"),
+                'dueDate'       => $dueDateTrx->modify("+1 days")->format("Y-m-d H:i:s"),
+                'paidDate'      => date("Y-m-d H:i:s"),
+                'approvedDate'  => date("Y-m-d H:i:s"),
+                'cancelDate'    => null,
+                'activeFrom'    => $activeFrom,
+                'activeTo'      => $expiredDate
+            ];
+            $transactionModel->insert($transaction);
+
+            $subsData       = $subscriptionModel->getByUser($adminId);
+            $packageSubsId  = $subsData[0]['packageId'];
+            $dataPackage    = $packageModel->getById($packageSubsId);
+            $package        = $dataPackage;
+
+            $dataSubscription   = $subscriptionModel->getByUser($adminId);
+            $transaction     = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
         }
-        // if ($subscription) {
-        //     $packageId = $subscription[0]['packageId'];
-        //     $packageData = $packageModel->getById($packageId);
-        //     $package = $packageData;
-        // }
-        // d($transaction);
-        // die();
+
         $data['transaction'] = $transaction;
         $data['subscription'] = $dataSubscription;
-        $data['package'] = $subscription = '' ? '' : $package[0]['name'];
+        $data['package'] = $subscription == '' ? '' : $package[0]['name'];
         return $this->template->render('Customers/Subscription/index', $data);
     }
 
