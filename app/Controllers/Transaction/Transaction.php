@@ -142,14 +142,14 @@ class Transaction extends BaseController
 
 		$dateNow = new DateTime();
 
-		if (!$isValid) {
-			return $this->response->setJson([
-				'status' => 400,
-				'message' => $this->validator->getErrors(),
-				'data' => []
-			], 400);
-		}
-
+        if (!$isValid) {
+            return $this->response->setJson([
+                'status' => 400,
+                'message' => "Invalid Form",
+                'data' => $this->validator->getErrors()
+            ], 400);
+        }
+		
 		$scheduleTrxModel = new ScheduleTrxModel();
 		$trxModel = new TransactionModel();
 

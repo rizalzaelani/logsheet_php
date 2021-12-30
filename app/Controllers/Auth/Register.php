@@ -14,8 +14,6 @@ use DateTime;
 use DateTimeImmutable;
 use Exception;
 use Firebase\JWT\JWT;
-use HTTP_Request2;
-use HTTP_Request2_Exception;
 
 class Register extends BaseController
 {
@@ -119,7 +117,7 @@ class Register extends BaseController
                 $email->setFrom('logsheet-noreply@nocola.co.id', 'Logsheet Digital');
                 $email->setTo($param['email']);
                 $email->setSubject('Verify your Logsheet Digital Account');
-                // $email->setMessage($message);
+                $email->setMessage($message);
                 $email->setMailType("html");
 
                 $email->send();

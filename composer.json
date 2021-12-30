@@ -13,7 +13,8 @@
 		"firebase/php-jwt": "^5.4",
 		"pear/http_request2": "^2.5",
 		"influxdb/influxdb-php": "^1.15",
-		"crodas/influx-php": "*"
+		"crodas/influx-php": "*",
+		"telegram-bot/api": "^2.3"
 	},
 	"require-dev": {
 		"fakerphp/faker": "^1.9",

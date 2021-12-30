@@ -30,6 +30,7 @@ class Login extends ResourceController
 
         $param["email"] = $this->request->getVar("email");
         $param["password"] = $this->request->getVar("password");
+        $param["platform"] = env('platform');
         
         $userModel = new UserModel();
         $dataRes = $userModel->clientAuth($param);
