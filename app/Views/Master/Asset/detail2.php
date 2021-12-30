@@ -3965,47 +3965,47 @@ $sess = $session->get('adminId');
                     return true;
                 }
 
-                function DTChangeLog(changelog){
-                    $('#tableChangeLog').DataTable({
-                        data: changelog,
-                        columns: [{
-                                data: "time",
-                                name: "time",
-                                render: function(data, type, row, meta) {
-                                    return v.momentchangelog(data);
-                                }
-                            },
-                            {
-                                data: "ip",
-                                name: "ip"
-                            },
-                            {
-                                data: "username",
-                                name: "username"
-                            },
-                            {
-                                data: "activity",
-                                name: "activity",
-                            },
-                            {
-                                data: "assetId",
-                                name: "assetId",
-                                render: function(data, type, row, meta) {
-                                    if (row.activity == 'Update asset') {
-                                        return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                                    }else{
-                                        return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                                    }
-                                }
-                            }
-                        ],
-                        order: [0, 'desc'],
-                        columnDefs: [{
-                            targets: 4,
-                            width: "10%"
-                        }]
-                    })
-                }
+                // function DTChangeLog(changelog){
+                //     $('#tableChangeLog').DataTable({
+                //         data: changelog,
+                //         columns: [{
+                //                 data: "time",
+                //                 name: "time",
+                //                 render: function(data, type, row, meta) {
+                //                     return v.momentchangelog(data);
+                //                 }
+                //             },
+                //             {
+                //                 data: "ip",
+                //                 name: "ip"
+                //             },
+                //             {
+                //                 data: "username",
+                //                 name: "username"
+                //             },
+                //             {
+                //                 data: "activity",
+                //                 name: "activity",
+                //             },
+                //             {
+                //                 data: "assetId",
+                //                 name: "assetId",
+                //                 render: function(data, type, row, meta) {
+                //                     if (row.activity == 'Update asset') {
+                //                         return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                //                     }else{
+                //                         return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                //                     }
+                //                 }
+                //             }
+                //         ],
+                //         order: [0, 'desc'],
+                //         columnDefs: [{
+                //             targets: 4,
+                //             width: "10%"
+                //         }]
+                //     })
+                // }
 
                 const cb = (start, end) => {
                     $('#rangechangelog span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
@@ -4152,7 +4152,46 @@ $sess = $session->get('adminId');
                         if (rsp.status == 200) {
                             v.changelog = rsp.data;
                             $(document).ready(function() {
-                                v.tableChangeLog = v.DTChangeLog(v.changelog);
+                                // v.tableChangeLog = v.DTChangeLog(v.changelog);
+                                v.tableChangeLog = $('#tableChangeLog').DataTable({
+                                    data: v.changelog,
+                                    columns: [{
+                                            data: "time",
+                                            name: "time",
+                                            render: function(data, type, row, meta) {
+                                                return v.momentchangelog(data);
+                                            }
+                                        },
+                                        {
+                                            data: "ip",
+                                            name: "ip"
+                                        },
+                                        {
+                                            data: "username",
+                                            name: "username"
+                                        },
+                                        {
+                                            data: "activity",
+                                            name: "activity",
+                                        },
+                                        {
+                                            data: "assetId",
+                                            name: "assetId",
+                                            render: function(data, type, row, meta) {
+                                                if (row.activity == 'Update asset') {
+                                                    return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                                }else{
+                                                    return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    order: [0, 'desc'],
+                                    columnDefs: [{
+                                        targets: 4,
+                                        width: "10%"
+                                    }]
+                                })
                             })
                         }
                     })
@@ -4253,7 +4292,7 @@ $sess = $session->get('adminId');
                     start,
                     end,
                     duplicate,
-                    DTChangeLog
+                    // DTChangeLog
                 }
             },
             computed: {
