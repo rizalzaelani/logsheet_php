@@ -34,10 +34,12 @@ class LogModel
         return $this->db->getQueryBuilder();
     }
 
-    public function getLogAsset($activity, $assetId, $dateFrom, $dateTo)
+    public function getLogAsset($activity, $activity2, $userId, $assetId, $dateFrom, $dateTo)
     {
         $where = [
-            "activity = '$activity'",
+            "activity = '$activity' OR activity = '$activity2'",
+            // "activity = '$activity'",
+            "userId = '$userId'",
             "assetId = '$assetId'",
             "time >= '$dateFrom'",
             "time <= '$dateTo'"
@@ -53,13 +55,10 @@ class LogModel
             ->getPoints();
     }
 
-    public function getAll($dateFrom, $dateTo)
+    public function getAll($userId)
     {
         $where = [
-            // "activity = '$activity'",
-            // "assetId = '$assetId'",
-            // "time >= '$dateFrom'",
-            "time <= '$dateTo'"
+            "userId = '$userId'"
         ];
 
         return $this->querybuilder()

@@ -22,4 +22,13 @@ class AssetTagLocationModel extends Model
     {
         return $this->builder('tblmb_assetTagLocation')->where('tagLocationId', $tagLocationId)->delete();
     }
+    public function getAll(array $where = null)
+    {
+        $query = $this->builder();
+        if ($where != null) {
+            $query = $query->where($where);
+        }
+
+        return $query->get()->getResultArray();
+    }
 }

@@ -7,6 +7,8 @@ use App\Models\FindingLogModel;
 use App\Models\FindingModel;
 use App\Models\ScheduleTrxModel;
 use App\Models\TransactionModel;
+use App\Models\Influx\LogModel;
+
 use DateTime;
 use Exception;
 
@@ -71,6 +73,15 @@ class Finding extends BaseController
 
 	public function detail()
 	{
+		// $influxModel = new LogModel();
+        // $from = new DateTime();
+        // $to = new DateTime();
+        // $dateFrom = $from->format("Y-m-d H:i:s");
+        // $dateTo = $from->modify("+1 days")->format("Y-m-d H:i:s");
+        // $test = $influxModel->getAll($dateFrom, $dateFrom);
+        // d($this->request->getUserAgent());
+        // d($test);
+        // die();
 		if (!checkRoleList("FINDING.DETAIL.VIEW")) {
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
@@ -227,11 +238,22 @@ class Finding extends BaseController
 
 			$scheduleTrxModel->update($checkTrx["scheduleTrxId"], ["condition" => $scheduleCond]);
 
+			$dataUpdated = $scheduleTrxModel->getById($checkTrx["scheduleTrxId"]);
+			if ($this->isJson($dataUpdated['description'])) {
+				$dataUpdated['description'] = json_decode($dataUpdated['description']);
+			}
+
+			$assetId = $dataUpdated['assetId'];
+			$activity	= 'Open finding';
+			sendLog($activity, $assetId, json_encode($dataUpdated));
+
 			if($sendNotif){
 				$checkFinding = $findingModel->getById($findingId);
 				$this->sendMail($findingId, "Follow Up Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding);
 				$this->sendTelegram($findingId, "open", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
 			}
+
+			
 
 			return redirect()->to("/Finding/detail?findingId=" . $findingId);
 		} catch (Exception $e) {
@@ -315,6 +337,15 @@ class Finding extends BaseController
 
 			$findingLogModel = new FindingLogModel();
 			$findingLogData = $findingLogModel->where("findingId", $findingId)->orderBy("createdAt", "asc")->get()->getResultArray();
+
+			$dataUpdated = $scheduleTrxModel->getById($checkTrx["scheduleTrxId"]);
+			if ($this->isJson($dataUpdated['description'])) {
+				$dataUpdated['description'] = json_decode($dataUpdated['description']);
+			}
+			$assetId = $dataUpdated['assetId'];
+			$activity	= 'Close finding';
+			sendLog($activity, $assetId, json_encode($dataUpdated));
+
 			$this->sendMail($findingId, "Close Finding", $dateNow->format("Y-m-d H:i:s"), $this->session->get("name"), $checkFinding, $findingLogData);
 			$this->sendTelegram($findingId, "close", $this->session->get("name"), $dateNow->format("Y-m-d H:i:s"), $checkFinding["parameterName"]);
 
@@ -393,6 +424,7 @@ class Finding extends BaseController
 
 		$findingModel = new FindingModel();
 		$findingLogModel = new FindingLogModel();
+		$scheduleTrxModel = new ScheduleTrxModel();
 
 		$checkFinding = $findingModel->find($findingId);
 		if (empty($checkFinding)) {
@@ -411,7 +443,18 @@ class Finding extends BaseController
 		);
 
 		try {
+			
 			$findingLogModel->insert($dataInsert);
+			$dataFinding = $findingModel->getById($findingId);
+			$dataUpdated = $scheduleTrxModel->getById($dataFinding['scheduleTrxId']);
+			$assetId = $dataUpdated['assetId'];
+			if ($this->isJson($dataUpdated['description'])) {
+				$dataUpdated['description'] = json_decode($dataUpdated['description']);
+			}
+			$dataInflux = json_encode($dataUpdated);
+
+			$activity	= 'Add timeline';
+			sendLog($activity, $assetId, $dataInflux);
 
 			return $this->response->setJSON([
 				'status' => 200,
@@ -551,5 +594,16 @@ class Finding extends BaseController
 		} catch (Exception $e) {
 			return $e;
 		}
+	}
+
+	private function isJson(string $value)
+	{
+		try {
+			json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+		} catch (Exception $e) {
+			return false;
+		}
+	
+		return true;
 	}
 }

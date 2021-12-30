@@ -133,6 +133,9 @@ class Schedule extends BaseController
         try {
             $schModel->insertBatch($dataInsertSchAM);
 
+            $activity = 'Add schedule asset manual';
+            sendLog($activity, null, json_encode($dataInsertSchAM));
+
             $getDataInsert = $schModel->getAll(["assetId IN ('" . implode("','", array_column($dataAssetAM, "assetId")) . "')" => null, "DATE_FORMAT(scheduleFrom, '%Y-%m-%d')" => $start, "DATE_FORMAT(scheduleTo, '%Y-%m-%d')" => $end], "scheduleFrom", "asc");
 
             return $this->response->setJSON([

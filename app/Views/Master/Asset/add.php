@@ -2807,40 +2807,20 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         data: formdata,
                         method: "POST"
                     }).then(res => {
-                        if (res.status == 200) {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success mr-1',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                    title: 'Success!',
-                                    text: 'You have successfully added data.',
+                        let rsp = res.data;
+                        if (rsp.status == 200) {
+                            swal.fire({
+                                    title: rsp.message,
                                     icon: 'success'
                                 })
                                 .then(okay => {
                                     if (okay) {
-                                        swal.fire({
-                                            title: 'Please Wait!',
-                                            text: 'Reloading page..',
-                                            onOpen: function() {
-                                                swal.showLoading()
-                                            }
-                                        })
                                         window.location.href = "<?= base_url('Asset'); ?>";
                                     }
                                 })
-                        } else if (res.data.status == 'failed') {
-                            const swalWithBootstrapButtons = swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: res.data.message,
+                        } else{
+                            swaal.fire({
+                                title: rsp.message,
                                 icon: 'error'
                             })
                         }

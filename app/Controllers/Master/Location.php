@@ -22,15 +22,6 @@ class Location extends BaseController
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
-        // $influxModel = new LogModel();
-        // $from = new DateTime();
-        // $to = new DateTime();
-        // $dateFrom = $from->format("Y-m-d H:i:s");
-        // $dateTo = $from->modify("+1 days")->format("Y-m-d H:i:s");
-        // $test = $influxModel->getAll($dateFrom, $dateFrom);
-        // d($test);
-        // die();
-
         $data = array(
             'title' => 'Tag Location',
             'subtitle' => 'List Location',
@@ -153,10 +144,7 @@ class Location extends BaseController
         $model          = new TagLocationModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Add Tag Location';
-        $ipAddress      = $this->request->getIPAddress();
-        $username       = $this->session->get('name');
-        $userId         = $this->session->get('adminId');
+        $activity       = 'Add tag location';
 
         $json = $this->request->getJSON();
 
@@ -170,7 +158,7 @@ class Location extends BaseController
             );
             $model->insert($data);
 
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data));
+            sendLog($activity, null, json_encode($data));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -198,11 +186,6 @@ class Location extends BaseController
         $model = new TagLocationModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Update Tag Location';
-        $ipAddress      = $this->request->getIPAddress();
-        $username       = $this->session->get('name');
-        $userId         = $this->session->get('adminId');
-
         $json = $this->request->getJSON();
         $tagLocationId = $json->tagLocationId;
 
@@ -223,7 +206,9 @@ class Location extends BaseController
                 'data_before' => $data_before,
                 'data_after'  => $data_after
             ];
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
+
+            $activity       = 'Update tag location';
+            sendLog($activity, null, json_encode($dataInflux));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -253,11 +238,6 @@ class Location extends BaseController
         $assetLocationModel = new AssetTagLocationModel();
         $influxModel    = new LogModel();
 
-        $activity       = 'Delete Tag Location';
-        $ipAddress      = $this->request->getIPAddress();
-        $username       = $this->session->get('name');
-        $userId         = $this->session->get('adminId');
-
         $json = $this->request->getJSON();
         $tagLocationId = $json->tagLocationId;
 
@@ -267,7 +247,8 @@ class Location extends BaseController
             $assetLocationModel->deleteTagLocationId($tagLocationId);
             $locationModel->delete($tagLocationId);
     
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data_deleted));
+            $activity       = 'Delete tag location';
+            sendLog($activity, null, json_encode($data_deleted));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -288,14 +269,9 @@ class Location extends BaseController
         if(!checkRoleList("MASTER.TAGLOCATION.IMPORT")){
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
-        $influxModel    = new LogModel();
 
-        $activity       = 'Download Template Tag Location';
-        $ipAddress      = $this->request->getIPAddress();
-        $username       = $this->session->get('name');
-        $userId         = $this->session->get('adminId');
-
-        $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+        $activity       = 'Download template tag location';
+        sendLog($activity, null, null);
         try {
             return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/location.xlsx', null);
         } catch (Exception $e) {
@@ -362,12 +338,6 @@ class Location extends BaseController
             ], 403);
         }
         $tagLocationModel = new TagLocationModel();
-        $influxModel    = new LogModel();
-
-        $activity       = 'Import Tag Location';
-        $ipAddress      = $this->request->getIPAddress();
-        $username       = $this->session->get('name');
-        $userId         = $this->session->get('adminId');
 
         $json = $this->request->getJSON();
         $dataLocation = $json->dataLocation;
@@ -385,7 +355,9 @@ class Location extends BaseController
                 ];
                 $tagLocationModel->insert($data);
             }
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataLocation));
+
+            $activity       = 'Import tag location';
+            sendLog($activity, null, json_encode($dataLocation));
 
             return $this->response->setJSON(array(
                 'status' => 200,
@@ -404,12 +376,8 @@ class Location extends BaseController
     public function exportExcel()
     {
         $tagLocationModel = new TagLocationModel();
-        $influxModel    = new LogModel();
 
-        $activity       = 'Export Tag Location';
-        $ipAddress      = $this->request->getIPAddress();
-        $username       = $this->session->get('name');
-        $userId         = $this->session->get('adminId');
+        $activity       = 'Export tag location';
 
         try {
             $writer = WriterEntityFactory::createXLSXWriter();
@@ -443,7 +411,7 @@ class Location extends BaseController
                 $writer->addRow($rowFromValues);
             }
             $writer->close();
-            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data));
+            sendLog($activity, null, json_encode($data));
         } catch (Exception $e) {
             return $this->response->setJSON(array(
                 'status' => $e->getCode(),

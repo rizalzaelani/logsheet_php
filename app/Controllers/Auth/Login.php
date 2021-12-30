@@ -104,8 +104,17 @@ class Login extends BaseController
                             $ipAddress      = $this->request->getIPAddress();
                             $username       = $this->session->get('name');
                             $userId         = $this->session->get('adminId');
+                            $userAgent      = $this->request->getUserAgent();
+                            $browser        = $userAgent->getBrowser() . ' ' . $userAgent->getVersion();
+                            $platform       = $userAgent->getPlatform();
+                            $isMobile       = $userAgent->isMobile();
+                            $arr            = [
+                                'browser' => $browser,
+                                'platform' => $platform,
+                                'isMobile' => $isMobile
+                            ];
 
-                            $LogModel = $logModel->writeData($activity, $ipAddress, $userId, $username, null, $user_agent->getAgentString());
+                            sendLog($activity, null, json_encode($arr));
 
                             return $this->response->setJSON(array(
                                 'status' => 200,
@@ -198,6 +207,17 @@ class Login extends BaseController
         $session->destroy();
         $this->response->deleteCookie('clientToken');
         delete_cookie("clientToken");
+
+        $userAgent  = $this->request->getUserAgent();
+        $browser    = $userAgent->getBrowser() . ' ' . $userAgent->getVersion();
+        $platform   = $userAgent->getPlatform();
+        $isMobile   = $userAgent->isMobile();
+        $data = [
+            'browser'   => $browser,
+            'platform'  => $platform,
+            'isMobile'  => $isMobile
+        ];
+        sendLog('Log out application', null, json_encode($data));
 
         return redirect()->to(base_url());
     }
