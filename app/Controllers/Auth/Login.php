@@ -37,6 +37,7 @@ class Login extends BaseController
         $params = [
             'email' => $email,
             'password' => $password,
+            'platform' => env('platform')
         ];
 
         if (!$captcha) {

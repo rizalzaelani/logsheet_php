@@ -143,8 +143,8 @@ class Transaction extends BaseController
         if (!$isValid) {
             return $this->response->setJson([
                 'status' => 400,
-                'message' => $this->validator->getErrors(),
-                'data' => []
+                'message' => "Invalid Form",
+                'data' => $this->validator->getErrors()
             ], 400);
         }
 		

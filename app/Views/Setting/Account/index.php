@@ -209,6 +209,10 @@
                                             <template v-else>-</template>
                                         </div>
                                     </li>
+                                    <li class="mt-3 d-block d-md-flex">
+                                        <span class="list-title">Role</span>
+                                        <span class="font-weight-500">{{ user.role }}</span>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

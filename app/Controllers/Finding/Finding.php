@@ -534,7 +534,8 @@ class Finding extends BaseController
 	{
 		try {
 			$notifModel = new \App\Models\NotificationModel();
-			$dtNotif = $notifModel->getAll(["deletedAt IS NULL" => null, "status" => "active", "type" => "telegram", "FIND_IN_SET('" . ($type == "Close" ? "Closed" : "Open") . " Finding', `trigger`) > 0" => null]);
+			$adminId = $this->session->get("adminId");
+			$dtNotif = $notifModel->getAll(["userId" => $adminId,"deletedAt IS NULL" => null, "status" => "active", "type" => "telegram", "FIND_IN_SET('" . ($type == "Close" ? "Closed" : "Open") . " Finding', `trigger`) > 0" => null]);
 			if (!empty($dtNotif)) {
 				$bot = new \TelegramBot\Api\BotApi(env('botTelegramToken'));
 				foreach($dtNotif as $row){
