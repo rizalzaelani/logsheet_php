@@ -122,13 +122,7 @@
                         longitude: this.tagLocation.longitude,
                         description: this.tagLocation.description
                     }).then(res => {
-                        if (res.data.status == 'success') {
-                            // const swalWithBootstrapButtons = swal.mixin({
-                            //     customClass: {
-                            //         confirmButton: 'btn btn-success mr-1',
-                            //     },
-                            //     buttonsStyling: false
-                            // })
+                        if (res.data.status == 200) {
                             swal.fire({
                                 title: res.data.message,
                                 icon: 'success'
@@ -144,6 +138,11 @@
                                     // location.reload();
                                     window.location.href = "<?= base_url('Location/'); ?>";
                                 }
+                            })
+                        }else{
+                            swal.fire({
+                                icon: 'error',
+                                title: res.data.message
                             })
                         }
                     })
@@ -162,7 +161,7 @@
                     })
                     swalWithBootstrapButtons.fire({
                         title: 'Delete this data?',
-                        text: "You will delete this data!",
+                        text: "You cannot restore this data",
                         icon: 'warning',
                         showCancelButton: true,
                         cancelButtonText: "<i class='fa fa-times'></i> Cancel",
@@ -173,10 +172,9 @@
                             axios.post("<?= base_url('Location/delete'); ?>", {
                                 tagLocationId: this.tagLocation.tagLocationId
                             }).then(res => {
-                                if (res.data.status == 'success') {
-                                    swalWithBootstrapButtons.fire({
-                                        title: 'Success!',
-                                        text: res.data.message,
+                                if (res.data.status == 200) {
+                                    swal.fire({
+                                        title: res.data.message,
                                         icon: 'success',
                                         allowOutsideClick: false
                                     }).then(okay => {
@@ -190,6 +188,11 @@
                                             })
                                             window.location.href = "<?= base_url('Location/'); ?>";
                                         }
+                                    })
+                                }else{
+                                    swal.fire({
+                                        icon: 'error',
+                                        title: res.data.message
                                     })
                                 }
                             })

@@ -5,19 +5,33 @@ namespace App\Controllers\Master;
 use App\Controllers\BaseController;
 use App\Models\TagModel;
 use App\Models\AssetTagModel;
+use App\Models\Influx\LogModel;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
+use DateTime;
+use Exception;
 
 class Tag extends BaseController
 {
     public function index()
     {
-        if(!checkRoleList("MASTER.TAG.VIEW")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
+        if (!checkRoleList("MASTER.TAG.VIEW")) {
+            return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
         }
+
+        // $influxModel = new LogModel();
+        // $from = new DateTime();
+        // $to = new DateTime();
+        // $dateFrom = $from->format("Y-m-d H:i:s");
+        // $dateTo = $from->modify("+1 days")->format("Y-m-d H:i:s");
+        // $test = $influxModel->getAll($dateFrom, $dateFrom);
+        // d($this->request->getUserAgent());
+        // d($test);
+        // die();
+
         $data = array(
             'title' => 'Tag',
             'subtitle' => 'List Tag',
@@ -82,8 +96,16 @@ class Tag extends BaseController
         }
 
         $model = new TagModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Add Tag';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
         $data = $this->request->getJSON();
-        if ($data->tagName != '' && $data->description != '') {
+
+        try {
             $dt = array(
                 'tagId' => $data->tagId,
                 'userId' => $this->session->get("adminId"),
@@ -91,11 +113,23 @@ class Tag extends BaseController
                 'description' => $data->description
             );
             $model->insert($dt);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully added tag.', 'data' => $dt));
-        } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'All fields cannot be empty.'));
+
+            $dataInflux = $dt;
+
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success add data",
+                'data' => $dt
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'data' => ""
+            ]);
         }
-        die();
     }
 
     public function edit()
@@ -109,11 +143,24 @@ class Tag extends BaseController
         }
 
         $model = new TagModel();
+
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
-        $tag = $model->where('tagId', $tagId)->get()->getResultArray();
-        echo json_encode(array('status' => 'success', 'data' => $tag));
-        die();
+
+        try {
+            $tag = $model->where('tagId', $tagId)->get()->getResultArray();
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success get data",
+                'data' => $tag
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'data' => ""
+            ]);
+        }
     }
 
     public function update()
@@ -127,20 +174,44 @@ class Tag extends BaseController
         }
 
         $model = new TagModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Update Tag';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
-        if ($json->tagName != '' && $json->description != '') {
+
+        $data_before = $model->getById($tagId);
+        try {
             $data = array(
                 'tagName' => $json->tagName,
                 'userId' => $this->session->get("adminId"),
                 'description' => $json->description,
             );
             $model->update($tagId, $data);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully update data.', 'data' => $data));
-        } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'All fields cannot be empty.', 'data' => $json));
+            
+            $data_after = $model->getById($tagId);
+            $dataInflux = [
+                'data_before' => $data_before,
+                'data_after' => $data_after
+            ];
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success updated data",
+                'data' => $data
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'data' => ""
+            ]);
         }
-        die();
     }
 
     public function deleteTag()
@@ -153,28 +224,63 @@ class Tag extends BaseController
             ], 403);
         }
 
-        $modelAssetTag = new AssetTagModel();
-        $modelTag = new TagModel();
+        $modelAssetTag  = new AssetTagModel();
+        $modelTag       = new TagModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Delete Tag';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
         $json = $this->request->getJSON();
         $tagId = $json->tagId;
-        if ($tagId != '') {
+
+        $data_deleted = $modelTag->getById($tagId);
+
+        try {
             $modelAssetTag->deleteByIdTag($tagId);
             $modelTag->delete($tagId);
-            echo json_encode(array('status' => 'success', 'message' => 'You have successfully deleted data.', 'data' => $json));
-        } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'Bad Request!', 'data' => $json));
+
+            $dataInflux = $data_deleted;
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataInflux));
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success deleted data",
+                'data' => $json
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'data' => ""
+            ]);
         }
-        die();
     }
 
     public function download()
     {
-        if(!checkRoleList("MASTER.TAG.IMPORT")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
+        if (!checkRoleList("MASTER.TAG.IMPORT")) {
+            return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
         }
+        $influxModel    = new LogModel();
 
-        // return $this->response->download('../public/download/tag.xlsx', null);
-        return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/tag.xlsx', null);
+        $activity       = 'Download Template Tag';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+
+        try {
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, null);
+            return $this->response->download($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . 'download/tag.xlsx', null);
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'data' => ""
+            ]);
+        }
     }
     public function uploadFile()
     {
@@ -231,56 +337,92 @@ class Tag extends BaseController
         }
 
         $tagModel = new TagModel();
+        $influxModel    = new LogModel();
+
+        $activity       = 'Import Tag';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
+        
+
         $json = $this->request->getJSON();
         $dataTag = $json->dataTag;
         $length = count($dataTag);
-        for ($i = 0; $i < $length; $i++) {
-            $data = [
-                'tagId' => null,
-                'userId' => $this->session->get("adminId"),
-                'tagName'   => $dataTag[$i]->tagName,
-                'description'   => $dataTag[$i]->description,
-            ];
-            $tagModel->insert($data);
+
+        try {
+            for ($i = 0; $i < $length; $i++) {
+                $data = [
+                    'tagId' => null,
+                    'userId' => $this->session->get("adminId"),
+                    'tagName'   => $dataTag[$i]->tagName,
+                    'description'   => $dataTag[$i]->description,
+                ];
+                $tagModel->insert($data);
+            }
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($dataTag));
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => "Success import data",
+                'data' => $json
+            ]);
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'data' => ""
+            ]);
         }
-        echo json_encode(array('status' => 'success', 'message' => '', 'data' => $json));
-        die();
     }
 
     public function exportExcel()
     {
         $tagModel = new TagModel();
-        $writer = WriterEntityFactory::createXLSXWriter();
-        $userId = $this->session->get('adminId');
-        $data = $tagModel->where('userId', $userId)->findAll();
+        $influxModel    = new LogModel();
 
-        $writer->setShouldUseInlineStrings(true);
-        $header = ["No", "Tag", "Description"];
-        $styleHeader = (new StyleBuilder())
-            ->setCellAlignment(CellAlignment::CENTER)
-            ->setBackgroundColor(COLOR::YELLOW)
-            ->build();
-        $styleBody = (new StyleBuilder())
-            ->setCellAlignment(CellAlignment::LEFT)
-            ->build();
-        $dataArr = [];
+        $activity       = 'Export Tag';
+        $ipAddress      = $this->request->getIPAddress();
+        $username       = $this->session->get('name');
+        $userId         = $this->session->get('adminId');
 
-        if (count($data)) {
-            foreach ($data as $key => $value) {
-                $arr = [$key + 1, $value['tagName'], $value['description']];
-                array_push($dataArr, $arr);
+        try {
+            $writer = WriterEntityFactory::createXLSXWriter();
+            $userId = $this->session->get('adminId');
+            $data = $tagModel->where('userId', $userId)->findAll();
+    
+            $writer->setShouldUseInlineStrings(true);
+            $header = ["No", "Tag", "Description"];
+            $styleHeader = (new StyleBuilder())
+                ->setCellAlignment(CellAlignment::CENTER)
+                ->setBackgroundColor(COLOR::YELLOW)
+                ->build();
+            $styleBody = (new StyleBuilder())
+                ->setCellAlignment(CellAlignment::LEFT)
+                ->build();
+            $dataArr = [];
+    
+            if (count($data)) {
+                foreach ($data as $key => $value) {
+                    $arr = [$key + 1, $value['tagName'], $value['description']];
+                    array_push($dataArr, $arr);
+                }
             }
-        }
-        $fileName = "Tag - " . date("d M Y") . '.xlsx';
-        $writer->openToBrowser($fileName);
-
-        $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
-        $writer->addRow($rowFromValues);
-        foreach ($dataArr as $key => $value) {
-            $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+            $fileName = "Tag - " . date("d M Y") . '.xlsx';
+            $writer->openToBrowser($fileName);
+    
+            $rowFromValues = WriterEntityFactory::createRowFromArray($header, $styleHeader);
             $writer->addRow($rowFromValues);
+            foreach ($dataArr as $key => $value) {
+                $rowFromValues = WriterEntityFactory::createRowFromArray($value, $styleBody);
+                $writer->addRow($rowFromValues);
+            }
+            $writer->close();
+            $influxModel->writeData($activity, $ipAddress, $userId, $username, null, json_encode($data));
+        } catch (Exception $e) {
+            return $this->response->setJSON([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'data' => ""
+            ]);
         }
-        $writer->close();
-        die();
     }
 }

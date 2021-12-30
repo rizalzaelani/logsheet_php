@@ -240,30 +240,20 @@
                     dataLocation: importList,
                     tagLocationId: uuidv4()
                 }).then(res => {
-                    console.log(res);
-                    if (res.data.status == 'success') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire(
-                            'Success!',
-                            'You have successfully add Location.',
-                            'success'
-                        ).then(okay => {
+                    if (res.data.status == 200) {
+                        swal.fire({
+                            title: res.data.message,
+                            icon: 'success'
+                        }).then(okay => {
                             if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Redirecting page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                // location.reload();
-                                window.location.href = "<?= site_url('Location') ?>";
+                                $('#listImport').modal('hide');
+                                v.table.draw();
                             }
+                        })
+                    }else{
+                        swal.fire({
+                            icon: 'error',
+                            title: res.data.message
                         })
                     }
                 })
@@ -280,7 +270,7 @@
                 });
 
                 $(document).on('click', '#tableLocation tbody tr', function() {
-                    if($(this).attr("data-id")) window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
+                    if ($(this).attr("data-id")) window.location.href = "<?= site_url('Location/detail') ?>/" + $(this).attr("data-id");
                 });
             });
 

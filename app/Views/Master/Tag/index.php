@@ -154,7 +154,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel"><i class=" fa fa-times"></i> Cancel</button>
-                                <button type="button" class="btn btn-success" @click="insertTag()" id="btnAddTag"><i class="fa fa-plus"></i> Add Location</button>
+                                <button type="button" class="btn btn-success" @click="insertTag()" id="btnAddTag"><i class="fa fa-plus"></i> Add Tag</button>
                             </div>
                         </div>
                     </div>
@@ -178,6 +178,7 @@
             var data = ref('');
             var table = ref('');
             var modalTag = ref('');
+            var modalImportTag = ref('');
             var tagName = ref('');
             var description = ref('');
             var tagId = ref(null);
@@ -251,42 +252,18 @@
                     tagName: this.tagName,
                     description: this.description
                 }).then(res => {
-                    if (res.data.status == 'success') {
-                        const swalWithBootstrapButtons = Swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Success!',
-                            text: res.data.message,
+                    if (res.data.status == 200) {
+                        swal.fire({
+                            title: res.data.message,
                             icon: 'success',
-                            allowOutsideClick: false
                         }).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
+                            v.modalTag.hide();
+                            v.table.draw();
                         })
                     } else {
-                        const swalWithBootstrapButtons = Swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: res.data.message,
+                        swal.fire({
+                            title: res.data.message,
                             icon: 'error',
-                            allowOutsideClick: false
                         })
                     }
                 })
@@ -299,106 +276,51 @@
                         tagName: this.tagName,
                         description: this.description,
                     }).then(res => {
-                        if (res.data.status == 'success') {
-                            const swalWithBootstrapButtons = Swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-success',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Success!',
-                                text: res.data.message,
+                        if (res.data.status == 200) {
+                            swal.fire({
+                                title: res.data.message,
                                 icon: 'success',
-                                allowOutsideClick: false
                             }).then(okay => {
-                                if (okay) {
-                                    swal.fire({
-                                        title: 'Please Wait!',
-                                        text: 'Reloading page..',
-                                        onOpen: function() {
-                                            swal.showLoading()
-                                        }
-                                    })
-                                    location.reload();
-                                }
+                                v.modalTag.hide();
+                                v.table.draw();
                             })
-                        } else if (res.data.status == 'failed') {
-                            const swalWithBootstrapButtons = Swal.mixin({
-                                customClass: {
-                                    confirmButton: 'btn btn-danger',
-                                },
-                                buttonsStyling: false
-                            })
-                            swalWithBootstrapButtons.fire({
-                                title: 'Failed!',
-                                text: 'Bad Request!',
+                        } else {
+                            swal.fire({
+                                title: 'Bad Request!',
                                 icon: 'error',
-                                allowOutsideClick: false
                             })
                         }
                     })
                 } else {
-                    const swalWithBootstrapButtons = Swal.mixin({
-                        customClass: {
-                            confirmButton: 'btn btn-danger',
-                        },
-                        buttonsStyling: false
-                    })
-                    swalWithBootstrapButtons.fire({
-                        title: 'Failed!',
-                        text: 'All fields cannot be empty.',
+                    swal.fire({
+                        title: 'All fields cannot be empty.',
                         icon: 'error',
-                        allowOutsideClick: false
                     })
                 }
             };
 
             function uploadFile() {
-                this.modalLocation = new coreui.Modal(document.getElementById('importTagModal'), {});
-                this.modalLocation.show();
+                this.modalImportTag = new coreui.Modal(document.getElementById('importTagModal'), {});
+                this.modalImportTag.show();
             };
 
             function insertTag() {
                 axios.post("<?= base_url('Tag/insertTag'); ?>", {
                     dataTag: importList,
                 }).then(res => {
-                    console.log(res);
-                    if (res.data.status == 'success') {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-success',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire(
-                            'Success!',
-                            'You have successfully add tag.',
-                            'success'
-                        ).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
+                    if (res.data.status == 200) {
+                        swal.fire({
+                            title: res.data.message,
+                            icon: 'success'
+                        }).then(okay => {
+                            $('#listImport').modal('hide');
+                            v.table.draw();
                         })
                     } else {
-                        const swalWithBootstrapButtons = swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
+                        swal.fire({
+                            icon: 'error',
+                            title: res.data.message
                         })
-                        swalWithBootstrapButtons.fire(
-                            'Failed!',
-                            res.data.message,
-                            'error'
-                        )
                     }
                 })
             };
@@ -424,6 +346,7 @@
                 data,
                 table,
                 modalTag,
+                modalImportTag,
                 tagName,
                 description,
                 tagId,
@@ -448,7 +371,7 @@
         axios.post("<?= base_url('Tag/edit'); ?>", {
             tagId: data
         }).then(res => {
-            if (res.data.status == 'success') {
+            if (res.data.status == 200) {
                 let dataTag = res.data.data[0];
                 v.tagId = dataTag.tagId;
                 v.tagName = dataTag.tagName;
@@ -456,17 +379,9 @@
                 v.modalTag = new coreui.Modal(document.getElementById('modalTag'), {});
                 v.modalTag.show();
             } else {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-danger',
-                    },
-                    buttonsStyling: false
-                })
-                swalWithBootstrapButtons.fire({
-                    title: 'Failed!',
-                    text: 'Bad Request!',
+                swal.fire({
+                    title: res.data.message,
                     icon: 'error',
-                    allowOutsideClick: false
                 })
             }
         })
@@ -493,36 +408,17 @@
                 axios.post("<?= base_url('Tag/deleteTag'); ?>", {
                     tagId: data
                 }).then(res => {
-                    if (res.data.status == 'success') {
-                        swalWithBootstrapButtons.fire({
-                            title: 'Success!',
-                            text: 'You have successfully deleted this data.',
+                    if (res.data.status == 200) {
+                        swal.fire({
+                            title: res.data.message,
                             icon: 'success',
-                            allowOutsideClick: false
                         }).then(okay => {
-                            if (okay) {
-                                swal.fire({
-                                    title: 'Please Wait!',
-                                    text: 'Reloading page..',
-                                    onOpen: function() {
-                                        swal.showLoading()
-                                    }
-                                })
-                                location.reload();
-                            }
+                            v.table.draw();
                         })
                     } else {
-                        const swalWithBootstrapButtons = Swal.mixin({
-                            customClass: {
-                                confirmButton: 'btn btn-danger',
-                            },
-                            buttonsStyling: false
-                        })
-                        swalWithBootstrapButtons.fire({
-                            title: 'Failed!',
-                            text: 'Bad Request!',
+                        swal.fire({
+                            title: res.data.message,
                             icon: 'error',
-                            allowOutsideClick: false
                         })
                     }
                 })
