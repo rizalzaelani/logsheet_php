@@ -720,7 +720,6 @@ $sess = $session->get('adminId');
                                                     <template v-if="JSON.stringify(val) == JSON.stringify(dataAB.data_after[i])">
                                                         <tr>
                                                             <td>{{ _.startCase(i) }}</td>
-                                                            <!-- <td style="max-width: 200px !important">{{ val }}</td> -->
                                                             <template v-if="IsArray(val)">
                                                                 <td style="max-width: 200px !important">
                                                                     <div v-for="(value, key) in val">
@@ -737,13 +736,19 @@ $sess = $session->get('adminId');
                                                             </template>
                                                             <template v-else>
                                                                 <template v-if="isUrl(val)">
-                                                                    <td>
-                                                                        <img :src="val" alt="img" style="width: 200px"><br>
-                                                                        <a :href="val" target="_blank">Open In New Tab</a>
-                                                                    </td>
+                                                                    <template v-if="isFileExist(val)">
+                                                                        <td>
+                                                                            <img :src="val" alt="img" style="width: 200px"><br>
+                                                                            <a :href="val" target="_blank">Open In New Tab</a>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            File Removed
+                                                                        </td>
+                                                                    </template>
                                                                 </template>
                                                                 <template v-else>
-                                                                    <!-- <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td> -->
                                                                     <td style="max-width: 200px !important">{{ val }}</td>
                                                                 </template>
                                                             </template>
@@ -764,22 +769,27 @@ $sess = $session->get('adminId');
                                                             </template>
                                                             <template v-else>
                                                                 <template v-if="isUrl(dataAB.data_after[i])">
-                                                                    <td>
-                                                                        <img :src="dataAB.data_after[i]" alt="img" style="width: 200px"><br>
-                                                                        <a :href="dataAB.data_after[i]" target="_blank">Open In New Tab</a>
-                                                                    </td>
+                                                                    <template v-if="isFileExist(dataAB.data_after[i])">
+                                                                        <td>
+                                                                            <img :src="dataAB.data_after[i]" alt="img" style="width: 200px"><br>
+                                                                            <a :href="dataAB.data_after[i]" target="_blank">Open In New Tab</a>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td>
+                                                                            File Removed
+                                                                        </td>
+                                                                    </template>
                                                                 </template>
                                                                 <template v-else>
                                                                     <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td>
                                                                 </template>
                                                             </template>
-                                                            <!-- <td style="max-width: 200px !important">{{ dataAB.data_after[i] }}</td> -->
                                                         </tr>
                                                     </template>
                                                     <template v-else>
                                                         <tr>
                                                             <td>{{ _.startCase(i) }}</td>
-                                                            <!-- <td style=" max-width: 200px !important" class="old">{{ val }}</td> -->
                                                             <template v-if="IsArray(val)">
                                                                 <td style="max-width: 200px !important" class="old">
                                                                     <div v-for="(value, key) in val">
@@ -796,10 +806,17 @@ $sess = $session->get('adminId');
                                                             </template>
                                                             <template v-else>
                                                                 <template v-if="isUrl(val)">
-                                                                    <td class="old">
-                                                                        File removed
-                                                                    </td>
-                                                                    <!-- <t/d><a :href="val" target="_blank">link</a></td> -->
+                                                                    <template v-if="isFileExist(val)">
+                                                                        <td class="old">
+                                                                            <img :src="val" alt="img" style="width: 200px"><br>
+                                                                            <a :href="val" target="_blank">Open In New Tab</a>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td class="old">
+                                                                            File removed
+                                                                        </td>
+                                                                    </template>
                                                                 </template>
                                                                 <template v-else>
                                                                     <td style="max-width: 200px !important" class="old">{{ val }}</td>
@@ -821,13 +838,19 @@ $sess = $session->get('adminId');
                                                             </template>
                                                             <template v-else>
                                                                 <template v-if="isUrl(dataAB.data_after[i])">
-                                                                    <td class="new">
-                                                                        <img :src="dataAB.data_after[i]" alt="img" style="width: 200px"><br>
-                                                                        <a :href="dataAB.data_after[i]" target="_blank">Open In New Tab</a>
-                                                                    </td>
+                                                                    <template v-if="isFileExist(dataAB.data_after[i])">
+                                                                        <td class="new">
+                                                                            <img :src="dataAB.data_after[i]" alt="img" style="width: 200px"><br>
+                                                                            <a :href="dataAB.data_after[i]" target="_blank">Open In New Tab</a>
+                                                                        </td>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        <td class="new">
+                                                                            File Removed
+                                                                        <td>
+                                                                    </template>
                                                                 </template>
                                                                 <template v-else>
-                                                                    <!-- <td style="max-width: 200px !important" class="old">{{ val }}</td> -->
                                                                     <td style="max-width: 200px !important" class="new">{{ dataAB.data_after[i] }}</td>
                                                                 </template>
                                                             </template>
@@ -894,6 +917,20 @@ $sess = $session->get('adminId');
                                                                     <td>{{value.min}}</td>
                                                                     <td>{{value.uom}}</td>
                                                                     <td>{{value.showOn}}</td>
+                                                                    <td>
+                                                                        <template v-if="isUrl(value.photo1)">
+                                                                            <template v-if="isFileExist(value.photo1)">
+                                                                                <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
+                                                                                <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                            </template>
+                                                                            <template>
+                                                                                File Removed
+                                                                            </template>
+                                                                        </template>
+                                                                        <template v-else>
+                                                                            {{value.photo1}}
+                                                                        </template>
+                                                                    </td>
                                                                 </tr>
                                                             </template>
                                                         </template>
@@ -1102,22 +1139,64 @@ $sess = $session->get('adminId');
                                                                     <template v-if="val[0].photo1 != val[1].photo1">
                                                                         <td>
                                                                             <div class="old p-1">
-                                                                                {{val[0].photo1}}
+                                                                                <template v-if="isUrl(val[0].photo1)">
+                                                                                    <template v-if="isFileExist(val[0].photo1)">
+                                                                                        <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
+                                                                                        <a :href="val[0].photo1" target="_blank">Open new tab</a>
+                                                                                    </template>
+                                                                                    <template v-else>
+                                                                                        File Removed
+                                                                                    </template>
+                                                                                </template>
+                                                                                <template v-else>
+                                                                                    {{val[0].photo1}}
+                                                                                </template>
                                                                             </div>
                                                                             <div class="new p-1">
-                                                                                {{val[1].photo1}}
+                                                                                <template v-if="isUrl(val[1].photo1)">
+                                                                                    <template v-if="isFileExist(val[1].photo1)">
+                                                                                        <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
+                                                                                        <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                                    </template>
+                                                                                    <template v-else>
+                                                                                        File Removed
+                                                                                    </template>
+                                                                                </template>
+                                                                                <template v-else>
+                                                                                    {{val[1].photo1}}
+                                                                                </template>
                                                                             </div>
                                                                         </td>
                                                                     </template>
                                                                     <template v-else>
                                                                         <td>
                                                                             <div>
-                                                                                <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
-                                                                                <a :href="val[0].photo1" target="_blank">Open new tab</a>
+                                                                                <template v-if="isUrl(val[0].photo1)">
+                                                                                    <template v-if="isFileExist(val[0].photo1)">
+                                                                                        <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
+                                                                                        <a :href="val[0].photo1" target="_blank">Open new tab</a>
+                                                                                    </template>
+                                                                                    <template v-else>
+                                                                                        File Removed
+                                                                                    </template>
+                                                                                </template>
+                                                                                <template v-else>
+                                                                                    {{val[0].photo1}}
+                                                                                </template>
                                                                             </div>
                                                                             <div>
-                                                                                <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
-                                                                                <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                                <template v-if="isUrl(val[1].photo1)">
+                                                                                    <template v-if="isFileExist(val[1].photo1)">
+                                                                                        <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
+                                                                                        <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                                    </template>
+                                                                                    <template v-else>
+                                                                                        File Removed
+                                                                                    </template>
+                                                                                </template>
+                                                                                <template v-else>
+                                                                                    {{val[1].photo1}}
+                                                                                </template>
                                                                             </div>
                                                                         </td>
                                                                     </template>
@@ -3973,6 +4052,22 @@ $sess = $session->get('adminId');
                     return true;
                 }
 
+                function isFileExist(url){
+                    try {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('HEAD', urlToFile, false);
+                        xhr.send();
+                        
+                        if (xhr.status == "404") {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
                 // function DTChangeLog(changelog){
                 //     $('#tableChangeLog').DataTable({
                 //         data: changelog,
@@ -4209,6 +4304,7 @@ $sess = $session->get('adminId');
                     tableChangeLog,
                     IsArray,
                     isUrl,
+                    isFileExist,
                     IsJsonString,
                     changelog,
                     dataChangeLog,
