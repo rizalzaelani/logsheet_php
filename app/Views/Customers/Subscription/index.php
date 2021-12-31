@@ -190,7 +190,7 @@ $session = \Config\Services::session();
                                 <div v-else-if="dataModal.paidDate == null && dataModal.approvedDate == null && dataModal.attachment != null">
                                     <h5 class="text-primary text-uppercase">Waiting</h5>
                                 </div>
-                                <div v-else-if="dataModal.paidDate == null && dataModal.approvedDate == null">
+                                <div v-else-if="dataModal.paidDate == null && dataModal.approvedDate == null && dataModal.cancelDate == null">
                                     <h5 class="text-danger text-uppercase">Unpaid</h5>
                                 </div>
                                 <div v-else>
@@ -359,8 +359,8 @@ $session = \Config\Services::session();
                         </div>
                     </div>
                 </div>
-                <div :class="dataModal.status == 1 ? 'modal-footer d-flex justify-content-between align-items-center' : 'modal-footer'">
-                    <div :class="dataModal.status == 1 ? '' : 'd-none'">
+                <div :class="dataModal.paidDate == null && dataModal.approvedDate == null && dataModal.cancelDate == null ? 'd-flex justify-content-between align-items-center modal-footer px-3' : 'modal-footer px-3'">
+                    <div v-if="dataModal.paidDate == null && dataModal.approvedDate == null && dataModal.cancelDate == null">
                         <button type="button" class="btn btn-success mr-1" @click="confirm"><i class="fa fa-file-upload"></i> Upload</button>
                         <button type="button" class="btn btn-danger" @click="cancelUp(dataModal.transactionId)"><i class="fa fa-times"></i> Cancel Upgrade</button>
                     </div>
