@@ -329,10 +329,11 @@ class Subscription extends BaseController
         $packagePriceId     = $dataSubscription[0]['packagePriceId'];
         $transaction        = $transactionModel->getByUser(['userId' => $adminId, 'cancelDate' => null]);
 
+        if ($transaction[0]['paidDate'] == null && $transaction[0]['cancelDate'] == null) {
+            return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "Please make a payment first or cancel the previous transaction"]);
+        }
         if ($transaction[0]['paymentTotal'] == '0') {
             return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "You can only upgrade this package"]);
-        } else if ($transaction[0]['paidDate'] == null && $transaction[0]['cancelDate'] == null) {
-            return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "Please make a payment first or cancel the previous transaction"]);
         }
 
         $packagePrice   = $packagePriceModel->getAll();

@@ -36,23 +36,27 @@ class LogModel
 
     public function getLogAsset($activity, $activity2, $userId, $assetId, $dateFrom, $dateTo)
     {
+        $database = $this->client->selectDB('db_logsheet');
         $where = [
-            "activity = '$activity' OR activity = '$activity2'",
             // "activity = '$activity'",
-            "userId = '$userId'",
             "assetId = '$assetId'",
+            "userId = '$userId'",
             "time >= '$dateFrom'",
-            "time <= '$dateTo'"
+            "time <= '$dateTo'",
+            "activity = '$activity' OR activity = '$activity2'",
         ];
 
-        return $this->querybuilder()
-            ->from('logsheet_logactivity')
-            ->select('*')
-            ->where($where)
-            // ->limit(5)
-            ->orderBy('time', 'desc')
-            ->getResultSet()
-            ->getPoints();
+        $query = "SELECT * FROM logsheet_logactivity WHERE assetId = '$assetId' AND userId = '$userId' AND time >= '$dateFrom' AND time <= '$dateTo' AND (activity = '$activity' OR activity = '$activity2')";
+        $result = $database->query($query);
+        return $result->getPoints();
+        // return $this->querybuilder()
+        //     ->from('logsheet_logactivity')
+        //     ->select('*')
+        //     ->where($where)
+        //     // ->limit(5)
+        //     ->orderBy('time', 'desc')
+        //     ->getResultSet()
+        //     ->getPoints();
     }
 
     public function getAll($userId)

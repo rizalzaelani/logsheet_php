@@ -259,10 +259,10 @@ class Asset extends BaseController
 
 		$adminId = $this->session->get('adminId');
 
-		
+
 		$post = $this->request->getPost();
 		$assetId = $post['assetId'];
-		
+
 		$checkAssetNumber = $assetModel->getAll(['userId' => $adminId, 'assetNumber' => $post['assetNumber']]);
 		if (count($checkAssetNumber)) {
 			$post['assetNumber'] = $post['assetNumber'] . '_' . $this->randomString();
@@ -950,7 +950,7 @@ class Asset extends BaseController
 		if (empty($dataAsset)) {
 			return $this->response->setJSON(array(
 				'status' => 404,
-				'message'=> 'Data not found',
+				'message' => 'Data not found',
 				'data' => []
 			));
 		}
@@ -1001,13 +1001,13 @@ class Asset extends BaseController
 			sendLog('Delete asset', $assetId, json_encode($dataAsset));
 			return $this->response->setJSON(array(
 				'status' => 200,
-				'message'=> 'Success delete data',
+				'message' => 'Success delete data',
 				'data' => []
 			));
 		} catch (Exception $e) {
 			return $this->response->setJSON(array(
 				'status' => $e->getCode(),
-				'message'=> $e->getMessage(),
+				'message' => $e->getMessage(),
 				'data' => []
 			));
 		}
@@ -1496,152 +1496,153 @@ class Asset extends BaseController
 		$dataAssetTag			= $assetTagModel->getAll(['assetId' => $assetId]);
 		$dataAssetTagLocation	= $assetTagLocationModel->getAll(['assetId' => $assetId]);
 
-		$photoAsset = "";
-		if (!empty($dataAsset)) {
-			foreach ($dataAsset as $key => $value) {
-				if ($value['photo'] != "" && $value['photo'] != null && $value['photo'] != "null") {
-
-					$str = str_replace(base_url() , "", $value['photo']);
-					$img1 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str);
-					$encode = base64_encode($img1);
-					$decode = base64_decode($encode);
-
-					$size = getimagesizefromstring($decode);
-					if (empty($size['mime']) || strpos($size['mime'], 'image/') !== 0) {
-						die('Base64 value is not a valid image');
-					}
-					$ext = substr($size['mime'], 6);
-					if (!in_array($ext, ['png', 'gif', 'jpeg'])) {
-						die('Unsupported image type');
-					}
-					$dirPath = "upload/Asset/file" . $adminId;
-					$filename = "IMG_" . $this->randomString() . '.' . "{$ext}";
-					$img_file = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename;
-					file_put_contents($img_file, $decode);
-					$photoAsset = base_url() . '/' . $dirPath . '/' . $filename;
-				}
-			}
-		}
-
-		if (count($dataParameter)) {
-
-			foreach ($dataParameter as $key => $value) {
-				$dataParameter[$key]['parameterId'] = uuidv4();
-				$dataParameter[$key]['assetId'] = $newAssetId;
-				$photo1 = "";
-				$photo2 = "";
-				$photo3 = "";
-				if ($value['photo1'] != "" && $value['photo1'] != null && $value['photo1'] != "null" && $value['photo2'] != "" && $value['photo2'] != null && $value['photo2'] != "null" && $value['photo3'] != "" && $value['photo3'] != null && $value['photo3'] != "null") {
-
-					//PHOTO 1
-					$str1 = str_replace(base_url() , "", $value['photo1']);
-					$img1 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str1);
-					$encode1 = base64_encode($img1);
-					$decode1 = base64_decode($encode1);
-
-					$size1 = getimagesizefromstring($decode1);
-					if (empty($size1['mime']) || strpos($size1['mime'], 'image/') !== 0) {
-						die('Base64 value is not a valid image');
-					}
-					$ext1 = substr($size1['mime'], 6);
-					if (!in_array($ext1, ['png', 'gif', 'jpeg'])) {
-						die('Unsupported image type');
-					}
-
-					$dirPath = "upload/Asset/file" . $adminId;
-					$filename1 = "IMG_PARAM_H_" . $this->randomString() . '.' . "{$ext1}";
-					$img_file1 = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename1;
-					file_put_contents($img_file1, $decode1);
-					$photo1 = base_url() . '/' . $dirPath . '/' . $filename1;
-
-					//PHOTO 2
-					$str2 = str_replace(base_url() , "", $value['photo2']);
-					$img2 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str2);
-					$encode2 = base64_encode($img2);
-					$decode2 = base64_decode($encode2);
-
-					$size2 = getimagesizefromstring($decode2);
-					if (empty($size2['mime']) || strpos($size2['mime'], 'image/') !== 0) {
-						die('Base64 value is not a valid image');
-					}
-					$ext2 = substr($size2['mime'], 6);
-					if (!in_array($ext2, ['png', 'gif', 'jpeg'])) {
-						die('Unsupported image type');
-					}
-
-					$filename2 = "IMG_PARAM_M_" . $this->randomString() . '.' . "{$ext2}";
-					$img_file2 = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename2;
-					file_put_contents($img_file2, $decode2);
-					$photo2 = base_url() . '/' . $dirPath . '/' . $filename2;
-
-					//PHOTO 3
-					$str3 = str_replace(base_url() , "", $value['photo3']);
-					$img3 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . $str3);
-					$encode3 = base64_encode($img3);
-					$decode3 = base64_decode($encode3);
-
-					$size3 = getimagesizefromstring($decode3);
-					if (empty($size3['mime']) || strpos($size3['mime'], 'image/') !== 0) {
-						die('Base64 value is not a valid image');
-					}
-					$ext3 = substr($size['mime'], 6);
-					if (!in_array($ext3, ['png', 'gif', 'jpeg'])) {
-						die('Unsupported image type');
-					}
-
-					$filename3 = "IMG_PARAM_L_" . $this->randomString() . '.' . "{$ext3}";
-					$img_file3 = $_SERVER['DOCUMENT_ROOT'] . "/" . $dirPath . "/" . $filename3;
-					file_put_contents($img_file3, $decode3);
-					$photo3 = base_url() . '/' . $dirPath . '/' . $filename3;
-
-					$dataParameter[$key]['photo1'] = $photo1 != "" ? $photo1 : null;
-					$dataParameter[$key]['photo2'] = $photo2 != "" ? $photo2 : null;
-					$dataParameter[$key]['photo3'] = $photo3 != "" ? $photo3 : null;
-				}
-			}
-		}
-		if (count($dataTagging)) {
-			for ($a=0; $a < count($dataTagging); $a++) { 
-				$dataTagging[$a]['assetTaggingId'] = uuidv4();
-				$dataTagging[$a]['assetId'] = $newAssetId;
-				$dataTagging[$a]['userId'] = $adminId;
-			}
-		}
-		if (count($dataAssetTag)) {
-			for ($b=0; $b < count($dataAssetTag); $b++) { 
-				$dataAssetTag[$b]['assetTagId'] = uuidv4();
-				$dataAssetTag[$b]['assetId'] = $newAssetId;
-			}
-		}
-		if (count($dataAssetTagLocation)) {
-			for ($b=0; $b < count($dataAssetTagLocation); $b++) { 
-				$dataAssetTagLocation[$b]['assetTagLocationId'] = uuidv4();
-				$dataAssetTagLocation[$b]['assetId'] = $newAssetId;
-			}
-		}
-
-		$asset = [
-			'assetId'		=> $newAssetId,
-			'userId'		=> $adminId,
-			'assetStatusId'	=> $dataAsset[0]['assetStatusId'],
-			'assetName'		=> $dataAsset[0]['assetName'] . ' Copy',
-			'photo'			=> $photoAsset != "" ? $photoAsset : null,
-			'description'	=> $dataAsset[0]['description'],
-			'schManual'		=> $dataAsset[0]['schManual'],
-			'schType'		=> $dataAsset[0]['schType'],
-			'schFrequency'	=> $dataAsset[0]['schFrequency'],
-			'schWeeks'		=> $dataAsset[0]['schWeeks'],
-			'schWeekDays'	=> $dataAsset[0]['schWeekDays'],
-			'schDays'		=> $dataAsset[0]['schDays']
-		];
-
-		if (strpos($dataAsset[0]['assetNumber'], '_') !== false) {
-			$asset['assetNumber'] = explode("_", $dataAsset[0]['assetNumber'])[0] . '_' . $this->randomString();
-		}else{
-			$asset['assetNumber'] = explode("_", $dataAsset[0]['assetNumber'])[0] . '_' . $this->randomString();
-		}
-
 		try {
+			$photoAsset = "";
+			if (!empty($dataAsset)) {
+				foreach ($dataAsset as $key => $value) {
+					if ($value['photo'] != "" && $value['photo'] != null && $value['photo'] != "null") {
+
+						$str = str_replace(base_url(), "", $value['photo']);
+						$img1 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir')  . $str);
+						$encode = base64_encode($img1);
+						$decode = base64_decode($encode);
+
+						$size = getimagesizefromstring($decode);
+						if (empty($size['mime']) || strpos($size['mime'], 'image/') !== 0) {
+							die('Base64 value is not a valid image');
+						}
+						$ext = substr($size['mime'], 6);
+						if (!in_array($ext, ['png', 'gif', 'jpeg'])) {
+							die('Unsupported image type');
+						}
+						$dirPath = "upload/Asset/file" . $adminId;
+						$filename = "IMG_" . $this->randomString() . '.' . "{$ext}";
+						$img_file = $_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . "/" . $filename;
+						file_put_contents($img_file, $decode);
+						$photoAsset = base_url() . '/' . $dirPath . '/' . $filename;
+					}
+				}
+			}
+
+			if (count($dataParameter)) {
+
+				foreach ($dataParameter as $key => $value) {
+					$dataParameter[$key]['parameterId'] = uuidv4();
+					$dataParameter[$key]['assetId'] = $newAssetId;
+					$photo1 = "";
+					$photo2 = "";
+					$photo3 = "";
+					if ($value['photo1'] != "" && $value['photo1'] != null && $value['photo1'] != "null" && $value['photo2'] != "" && $value['photo2'] != null && $value['photo2'] != "null" && $value['photo3'] != "" && $value['photo3'] != null && $value['photo3'] != "null") {
+
+						//PHOTO 1
+						$str1 = str_replace(base_url(), "", $value['photo1']);
+						$img1 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $str1);
+						$encode1 = base64_encode($img1);
+						$decode1 = base64_decode($encode1);
+
+						$size1 = getimagesizefromstring($decode1);
+						if (empty($size1['mime']) || strpos($size1['mime'], 'image/') !== 0) {
+							die('Base64 value is not a valid image');
+						}
+						$ext1 = substr($size1['mime'], 6);
+						if (!in_array($ext1, ['png', 'gif', 'jpeg'])) {
+							die('Unsupported image type');
+						}
+
+						$dirPath = "upload/Asset/file" . $adminId;
+						$filename1 = "IMG_PARAM_H_" . $this->randomString() . '.' . "{$ext1}";
+						$img_file1 = $_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $dirPath . "/" . $filename1;
+						file_put_contents($img_file1, $decode1);
+						$photo1 = base_url() . '/' . $dirPath . '/' . $filename1;
+
+						//PHOTO 2
+						$str2 = str_replace(base_url(), "", $value['photo2']);
+						$img2 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $str2);
+						$encode2 = base64_encode($img2);
+						$decode2 = base64_decode($encode2);
+
+						$size2 = getimagesizefromstring($decode2);
+						if (empty($size2['mime']) || strpos($size2['mime'], 'image/') !== 0) {
+							die('Base64 value is not a valid image');
+						}
+						$ext2 = substr($size2['mime'], 6);
+						if (!in_array($ext2, ['png', 'gif', 'jpeg'])) {
+							die('Unsupported image type');
+						}
+
+						$filename2 = "IMG_PARAM_M_" . $this->randomString() . '.' . "{$ext2}";
+						$img_file2 = $_SERVER['DOCUMENT_ROOT']. env('baseDir') . $dirPath . "/" . $filename2;
+						file_put_contents($img_file2, $decode2);
+						$photo2 = base_url() . '/' . $dirPath . '/' . $filename2;
+
+						//PHOTO 3
+						$str3 = str_replace(base_url(), "", $value['photo3']);
+						$img3 = file_get_contents($_SERVER['DOCUMENT_ROOT'] . env('baseDir') . $str3);
+						$encode3 = base64_encode($img3);
+						$decode3 = base64_decode($encode3);
+
+						$size3 = getimagesizefromstring($decode3);
+						if (empty($size3['mime']) || strpos($size3['mime'], 'image/') !== 0) {
+							die('Base64 value is not a valid image');
+						}
+						$ext3 = substr($size['mime'], 6);
+						if (!in_array($ext3, ['png', 'gif', 'jpeg'])) {
+							die('Unsupported image type');
+						}
+
+						$filename3 = "IMG_PARAM_L_" . $this->randomString() . '.' . "{$ext3}";
+						$img_file3 = $_SERVER['DOCUMENT_ROOT']. env('baseDir') . $dirPath . "/" . $filename3;
+						file_put_contents($img_file3, $decode3);
+						$photo3 = base_url() . '/' . $dirPath . '/' . $filename3;
+
+						$dataParameter[$key]['photo1'] = $photo1 != "" ? $photo1 : null;
+						$dataParameter[$key]['photo2'] = $photo2 != "" ? $photo2 : null;
+						$dataParameter[$key]['photo3'] = $photo3 != "" ? $photo3 : null;
+					}
+				}
+			}
+			if (count($dataTagging)) {
+				for ($a = 0; $a < count($dataTagging); $a++) {
+					$dataTagging[$a]['assetTaggingId'] = uuidv4();
+					$dataTagging[$a]['assetId'] = $newAssetId;
+					$dataTagging[$a]['userId'] = $adminId;
+				}
+			}
+			if (count($dataAssetTag)) {
+				for ($b = 0; $b < count($dataAssetTag); $b++) {
+					$dataAssetTag[$b]['assetTagId'] = uuidv4();
+					$dataAssetTag[$b]['assetId'] = $newAssetId;
+				}
+			}
+			if (count($dataAssetTagLocation)) {
+				for ($b = 0; $b < count($dataAssetTagLocation); $b++) {
+					$dataAssetTagLocation[$b]['assetTagLocationId'] = uuidv4();
+					$dataAssetTagLocation[$b]['assetId'] = $newAssetId;
+				}
+			}
+
+			$asset = [
+				'assetId'		=> $newAssetId,
+				'userId'		=> $adminId,
+				'assetStatusId'	=> $dataAsset[0]['assetStatusId'],
+				'assetName'		=> $dataAsset[0]['assetName'] . ' Copy',
+				'photo'			=> $photoAsset != "" ? $photoAsset : null,
+				'description'	=> $dataAsset[0]['description'],
+				'schManual'		=> $dataAsset[0]['schManual'],
+				'schType'		=> $dataAsset[0]['schType'],
+				'schFrequency'	=> $dataAsset[0]['schFrequency'],
+				'schWeeks'		=> $dataAsset[0]['schWeeks'],
+				'schWeekDays'	=> $dataAsset[0]['schWeekDays'],
+				'schDays'		=> $dataAsset[0]['schDays']
+			];
+
+			if (strpos($dataAsset[0]['assetNumber'], '_') !== false) {
+				$asset['assetNumber'] = explode("_", $dataAsset[0]['assetNumber'])[0] . '_' . $this->randomString();
+			} else {
+				$asset['assetNumber'] = explode("_", $dataAsset[0]['assetNumber'])[0] . '_' . $this->randomString();
+			}
+
+
 
 			$assetModel->insert($asset);
 			$parameterModel->insertBatch($dataParameter);
@@ -1656,17 +1657,16 @@ class Asset extends BaseController
 			sendLog('Duplicate asset', $newAssetId, json_encode($dt));
 			return $this->response->setJSON(array(
 				'status' => 200,
-				'message'=> 'Success duplicate data',
+				'message' => 'Success duplicate data',
 				'data' => $dt
 			));
 		} catch (Exception $e) {
 			return $this->response->setJSON(array(
 				'status' => $e->getCode(),
-				'message'=> $e->getMessage(),
+				'message' => $e->getMessage(),
 				'data' => []
 			));
 		}
-
 	}
 
 	private function isJson(string $value)
@@ -1680,7 +1680,8 @@ class Asset extends BaseController
 		return true;
 	}
 
-	private function randomString() {
+	private function randomString()
+	{
 		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$randomString = '';
 		$n = 5;
@@ -1688,7 +1689,7 @@ class Asset extends BaseController
 			$index = rand(0, strlen($characters) - 1);
 			$randomString .= $characters[$index];
 		}
-	  
+
 		return $randomString;
 	}
 }

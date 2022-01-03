@@ -182,6 +182,14 @@ $sess = $session->get('adminId');
                                 <img onclick="modalImgAsset()" :src="assetData.photo" alt="Image" :class="((assetData.photo != null && assetData.photo != '') ? 'mt-1 m-0' : 'd-none')" style="height: 200px !important; cursor: pointer;">
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Duplicate Asset"> <i class="fa fa-copy"></i> Duplicate</button>
+                                    <button @click="deleteAsset()" type="button" class="btn btn-sub btn-outline-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Delete Asset"> <i class="fa fa-trash"></i> Delete</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <!-- tab parameter -->
                     <div class=" tab-pane" id="parameter" role="tabpanel">
@@ -1818,7 +1826,7 @@ $sess = $session->get('adminId');
                 </table>
             </div>
         </div>
-        <div :class="checkTabDetail == true ? '' : 'd-none'">
+        <!-- <div :class="checkTabDetail == true ? '' : 'd-none'">
             <div class="btn-group-fab" role="group" aria-label="FAB Menu">
                 <div>
                     <button type="button" class="btn btn-main btn-success has-tooltip" data-placement="left" title="Menu"> <i class="fa fa-bars"></i> </button>
@@ -1826,7 +1834,7 @@ $sess = $session->get('adminId');
                     <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Duplicate Asset"> <i class="fa fa-copy"></i> </button>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div :class="((checkTabSetting == true) || (checkTabParameter == true && parameter.length > 0) ? 'btn-fab' : 'd-none')" aria-label="fab">
             <div>
                 <button type="button" id="btnSaveSetting" @click="checkTabSetting == true ? btnSaveSetting() : btnSaveSorting()" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="top" title="Save Changes">
@@ -3965,47 +3973,47 @@ $sess = $session->get('adminId');
                     return true;
                 }
 
-                function DTChangeLog(changelog){
-                    $('#tableChangeLog').DataTable({
-                        data: changelog,
-                        columns: [{
-                                data: "time",
-                                name: "time",
-                                render: function(data, type, row, meta) {
-                                    return v.momentchangelog(data);
-                                }
-                            },
-                            {
-                                data: "ip",
-                                name: "ip"
-                            },
-                            {
-                                data: "username",
-                                name: "username"
-                            },
-                            {
-                                data: "activity",
-                                name: "activity",
-                            },
-                            {
-                                data: "assetId",
-                                name: "assetId",
-                                render: function(data, type, row, meta) {
-                                    if (row.activity == 'Update asset') {
-                                        return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                                    }else{
-                                        return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                                    }
-                                }
-                            }
-                        ],
-                        order: [0, 'desc'],
-                        columnDefs: [{
-                            targets: 4,
-                            width: "10%"
-                        }]
-                    })
-                }
+                // function DTChangeLog(changelog){
+                //     $('#tableChangeLog').DataTable({
+                //         data: changelog,
+                //         columns: [{
+                //                 data: "time",
+                //                 name: "time",
+                //                 render: function(data, type, row, meta) {
+                //                     return v.momentchangelog(data);
+                //                 }
+                //             },
+                //             {
+                //                 data: "ip",
+                //                 name: "ip"
+                //             },
+                //             {
+                //                 data: "username",
+                //                 name: "username"
+                //             },
+                //             {
+                //                 data: "activity",
+                //                 name: "activity",
+                //             },
+                //             {
+                //                 data: "assetId",
+                //                 name: "assetId",
+                //                 render: function(data, type, row, meta) {
+                //                     if (row.activity == 'Update asset') {
+                //                         return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                //                     }else{
+                //                         return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                //                     }
+                //                 }
+                //             }
+                //         ],
+                //         order: [0, 'desc'],
+                //         columnDefs: [{
+                //             targets: 4,
+                //             width: "10%"
+                //         }]
+                //     })
+                // }
 
                 const cb = (start, end) => {
                     $('#rangechangelog span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
@@ -4152,7 +4160,46 @@ $sess = $session->get('adminId');
                         if (rsp.status == 200) {
                             v.changelog = rsp.data;
                             $(document).ready(function() {
-                                v.tableChangeLog = v.DTChangeLog(v.changelog);
+                                // v.tableChangeLog = v.DTChangeLog(v.changelog);
+                                v.tableChangeLog = $('#tableChangeLog').DataTable({
+                                    data: v.changelog,
+                                    columns: [{
+                                            data: "time",
+                                            name: "time",
+                                            render: function(data, type, row, meta) {
+                                                return v.momentchangelog(data);
+                                            }
+                                        },
+                                        {
+                                            data: "ip",
+                                            name: "ip"
+                                        },
+                                        {
+                                            data: "username",
+                                            name: "username"
+                                        },
+                                        {
+                                            data: "activity",
+                                            name: "activity",
+                                        },
+                                        {
+                                            data: "assetId",
+                                            name: "assetId",
+                                            render: function(data, type, row, meta) {
+                                                if (row.activity == 'Update asset') {
+                                                    return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                                }else{
+                                                    return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    order: [0, 'desc'],
+                                    columnDefs: [{
+                                        targets: 4,
+                                        width: "10%"
+                                    }]
+                                })
                             })
                         }
                     })
@@ -4253,7 +4300,7 @@ $sess = $session->get('adminId');
                     start,
                     end,
                     duplicate,
-                    DTChangeLog
+                    // DTChangeLog
                 }
             },
             computed: {
