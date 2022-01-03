@@ -172,6 +172,7 @@ $routes->get('/ReportingAsset/getRecordByParam', 'Reporting/Asset::getRecordByPa
 // $routes->get('/IncidentalReport', 'Transaction/IncidentalReport::index');
 $routes->get('/LogActivity', 'Log/LogActivity::index');
 $routes->get('/LogActivity/getLogActivity', 'Log/LogActivity::getLogActivity');
+$routes->add('/LogActivity/getDatatable/(:any)/(:any)', 'Log\LogActivity::getDatatable/$1/$2');
 $routes->get('/MediaLocation', 'Reporting/MediaLocation::index');
 
 $routes->get('/Report', 'Reporting/Report::index');

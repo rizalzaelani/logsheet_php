@@ -37,26 +37,72 @@ class LogModel
     public function getLogAsset($activity, $activity2, $userId, $assetId, $dateFrom, $dateTo)
     {
         $database = $this->client->selectDB('db_logsheet');
-        $where = [
-            // "activity = '$activity'",
-            "assetId = '$assetId'",
-            "userId = '$userId'",
-            "time >= '$dateFrom'",
-            "time <= '$dateTo'",
-            "activity = '$activity' OR activity = '$activity2'",
-        ];
 
         $query = "SELECT * FROM logsheet_logactivity WHERE assetId = '$assetId' AND userId = '$userId' AND time >= '$dateFrom' AND time <= '$dateTo' AND (activity = '$activity' OR activity = '$activity2')";
         $result = $database->query($query);
         return $result->getPoints();
-        // return $this->querybuilder()
-        //     ->from('logsheet_logactivity')
-        //     ->select('*')
-        //     ->where($where)
-        //     // ->limit(5)
-        //     ->orderBy('time', 'desc')
-        //     ->getResultSet()
-        //     ->getPoints();
+    }
+
+    public function getTotal($userId, $dateFrom, $dateTo)
+    {
+        $where = [
+            "userId = '$userId'",
+            "time >= '$dateFrom'",
+            "time <= '$dateTo'",
+        ];
+
+        $data = $this->querybuilder()
+            ->from('logsheet_logactivity')
+            ->select('*')
+            ->where($where)
+            ->getResultSet()
+            ->getPoints();
+
+        return count($data);
+    }
+
+    public function getsFilteredTotal($userId, $dateFrom, $dateTo, string $search)
+    {
+        $where = [
+            "userId = '$userId'",
+            "time >= '$dateFrom'",
+            "time <= '$dateTo'",
+        ];
+        if ($search != "") {
+            array_push($where, "(username =~ /.*$search.*/ OR activity =~ /.*$search.*/)");
+        }
+
+        $data = $this->querybuilder()
+            ->from("logsheet_logactivity")
+            ->select('*')
+            ->where($where)
+            ->getResultSet()
+            ->getPoints();
+
+        return count($data);
+    }
+
+    public function getsFiltered($userId, $dateFrom, $dateTo, $search, $limit, $offset, $orderField = 'time', $orderType = 'desc')
+    {
+        $where = [
+            "userId = '$userId'",
+            "time >= '$dateFrom'",
+            "time <= '$dateTo'",
+        ];
+        if ($search != "") {
+            array_push($where, "(username =~ /.*$search.*/ OR activity =~ /.*$search.*/)");
+
+        }
+
+        return $this->querybuilder()
+            ->from('logsheet_logactivity')
+            ->select('*')
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy($orderField, $orderType)
+            ->where($where)
+            ->getResultSet()
+            ->getPoints();
     }
 
     public function getAll($userId)

@@ -69,4 +69,40 @@ class LogActivity extends BaseController
 			], 500);
 		}
 	}
+
+	public function getDatatable($dateFrom, $dateTo)
+	{
+		$logModel = new LogModel();
+		$post = $this->request->getPost();
+
+		$dateTo = Date('Y-m-d', strtotime($dateTo.'+1 days'));
+        $draw = $_POST['draw'];
+        $search = $_POST['search']['value'] ?? "";
+        $limit = ($_POST['length'] ?? 10) < 0 ? 0 : ($_POST['length'] ?? 10);
+        $offset = ($_POST['start'] ?? 0) < 0 ? 0 : ($_POST['start'] ?? 10);
+		$adminId = $this->session->get('adminId');
+
+        // if(!checkRoleList("LOG.LIST.VIEW")){
+        //     return json_encode([
+        //         'draw' => $draw,
+        //         'recordsTotal' => 0,
+        //         'recordsFiltered' => 0,
+        //         'data' => []
+        //     ]);
+        // }
+
+        $columnOrder = $_POST["columns"][($_POST["order"][0]["column"] ?? 0)]["data"];
+        $typeOrder = $_POST["order"][0]["dir"] ?? "desc";
+
+        $total = $logModel->getTotal($adminId,$dateFrom, $dateTo);
+        $filteredCount = $logModel->getsFilteredTotal($adminId, $dateFrom, $dateTo, $search);
+        $data = $logModel->getsFiltered($adminId, $dateFrom, $dateTo, $search, $limit, $offset,$columnOrder,$typeOrder);
+
+        return json_encode([
+            'draw' => $draw,
+            'recordsTotal' => $total,
+            'recordsFiltered' => $filteredCount,
+            'data' => $data
+        ]);
+	}
 }
