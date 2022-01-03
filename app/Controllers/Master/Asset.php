@@ -322,7 +322,6 @@ class Asset extends BaseController
 				'longitude'		=> $post['longitude'],
 			);
 			$assetModel->insert($dataAsset);
-			echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.', 'data' => $dataAsset));
 
 			// tag and location new
 			if ($post['tag'] != '') {
@@ -369,10 +368,7 @@ class Asset extends BaseController
 						'tagLocationId' => $tagLocation[$i]
 					);
 					$assetTagLocationModel->insert($dataTagLocation);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 				}
-			} else {
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 			}
 
 			// tag
@@ -387,10 +383,7 @@ class Asset extends BaseController
 						'tagId' => $tag[$i]
 					);
 					$assetTagModel->insert($dataTag);
-					echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 				}
-			} else {
-				echo json_encode(array('status' => 'success', 'message' => 'You have successfully updated data.'));
 			}
 
 			// asset tagging
@@ -1040,8 +1033,8 @@ class Asset extends BaseController
 							'no' => $numrow + 1,
 							'parameterName' => $row->getCellAtIndex(1)->getValue(),
 							'description' => $row->getCellAtIndex(2)->getValue(),
-							'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? ($row->getCellAtIndex(4)->getValue() == "" ? null : $row->getCellAtIndex(4)->getValue()) : ($row->getCellAtIndex(3)->getValue() == "" ? null : $row->getCellAtIndex(3)->getValue()),
-							'min' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() == true ? ($row->getCellAtIndex(3)->getValue() == "" ? null : $row->getCellAtIndex(3)->getValue()) : ($row->getCellAtIndex(4)->getValue() == "" ? null : $row->getCellAtIndex(4)->getValue()),
+							'max' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() == true ? ($row->getCellAtIndex(4)->getValue() === "" ? null : $row->getCellAtIndex(4)->getValue()) : ($row->getCellAtIndex(3)->getValue() === "" ? null : $row->getCellAtIndex(3)->getValue()),
+							'min' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() == true ? ($row->getCellAtIndex(3)->getValue() === "" ? null : $row->getCellAtIndex(3)->getValue()) : ($row->getCellAtIndex(4)->getValue() === "" ? null : $row->getCellAtIndex(4)->getValue()),
 							'normal' => $row->getCellAtIndex(5)->getValue(),
 							'abnormal' => $row->getCellAtIndex(6)->getValue(),
 							'option' => $row->getCellAtIndex(8)->getValue(),
@@ -1050,6 +1043,11 @@ class Asset extends BaseController
 							'showOn' => $row->getCellAtIndex(10)->getValue(),
 							'flipMax' => $row->getCellAtIndex(3)->getValue() < $row->getCellAtIndex(4)->getValue() ? true : false,
 							'flipMin' => $row->getCellAtIndex(4)->getValue() > $row->getCellAtIndex(3)->getValue() ? true : false,
+							'photo' => "",
+							'photo1' => null,
+							'photo2' => null,
+							'photo3' => null,
+							'status' => 'New'
 						);
 						// } else {
 						// 	return $this->response->setJSON(array('status' => 'failed', 'message' => 'Data Does Not Match'));

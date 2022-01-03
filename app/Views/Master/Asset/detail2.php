@@ -1679,6 +1679,12 @@ $sess = $session->get('adminId');
 
         <!-- parameter -->
         <div :class="checkTabSetting == true ? 'card card-main' : 'd-none'" id="cardParameter">
+            <div class="dt-search-input">
+                <div class="input-container">
+                    <a href="javascript:void(0)" class="suffix text-decoration-none dt-search-hide"><i class="c-icon cil-x" style="font-size: 1.5rem;"></i></a>
+                    <input id="srcParameter" name="dt-search" class="material-input py-4" type="text" data-target="#tableParameter" placeholder="Search Data Parameter" />
+                </div>
+            </div>
             <div class="mt-2 d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center">
                     <div>
@@ -1696,7 +1702,8 @@ $sess = $session->get('adminId');
                 </div>
                 <div>
                     <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
-                    <button class="btn btn-sm btn-outline-primary" @click="addParameter(); checkModalAdd = true"><i class="fa fa-plus"></i> Add Parameter</button>
+                    <button class="btn btn-sm btn-outline-primary mr-1" @click="addParameter(); checkModalAdd = true"><i class="fa fa-plus"></i> Add Parameter</button>
+                    <a href="javascript:;" class="dt-search p-3 mr-1" data-target="#tableParameter"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                 </div>
             </div>
             <div class="table-responsive mt-2 w-100">
@@ -3264,7 +3271,7 @@ $sess = $session->get('adminId');
                         this.params.forEach((val, i) => {
                             if (val.parameterId == this.param.parameterId) {
                                 this.params[i] = {
-                                    ...toRaw(this.param)
+                                    ...toRaw(v.param)
                                 }
                             }
                         })
@@ -4298,6 +4305,14 @@ $sess = $session->get('adminId');
                             })
                         }
                     })
+
+                    $("#srcParameter").on("keyup", function() {
+                        var value = $(this).val().toLowerCase();
+                        $("#tableParameter tbody tr").filter(function() {
+                            $(this).toggle($(this).text()
+                            .toLowerCase().indexOf(value) > -1)
+                        });
+                    });
                 });
 
                 return {
