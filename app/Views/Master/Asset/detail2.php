@@ -201,7 +201,16 @@ $sess = $session->get('adminId');
                         <div class="row">
                             <div class="col-6">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Duplicate Asset"> <i class="fa fa-copy"></i> Duplicate</button>
+                                    <?php
+                                    if (!checkLimitAsset()) { ?>
+                                        <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip disabled" disabled data-toggle="tooltip" data-placement="left" title="Duplicate Asset" style="cursor: not-allowed !important"> <i class="fa fa-copy"></i> Duplicate
+                                            <svg class="c-icon mr-1">
+                                                <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-lock-locked"></use>
+                                            </svg>
+                                        </button>
+                                    <?php } else { ?>
+                                        <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Duplicate Asset"> <i class="fa fa-copy"></i> Duplicate</button>
+                                    <?php } ?>
                                     <button @click="deleteAsset()" type="button" class="btn btn-sub btn-outline-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Delete Asset"> <i class="fa fa-trash"></i> Delete</button>
                                 </div>
                             </div>
@@ -3973,7 +3982,7 @@ $sess = $session->get('adminId');
                 };
 
                 function insertParam() {
-                    if (!(this.checkLimitParameterImport())) {
+                    if (!(this.checkLimitParameter())) {
                         return swal.fire({
                             icon: 'info',
                             title: "Your parameters has reached the limit"
@@ -4041,6 +4050,13 @@ $sess = $session->get('adminId');
                 }
 
                 function duplicate(assetId) {
+                    <?php
+                    if (!checkLimitAsset()) { ?>
+                        return swal.fire({
+                            icon: 'info',
+                            title: 'Your assets has reached the limit'
+                        })
+                    <?php } ?>
                     let formdata = new FormData();
                     formdata.append('assetId', assetId);
                     const swalWithBootstrapButtons = swal.mixin({
@@ -4197,7 +4213,8 @@ $sess = $session->get('adminId');
                 function checkLimitParameter() {
                     let lengthParameter = this.masterParameter.length;
                     let lengthTempParameter = this.params.length;
-                    let parameterNow = lengthParameter + lengthTempParameter;
+                    let lengthDelete = this.deletedParameter.length;
+                    let parameterNow = (lengthParameter + lengthTempParameter) - lengthDelete;
                     let subscription = "";
 
                     if (this.subscription.length) {
@@ -4214,9 +4231,9 @@ $sess = $session->get('adminId');
                     let lengthParameter = this.masterParameter.length;
                     let lengthTempParameter = this.params.length;
                     let lengthImport = this.listNewParam.length;
-                    let parameterNow = lengthParameter + lengthTempParameter + lengthImport;
+                    let lengthDelete = this.deletedParameter.length;
+                    let parameterNow = (lengthParameter + lengthTempParameter + lengthImport) - lengthDelete;
                     let subscription = "";
-
                     if (this.subscription.length) {
                         subscription = this.subscription[0];
                         if (parameterNow >= subscription.parameterMax) {
@@ -4914,7 +4931,8 @@ $sess = $session->get('adminId');
                                 let lengthParameter = v.masterParameter.length;
                                 let lengthParams = v.params.length;
                                 let lengthImport = v.listNewParam.length;
-                                let available = (v.subscription[0].parameterMax) - (lengthParams + lengthImport + lengthParameter);
+                                let lengthDeleted = v.deletedParameter.length;
+                                let available = (v.subscription[0].parameterMax) - (lengthParams + lengthImport + lengthParameter) + lengthDeleted;
                                 return swal.fire({
                                     icon: 'info',
                                     title: 'Your parameters still available : ' + available + ' parameter'
@@ -4942,7 +4960,13 @@ $sess = $session->get('adminId');
                             let lengthParam = v.importList.length;
                             for (let i = 0; i < lengthParam; i++) {
                                 if (data.no == v.importList[i].no) {
-                                    return 
+                                    if (!(v.checkLimitParameterImport())) {
+                                        $(id).prop('checked', false);
+                                        return swal.fire({
+                                            icon: 'info',
+                                            title: "Your parameters has reached the limit"
+                                        })
+                                    }
                                     v.listNewParam.push(v.importList[i])
                                 }
                             }
