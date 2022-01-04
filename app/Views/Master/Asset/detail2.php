@@ -2396,8 +2396,8 @@ $sess = $session->get('adminId');
                 }
 
                 function updateExistParameter() {
-                    let min = ((this.param.min === "") || (this.param.min == null)) && (this.param.inputType == 'input') ? true : false;
-                    let max = ((this.param.max === "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                    let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
+                    let max = (this.param.max == null) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom === "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
                     let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -2425,10 +2425,10 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min !== "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
-                            if (this.param.max !== "" || this.param.max != null) {
+                            if (this.param.max != null) {
                                 $('.max').removeClass('is-invalid');
                             }
                             if (this.param.uom != "" || this.param.uom != null) {
@@ -2467,10 +2467,10 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min === "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
-                            if (this.param.max === "" || this.param.max == null) {
+                            if (this.param.max == null) {
                                 $('.max').addClass('is-invalid');
                             }
                             if (this.param.uom == "" || this.param.uom == null) {
@@ -2509,10 +2509,10 @@ $sess = $session->get('adminId');
                         //remove invalid class
                         // input type
                         if (this.param.inputType == 'input') {
-                            if (this.param.min !== "" || this.param.min != null) {
+                            if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
-                            if (this.param.max !== "" || this.param.max != null) {
+                            if (this.param.max != null) {
                                 $('.max').removeClass('is-invalid');
                             }
                             if (this.param.uom != "" || this.param.uom != null) {
@@ -2551,10 +2551,10 @@ $sess = $session->get('adminId');
                             $('.type').addClass('is-invalid');
                         }
                         if (this.param.inputType == 'input') {
-                            if (this.param.min === "" || this.param.min == null) {
+                            if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
-                            if (this.param.max == "" || this.param.max == null) {
+                            if (this.param.max == null) {
                                 $('.max').addClass('is-invalid');
                             }
                             if (this.param.uom == "" || this.param.uom == null) {
@@ -2803,7 +2803,7 @@ $sess = $session->get('adminId');
                         })
                     }
                     let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
-                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                    let max = (this.param.max == null) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
                     let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -2827,7 +2827,7 @@ $sess = $session->get('adminId');
                             if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
-                            if (this.param.max != "" || this.param.max != null) {
+                            if (this.param.max != null) {
                                 $('.max').removeClass('is-invalid');
                             }
                             if (this.param.uom != "" || this.param.uom != null) {
@@ -2869,7 +2869,7 @@ $sess = $session->get('adminId');
                             if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
-                            if (this.param.max == "" || this.param.max == null) {
+                            if (this.param.max == null) {
                                 $('.max').addClass('is-invalid');
                             }
                             if (this.param.uom == "" || this.param.uom == null) {
@@ -2911,7 +2911,7 @@ $sess = $session->get('adminId');
                             if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
-                            if (this.param.max != "" || this.param.max != null) {
+                            if (this.param.max != null) {
                                 $('.max').removeClass('is-invalid');
                             }
                             if (this.param.uom != "" || this.param.uom != null) {
@@ -2953,7 +2953,7 @@ $sess = $session->get('adminId');
                             if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
-                            if (this.param.max == "" || this.param.max == null) {
+                            if (this.param.max == null) {
                                 $('.max').addClass('is-invalid');
                             }
                             if (this.param.uom == "" || this.param.uom == null) {
@@ -3005,9 +3005,6 @@ $sess = $session->get('adminId');
                             inputType: '',
                             showOn: '',
                         })
-                        // this.tempParameterGroupData = _.groupBy(this.params, function(val) {
-                        //     return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
-                        // });
                         this.parameterGroupData = _.groupBy(this.allParameter[0], function(val) {
                             return val.parameterName.includes("#") ? val.parameterName.split("#")[0] + "#" : val.parameterName;
                         });
@@ -3164,7 +3161,7 @@ $sess = $session->get('adminId');
 
                 function updateTempParameter() {
                     let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
-                    let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                    let max = (this.param.max == null) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                     let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
                     let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -3195,7 +3192,7 @@ $sess = $session->get('adminId');
                             if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
-                            if (this.param.max != "" || this.param.max != null) {
+                            if (this.param.max != null) {
                                 $('.max').removeClass('is-invalid');
                             }
                             if (this.param.uom != "" || this.param.uom != null) {
@@ -3237,7 +3234,7 @@ $sess = $session->get('adminId');
                             if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
-                            if (this.param.max == "" || this.param.max == null) {
+                            if (this.param.max == null) {
                                 $('.max').addClass('is-invalid');
                             }
                             if (this.param.uom == "" || this.param.uom == null) {
@@ -3279,7 +3276,7 @@ $sess = $session->get('adminId');
                             if (this.param.min != null) {
                                 $('.min').removeClass('is-invalid');
                             }
-                            if (this.param.max != "" || this.param.max != null) {
+                            if (this.param.max != null) {
                                 $('.max').removeClass('is-invalid');
                             }
                             if (this.param.uom != "" || this.param.uom != null) {
@@ -3321,7 +3318,7 @@ $sess = $session->get('adminId');
                             if (this.param.min == null) {
                                 $('.min').addClass('is-invalid');
                             }
-                            if (this.param.max == "" || this.param.max == null) {
+                            if (this.param.max == null) {
                                 $('.max').addClass('is-invalid');
                             }
                             if (this.param.uom == "" || this.param.uom == null) {

@@ -1266,7 +1266,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                     })
                 }
                 let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
-                let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                let max = (this.param.max == null) && (this.param.inputType == 'input') ? true : false;
                 let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                 let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
                 let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -1290,7 +1290,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
-                        if (this.param.max != "" || this.param.max != null) {
+                        if (this.param.max != null) {
                             $('.max').removeClass('is-invalid');
                         }
                         if (this.param.uom != "" || this.param.uom != null) {
@@ -1332,7 +1332,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
-                        if (this.param.max == "" || this.param.max == null) {
+                        if (this.param.max == null) {
                             $('.max').addClass('is-invalid');
                         }
                         if (this.param.uom == "" || this.param.uom == null) {
@@ -1374,7 +1374,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
-                        if (this.param.max != "" || this.param.max != null) {
+                        if (this.param.max != null) {
                             $('.max').removeClass('is-invalid');
                         }
                         if (this.param.uom != "" || this.param.uom != null) {
@@ -1416,7 +1416,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
-                        if (this.param.max == "" || this.param.max == null) {
+                        if (this.param.max == null) {
                             $('.max').addClass('is-invalid');
                         }
                         if (this.param.uom == "" || this.param.uom == null) {
@@ -1717,7 +1717,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             function updateTempParameter() {
                 let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
-                let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
+                let max = (this.param.max == null) && (this.param.inputType == 'input') ? true : false;
                 let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
                 let normal = ((this.param.normal == "") && (this.param.inputType == 'select')) ? true : false;
                 let abnormal = ((this.param.abnormal == "") && (this.param.inputType == 'select')) ? true : false;
@@ -1748,7 +1748,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
-                        if (this.param.max != "" || this.param.max != null) {
+                        if (this.param.max != null) {
                             $('.max').removeClass('is-invalid');
                         }
                         if (this.param.uom != "" || this.param.uom != null) {
@@ -1790,7 +1790,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
-                        if (this.param.max == "" || this.param.max == null) {
+                        if (this.param.max == null) {
                             $('.max').addClass('is-invalid');
                         }
                         if (this.param.uom == "" || this.param.uom == null) {
@@ -1832,7 +1832,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min != null) {
                             $('.min').removeClass('is-invalid');
                         }
-                        if (this.param.max != "" || this.param.max != null) {
+                        if (this.param.max != null) {
                             $('.max').removeClass('is-invalid');
                         }
                         if (this.param.uom != "" || this.param.uom != null) {
@@ -1874,7 +1874,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         if (this.param.min == null) {
                             $('.min').addClass('is-invalid');
                         }
-                        if (this.param.max == "" || this.param.max == null) {
+                        if (this.param.max == null) {
                             $('.max').addClass('is-invalid');
                         }
                         if (this.param.uom == "" || this.param.uom == null) {
@@ -1905,23 +1905,6 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
                     let keyGP = this.param.keyGP;
                     let key = this.param.key;
-                    // this.tempParameterGroupData[keyGP][key] = reactive({
-                    //     parameterId: this.param.parameterId,
-                    //     sortId: this.param.sortId,
-                    //     parameterName: this.param.parameterName,
-                    //     photo: this.paramPhoto,
-                    //     description: this.param.description,
-                    //     uom: this.param.uom,
-                    //     min: this.param.min,
-                    //     max: this.param.max,
-                    //     normal: this.param.normal,
-                    //     abnormal: this.param.abnormal,
-                    //     option: this.param.option,
-                    //     inputType: this.param.inputType,
-                    //     showOn: this.param.showOn,
-                    //     keyGP: keyGP,
-                    //     key: key,
-                    // })
                     this.params.forEach((el, i) => {
                         if (el.parameterId === this.param.parameterId) {
                             this.params[i] = reactive({
