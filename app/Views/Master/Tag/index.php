@@ -30,9 +30,29 @@
                         <a href="javascript:;" class="dt-search" data-target="#tableTag"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item cursor-pointer" @click="handleAdd()"><i class="fa fa-plus mr-2"></i> Add Tag</a>
+                            <?php
+                            if (!checkLimitTag()) { ?>
+                                <a class="dropdown-item disabled" @click="handleAdd()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Add Tag
+                                    <div class="ml-2 d-flex justify-content-end">
+                                        <i class="cil-lock-locked"></i>
+                                    </div>
+                                </a>
+                            <?php } else { ?>
+                                <a class="dropdown-item" @click="handleAdd()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Add Tag</a>
+                            <?php } ?>
+                            <!-- <a class="dropdown-item cursor-pointer" @click="handleAdd()"><i class="fa fa-plus mr-2"></i> Add Tag</a> -->
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
+                            <?php
+                            if (!checkLimitTag()) { ?>
+                                <a class="dropdown-item disabled" @click="uploadFile()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Import Data
+                                    <div class="ml-2 d-flex justify-content-end">
+                                        <i class="cil-lock-locked"></i>
+                                    </div>
+                                </a>
+                            <?php } else { ?>
+                                <a class="dropdown-item" @click="uploadFile()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Import Data</a>
+                            <?php } ?>
+                            <!-- <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a> -->
                             <a class="dropdown-item" target="_blank" href="<?= base_url('/Tag/exportExcel'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
@@ -238,6 +258,13 @@
             };
 
             function handleAdd() {
+                <?php
+				if (!checkLimitTag()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your tag location has reached the limit"
+					});
+				<?php }; ?>
                 $('#btnAdd').show();
                 $('#btnEdit').hide();
                 $('#modalTagTitle').show();
@@ -247,6 +274,13 @@
             };
 
             function add() {
+                <?php
+				if (!checkLimitTag()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your tag location has reached the limit"
+					});
+				<?php }; ?>
                 axios.post("<?= base_url('Tag/add'); ?>", {
                     tagId: this.tagId,
                     tagName: this.tagName,
@@ -300,11 +334,25 @@
             };
 
             function uploadFile() {
+                <?php
+				if (!checkLimitTag()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your tag location has reached the limit"
+					});
+				<?php }; ?>
                 this.modalImportTag = new coreui.Modal(document.getElementById('importTagModal'), {});
                 this.modalImportTag.show();
             };
 
             function insertTag() {
+                <?php
+				if (!checkLimitTag()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your tag location has reached the limit"
+					});
+				<?php }; ?>
                 axios.post("<?= base_url('Tag/insertTag'); ?>", {
                     dataTag: importList,
                 }).then(res => {

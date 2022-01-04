@@ -13,6 +13,7 @@ use App\Models\AssetTagModel;
 use App\Models\Influx\LogActivityModel;
 use App\Models\Influx\LogModel;
 use App\Models\ParameterModel;
+use App\Models\Wizard\SubscriptionModel;
 use App\Models\Wizard\TransactionModel;
 use CodeIgniter\API\ResponseTrait;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
@@ -63,6 +64,8 @@ class Asset extends BaseController
 
 		$model = new AssetModel();
 		$assetTaggingModel = new AssetTaggingModel();
+		$subscriptionModel = new SubscriptionModel();
+		$parameterModel = new ParameterModel();
 
 		$adminId = $this->session->get('adminId');
 
@@ -89,6 +92,8 @@ class Asset extends BaseController
 		$tagData = $this->db->table('tblm_tag')->where(['userId' => $adminId])->get()->getResult();
 		$statusData = $this->db->table('tblm_assetStatus')->where(['deletedAt' => null, 'userId' => $adminId])->get()->getResult();
 		$locationData = $this->db->table('tblm_tagLocation')->where(['userId' => $adminId])->get()->getResult();
+		$subscriptionData = $subscriptionModel->getAll(['userId' => $adminId]);
+		$parameterData = $parameterModel->getAll(['userId' => $adminId]);
 
 		$data = array(
 			'title' => 'Detail Asset',
@@ -124,6 +129,8 @@ class Asset extends BaseController
 		$data['locationData']	= $locationData;
 		$data['statusData']		= $statusData;
 		$data['tagging']		= $tagging;
+		$data['subscription']	= $subscriptionData;
+		$data['parameterData']	= $parameterData;
 
 		return $this->template->render('Master/Asset/detail2', $data);
 	}
@@ -207,12 +214,24 @@ class Asset extends BaseController
 			return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
 		}
 
+		// if (!checkLimitAsset()) {
+		// 	return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your assets has reached the limit"]);
+		// }
+
 		$modelAsset = new AssetModel();
+		$parameterModel = new ParameterModel();
+		$tagModel = new TagModel();
+		$tagLocationModel = new TagLocationModel();
+		$subscriptionModel = new SubscriptionModel();
+
 		$adminId = $this->session->get('adminId');
 
 		$locationData = $this->db->table('tblm_tagLocation')->where(['userId' => $adminId])->get()->getResult();
 		$tagData = $this->db->table('tblm_tag')->where(['userId' => $adminId])->get()->getResult();
 		$statusData = $this->db->table('tblm_assetStatus')->where(['deletedAt' => null, 'userId' => $adminId])->get()->getResult();
+		$subscriptionData	= $subscriptionModel->getAll(['userId' => $adminId]);
+		$parameterData		= $parameterModel->getAll(['userId' => $adminId]);
+
 		$data = array(
 			'title' => "Add Asset",
 			'subtitle' => "Add Asset",
@@ -236,6 +255,8 @@ class Asset extends BaseController
 		$data['tagData'] = $tagData;
 		$data['locationData'] = $locationData;
 		$data['statusData'] = $statusData;
+		$data['subscription'] = $subscriptionData;
+		$data['parameterData'] = $parameterData;
 		return $this->template->render('Master/Asset/add', $data);
 	}
 
@@ -247,6 +268,9 @@ class Asset extends BaseController
 				'message' => "Sorry, You don't have access",
 				'data' => []
 			], 403);
+		}
+		if (!checkLimitAsset()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your assets has reached the limit"]);
 		}
 
 		$assetModel = new AssetModel();
@@ -502,6 +526,9 @@ class Asset extends BaseController
 				'message' => "Sorry, You don't have access",
 				'data' => []
 			], 403);
+		}
+		if (!checkLimitAsset()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your assets has reached the limit"]);
 		}
 
 		$assetModel			= new AssetModel();
@@ -1120,6 +1147,9 @@ class Asset extends BaseController
 
 	public function import()
 	{
+		if (!checkLimitAsset()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your assets has reached the limit"]);
+		}
 		$data = array(
 			'title' => 'Import Asset',
 			'subtitle' => 'Import Asset',
@@ -1294,6 +1324,11 @@ class Asset extends BaseController
 		$asset = $this->request->getPost('dataAsset');
 		$parameter = $this->request->getPost('parameter');
 		$lengthAsset = count($asset);
+
+		if (!checkLimitAsset()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your assets has reached the limit"]);
+		}
+
 		try {
 			$dataAsset = "";
 			foreach ($asset as $key => $value) {
@@ -1493,6 +1528,10 @@ class Asset extends BaseController
 		$dataParameter			= $parameterModel->getAll(['assetId' => $assetId, 'deletedAt' => null]);
 		$dataAssetTag			= $assetTagModel->getAll(['assetId' => $assetId]);
 		$dataAssetTagLocation	= $assetTagLocationModel->getAll(['assetId' => $assetId]);
+
+		if (!checkLimitAsset()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your assets has reached the limit"]);
+		}
 
 		try {
 			$photoAsset = "";

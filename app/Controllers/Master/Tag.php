@@ -84,6 +84,9 @@ class Tag extends BaseController
                 'data' => []
             ], 403);
         }
+        if (!checkLimitTag()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your tag has reached the limit"]);
+		}
 
         $model = new TagModel();
         $influxModel    = new LogModel();
@@ -315,6 +318,9 @@ class Tag extends BaseController
                 'data' => []
             ], 403);
         }
+        if (!checkLimitTag()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your tag has reached the limit"]);
+		}
 
         $tagModel = new TagModel();
 

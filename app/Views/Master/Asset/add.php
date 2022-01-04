@@ -323,13 +323,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             <!-- modal table import parameter-->
             <div class="modal fade" role="dialog" id="listImport">
-                <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="titleModalAdd">List Parameter</h5>
                         </div>
                         <div class="modal-body">
-                            <div class="container">
+                            <div class="table-responsive w-100">
                                 <table class="table w-100" id="tableImport">
                                     <thead>
                                         <tr>
@@ -870,16 +870,38 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         <div class="card card-main" id="cardParameter">
             <div class="mt-2 d-flex justify-content-between align-items-center">
                 <h5>
-                    <b class="d-flex justify-content-start align-item-center">
+                    <b class="d-flex justify-content-start align-items-center">
                         <svg class="c-icon mr-1">
-                            <use xlink:href="/icons/coreui/svg/linear.svg#cil-timeline"></use>
+                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
                         </svg>
                         <p class="m-0"> Parameter <span class="required">*</span></p>
                     </b>
                 </h5>
-                <div>
-                    <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
-                    <button class="btn btn-sm btn-outline-primary" @click="addParameter(); checkModalAdd = true"><i class="fa fa-plus"></i> Add Parameter</button>
+                <div class="d-flex justify-content-end">
+                    <template v-if="checkLimitParameter()">
+                        <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
+                    </template>
+                    <template v-else>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary mr-1 disabled align-items-center" disabled @click="importParameter()" style="cursor: not-allowed !important"><i class="fa fa-upload"></i> Import Parameter
+                                <svg class="c-icon mr-1">
+                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-lock-locked"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                    <template v-if="checkLimitParameter()">
+                        <button class="btn btn-sm btn-outline-primary" @click="addParameter(); checkModalAdd = true"><i class="fa fa-plus"></i> Add Parameter</button>
+                    </template>
+                    <template v-else>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary disabled" disabled @click="addParameter(); checkModalAdd = true" style="cursor: not-allowed !important"><i class="fa fa-plus"></i> Add Parameter
+                                <svg class="c-icon mr-1">
+                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-lock-locked"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
                 </div>
             </div>
             <div class="table-responsive mt-2">
@@ -1017,6 +1039,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
     let v = Vue.createApp({
         el: '#app',
         setup() {
+            var masterTag = <?= json_encode($tagData) ?>;
+            var masterTagLocation = <?= json_encode($locationData) ?>;
+            var masterParameter = <?= json_encode($parameterData) ?>;
+            var subscription = <?= json_encode($subscription) ?>;
             var checkModalAdd = ref(false);
             var assetData = reactive({
                 assetId: uuidv4(),
@@ -1131,6 +1157,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function importParameter() {
+                <?php
+                if (!checkLimitParameter()) { ?>
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your parameters has reached the limit"
+                    })
+                <?php } ?>
                 this.myModal = new coreui.Modal(document.getElementById('importParameterModal'), {
                     backdrop: 'static',
                     keyboard: false
@@ -1139,6 +1172,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function insertParam() {
+                if (!(this.checkLimitParameterImport())) {
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your parameters has reached the limit"
+                    })
+                }
                 let lengthParam = v.listNewParam.length;
                 var uniqParam = _.uniqBy(v.listNewParam, 'no');
                 if (uniqParam.length) {
@@ -1181,6 +1220,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             };
 
             function addParameter() {
+                if (!(this.checkLimitParameterImport())) {
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your parameters has reached the limit"
+                    })
+                }
                 this.myModal = new coreui.Modal(document.getElementById('addParameterModal'), {});
                 this.myModal.show();
 
@@ -1214,6 +1259,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function addTempParameter() {
+                if (!(this.checkLimitParameterImport())) {
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your parameters has reached the limit"
+                    })
+                }
                 let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                 let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                 let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
@@ -2326,11 +2377,23 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function modalAddTag() {
+                if (!(this.checkLimitTag())) {
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your tag has reached the limit"
+                    });
+                }
                 this.myModal = new coreui.Modal(document.getElementById('modalAddTag'));
                 this.myModal.show();
             }
 
             function addAssetTag() {
+                if (!(this.checkLimitTag())) {
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your tag has reached the limit"
+                    });
+                }
                 if (this.addTag.addTagName == '') {
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
@@ -2360,6 +2423,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function modalAddLocation() {
+                if (!(this.checkLimitTagLocation())) {
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your tag has reached the limit"
+                    });
+                }
                 this.myModal = new coreui.Modal(document.getElementById('modalAddLocation'));
                 this.myModal.show();
                 // add location map
@@ -2391,6 +2460,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function addTagLocation() {
+                if (!(this.checkLimitTagLocation())) {
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your tag has reached the limit"
+                    });
+                }
                 if (this.addLocation.addLocationName == '') {
                     const swalWithBootstrapButtons = swal.mixin({
                         customClass: {
@@ -2421,6 +2496,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             }
 
             function save() {
+                <?php
+                if (!checkLimitAsset()) { ?>
+                    return swal.fire({
+                        icon: 'info',
+                        title: "Your assets has reached the limit"
+                    });
+                <?php }; ?>
                 this.submited = true;
                 let checkSchType = ((this.assetData.schType == "") && (this.setSch == 'Automatic')) ? true : false;
                 let checkRfid = this.assetTagging.find(function(key, index) {
@@ -2818,7 +2900,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                         window.location.href = "<?= base_url('Asset'); ?>";
                                     }
                                 })
-                        } else{
+                        } else {
                             swaal.fire({
                                 title: rsp.message,
                                 icon: 'error'
@@ -2833,6 +2915,71 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 v.assetTagging.assetTaggingtype = 'uhf';
                 v.valCoordinate = ref('');
             };
+
+            function checkLimitTag() {
+                let lengthTag = this.masterTag.length;
+                let lengthTempTag = this.tags.length;
+                let TagNow = lengthTag + lengthTempTag;
+                let subscription = "";
+
+                if (this.subscription.length) {
+                    subscription = this.subscription[0];
+                    if (TagNow >= subscription.tagMax) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+
+            function checkLimitTagLocation() {
+                let lengthTagLocation = this.masterTagLocation.length;
+                let lengthTempTagLocation = this.locations.length;
+                let tagLocationNow = lengthTagLocation + lengthTempTagLocation;
+                let subscription = "";
+
+                if (this.subscription.length) {
+                    subscription = this.subscription[0];
+                    if (tagLocationNow >= subscription.tagMax) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+
+            function checkLimitParameter() {
+                let lengthParameter = this.masterParameter.length;
+                let lengthTempParameter = this.params.length;
+                let parameterNow = lengthParameter + lengthTempParameter;
+                let subscription = "";
+
+                if (this.subscription.length) {
+                    subscription = this.subscription[0];
+                    if (parameterNow >= subscription.parameterMax) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+
+            function checkLimitParameterImport() {
+                let lengthParameter = this.masterParameter.length;
+                let lengthTempParameter = this.params.length;
+                let lengthImport = this.listNewParam.length;
+                let parameterNow = lengthParameter + lengthTempParameter + lengthImport;
+                let subscription = "";
+
+                if (this.subscription.length) {
+                    subscription = this.subscription[0];
+                    if (parameterNow >= subscription.parameterMax) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
 
             onMounted(() => {
                 FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
@@ -2894,6 +3041,10 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 
             });
             return {
+                masterTag,
+                masterTagLocation,
+                masterParameter,
+                subscription,
                 checkModalAdd,
                 assetData,
                 assetPhoto,
@@ -2941,7 +3092,12 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 paramPhoto,
                 files,
                 url,
-                tempParameterGroupData
+                tempParameterGroupData,
+
+                checkLimitTag,
+                checkLimitTagLocation,
+                checkLimitParameter,
+                checkLimitParameterImport
             };
         },
         computed: {
@@ -3221,7 +3377,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         },
         language: {
             noResults: function() {
-                return `<button class="btn btn-sm btn-primary" onclick="v.modalAddTag()"><i class="fa fa-plus"></i> Add</button>`;
+                if (!(v.checkLimitTag())) {
+                    return `<button class="btn btn-sm btn-primary disabled d-flex align-items-center" disabled onclick="v.modalAddTag()" style="cursor: not-allowed"><i class="fa fa-plus mr-1"></i> Add <i class="cil-lock-locked"></i></button>`;
+                } else {
+                    return `<button class="btn btn-sm btn-primary" onclick="v.modalAddTag()"><i class="fa fa-plus"></i> Add</button>`;
+                }
             }
         }
     })
@@ -3234,7 +3394,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         },
         language: {
             noResults: function() {
-                return `<button class="btn btn-sm btn-primary" onclick="v.modalAddLocation()"><i class="fa fa-plus"></i> Add</button>`;
+                if (!(v.checkLimitTagLocation())) {
+                    return `<button class="btn btn-sm btn-primary disabled d-flex align-items-center" disabled onclick="v.modalAddLocation()" style="cursor: not-allowed"><i class="fa fa-plus mr-1"></i> Add <i class="cil-lock-locked"></i></button>`;
+                } else {
+                    return `<button class="btn btn-sm btn-primary" onclick="v.modalAddLocation()"><i class="fa fa-plus"></i> Add</button>`;
+                }
             }
         }
     })
@@ -3297,6 +3461,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 if ($('#select-all').prop('checked', true)) {
                     $('input[name="parameterId"]').prop('checked', true);
                     v.listNewParam = v.importList;
+                    if (!(v.checkLimitParameterImport())) {
+                        v.listNewParam = ref([]);
+                        $('#select-all').prop('checked', false);
+                        $('input[name="parameterId"]').prop('checked', false);
+                    }
                 }
                 let arr = [];
                 $('#select-all').change(function() {
@@ -3307,6 +3476,19 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                             arr.push(val);
                         })
                         v.listNewParam = arr;
+                        if (!(v.checkLimitParameterImport())) {
+                            v.listNewParam = ref([]);
+                            $('#select-all').prop('checked', false);
+                            $('input[name="parameterId"]').prop('checked', false);
+                            let lengthParameter = v.masterParameter.length;
+                            let lengthParams = v.params.length;
+                            let lengthImport = v.listNewParam.length;
+                            let available = (v.subscription[0].parameterMax) - (lengthParams + lengthImport + lengthParameter);
+                            return swal.fire({
+                                icon: 'info',
+                                title: 'Your parameters still available : ' + available + ' parameter'
+                            })
+                        }
                     } else {
                         $('input[name="parameterId"]').prop('checked', this.checked);
                         v.listNewParam = ref([]);
@@ -3329,6 +3511,13 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         let lengthParam = v.importList.length;
                         for (let i = 0; i < lengthParam; i++) {
                             if (data.no == v.importList[i].no) {
+                                if (!(v.checkLimitParameterImport())) {
+                                    $(id).prop('checked', false);
+                                    return swal.fire({
+                                        icon: 'info',
+                                        title: "Your parameters has reached the limit"
+                                    })
+                                }
                                 v.listNewParam.push(v.importList[i])
                             }
                         }

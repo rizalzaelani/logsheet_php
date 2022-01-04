@@ -23,10 +23,19 @@
 						<a href="javascript:;" class="dt-search" data-target="#tableUser"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
-							<a class="dropdown-item" href="javascript:;" @click="getUserList()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 							<?php if (checkRoleList("USER.ADD")) { ?>
-								<a class="dropdown-item" href="javascript:;" @click="showUserModal()"><i class="fa fa-user-plus mr-2"></i> Add User</a>
+								<?php
+								if (!checkLimitUser()) { ?>
+									<a class="dropdown-item disabled" @click="showUserModal()" style="cursor: not-allowed !important;"><i class="fa fa-upload mr-2"></i> Add User
+										<div class="ml-2 d-flex justify-content-end">
+											<i class="cil-lock-locked"></i>
+										</div>
+									</a>
+								<?php } else { ?>
+									<a class="dropdown-item" href="javascript:;" @click="showUserModal()"><i class="fa fa-user-plus mr-2"></i> Add User</a>
+								<?php } ?>
 							<?php } ?>
+							<a class="dropdown-item" href="javascript:;" @click="getUserList()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
 						</div>
 					</h5>
 				</div>
@@ -267,6 +276,13 @@
 
 			<?php if (checkRoleList("USER.ADD")) : ?>
 				const showUserModal = () => {
+					<?php
+					if (!checkLimitUser()) { ?>
+						return swal.fire({
+							icon: 'info',
+							title: "Your users has reached the limit"
+						});
+					<?php }; ?>
 					if (userForm.userId) {
 						userForm.userId = "";
 						userForm.name = "";
@@ -304,12 +320,12 @@
 					userFormErr.email = null;
 					userFormErr.groupId = null;
 					userFormErr.password = null;
-					
-                    <?php if (checkRoleList("USER.MODIFY")) { ?>
-                        $("#userModal").find("input,select").attr("disabled", false);
-                    <?php } else { ?>
-                        $("#userModal").find("input,select").attr("disabled", true);
-                    <?php } ?>
+
+					<?php if (checkRoleList("USER.MODIFY")) { ?>
+						$("#userModal").find("input,select").attr("disabled", false);
+					<?php } else { ?>
+						$("#userModal").find("input,select").attr("disabled", true);
+					<?php } ?>
 
 					$("#userModal").modal("show");
 				}
@@ -317,6 +333,13 @@
 
 			<?php if (checkRoleList("USER.ADD,USER.MODIFY")) : ?>
 				const saveUser = () => {
+					<?php
+					if (!checkLimitUser()) { ?>
+						return swal.fire({
+							icon: 'info',
+							title: "Your users has reached the limit"
+						});
+					<?php }; ?>
 					if (userForm.name && userForm.email && userForm.groupId && ((userForm.password && userForm.confirmPass) || userForm.userId)) {
 						if (userForm.password != userForm.confirmPass) {
 							userFormErr.password = 'Those passwords didn’t match. Try again.';
@@ -439,7 +462,7 @@
 				});
 
 				$(document).on('click', '#tableUser tbody tr', function() {
-					if($(this).attr("data-id")) detailUser($(this).attr("data-id"));
+					if ($(this).attr("data-id")) detailUser($(this).attr("data-id"));
 				});
 
 				let tagS2 = $("select[name=tag]").select2({
@@ -468,7 +491,7 @@
 				userData,
 				userForm,
 				userFormErr,
-				
+
 				<?= (checkRoleList("USER.ADD") ? "showUserModal," : ""); ?>
 				<?= (checkRoleList("USER.ADD,USER.MODIFY") ? "saveUser," : ""); ?>
 				<?= (checkRoleList("USER.DELETE") ? "deleteUser," : ""); ?>

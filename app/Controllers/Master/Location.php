@@ -110,6 +110,10 @@ class Location extends BaseController
             return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
         }
 
+        if (!checkLimitTagLocation()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your tag location has reached the limit"]);
+		}
+
         $model = new TagLocationModel();
         $data = array(
             'title' => 'Add Tag Location',
@@ -140,6 +144,10 @@ class Location extends BaseController
                 'data' => []
             ], 403);
         }
+
+        if (!checkLimitTagLocation()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your tag location has reached the limit"]);
+		}
 
         $model          = new TagLocationModel();
         $influxModel    = new LogModel();
@@ -291,6 +299,9 @@ class Location extends BaseController
                 'data' => []
             ], 403);
         }
+        if (!checkLimitTagLocation()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your tag location has reached the limit"]);
+		}
 
         $file = $this->request->getFile('fileImportLocation');
         if ($file) {
@@ -337,6 +348,9 @@ class Location extends BaseController
                 'data' => []
             ], 403);
         }
+        if (!checkLimitTagLocation()) {
+			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your tag location has reached the limit"]);
+		}
         $tagLocationModel = new TagLocationModel();
 
         $json = $this->request->getJSON();

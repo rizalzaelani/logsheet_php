@@ -165,6 +165,13 @@ class User extends BaseController
                 'data' => []
             ], 403);
         }
+        if (!checkLimitUser()) {
+            return $this->response->setJSON([
+                'status' => 400,
+                'message' => "Sorry, Your users has reached the limit",
+                'data' => []
+            ], 400);
+        }
 
         $isValid = $this->validate([
             'name' => 'required',
@@ -325,5 +332,4 @@ class User extends BaseController
             ], 500);
         }
     }
-
 }

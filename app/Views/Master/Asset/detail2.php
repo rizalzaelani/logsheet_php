@@ -12,6 +12,7 @@
         /* vertical-align: middle !important; */
         text-align: left;
     }
+
     /* table #tableChangeLogParam thead tr th{
         vertical-align: middle !important;
     }
@@ -38,48 +39,63 @@
     .old {
         background-color: #FFE6DF !important;
     }
+
     .btn-group-fab {
-    position: fixed;
-    width: 50px;
-    height: auto;
-    right: 20px; bottom: 20px;
+        position: fixed;
+        width: 50px;
+        height: auto;
+        right: 20px;
+        bottom: 20px;
     }
+
     .btn-group-fab div {
-    position: relative; width: 100%;
-    height: auto;
+        position: relative;
+        width: 100%;
+        height: auto;
     }
+
     .btn-group-fab .btn {
-    position: absolute;
-    bottom: 0;
-    border-radius: 50%;
-    display: block;
-    margin-bottom: 4px;
-    width: 40px; height: 40px;
-    margin: 4px auto;
+        position: absolute;
+        bottom: 0;
+        border-radius: 50%;
+        display: block;
+        margin-bottom: 4px;
+        width: 40px;
+        height: 40px;
+        margin: 4px auto;
     }
+
     .btn-group-fab .btn-main {
-    width: 50px; height: 50px;
-    right: 50%; margin-right: -25px;
-    z-index: 9;
+        width: 50px;
+        height: 50px;
+        right: 50%;
+        margin-right: -25px;
+        z-index: 9;
     }
+
     .btn-group-fab .btn-sub {
-    bottom: 0; z-index: 8;
-    right: 50%;
-    margin-right: -20px;
-    -webkit-transition: all 2s;
-    transition: all 0.5s;
+        bottom: 0;
+        z-index: 8;
+        right: 50%;
+        margin-right: -20px;
+        -webkit-transition: all 2s;
+        transition: all 0.5s;
     }
+
     .btn-group-fab.active .btn-sub:nth-child(2) {
-    bottom: 60px;
+        bottom: 60px;
     }
+
     .btn-group-fab.active .btn-sub:nth-child(3) {
-    bottom: 110px;
+        bottom: 110px;
     }
+
     .btn-group-fab.active .btn-sub:nth-child(4) {
-    bottom: 160px;
+        bottom: 160px;
     }
+
     .btn-group-fab .btn-sub:nth-child(5) {
-    bottom: 210px;
+        bottom: 210px;
     }
 </style>
 <?= $this->endSection(); ?>
@@ -562,13 +578,13 @@ $sess = $session->get('adminId');
 
                 <!-- modal table import parameter-->
                 <div class="modal fade" role="dialog" id="listImport">
-                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="titleModalAdd">List Parameter</h5>
                             </div>
                             <div class="modal-body">
-                                <div class="container">
+                                <div class="table-responsive w-100">
                                     <table class="table w-100" id="tableImport">
                                         <thead>
                                             <tr>
@@ -885,327 +901,327 @@ $sess = $session->get('adminId');
                                     <h6>Changes {{ momentchangelog(dataChangeLog.time) }} by <b class="text-info">{{ dataChangeLog.username }}</b></h6>
                                 </div>
                                 <div class="mt-4">
-                                        <div class="table-responsive w-100">
-                                            <table class="table display nowrap" id="tableChangeLogParam">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Parameter</th>
-                                                        <th>Description</th>
-                                                        <th>Input Type</th>
-                                                        <th>Normal</th>
-                                                        <th>Abnormal</th>
-                                                        <th>Option</th>
-                                                        <th>Max</th>
-                                                        <th>Min</th>
-                                                        <th>Uom</th>
-                                                        <th>Show On</th>
-                                                        <th>Photo</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <template v-for="(val, i) in parameterGroupChangeLog">
-                                                        <template v-if="val.length == 1">
-                                                            <template v-for="(value, b) in val">
-                                                                <tr>
-                                                                    <td>{{value.parameterName}}</td>
-                                                                    <td>{{value.description}}</td>
-                                                                    <td>{{value.inputType}}</td>
-                                                                    <td>{{value.normal}}</td>
-                                                                    <td>{{value.abnormal}}</td>
-                                                                    <td>{{value.option}}</td>
-                                                                    <td>{{value.max}}</td>
-                                                                    <td>{{value.min}}</td>
-                                                                    <td>{{value.uom}}</td>
-                                                                    <td>{{value.showOn}}</td>
-                                                                    <td>
-                                                                        <template v-if="isUrl(value.photo1)">
-                                                                            <template v-if="isFileExist(value.photo1)">
-                                                                                <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
-                                                                                <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                    <div class="table-responsive w-100">
+                                        <table class="table display nowrap" id="tableChangeLogParam">
+                                            <thead>
+                                                <tr>
+                                                    <th>Parameter</th>
+                                                    <th>Description</th>
+                                                    <th>Input Type</th>
+                                                    <th>Normal</th>
+                                                    <th>Abnormal</th>
+                                                    <th>Option</th>
+                                                    <th>Max</th>
+                                                    <th>Min</th>
+                                                    <th>Uom</th>
+                                                    <th>Show On</th>
+                                                    <th>Photo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <template v-for="(val, i) in parameterGroupChangeLog">
+                                                    <template v-if="val.length == 1">
+                                                        <template v-for="(value, b) in val">
+                                                            <tr>
+                                                                <td>{{value.parameterName}}</td>
+                                                                <td>{{value.description}}</td>
+                                                                <td>{{value.inputType}}</td>
+                                                                <td>{{value.normal}}</td>
+                                                                <td>{{value.abnormal}}</td>
+                                                                <td>{{value.option}}</td>
+                                                                <td>{{value.max}}</td>
+                                                                <td>{{value.min}}</td>
+                                                                <td>{{value.uom}}</td>
+                                                                <td>{{value.showOn}}</td>
+                                                                <td>
+                                                                    <template v-if="isUrl(value.photo1)">
+                                                                        <template v-if="isFileExist(value.photo1)">
+                                                                            <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
+                                                                            <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                        </template>
+                                                                        <template>
+                                                                            File Removed
+                                                                        </template>
+                                                                    </template>
+                                                                    <template v-else>
+                                                                        {{value.photo1}}
+                                                                    </template>
+                                                                </td>
+                                                            </tr>
+                                                        </template>
+                                                    </template>
+                                                    <template v-else>
+                                                        <tr>
+                                                            <template v-if="val[0].parameterName != val[1].parameterName">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].parameterName}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].parameterName}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].parameterName}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].parameterName}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].description != val[1].description">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].description}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].description}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].description}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].description}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].inputType != val[1].inputType">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].inputType}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].inputType}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].inputType}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].inputType}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].normal != val[1].normal">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].normal}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].normal}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].normal}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].normal}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].abnormal != val[1].abnormal">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].abnormal}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].abnormal}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].abnormal}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].abnormal}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].option != val[1].option">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].option}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].option}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].option}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].option}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].max != val[1].max">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].max}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].max}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].max}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].max}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].min != val[1].min">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].min}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].min}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].min}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].min}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].uom != val[1].uom">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].uom}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].uom}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].uom}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].uom}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].showOn != val[1].showOn">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        {{val[0].showOn}}
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        {{val[1].showOn}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        {{val[0].showOn}}
+                                                                    </div>
+                                                                    <div>
+                                                                        {{val[1].showOn}}
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                            <template v-if="val[0].photo1 != val[1].photo1">
+                                                                <td>
+                                                                    <div class="old p-1">
+                                                                        <template v-if="isUrl(val[0].photo1)">
+                                                                            <template v-if="isFileExist(val[0].photo1)">
+                                                                                <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
+                                                                                <a :href="val[0].photo1" target="_blank">Open new tab</a>
                                                                             </template>
-                                                                            <template>
+                                                                            <template v-else>
                                                                                 File Removed
                                                                             </template>
                                                                         </template>
                                                                         <template v-else>
-                                                                            {{value.photo1}}
+                                                                            {{val[0].photo1}}
                                                                         </template>
-                                                                    </td>
-                                                                </tr>
+                                                                    </div>
+                                                                    <div class="new p-1">
+                                                                        <template v-if="isUrl(val[1].photo1)">
+                                                                            <template v-if="isFileExist(val[1].photo1)">
+                                                                                <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
+                                                                                <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                            </template>
+                                                                            <template v-else>
+                                                                                File Removed
+                                                                            </template>
+                                                                        </template>
+                                                                        <template v-else>
+                                                                            {{val[1].photo1}}
+                                                                        </template>
+                                                                    </div>
+                                                                </td>
                                                             </template>
-                                                        </template>
-                                                        <template v-else>
-                                                                <tr>
-                                                                    <template v-if="val[0].parameterName != val[1].parameterName">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].parameterName}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].parameterName}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].parameterName}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].parameterName}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].description != val[1].description">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].description}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].description}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].description}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].description}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].inputType != val[1].inputType">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].inputType}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].inputType}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].inputType}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].inputType}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].normal != val[1].normal">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].normal}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].normal}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].normal}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].normal}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].abnormal != val[1].abnormal">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].abnormal}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].abnormal}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].abnormal}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].abnormal}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].option != val[1].option">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].option}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].option}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].option}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].option}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].max != val[1].max">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].max}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].max}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].max}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].max}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].min != val[1].min">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].min}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].min}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].min}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].min}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].uom != val[1].uom">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].uom}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].uom}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].uom}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].uom}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].showOn != val[1].showOn">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                {{val[0].showOn}}
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                {{val[1].showOn}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                {{val[0].showOn}}
-                                                                            </div>
-                                                                            <div>
-                                                                                {{val[1].showOn}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-if="val[0].photo1 != val[1].photo1">
-                                                                        <td>
-                                                                            <div class="old p-1">
-                                                                                <template v-if="isUrl(val[0].photo1)">
-                                                                                    <template v-if="isFileExist(val[0].photo1)">
-                                                                                        <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
-                                                                                        <a :href="val[0].photo1" target="_blank">Open new tab</a>
-                                                                                    </template>
-                                                                                    <template v-else>
-                                                                                        File Removed
-                                                                                    </template>
-                                                                                </template>
-                                                                                <template v-else>
-                                                                                    {{val[0].photo1}}
-                                                                                </template>
-                                                                            </div>
-                                                                            <div class="new p-1">
-                                                                                <template v-if="isUrl(val[1].photo1)">
-                                                                                    <template v-if="isFileExist(val[1].photo1)">
-                                                                                        <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
-                                                                                        <a :href="val[1].photo1" target="_blank">Open new tab</a>
-                                                                                    </template>
-                                                                                    <template v-else>
-                                                                                        File Removed
-                                                                                    </template>
-                                                                                </template>
-                                                                                <template v-else>
-                                                                                    {{val[1].photo1}}
-                                                                                </template>
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <td>
-                                                                            <div>
-                                                                                <template v-if="isUrl(val[0].photo1)">
-                                                                                    <template v-if="isFileExist(val[0].photo1)">
-                                                                                        <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
-                                                                                        <a :href="val[0].photo1" target="_blank">Open new tab</a>
-                                                                                    </template>
-                                                                                    <template v-else>
-                                                                                        File Removed
-                                                                                    </template>
-                                                                                </template>
-                                                                                <template v-else>
-                                                                                    {{val[0].photo1}}
-                                                                                </template>
-                                                                            </div>
-                                                                            <div>
-                                                                                <template v-if="isUrl(val[1].photo1)">
-                                                                                    <template v-if="isFileExist(val[1].photo1)">
-                                                                                        <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
-                                                                                        <a :href="val[1].photo1" target="_blank">Open new tab</a>
-                                                                                    </template>
-                                                                                    <template v-else>
-                                                                                        File Removed
-                                                                                    </template>
-                                                                                </template>
-                                                                                <template v-else>
-                                                                                    {{val[1].photo1}}
-                                                                                </template>
-                                                                            </div>
-                                                                        </td>
-                                                                    </template>
-                                                                </tr>
-                                                        </template>
+                                                            <template v-else>
+                                                                <td>
+                                                                    <div>
+                                                                        <template v-if="isUrl(val[0].photo1)">
+                                                                            <template v-if="isFileExist(val[0].photo1)">
+                                                                                <img :src="val[0].photo1" alt="img" style="width: 50px;"><br>
+                                                                                <a :href="val[0].photo1" target="_blank">Open new tab</a>
+                                                                            </template>
+                                                                            <template v-else>
+                                                                                File Removed
+                                                                            </template>
+                                                                        </template>
+                                                                        <template v-else>
+                                                                            {{val[0].photo1}}
+                                                                        </template>
+                                                                    </div>
+                                                                    <div>
+                                                                        <template v-if="isUrl(val[1].photo1)">
+                                                                            <template v-if="isFileExist(val[1].photo1)">
+                                                                                <img :src="val[1].photo1" alt="img" style="width: 50px;"><br>
+                                                                                <a :href="val[1].photo1" target="_blank">Open new tab</a>
+                                                                            </template>
+                                                                            <template v-else>
+                                                                                File Removed
+                                                                            </template>
+                                                                        </template>
+                                                                        <template v-else>
+                                                                            {{val[1].photo1}}
+                                                                        </template>
+                                                                    </div>
+                                                                </td>
+                                                            </template>
+                                                        </tr>
                                                     </template>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -1686,24 +1702,39 @@ $sess = $session->get('adminId');
                 </div>
             </div>
             <div class="mt-2 d-flex justify-content-between align-items-center">
-                <div class="d-flex justify-content-start align-items-center">
-                    <div>
-                        <h5>
-                            <svg class="c-icon mr-1">
-                                <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
-                            </svg>
-                        </h5>
-                    </div>
-                    <div>
-                        <h5 class="mb-0">
-                            Parameter <span class="required">*</span>
-                        </h5>
-                    </div>
-                </div>
-                <div>
-                    <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
-                    <button class="btn btn-sm btn-outline-primary mr-1" @click="addParameter(); checkModalAdd = true"><i class="fa fa-plus"></i> Add Parameter</button>
-                    <a href="javascript:;" class="dt-search p-3 mr-1" data-target="#tableParameter"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
+                <h5>
+                    <b class="d-flex justify-content-start align-item-center">
+                        <svg class="c-icon mr-1">
+                            <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-timeline"></use>
+                        </svg>
+                        <p class="m-0"> Parameter <span class="required">*</span></p>
+                    </b>
+                </h5>
+                <div class="d-flex justify-content-end">
+                    <template v-if="checkLimitParameter()">
+                        <button class="btn btn-sm btn-outline-primary mr-1" @click="importParameter()"><i class="fa fa-upload"></i> Import Parameter</button>
+                    </template>
+                    <template v-else>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary mr-1 disabled align-items-center" disabled @click="importParameter()" style="cursor: not-allowed !important"><i class="fa fa-upload"></i> Import Parameter
+                                <svg class="c-icon mr-1">
+                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-lock-locked"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                    <template v-if="checkLimitParameter()">
+                        <button class="btn btn-sm btn-outline-primary" @click="addParameter(); checkModalAdd = true"><i class="fa fa-plus"></i> Add Parameter</button>
+                    </template>
+                    <template v-else>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary disabled" disabled @click="addParameter(); checkModalAdd = true" style="cursor: not-allowed !important"><i class="fa fa-plus"></i> Add Parameter
+                                <svg class="c-icon mr-1">
+                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-lock-locked"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
                 </div>
             </div>
             <div class="table-responsive mt-2 w-100">
@@ -1944,6 +1975,10 @@ $sess = $session->get('adminId');
         const v = Vue.createApp({
             el: '#app',
             setup() {
+                var subscription = <?= json_encode($subscription) ?>;
+                var masterTag = <?= json_encode($tagData) ?>;
+                var masterTagLocation = <?= json_encode($locationData) ?>;
+                var masterParameter = <?= json_encode($parameterData) ?>;
                 const start = moment().subtract(6, 'days');
                 const end = moment();
 
@@ -2050,11 +2085,23 @@ $sess = $session->get('adminId');
                 }
 
                 function modalAddTag() {
+                    if (!(this.checkLimitTag())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your tag has reached the limit"
+                        });
+                    }
                     this.myModal = new coreui.Modal(document.getElementById('modalAddTag'));
                     this.myModal.show();
                 };
 
                 function addNewTag() {
+                    if (!(this.checkLimitTag())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your tag has reached the limit"
+                        });
+                    }
                     if (this.addTag.addTagName == '') {
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
@@ -2128,6 +2175,12 @@ $sess = $session->get('adminId');
                 };
 
                 function modalAddLocation() {
+                    if (!(this.checkLimitTagLocation())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your tag has reached the limit"
+                        });
+                    }
                     this.myModal = new coreui.Modal(document.getElementById('modalAddLocation'));
                     this.myModal.show();
                     // add location map
@@ -2159,6 +2212,12 @@ $sess = $session->get('adminId');
                 };
 
                 function addTagLocation() {
+                    if (!(this.checkLimitTagLocation())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your tag has reached the limit"
+                        });
+                    }
                     if (this.addLocation.addLocationName == '') {
                         const swalWithBootstrapButtons = swal.mixin({
                             customClass: {
@@ -2206,7 +2265,9 @@ $sess = $session->get('adminId');
                     this.allParameter[0].forEach((val, i) => {
                         if (val.parameterId == parameterId) {
                             // dt = _.cloneDeep(v.allParameter[0][i]);
-                            dt = {...toRaw(v.allParameter[0][i])}
+                            dt = {
+                                ...toRaw(v.allParameter[0][i])
+                            }
                         }
                     });
 
@@ -2551,7 +2612,9 @@ $sess = $session->get('adminId');
                                 }
                             }, 2000);
                             this.param.status = 'updated';
-                            this.editedParameter.push({...toRaw(this.param)});
+                            this.editedParameter.push({
+                                ...toRaw(this.param)
+                            });
                         }
 
                         this.allParameter[0].forEach((el, i) => {
@@ -2650,6 +2713,12 @@ $sess = $session->get('adminId');
                 };
 
                 function addParameter() {
+                    if (!(this.checkLimitParameter())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your parameters has reached the limit"
+                        })
+                    }
                     this.paramPhoto = ref("");
                     FilePond.destroy(document.querySelector('#photoParam'));
                     FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
@@ -2718,6 +2787,12 @@ $sess = $session->get('adminId');
                 };
 
                 function addTempParameter() {
+                    if (!(this.checkLimitParameter())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your parameters has reached the limit"
+                        })
+                    }
                     let min = (this.param.min == null) && (this.param.inputType == 'input') ? true : false;
                     let max = ((this.param.max == "") || (this.param.max == null)) && (this.param.inputType == 'input') ? true : false;
                     let uom = ((this.param.uom == "") && ((this.param.inputType == 'input') || (this.param.inputType == 'select'))) ? true : false;
@@ -3828,7 +3903,7 @@ $sess = $session->get('adminId');
                                             window.location.href = "<?= base_url('Asset'); ?>"
                                         }
                                     })
-                                } else{
+                                } else {
                                     swal.fire({
                                         title: rsp.message,
                                         icon: 'error',
@@ -3884,6 +3959,12 @@ $sess = $session->get('adminId');
                 };
 
                 function importParameter() {
+                    if (!(this.checkLimitParameter())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your parameters has reached the limit"
+                        })
+                    }
                     this.myModal = new coreui.Modal(document.getElementById('importParameterModal'), {
                         backdrop: 'static',
                         keyboard: false
@@ -3892,6 +3973,12 @@ $sess = $session->get('adminId');
                 };
 
                 function insertParam() {
+                    if (!(this.checkLimitParameterImport())) {
+                        return swal.fire({
+                            icon: 'info',
+                            title: "Your parameters has reached the limit"
+                        })
+                    }
                     var uniqParam = _.uniqBy(v.listNewParam, 'no');
                     if (uniqParam.length) {
                         for (let b = 0; b < uniqParam.length; b++) {
@@ -3986,7 +4073,7 @@ $sess = $session->get('adminId');
                                     }).then((okay) => {
                                         window.location.href = '<?= base_url('Asset/detail') ?>' + '/' + data[0]['assetId'];
                                     })
-                                }else{
+                                } else {
                                     swal.fire({
                                         icon: 'error',
                                         title: res.data.message
@@ -4059,12 +4146,12 @@ $sess = $session->get('adminId');
                     return true;
                 }
 
-                function isFileExist(url){
+                function isFileExist(url) {
                     try {
                         var xhr = new XMLHttpRequest();
                         xhr.open('HEAD', urlToFile, false);
                         xhr.send();
-                        
+
                         if (xhr.status == "404") {
                             return false;
                         } else {
@@ -4072,6 +4159,71 @@ $sess = $session->get('adminId');
                         }
                     } catch (e) {
                         return false;
+                    }
+                }
+
+                function checkLimitTag() {
+                    let lengthTag = this.masterTag.length;
+                    let lengthTempTag = this.tags.length;
+                    let TagNow = lengthTag + lengthTempTag;
+                    let subscription = "";
+
+                    if (this.subscription.length) {
+                        subscription = this.subscription[0];
+                        if (TagNow >= subscription.tagMax) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+
+                function checkLimitTagLocation() {
+                    let lengthTagLocation = this.masterTagLocation.length;
+                    let lengthTempTagLocation = this.locations.length;
+                    let tagLocationNow = lengthTagLocation + lengthTempTagLocation;
+                    let subscription = "";
+
+                    if (this.subscription.length) {
+                        subscription = this.subscription[0];
+                        if (tagLocationNow >= subscription.tagMax) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+
+                function checkLimitParameter() {
+                    let lengthParameter = this.masterParameter.length;
+                    let lengthTempParameter = this.params.length;
+                    let parameterNow = lengthParameter + lengthTempParameter;
+                    let subscription = "";
+
+                    if (this.subscription.length) {
+                        subscription = this.subscription[0];
+                        if (parameterNow >= subscription.parameterMax) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+
+                function checkLimitParameterImport() {
+                    let lengthParameter = this.masterParameter.length;
+                    let lengthTempParameter = this.params.length;
+                    let lengthImport = this.listNewParam.length;
+                    let parameterNow = lengthParameter + lengthTempParameter + lengthImport;
+                    let subscription = "";
+
+                    if (this.subscription.length) {
+                        subscription = this.subscription[0];
+                        if (parameterNow >= subscription.parameterMax) {
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
                 }
 
@@ -4290,7 +4442,7 @@ $sess = $session->get('adminId');
                                             render: function(data, type, row, meta) {
                                                 if (row.activity == 'Update asset') {
                                                     return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                                                }else{
+                                                } else {
                                                     return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
                                                 }
                                             }
@@ -4310,12 +4462,13 @@ $sess = $session->get('adminId');
                         var value = $(this).val().toLowerCase();
                         $("#tableParameter tbody tr").filter(function() {
                             $(this).toggle($(this).text()
-                            .toLowerCase().indexOf(value) > -1)
+                                .toLowerCase().indexOf(value) > -1)
                         });
                     });
                 });
 
                 return {
+                    subscription,
                     tableChangeLog,
                     IsArray,
                     isUrl,
@@ -4363,6 +4516,8 @@ $sess = $session->get('adminId');
                     onDays,
 
                     //tag & location
+                    masterTag,
+                    masterTagLocation,
                     addTag,
                     tag,
                     tags,
@@ -4370,6 +4525,7 @@ $sess = $session->get('adminId');
                     tagLocation,
                     locations,
                     //end tag & location
+                    masterParameter,
                     param,
                     paramPhoto,
                     tempPhoto,
@@ -4412,6 +4568,11 @@ $sess = $session->get('adminId');
                     end,
                     duplicate,
                     // DTChangeLog
+
+                    checkLimitTag,
+                    checkLimitTagLocation,
+                    checkLimitParameter,
+                    checkLimitParameterImport
                 }
             },
             computed: {
@@ -4478,7 +4639,9 @@ $sess = $session->get('adminId');
             v.myModal = new coreui.Modal(document.getElementById('modalChange'), {});
             v.myModal.show();
 
-            v.dataChangeLog = {...v.changelog[i]};
+            v.dataChangeLog = {
+                ...v.changelog[i]
+            };
 
             let before = _.omit((JSON.parse(v.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
             let after = _.omit((JSON.parse(v.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
@@ -4493,7 +4656,9 @@ $sess = $session->get('adminId');
             v.myModal = new coreui.Modal(document.getElementById('modalChangeParam'), {});
             v.myModal.show();
 
-            v.dataChangeLog = {...v.changelog[i]};
+            v.dataChangeLog = {
+                ...v.changelog[i]
+            };
 
             let before = _.omit((JSON.parse(v.changelog[i].data)).data_before, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
             let after = _.omit((JSON.parse(v.changelog[i].data)).data_after, ['assetId', 'userId', 'assetStatusId', 'createdAt', 'updatedAt', 'deletedAt', 'tagId', 'tagLocationId', 'latitude', 'longitude']);
@@ -4726,16 +4891,35 @@ $sess = $session->get('adminId');
                     if ($('#select-all').prop('checked', true)) {
                         $('input[name="parameterId"]').prop('checked', true);
                         v.listNewParam = v.importList;
+                        if (!(v.checkLimitParameterImport())) {
+                            v.listNewParam = ref([]);
+                            $('#select-all').prop('checked', false);
+                            $('input[name="parameterId"]').prop('checked', false);
+                        }
                     }
                     let arr = [];
                     $('#select-all').change(function() {
                         if (this.checked) {
+                            let table = $('#tableImport').DataTable();
                             $('input[name="parameterId"]').prop('checked', this.checked);
                             let elm = table.rows().data();
                             $.each(elm, function(key, val) {
                                 arr.push(val);
                             })
                             v.listNewParam = arr;
+                            if (!(v.checkLimitParameterImport())) {
+                                v.listNewParam = ref([]);
+                                $('#select-all').prop('checked', false);
+                                $('input[name="parameterId"]').prop('checked', false);
+                                let lengthParameter = v.masterParameter.length;
+                                let lengthParams = v.params.length;
+                                let lengthImport = v.listNewParam.length;
+                                let available = (v.subscription[0].parameterMax) - (lengthParams + lengthImport + lengthParameter);
+                                return swal.fire({
+                                    icon: 'info',
+                                    title: 'Your parameters still available : ' + available + ' parameter'
+                                })
+                            }
                         } else {
                             $('input[name="parameterId"]').prop('checked', this.checked);
                             v.listNewParam = ref([]);
@@ -4758,6 +4942,7 @@ $sess = $session->get('adminId');
                             let lengthParam = v.importList.length;
                             for (let i = 0; i < lengthParam; i++) {
                                 if (data.no == v.importList[i].no) {
+                                    return 
                                     v.listNewParam.push(v.importList[i])
                                 }
                             }
@@ -4851,7 +5036,11 @@ $sess = $session->get('adminId');
                 },
                 language: {
                     noResults: function() {
-                        return `<button class="btn btn-sm btn-primary" onclick="v.modalAddTag()"><i class="fa fa-plus"></i> Add</button>`;
+                        if (!(v.checkLimitTag())) {
+                            return `<button class="btn btn-sm btn-primary disabled d-flex align-items-center" disabled onclick="v.modalAddTag()" style="cursor: not-allowed"><i class="fa fa-plus mr-1"></i> Add <i class="cil-lock-locked"></i></button>`;
+                        } else {
+                            return `<button class="btn btn-sm btn-primary" onclick="v.modalAddTag()"><i class="fa fa-plus"></i> Add</button>`;
+                        }
                     }
                 }
             });
@@ -4863,7 +5052,11 @@ $sess = $session->get('adminId');
                 },
                 language: {
                     noResults: function() {
-                        return `<button class="btn btn-sm btn-primary" onclick="v.modalAddLocation()"><i class="fa fa-plus"></i> Add</button>`;
+                        if (!(v.checkLimitTagLocation())) {
+                            return `<button class="btn btn-sm btn-primary disabled d-flex align-items-center" disabled onclick="v.modalAddLocation()" style="cursor: not-allowed"><i class="fa fa-plus mr-1"></i> Add <i class="cil-lock-locked"></i></button>`;
+                        } else {
+                            return `<button class="btn btn-sm btn-primary" onclick="v.modalAddLocation()"><i class="fa fa-plus"></i> Add</button>`;
+                        }
                     }
                 }
             });

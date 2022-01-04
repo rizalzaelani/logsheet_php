@@ -21,9 +21,29 @@
                         <a href="javascript:;" class="dt-search" data-target="#tableLocation"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
                         <a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Tag Location</a>
+                            <?php
+                            if (!checkLimitTagLocation()) { ?>
+                                <a class="dropdown-item disabled" @click="add()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Add Tag Location
+                                    <div class="ml-2 d-flex justify-content-end">
+                                        <i class="cil-lock-locked"></i>
+                                    </div>
+                                </a>
+                            <?php } else { ?>
+                                <a class="dropdown-item" @click="add()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Add Tag Location</a>
+                            <?php } ?>
+                            <!-- <a class="dropdown-item" href="<?= base_url('/Location/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Tag Location</a> -->
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a>
+                            <?php
+                            if (!checkLimitTagLocation()) { ?>
+                                <a class="dropdown-item disabled" @click="uploadFile()" style="cursor: pointer !important;"><i class="fa fa-upload mr-2"></i> Import Data
+                                    <div class="ml-2 d-flex justify-content-end">
+                                        <i class="cil-lock-locked"></i>
+                                    </div>
+                                </a>
+                            <?php } else { ?>
+                                <a class="dropdown-item" @click="uploadFile()" style="cursor: pointer !important;"><i class="fa fa-upload mr-2"></i> Import Data</a>
+                            <?php } ?>
+                            <!-- <a class="dropdown-item" type="button" @click="uploadFile()"><i class="fa fa-upload mr-2"></i> Import Data</a> -->
                             <a class="dropdown-item" target="_blank" href="<?= base_url('/Location/exportExcel'); ?>"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
@@ -225,17 +245,26 @@
 
             };
 
-            const handleAdd = () => {
-                this.modalLocation = new coreui.Modal(document.getElementById('modalLocation'), {});
-                this.modalLocation.show();
-            };
-
             const uploadFile = () => {
+                <?php
+				if (!checkLimitTagLocation()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your tag location has reached the limit"
+					});
+				<?php }; ?>
                 this.modalLocation = new coreui.Modal(document.getElementById('importLocationModal'), {});
                 this.modalLocation.show();
             };
 
             const insertLocation = () => {
+                <?php
+				if (!checkLimitTagLocation()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your tag location has reached the limit"
+					});
+				<?php }; ?>
                 axios.post("<?= base_url('Location/insertLocation'); ?>", {
                     dataLocation: importList,
                     tagLocationId: uuidv4()
@@ -250,13 +279,24 @@
                                 v.table.draw();
                             }
                         })
-                    }else{
+                    } else {
                         swal.fire({
                             icon: 'error',
                             title: res.data.message
                         })
                     }
                 })
+            }
+
+            const add = () => {
+                <?php
+				if (!checkLimitTagLocation()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your tag location has reached the limit"
+					});
+				<?php }; ?>
+				window.location.href = "<?= base_url('Location/add') ?>";
             }
 
             Vue.onMounted(() => {
@@ -283,7 +323,9 @@
                 uploadFile,
                 dataLocation,
                 tableImport,
-                insertLocation
+                insertLocation,
+
+                add,
             }
         },
     }).mount('#app');

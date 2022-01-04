@@ -26,9 +26,28 @@
 						<a href="javascript:;" class="dt-search" data-target="#tableEq"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
 						<a href="#" class="ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v" data-toggle="tooltip" title="Option"></i></a>
 						<div class="dropdown-menu">
-							<a class="dropdown-item" href="<?= base_url('/Asset/add'); ?>"><i class="fa fa-plus mr-2"></i> Add Asset</a>
+							<?php
+							if (!checkLimitAsset()) { ?>
+								<a class="dropdown-item disabled" @click="add()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Add Asset
+									<div class="ml-2 d-flex justify-content-end">
+										<i class="cil-lock-locked"></i>
+									</div>
+								</a>
+							<?php } else { ?>
+								<a class="dropdown-item" @click="add()" style="cursor: pointer !important;"><i class="fa fa-plus mr-2"></i> Add Asset</a>
+							<?php } ?>
+							<?php
+							if (!checkLimitAsset()) { ?>
+								<a class="dropdown-item disabled" @click="importData()" style="cursor: pointer !important;"><i class="fa fa-upload mr-2"></i> Import data
+									<div class="ml-2 d-flex justify-content-end">
+										<i class="cil-lock-locked"></i>
+									</div>
+								</a>
+								<!-- <a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a> -->
+							<?php } else { ?>
+								<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
+							<?php } ?>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="<?= base_url('/Asset/import'); ?>"><i class="fa fa-upload mr-2"></i> Import Data</a>
 							<a class="dropdown-item" href="<?= base_url('/Asset/export'); ?>" target="_blank"><i class="fa fa-file-excel mr-2"></i> Export Data</a>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="javascript:;" @click="table.draw()"><i class="fa fa-sync-alt mr-2"></i> Reload</a>
@@ -132,6 +151,9 @@
 <?= $this->section('customScripts'); ?>
 <!-- Custom Script Js -->
 <script>
+	const {
+		ref
+	} = Vue;
 	let v = Vue.createApp({
 		el: '#app',
 		setup() {
@@ -221,64 +243,29 @@
 			};
 
 			const add = () => {
-				if (this.company != null && this.area != null && this.unit != null && this.equipment != null) {
-					axios.post("<?= base_url('Asset/add'); ?>", {
-							adminequip_id: this.adminequip_id,
-							company: this.company,
-							area: this.area,
-							unit: this.unit,
-							equipment: this.equipment,
-						})
-						// .then(response => (this.info = response))
-						.then(res => {
-							if (res.data.status == 'success') {
-								const swalWithBootstrapButtons = Swal.mixin({
-									customClass: {
-										confirmButton: 'btn btn-success',
-									},
-									buttonsStyling: false
-								})
-								swalWithBootstrapButtons.fire({
-										title: 'Success!',
-										text: "Success add data.",
-										icon: 'success',
-										allowOutsideClick: false
-									})
-									.then(okay => {
-										if (okay) {
-											// loading('show');
-											swal.fire({
-												title: 'Please Wait!',
-												text: 'Reloading page..',
-												onOpen: function() {
-													swal.showLoading()
-												}
-											})
-											location.reload();
-										}
-									})
-							}
-						})
-				} else {
-					const swalWithBootstrapButtons = swal.mixin({
-						customClass: {
-							confirmButton: 'btn btn-danger'
-						},
-						buttonsStyling: false
-					})
-
-					swalWithBootstrapButtons.fire({
-						icon: 'error',
-						title: 'Failed!',
-						text: 'Field cannot be empty.',
-						allowOutsideClick: false
-					})
-				}
+				<?php
+				if (!checkLimitAsset()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your assets has reached the limit"
+					});
+				<?php }; ?>
+				window.location.href = "<?= base_url('Asset/add') ?>";
 			};
 
+			const importData = () => {
+				<?php
+				if (!checkLimitAsset()) { ?>
+					return swal.fire({
+						icon: 'info',
+						title: "Your assets has reached the limit"
+					});
+				<?php }; ?>
+				window.location.href = "<?= base_url('Asset/import') ?>";
+			}
 			Vue.onMounted(() => {
 				getData()
-				
+
 				let search = $(".dt-search-input input[data-target='#tableEq']");
 				search.unbind().bind("keypress", function(e) {
 					if (e.which == 13 || e.keyCode == 13) {
@@ -288,7 +275,7 @@
 				});
 
 				$(document).on('click', '#tableEq tbody tr', function() {
-					if($(this).attr("data-id")) window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
+					if ($(this).attr("data-id")) window.location.href = "<?= site_url('Asset/detail') ?>/" + $(this).attr("data-id");
 				});
 
 				$('#filtDTTag,#filtDTLoc').on('change', function() {
@@ -304,7 +291,8 @@
 				table,
 				getData,
 				handleAdd,
-				add
+				add,
+				importData
 			}
 		},
 	}).mount('#app');

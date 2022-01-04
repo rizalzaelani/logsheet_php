@@ -5,9 +5,11 @@ namespace App\Controllers\Dashboard;
 use App\Controllers\BaseController;
 use App\Models\AssetModel;
 use App\Models\Influx\LogModel;
+use App\Models\ParameterModel;
 use App\Models\ScheduleTrxModel;
 use App\Models\TagModel;
 use App\Models\TagLocationModel;
+use App\Models\Wizard\SubscriptionModel;
 use App\Models\Wizard\TransactionModel;
 use DateTime;
 use Exception;
@@ -24,6 +26,8 @@ class Dashboard extends BaseController
 		$tagModel			= new TagModel();
 		$locationModel		= new TagLocationModel();
 		$scheduleTrxModel	= new ScheduleTrxModel();
+		$subscriptionModel	= new SubscriptionModel();
+		$parameterModel		= new ParameterModel();
 
 		$adminId = $this->session->get('adminId');
 
@@ -36,6 +40,13 @@ class Dashboard extends BaseController
 		$dataAsset = $assetModel->getAll(['userId' => $adminId, 'deletedAt' => null]);
 		$dataTag = $tagModel->getAll(['userId' => $adminId]);
 		$dataLocation = $locationModel->getAll(['userId' => $adminId]);
+		$dataParameter = $parameterModel->getAll(['userId' => $adminId]);
+
+		$dataSubscription = $subscriptionModel->getAll(['userId' => $adminId]);
+		$subscription = "";
+		if (!empty($dataSubscription)) {
+			$subscription = $dataSubscription[0];
+		}
 
 		$data = array(
 			'title' => "Dashboard",
@@ -47,15 +58,21 @@ class Dashboard extends BaseController
 				"link"	=> "Dashboard"
 			],
 		];
-		$data['totalAsset'] = count($dataAsset);
-		$data['totalTag'] = count($dataTag);
-		$data['totalLocation'] = count($dataLocation);
-		$data['approveNull'] = count($approvedAtNull);
+		$data['totalAsset']		= count($dataAsset);
+		$data['totalTag']		= count($dataTag);
+		$data['totalLocation']	= count($dataLocation);
+		$data['approveNull']	= count($approvedAtNull);
 		$data['approveNotNull'] = count($approvedAtNotNull);
-		$data['normal'] = count($normal);
-		$data['finding'] = count($finding);
-		$data['open'] = count($open);
-		$data['closed'] = count($closed);
+		$data['normal']			= count($normal);
+		$data['finding']		= count($finding);
+		$data['open']			= count($open);
+		$data['closed']			= count($closed);
+
+		$data['availableAsset']		= $subscription['assetMax'] - count($dataAsset);
+		$data['availableParameter'] = $subscription['parameterMax'] - count($dataParameter);
+		$data['availableTag']		= $subscription['tagMax'] - count($dataTag);
+		$data['availableTagLocation']= $subscription['tagMax'] - count($dataLocation);
+
 		return $this->template->render('Dashboard/index', $data);
 	}
 
