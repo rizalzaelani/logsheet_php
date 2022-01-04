@@ -86,14 +86,14 @@ class UserModel extends Model
                     );
                 }
             } else {
-                if($response->getStatus() == 401){
+                if ($response->getStatus() == 401) {
                     $clientAuth = $this->clientAuth(array(
                         'appCode' => $sess->get("appCode"),
                         'email' => $sess->get("email"),
                         'password' => $sess->get("password")
                     ));
 
-                    
+
                     $dataCA = $clientAuth['data'];
                     if ($clientAuth['error']) {
                         return array(
@@ -105,7 +105,7 @@ class UserModel extends Model
                     } else {
                         $sess->set("token", $dataCA->data->token);
                         $resp->setCookie("clientToken", "active", 3600);
-                        
+
                         return array(
                             'error' => false,
                             'message' => 'Success Refresh Token',
@@ -146,7 +146,7 @@ class UserModel extends Model
         $request->addPostParameter(array(
             'appId' => $sess->get("appId")
         ));
-        
+
         try {
             $response = $request->send();
             if ($response->getStatus() == 200) {
@@ -171,7 +171,8 @@ class UserModel extends Model
         }
     }
 
-    public function userDetail($userId = ""){
+    public function userDetail($userId = "")
+    {
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
 
@@ -188,7 +189,7 @@ class UserModel extends Model
             'appId' => $sess->get("appId"),
             'userId' => $userId
         ));
-        
+
         try {
             $response = $request->send();
             if ($response->getStatus() == 200) {
@@ -213,7 +214,8 @@ class UserModel extends Model
         }
     }
 
-    public function saveUser($param){
+    public function saveUser($param)
+    {
         // for update group, add the groupId value
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
@@ -228,7 +230,7 @@ class UserModel extends Model
             'Authorization' => $sess->get("token")
         ));
         $request->addPostParameter($param);
-        
+
         try {
             $response = $request->send();
             if ($response->getStatus() == 200) {
@@ -253,7 +255,8 @@ class UserModel extends Model
         }
     }
 
-    public function deleteUser($param){
+    public function deleteUser($param)
+    {
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
 
@@ -267,7 +270,7 @@ class UserModel extends Model
             'Authorization' => $sess->get("token")
         ));
         $request->addPostParameter($param);
-        
+
         try {
             $response = $request->send();
             if ($response->getStatus() == 200) {
@@ -292,7 +295,8 @@ class UserModel extends Model
         }
     }
 
-    public function changePassword($param){
+    public function changePassword($param)
+    {
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
 
@@ -306,7 +310,7 @@ class UserModel extends Model
             'Authorization' => $sess->get("token")
         ));
         $request->addPostParameter($param);
-        
+
         try {
             $response = $request->send();
             if ($response->getStatus() == 200) {
@@ -331,7 +335,8 @@ class UserModel extends Model
         }
     }
 
-    public function forgotPassword($param){
+    public function forgotPassword($param)
+    {
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
 
@@ -344,7 +349,7 @@ class UserModel extends Model
             'X-Requested-With' => 'XMLHttpRequest'
         ));
         $request->addPostParameter($param);
-        
+
         try {
             $response = $request->send();
             if ($response->getStatus() == 200) {
@@ -369,7 +374,8 @@ class UserModel extends Model
         }
     }
 
-    public function resetPassword($token, $param){
+    public function resetPassword($token, $param)
+    {
         $sess = \Config\Services::session();
         $request = new HTTP_Request2();
 
@@ -383,7 +389,7 @@ class UserModel extends Model
             'Authorization' => $token
         ));
         $request->addPostParameter($param);
-        
+
         try {
             $response = $request->send();
             if ($response->getStatus() == 200) {

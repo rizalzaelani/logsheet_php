@@ -86,10 +86,10 @@ class Login extends BaseController
                                 $this->response->setCookie('appLogoDark', "", 60 * 60 * 24 * 365, '', '/logsheet');
                                 $this->response->setCookie('appLogoIcon', "", 60 * 60 * 24 * 365, '', '/logsheet');
                             } else {
-                                $this->response->setCookie('appName', $appSetting["appName"], 60 * 60 * 24 * 365, '', '/logsheet');
-                                $this->response->setCookie('appLogoLight', $appSetting["appLogoLight"], 60 * 60 * 24 * 365, '', '/logsheet');
-                                $this->response->setCookie('appLogoDark', $appSetting["appLogoDark"], 60 * 60 * 24 * 365, '', '/logsheet');
-                                $this->response->setCookie('appLogoIcon', $appSetting["appLogoIcon"], 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appName', $appSetting["appName"] ?? "", 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoLight', $appSetting["appLogoLight"] ?? "", 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoDark', $appSetting["appLogoDark"] ?? "", 60 * 60 * 24 * 365, '', '/logsheet');
+                                $this->response->setCookie('appLogoIcon', $appSetting["appLogoIcon"] ?? "", 60 * 60 * 24 * 365, '', '/logsheet');
                             }
                             $tagModel = new TagModel();
                             $tagLocModel = new TagLocationModel();
@@ -101,9 +101,6 @@ class Login extends BaseController
                             $this->response->setCookie('clientToken', "active", 3600);
 
                             $activity       = 'Sign in to application';
-                            $ipAddress      = $this->request->getIPAddress();
-                            $username       = $this->session->get('name');
-                            $userId         = $this->session->get('adminId');
                             $userAgent      = $this->request->getUserAgent();
                             $browser        = $userAgent->getBrowser() . ' ' . $userAgent->getVersion();
                             $platform       = $userAgent->getPlatform();
@@ -220,33 +217,5 @@ class Login extends BaseController
         sendLog('Log out application', null, json_encode($data));
 
         return redirect()->to(base_url());
-    }
-
-    public function testMail()
-    {
-        try {
-            // $logActModel = new LogActivityModel();
-            // $logActModel->writeLog();
-
-            echo "Success - " . microtime(true);
-        } catch (Exception $e) {
-            echo "<pre />";
-            print_r($e);
-        }
-    }
-
-    public function testTelegram()
-    {
-        try {
-            $chatId = $this->request->getVar("chatId") ?? "586103052";
-            $bot = new \TelegramBot\Api\BotApi(env('botTelegramToken'));
-
-            $bot->sendMessage($chatId, "Hallo, Welcome to Logsheet Digital");
-
-            echo "success";
-        } catch (Exception $e) {
-            echo "<pre />";
-            print_r($e);
-        }
     }
 }
