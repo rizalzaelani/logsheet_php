@@ -48,6 +48,9 @@ $routes->get('/register', 'Auth\Register::index');
 $routes->get('/verifyMail/(:any)', 'Auth\Register::verifyMail/$1');
 $routes->post('/register/doRegister', 'Auth\Register::doRegister');
 
+$routes->get('/Industrial', 'Industrial/Industrial::index');
+$routes->post('/Industrial/doGenerate', 'Industrial/Industrial::doGenerate');
+
 $routes->get('/Wizard', 'Wizard/Wizard::index');
 $routes->post('/Wizard/getInvoice', 'Wizard/Wizard::getInvoice');
 $routes->add('/Wizard/Invoice/(:any)', 'Wizard\Wizard::invoice/$1');
