@@ -238,9 +238,11 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                                     <label class="col-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="showOn"></i></label>
                                     <div class="col-9 p-0">
                                         <select class="form-control showOn" name="showOn" id="showOn" multiple>
-                                            <option value="Running">Running</option>
-                                            <option value="Standby">Standby</option>
-                                            <option value="Repair">Repair</option>
+                                            <?php if(count($assetStatus)) : ?>
+                                                <?php foreach ($assetStatus as $key => $value) : ?>
+                                                <option value="<?= $value['assetStatusName'] ?>"><?= $value['assetStatusName'] ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                         </select>
                                         <div class="invalid-feedback">
                                             Field cannot be empty.
@@ -794,16 +796,22 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                         <hr>
                         <div class="form-group row">
                             <div class="col-12">
-                                <div class="btn-group-toggle" data-toggle="buttons" id="operation">
-                                    <?php foreach ($statusData as $key) : ?>
-                                        <label class="btn btn-outline-primary mx-1 mb-1" style="width: calc(25% - 0.5rem) !important;">
-                                            <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
-                                        </label>
-                                    <?php endforeach; ?>
-                                </div>
-                                <div class="invalid-feedback">
-                                    Field cannot be empty.
-                                </div>
+                                <template v-if="assetStatus.length == 0">
+                                    <button onclick="location.reload()" class="btn btn-sm btn-primary mr-1" style="width: calc(50% - 0.25rem) !important"><i class="fa fa-sync-alt"></i> Refresh Page</button>
+                                    <button onclick="window.open('<?= base_url('Application') ?>')" class="btn btn-sm btn-primary ml-1" style="width: calc(50% - 0.25rem) !important"><i class="fa fa-plus"></i> Add Data</button>
+                                </template>
+                                <template v-else>
+                                    <div class="btn-group-toggle" data-toggle="buttons" id="operation">
+                                        <?php foreach ($statusData as $key) : ?>
+                                            <label class="btn btn-outline-primary mx-1 mb-1" style="width: calc(25% - 0.5rem) !important;">
+                                                <input type="radio" name="options" data-content="<?= $key->assetStatusName ?>" id="<?= $key->assetStatusId ?>" autocomplete="off"><?= $key->assetStatusName ?>
+                                            </label>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Field cannot be empty.
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -1044,6 +1052,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
             var masterParameter = <?= json_encode($parameterData) ?>;
             var subscription = <?= json_encode($subscription) ?>;
             var checkModalAdd = ref(false);
+            var assetStatus = <?= json_encode($assetStatus) ?>;
             var assetData = reactive({
                 assetId: uuidv4(),
                 assetName: '',
@@ -3029,6 +3038,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 masterParameter,
                 subscription,
                 checkModalAdd,
+                assetStatus,
                 assetData,
                 assetPhoto,
                 setSch,
@@ -3080,7 +3090,7 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
                 checkLimitTag,
                 checkLimitTagLocation,
                 checkLimitParameter,
-                checkLimitParameterImport
+                checkLimitParameterImport,
             };
         },
         computed: {
@@ -3435,6 +3445,14 @@ $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
         theme: 'coreui',
         placeholder: "Parameter Status",
         dropdownParent: $('#addParameterModal'),
+        escapeMarkup: function(markup) {
+            return markup;
+        },
+        language: {
+            noResults: function() {
+                return `<button class="btn btn-sm btn-primary" onclick="window.open('<?= base_url('Application') ?>')"><i class="fa fa-plus"></i> Add</button>`
+            }
+        }
     });
 
     var loadListImport = (importList) => {

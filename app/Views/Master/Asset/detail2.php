@@ -482,9 +482,9 @@ $sess = $session->get('adminId');
                                                 <label class="col-sm-3" for="showOn">Parameter Status <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Status parameter you have."></i></label>
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control showOn" name="showOn" id="showOn" multiple>
-                                                        <option value="Running">Running</option>
-                                                        <option value="Standby">Standby</option>
-                                                        <option value="Repair">Repair</option>
+                                                        <?php foreach ($statusData as $key => $value) : ?>
+                                                        <option value="<?= $value->assetStatusName ?>"><?= $value->assetStatusName ?></option>
+                                                        <?php endforeach; ?>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         Field cannot be empty.
@@ -2002,6 +2002,7 @@ $sess = $session->get('adminId');
                 var checkTabParameter = ref(false);
                 var checkTabSetting = ref(false);
                 var assetData = reactive(<?= json_encode($assetData); ?>);
+                var statusData = ref(<?= json_encode($statusData); ?>);
                 var assetPhoto = ref("");
                 var deleteAssetPhoto = ref(false);
                 var parameter = reactive(<?= json_encode($parameter); ?>);
@@ -4507,6 +4508,7 @@ $sess = $session->get('adminId');
 
                     checked,
                     assetData,
+                    statusData,
                     deleteAssetPhoto,
                     assetPhoto,
                     descJson,

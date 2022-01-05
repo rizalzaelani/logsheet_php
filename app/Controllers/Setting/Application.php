@@ -21,7 +21,7 @@ class Application extends BaseController
         $appSettingModel = new ApplicationSettingModel();
         $assetStatusModel = new AssetStatusModel();
         $appSetting = $appSettingModel->where("userId", $userIdApp)->get()->getRowArray();
-        $assetStatus = $assetStatusModel->orderBy('createdAt', 'asc')->getWhere(['userId' => $userIdApp, 'deletedAt', null])->getResultArray();
+        $assetStatus = $assetStatusModel->orderBy('createdAt', 'asc')->getWhere(['userId' => $userIdApp, 'deletedAt' => null])->getResultArray();
         $data = array(
             'title' => 'Setting Application',
             'subtitle' => 'Setting Application'

@@ -223,6 +223,7 @@ class Asset extends BaseController
 		$tagModel = new TagModel();
 		$tagLocationModel = new TagLocationModel();
 		$subscriptionModel = new SubscriptionModel();
+		$assetStatusModel = new AssetStatusModel();
 
 		$adminId = $this->session->get('adminId');
 
@@ -231,6 +232,7 @@ class Asset extends BaseController
 		$statusData = $this->db->table('tblm_assetStatus')->where(['deletedAt' => null, 'userId' => $adminId])->get()->getResult();
 		$subscriptionData	= $subscriptionModel->getAll(['userId' => $adminId]);
 		$parameterData		= $parameterModel->getAll(['userId' => $adminId]);
+		$assetStatus = $assetStatusModel->getAll(['userId' => $adminId, 'deletedAt' => null]);
 
 		$data = array(
 			'title' => "Add Asset",
@@ -257,6 +259,7 @@ class Asset extends BaseController
 		$data['statusData'] = $statusData;
 		$data['subscription'] = $subscriptionData;
 		$data['parameterData'] = $parameterData;
+		$data['assetStatus'] = $assetStatus;
 		return $this->template->render('Master/Asset/add', $data);
 	}
 
@@ -309,44 +312,6 @@ class Asset extends BaseController
 		}
 
 		try {
-			$dirPath = 'upload/Asset';
-			$fileAsset = $this->request->getFile('photo');
-			$namePhoto = "";
-			$dirPhoto = "";
-			if ($fileAsset != null) {
-				if (!is_dir($dirPath)) {
-					mkdir($dirPath);
-				}
-				$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
-				if (!is_dir($dirPhoto)) {
-					mkdir($dirPhoto);
-				}
-				$namePhoto = 'IMG_' . $fileAsset->getRandomName();
-				$image1 = \Config\Services::image()
-					->withFile($fileAsset)
-					->resize(480, 480, true, 'heigth')
-					->save($dirPhoto . '/' . $namePhoto);
-			}
-			// asset
-			$dataAsset = array(
-				'assetId'		=> $assetId,
-				'userId'		=> $this->session->get("adminId"),
-				'assetStatusId' => $post['assetStatusId'],
-				'assetName'		=> $post['assetName'],
-				'assetNumber'	=> $post['assetNumber'],
-				'photo'			=> $namePhoto == "" ? null : (base_url() . '/' . $dirPhoto . '/' . $namePhoto),
-				'description'	=> $post['assetDesc'],
-				'schManual'		=> $post['schManual'],
-				'schType'		=> $post['schType'],
-				'schFrequency'	=> $post['schFrequency'] == '' ? 1 : (int)$post['schFrequency'],
-				'schWeekDays'	=> $post['schWeekDays'],
-				'schWeeks'		=> $post['schWeeks'],
-				'schDays'		=> $post['schDays'],
-				'latitude'		=> $post['latitude'],
-				'longitude'		=> $post['longitude'],
-			);
-			$assetModel->insert($dataAsset);
-
 			// tag and location new
 			if ($post['tag'] != '') {
 				$lengthAddTag = count($post['tag']);
@@ -384,6 +349,44 @@ class Asset extends BaseController
 					}
 				}
 			}
+			
+			$dirPath = 'upload/Asset';
+			$fileAsset = $this->request->getFile('photo');
+			$namePhoto = "";
+			$dirPhoto = "";
+			if ($fileAsset != null) {
+				if (!is_dir($dirPath)) {
+					mkdir($dirPath);
+				}
+				$dirPhoto = $dirPath . '/' . 'file' . $this->session->get('adminId');
+				if (!is_dir($dirPhoto)) {
+					mkdir($dirPhoto);
+				}
+				$namePhoto = 'IMG_' . $fileAsset->getRandomName();
+				$image1 = \Config\Services::image()
+					->withFile($fileAsset)
+					->resize(480, 480, true, 'heigth')
+					->save($dirPhoto . '/' . $namePhoto);
+			}
+			// asset
+			$dataAsset = array(
+				'assetId'		=> $assetId,
+				'userId'		=> $this->session->get("adminId"),
+				'assetStatusId' => $post['assetStatusId'],
+				'assetName'		=> $post['assetName'],
+				'assetNumber'	=> $post['assetNumber'],
+				'photo'			=> $namePhoto == "" ? null : (base_url() . '/' . $dirPhoto . '/' . $namePhoto),
+				'description'	=> $post['assetDesc'],
+				'schManual'		=> $post['schManual'],
+				'schType'		=> $post['schType'],
+				'schFrequency'	=> $post['schFrequency'] == '' ? 1 : (int)$post['schFrequency'],
+				'schWeekDays'	=> $post['schWeekDays'],
+				'schWeeks'		=> $post['schWeeks'],
+				'schDays'		=> $post['schDays'],
+				'latitude'		=> $post['latitude'],
+				'longitude'		=> $post['longitude'],
+			);
+			$assetModel->insert($dataAsset);
 
 			// taglocation
 			$tagLocation = explode(",", $post['locationId']);
