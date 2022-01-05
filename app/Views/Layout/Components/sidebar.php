@@ -91,6 +91,13 @@
                     </a>
                 </li>
             <?php endif; ?>
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link" href="<?= base_url('/Template') ?>">
+                    <svg class="c-sidebar-nav-icon">
+                        <use xlink:href="<?= base_url('/icons/coreui/svg/linear.svg#cil-file-xls') ?>"></use>
+                    </svg> Template
+                </a>
+            </li>
         <?php endif; ?>
 
         <?php if (checkRoleList("NOTIFICATION.VIEW,APPLICATION.VIEW,VERSIONAPPS.VIEW,SCHEDULE.VIEW")) : ?>

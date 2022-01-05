@@ -51,6 +51,12 @@ $routes->post('/register/doRegister', 'Auth\Register::doRegister');
 $routes->get('/Industrial', 'Industrial/Industrial::index');
 $routes->post('/Industrial/doGenerate', 'Industrial/Industrial::doGenerate');
 
+$routes->get('/Template', 'Master/Template::index');
+$routes->post('/Template/datatable', 'Master/Template::datatable');
+$routes->post('/Template/addCategory', 'Master/Template::addCategory');
+$routes->get('/Template/detail/(:any)', 'Master\Template::detail/$1');
+
+
 $routes->get('/Wizard', 'Wizard/Wizard::index');
 $routes->post('/Wizard/getInvoice', 'Wizard/Wizard::getInvoice');
 $routes->add('/Wizard/Invoice/(:any)', 'Wizard\Wizard::invoice/$1');
