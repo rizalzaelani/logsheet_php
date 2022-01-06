@@ -10,7 +10,7 @@ class TemplateModel extends Model
     protected $table                = 'tblm_template';
     protected $primaryKey           = 'templateId';
     protected $returnType           = 'array';
-    protected $allowedFields        = ['templateId', 'categoryIndustryId', 'path', 'createdAt', 'updatedAt', 'deletedAt'];
+    protected $allowedFields        = ['templateId', 'categoryIndustryId', 'name', 'path', 'description', 'createdAt', 'updatedAt', 'deletedAt'];
     protected $createdField         = 'createdAt';
 
     public function getById($id)

@@ -55,7 +55,13 @@ $routes->get('/Template', 'Master/Template::index');
 $routes->post('/Template/datatable', 'Master/Template::datatable');
 $routes->post('/Template/addCategory', 'Master/Template::addCategory');
 $routes->get('/Template/detail/(:any)', 'Master\Template::detail/$1');
+$routes->post('/Template/updateCategory', 'Master/Template::updateCategory');
+$routes->post('/Template/datatableTemplate/(:any)', 'Master\Template::datatableTemplate/$1');
 
+$routes->post('/Template/addTemplate', 'Master/Template::addTemplate');
+$routes->post('/Template/editTemplate', 'Master/Template::editTemplate');
+$routes->post('/Template/updateTemplate', 'Master/Template::updateTemplate');
+$routes->post('/Template/deleteTemplate', 'Master/Template::deleteTemplate');
 
 $routes->get('/Wizard', 'Wizard/Wizard::index');
 $routes->post('/Wizard/getInvoice', 'Wizard/Wizard::getInvoice');

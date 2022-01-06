@@ -149,12 +149,17 @@
             };
 
             const addCategory = () => {
+                categoryName.value = "";
+                descCategory.value = "";
+                image.value = "";
+                $('#image').filepond('removeFiles');
+
                 this.modal = new coreui.Modal(document.getElementById('modalCategory'), {});
                 this.modal.show();
             }
 
             const doAddCategory = () => {
-                if (categoryName.value == "" || descCategory.value == "" || image.value == "") {
+                if (v.categoryName == "" || v.descCategory == "" || v.image == "") {
                     return swal.fire({
                         icon: 'warning',
                         title: 'All fields cannot be empty!'
@@ -184,10 +189,6 @@
                         })
                     }
                 })
-
-                categoryName.value = "";
-                descCategory.value = "";
-                image.value = "";
             }
 
             onMounted(() => {
