@@ -102,14 +102,14 @@
                                 <form action="">
                                     <div class="mb-3">
                                         <label for="templateName">Template Name</label>
-                                        <input id="templateName" type="text" class="form-control" required v-model="templateName" placeholder="Template Name (ex: APAR)">
+                                        <input id="templateName" type="text" class="form-control" required v-model="templateName" placeholder="Template Name (e.g Apar, Hydrant, etc.)">
                                     </div>
                                     <div class="mb-3">
                                         <label for="descTemplate">Description</label>
                                         <textarea id="descTemplate" type="text" rows="5" class="form-control" required v-model="descTemplate" placeholder="Description"></textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="fileTemplate">File</label>
+                                        <label for="fileTemplate">Upload file template here</label>
                                         <input type="file" class="filepond w-100" name="filepond" id="fileTemplate" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
                                     </div>
                                 </form>
@@ -135,14 +135,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <!-- <div class="mb-3">
-                            <label for="edited">Upload new file here</label>
-                            <input type="file" class="filepond w-100" name="filepond" id="edited" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-                        </div> -->
                         <template v-if="template != ''">
                             <div class="mb-3">
                                 <label for="name">Template Name</label>
-                                <input id="name" type="text" class="form-control" required v-model="template[0].name" placeholder="Template Name (ex: APAR)">
+                                <input id="name" type="text" class="form-control" required v-model="template[0].name" placeholder="Template Name (e.g Apar, Hydrant, etc.)">
                             </div>
                             <div class="mb-3">
                                 <label for="desc">Description</label>
@@ -264,8 +260,8 @@
 
             const cancelEditCategory = () => {
                 checkEditCategory.value = false;
-                $('#categoryName').attr('readonly');
-                $('#descCategory').attr('readonly');
+                $('#categoryName').prop('readonly', true);
+                $('#descCategory').prop('readonly', true);
             }
 
             const deleteCategory = () => {
@@ -319,17 +315,18 @@
                 })
             }
 
-            const addTemplate = () => {
-                templateName.value = "";
-                descTemplate.value = "";
-                fileTemplate.value = "";
+            function addTemplate() {
+                this.templateName = "";
+                this.descTemplate = "";
+                this.fileTemplate = "";
+                $('#fileTemplate').filepond('removeFiles');
 
                 this.modal = new coreui.Modal(document.getElementById('modalTemplate'), {});
                 this.modal.show();
             }
 
-            const doAddTemplate = () => {
-                if (templateName.value == "" || fileTemplate.value == "") {
+            function doAddTemplate(){
+                if (this.templateName == "" || this.fileTemplate == "") {
                     return swal.fire({
                         icon: 'warning',
                         title: 'Field template name and file cannot be empty!'
@@ -338,9 +335,9 @@
 
                 let formdata = new FormData();
                 formdata.append('categoryId', category.categoryIndustryId);
-                formdata.append('templateName', templateName.value);
-                formdata.append('descTemplate', descTemplate.value);
-                formdata.append('fileTemplate', fileTemplate.value);
+                formdata.append('templateName', this.templateName);
+                formdata.append('descTemplate', this.descTemplate);
+                formdata.append('fileTemplate', this.fileTemplate);
                 axios({
                     url: "<?= base_url('Template/addTemplate') ?>",
                     method: 'POST',

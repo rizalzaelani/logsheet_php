@@ -215,7 +215,7 @@ class Template extends BaseController
         }
 
         try {
-            $dirPath    = 'assets/sample/';
+            $dirPath    = 'assets/Sample/';
             $fileName   = $templateName . '_' . uniqid() . '.xls';
             $file->move('../public/assets/sample/', $fileName);
             $path = base_url() . "/" . $dirPath . $fileName;
@@ -286,7 +286,7 @@ class Template extends BaseController
         try {
             $path = "";
             if (!empty($file)) {
-                $dirPath    = 'assets/sample/';
+                $dirPath    = 'assets/Sample/';
                 $fileName   = $template->name . '_' . uniqid() . '.xls';
                 $file->move('../public/assets/sample/', $fileName);
                 $path = base_url() . "/" . $dirPath . $fileName;

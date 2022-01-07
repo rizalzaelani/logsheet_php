@@ -349,7 +349,7 @@ class Asset extends BaseController
 					}
 				}
 			}
-			
+
 			$dirPath = 'upload/Asset';
 			$fileAsset = $this->request->getFile('photo');
 			$namePhoto = "";

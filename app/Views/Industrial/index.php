@@ -36,13 +36,17 @@
         }
 
         .h-100 {
-            min-height: 450px !important;
+            height: 475px !important;
+        }
+
+        .title-category {
+            height: 40px !important;
         }
     </style>
 </head>
 
 <body class="c-app flex-sm-row align-items-sm-center">
-    <div class="container" id="app">
+    <div class="container-fluid" id="app">
         <div class="row justify-content-center mt-4">
             <div class="col-sm-10 p-0">
                 <div class="card card-main pt-0">
@@ -52,14 +56,14 @@
                         </div>
                         <div class="row pt-4 m-0 w-100">
                             <template v-for="(val, i) in category">
-                                <div class="mx-1" style="width: calc(25% - 0.5rem) !important;">
+                                <div class="mx-1" style="width: calc(20% - 0.5rem) !important;">
                                     <label class="w-100">
                                         <input type="radio" name="industrial" class="form-control radio-card d-none" :value="val.categoryIndustryId">
                                         <div class="card h-100 card-main card-industri">
                                             <img class="card-img-top" :src="val.image" alt="">
                                             <div class="card-title">
                                                 <hr>
-                                                <h5 class="text-center m-0 text-uppercase">{{ val.categoryName }}</h5>
+                                                <h5 class="text-center m-0 text-uppercase title-category d-flex align-items-center justify-content-center">{{ val.categoryName }}</h5>
                                                 <hr>
                                                 <p class="card-text">
                                                     {{ val.description }}
@@ -72,7 +76,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-between pb-2">
-                        <button class="btn btn-link mr-1 text-secondary" style="text-decoration: none !important;">Skip</button>
+                        <button class="btn btn-link mr-1 text-secondary" @click="skip()" style="text-decoration: none !important;">Skip</button>
                         <button class="btn btn-link" @click="finish()" style="text-decoration: none !important;">Finish</button>
                     </div>
                 </div>
@@ -122,7 +126,13 @@
                         }
                     }).then((res) => {
                         let rsp = res.data;
-                        if (rsp.status == 200) {} else {
+                        if (rsp.status == 200) {
+                            // swal.fire({
+                            //     icon: 'success',
+                            //     title: rsp.message
+                            // })
+                            window.location.href = "<?= base_url('Dashboard') ?>";
+                        } else {
                             swal.fire({
                                 icon: 'error',
                                 title: rsp.message
@@ -130,11 +140,17 @@
                         }
                     })
                 }
+
+                const skip = () => {
+                    return window.location.href = "<?= base_url('Dashboard') ?>";
+                }
+                
                 return {
                     selected,
                     category,
 
-                    finish
+                    finish,
+                    skip
                 }
             }
         }).mount('#app');

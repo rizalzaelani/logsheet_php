@@ -483,7 +483,7 @@ $sess = $session->get('adminId');
                                                 <div class="col-sm-9 p-0">
                                                     <select class="form-control showOn" name="showOn" id="showOn" multiple>
                                                         <?php foreach ($statusData as $key => $value) : ?>
-                                                        <option value="<?= $value->assetStatusName ?>"><?= $value->assetStatusName ?></option>
+                                                            <option value="<?= $value->assetStatusName ?>"><?= $value->assetStatusName ?></option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -501,7 +501,7 @@ $sess = $session->get('adminId');
                                                     <input type="file" class="filepond mt-2 mb-2 w-100" name="photoParam" id="photoParam" />
                                                 </div>
                                             </div>
-                                            <div :class="checkModalAdd == false && param.photo1 != '' ? 'row mb-3' : 'd-none'">
+                                            <div :class="checkModalAdd == false && param.photo1 != '' && param.photo1 != null ? 'row mb-3' : 'd-none'">
                                                 <div class="col-sm-3">
 
                                                 </div>
@@ -1533,11 +1533,11 @@ $sess = $session->get('adminId');
                         <hr>
                         <div>
                             <ul class="nav nav-tabs w-100 d-flex justify-content-center align-items-center" role="tablist">
-                                <li class="nav-item"><a :class="['nav-link', (assetTagging[0].assetTaggingtype == 'rfid' ? 'active' : '')]" data-toggle="tab" href="#tabRfid" role="tab" aria-controls="tabRfid" id="rfid_tab" @click="rfid()">
+                                <li class="nav-item"><a :class="['nav-link', (assetTagging[0].assetTaggingtype == 'rfid' ? 'active' : '')]" data-toggle="tab" href="#tabRfid" role="tab" aria-controls="tabRfid" id="rfid_tab">
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/solid.svg#cis-qr-code"></use>
                                         </svg> rfid </a></li>
-                                <li class="nav-item"><a :class="['nav-link', (assetTagging[0].assetTaggingtype == 'coordinat' ? 'active' : '')]" data-toggle="tab" href="#tabCoordinate" role="tab" aria-controls="tabCoordinate" id="coordinate_tab" @click="coordinate()">
+                                <li class="nav-item"><a :class="['nav-link', (assetTagging[0].assetTaggingtype == 'coordinat' ? 'active' : '')]" data-toggle="tab" href="#tabCoordinate" role="tab" aria-controls="tabCoordinate" id="coordinate_tab">
                                         <svg class="c-icon">
                                             <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-map"></use>
                                         </svg> coordinate </a></li>
@@ -4316,7 +4316,7 @@ $sess = $session->get('adminId');
 
                 onMounted(() => {
                     FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginFilePoster);
-                    if (assetData.schMonthlyWeekDays != "" && assetData.schType == "Monthly" && assetData.schWeeks != "") {
+                    if (assetData.schMonthlyWeekDays != "" && assetData.schMonthlyWeekDays != null && assetData.schType == "Monthly" && assetData.schWeeks != "" && assetData.schWeeks != null) {
                         $('#monthlyOnDays').val(assetData.schMonthlyWeekDays.split(",")).trigger("change");
                     }
                     for (let i = 0; i < parameter.length; i++) {
