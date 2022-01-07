@@ -186,7 +186,7 @@
                                     let urlParams = new URLSearchParams(window.location.search);
                                     let returnUrl = urlParams.get('ReturnUrl');
                                     if (returnUrl == null || returnUrl == "") {
-                                        window.location.href = "<?= site_url("Dashboard") ?>";
+                                        window.location.href = "<?= site_url("Industrial") ?>";
                                     } else {
                                         window.location.href = location.protocol + "//" + location.host + returnUrl;
                                     }

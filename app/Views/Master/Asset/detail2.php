@@ -1913,8 +1913,8 @@ $sess = $session->get('adminId');
                                         <td style="max-width: 160px !important;" v-if="!val.option" :class="!val.uom ? 'font-italic' : ''">{{ !val.uom ? "(Empty)" : val.uom }}</td>
                                     </template>
                                     <template v-else>
-                                        <td :class="!val.abnormal ? 'font-italic' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
                                         <td :class="!val.normal ? 'font-italic' : ''">{{ !val.normal ? "(Empty)" :val.normal }}</td>
+                                        <td :class="!val.abnormal ? 'font-italic' : ''">{{ !val.abnormal ? "(Empty)": val.abnormal }}</td>
                                         <td style="max-width: 160px !important;" :class="!val.option ? 'font-italic' : ''">{{ !val.option ? "(Empty)" :val.option }}</td>
                                     </template>
                                     <td style="max-width: 1 60px !important;">

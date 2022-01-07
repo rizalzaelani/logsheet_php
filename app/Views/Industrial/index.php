@@ -20,9 +20,13 @@
     <link href="<?= base_url(); ?>/vendors/select2/css/select2.min.css" rel="stylesheet">
 
     <style>
+        .card-industri {
+            box-shadow: 0 1px 8px rgb(0 0 0 / 15%) !important;
+        }
+
         .card-industri:hover {
             cursor: pointer !important;
-            box-shadow: 0 4px 8px rgb(0 0 0 / 9%) !important;
+            box-shadow: 0 4px 8px rgb(0 0 0 / 20%) !important;
         }
 
         .radio-card:checked+.card-industri {
@@ -36,50 +40,59 @@
         }
 
         .h-100 {
-            height: 475px !important;
+            height: 95% !important;
         }
 
         .title-category {
             height: 40px !important;
         }
+
+        .h-200 {
+            height: 180px !important;
+        }
     </style>
 </head>
 
-<body class="c-app flex-sm-row align-items-sm-center">
-    <div class="container-fluid" id="app">
-        <div class="row justify-content-center mt-4">
-            <div class="col-sm-10 p-0">
-                <div class="card card-main pt-0">
-                    <div class="card-body pt-0">
-                        <div class="card-header px-0 py-4 d-flex justify-content-between">
+<body class="c-app flex-sm-row">
+    <div class="container" id="app">
+        <div class="row mt-4">
+            <div class="col p-0">
+                <h2 class="text-uppercase text-center">
+                    Select your industrial type
+                </h2>
+                <!-- <div class="card card-main pt-0">
+                    <div class="card-body pt-0"> -->
+                <!-- <div class="card-header px-0 py-4 d-flex justify-content-between">
                             <h3 class="m-0">Select your industrial type</h3>
-                        </div>
-                        <div class="row pt-4 m-0 w-100">
-                            <template v-for="(val, i) in category">
-                                <div class="mx-1" style="width: calc(20% - 0.5rem) !important;">
-                                    <label class="w-100">
-                                        <input type="radio" name="industrial" class="form-control radio-card d-none" :value="val.categoryIndustryId">
-                                        <div class="card h-100 card-main card-industri">
-                                            <img class="card-img-top" :src="val.image" alt="">
-                                            <div class="card-title">
-                                                <hr>
-                                                <h5 class="text-center m-0 text-uppercase title-category d-flex align-items-center justify-content-center">{{ val.categoryName }}</h5>
-                                                <hr>
+                        </div> -->
+                <div class="row pt-4 m-0 w-100">
+                    <template v-for="(val, i) in category">
+                        <div class="mx-2" style="width: calc(20% - 1rem) !important;">
+                            <label class="w-100 h-100">
+                                <input type="radio" name="industrial" class="form-control radio-card d-none" :value="val.categoryIndustryId">
+                                <div class="card h-100 card-main card-industri">
+                                    <div class="h-200 d-flex justify-content-center align-items-center">
+                                        <img class="card-img-top mb-1" :src="val.image" alt="">
+                                    </div>
+                                    <div class="card-title">
+                                        <!-- <hr> -->
+                                        <h5 class="text-center m-0 text-uppercase title-category d-flex justify-content-center">{{ val.categoryName }}</h5>
+                                        <!-- <hr>
                                                 <p class="card-text">
                                                     {{ val.description }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </label>
+                                                </p> -->
+                                    </div>
                                 </div>
-                            </template>
+                            </label>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between pb-2">
-                        <button class="btn btn-link mr-1 text-secondary" @click="skip()" style="text-decoration: none !important;">Skip</button>
-                        <button class="btn btn-link" @click="finish()" style="text-decoration: none !important;">Finish</button>
-                    </div>
+                    </template>
                 </div>
+                <!-- </div> -->
+                <div class="d-flex justify-content-end pb-2 mr-2">
+                    <button class="btn btn-secondary mr-1" @click="skip()" style="text-decoration: none !important;">Skip</button>
+                    <button class="btn btn-primary" @click="finish()" style="text-decoration: none !important;">Finish</button>
+                </div>
+                <!-- </div> -->
             </div>
         </div>
     </div>
@@ -144,7 +157,7 @@
                 const skip = () => {
                     return window.location.href = "<?= base_url('Dashboard') ?>";
                 }
-                
+
                 return {
                     selected,
                     category,
