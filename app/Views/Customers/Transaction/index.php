@@ -158,9 +158,9 @@ $session = \Config\Services::session();
                                             return '<span class="badge badge-danger text-uppercase">Unpaid</span>'
                                         } else if (data == null && row.cancelDate != null) {
                                             return '<span class="badge badge-warning text-white text-uppercase">Cancelled</span>'
-                                        } else if(data == null && row.cancelDate == null && row.attachment != null){
+                                        } else if (data == null && row.cancelDate == null && row.attachment != null) {
                                             return '<span class="badge badge-primary text-uppercase">Waiting</span>'
-                                        }else{
+                                        } else {
                                             return '<span class="badge badge-success text-uppercase">Paid</span>'
                                         }
                                     }
@@ -198,16 +198,16 @@ $session = \Config\Services::session();
             onMounted(() => {
                 GetData();
                 $(document).on('click', '#tableTrx tbody tr', function() {
-                    if($(this).attr("data-id")) window.location.href = "<?= site_url('Invoice/detail') ?>/" + $(this).attr("data-id");
+                    if ($(this).attr("data-id")) window.location.href = "<?= site_url('Invoice/detail') ?>/" + $(this).attr("data-id");
                 });
-				
-				let search = $(".dt-search-input input[data-target='#tableTrx']");
-				search.unbind().bind("keypress", function(e) {
-					if (e.which == 13 || e.keyCode == 13) {
-						let searchData = search.val();
-						v.table.search(searchData).draw();
-					}
-				});
+
+                let search = $(".dt-search-input input[data-target='#tableTrx']");
+                search.unbind().bind("keypress", function(e) {
+                    if (e.which == 13 || e.keyCode == 13) {
+                        let searchData = search.val();
+                        v.table.search(searchData).draw();
+                    }
+                });
 
                 $('#number').select2({
                     theme: 'coreui',
