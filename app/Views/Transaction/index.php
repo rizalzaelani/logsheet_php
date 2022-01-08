@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div class="d-flex justify-content-between mb-1">
-					<h4><?= $title ?></h4>
+					
 					<h5 class="header-icon">
 						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="btnFiltDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
@@ -173,7 +173,7 @@
 
 				<?php if (checkRoleList("TRX.DETAIL.VIEW")) : ?>
 					$(document).on('click', '#tableTrx tbody tr', function() {
-						if($(this).attr("data-id")) window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
+						if ($(this).attr("data-id")) window.location.href = "<?= site_url('Transaction/detail') ?>?scheduleTrxId=" + $(this).attr("data-id");
 					});
 				<?php endif; ?>
 

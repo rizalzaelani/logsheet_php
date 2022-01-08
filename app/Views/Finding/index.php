@@ -16,7 +16,15 @@
 					</div>
 				</div>
 				<div class="d-flex justify-content-between mb-1">
-					<h4><?= $title ?></h4>
+					<div class="d-flex justify-content-start align-items-center">
+						<h4 class="mr-3 mb-0"><?= $title ?></h4>
+						<span class="badge badge-pill badge-primary p-2 mr-1"></span>
+						<p class="m-0 mr-2"> Closed</p>
+						<span class="badge badge-pill badge-warning p-2 mr-1"></span>
+						<p class="m-0 mr-2"> Open</p>
+						<span class="badge badge-pill badge-dark p-2 mr-1"></span>
+						<p class="m-0 mr-2"> Finding</p>
+					</div>
 					<h5 class="header-icon">
 						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<a href="javascript:;" class="dt-search" data-target="#tableFinding"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
@@ -177,7 +185,7 @@
 
 				<?php if (checkRoleList("FINDING.DETAIL.LIST.VIEW")) : ?>
 					$(document).on('click', '#tableFinding tbody tr', function() {
-						if($(this).attr("data-id")) window.location.href = "<?= site_url('Finding/detailList') ?>?scheduleTrxId=" + $(this).attr("data-id");
+						if ($(this).attr("data-id")) window.location.href = "<?= site_url('Finding/detailList') ?>?scheduleTrxId=" + $(this).attr("data-id");
 					});
 				<?php endif; ?>
 
