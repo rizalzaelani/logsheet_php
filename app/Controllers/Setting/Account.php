@@ -3,6 +3,7 @@
 namespace App\Controllers\Setting;
 
 use App\Controllers\BaseController;
+use App\Models\Influx\LogModel;
 use App\Models\USMAN\UserModel;
 use Exception;
 
@@ -10,8 +11,14 @@ class Account extends BaseController
 {
     public function index()
     {
-        if(!checkRoleList("APPLICATION.VIEW")){
-            return View('errors/customError', ['errorCode'=>403,'errorMessage'=>"Sorry, You don't have access to this page"]);
+        $logModel = new LogModel();
+
+        $activity = 'Sign in to application';
+        $userId = $this->session->get('adminId');
+        $dataLogin = $logModel->getLogLogin($activity, $userId);
+
+        if (!checkRoleList("APPLICATION.VIEW")) {
+            return View('errors/customError', ['errorCode' => 403, 'errorMessage' => "Sorry, You don't have access to this page"]);
         }
 
         $userId = $this->session->get("userId");
@@ -33,8 +40,8 @@ class Account extends BaseController
         $parameterUser = json_decode($this->session->get("parameter"), true);
 
         $data["userData"] = array(
-            "email" => $this->session->get("email"), 
-            "role" => $this->session->get("group"), 
+            "email" => $this->session->get("email"),
+            "role" => $this->session->get("group"),
             "fullname" => $parameterUser['fullname'],
             "company" => $parameterUser['company'],
             "city" => $parameterUser['city'],
@@ -44,6 +51,7 @@ class Account extends BaseController
             "tag" => $parameterUser['tag'],
             "tagLocation" => $parameterUser['tagLocation'],
         );
+        $data['logLogin'] = $dataLogin;
 
         return $this->template->render('Setting/Account/index.php', $data);
     }

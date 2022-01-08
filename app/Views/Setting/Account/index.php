@@ -234,56 +234,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Safari on Macbook </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Chrome on Window </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Chrome on Macbook </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Firefox on Window </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Safari on Macbook </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Edge on Window </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Chrome on Macbook </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Firefox on Window </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Edge on Window </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Safari on Macbook </td>
-                                            <td>278.281.987.111</td>
-                                            <td>Nov 12, 2021 08:56 PM</td>
-                                        </tr>
+                                        <template v-if="logLogin.length">
+                                            <template v-for="(val,i) in logLogin">
+                                                <tr>
+                                                    <td>
+                                                        <template v-if="isJsonStr(val.data)">
+                                                            {{JSON.parse(val.data).browser + ' On ' + JSON.parse(val.data).platform}}
+                                                        </template>
+                                                    </td>
+                                                    <td>
+                                                        {{val.ip}}
+                                                    </td>
+                                                    <td>
+                                                        {{momentJs(val.time)}}
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </template>
                                     </tbody>
                                 </table>
                             </div>
@@ -374,6 +341,9 @@
 
             const btnChangePass = Vue.ref(true);
 
+            const logLogin = Vue.reactive(<?= json_encode($logLogin) ?>);
+            const dataLogin = Vue.ref("");
+
             const changePassword = () => {
                 if (!oldPass.value || !newPass.value || (newPass.value ?? "").length < 6 || newPass.value != conPass.value) {
                     oldPassErr.value = !oldPass.value ? 'Input your old password' : null;
@@ -430,6 +400,19 @@
                 }
             }
 
+            const isJsonStr = (val) => {
+                try {
+                    JSON.parse(val);
+                } catch (error) {
+                    return false;
+                }
+                return true;
+            }
+
+            const momentJs = (val) => {
+                return moment(val).format('lll')
+            }
+
             Vue.watch(
                 oldPass,
                 (state, prevState) => {
@@ -451,12 +434,13 @@
                     conPassErr.value = newPass.value != state ? 'Password doesn\'t match' : null;
                 }
             )
-
             return {
                 user,
                 oldPass,
                 newPass,
                 conPass,
+                logLogin,
+                dataLogin,
                 oldPassErr,
                 newPassErr,
                 conPassErr,
@@ -465,7 +449,9 @@
                 showConPass,
                 btnChangePass,
 
-                changePassword
+                changePassword,
+                isJsonStr,
+                momentJs
             }
         }
     }).mount("#app")

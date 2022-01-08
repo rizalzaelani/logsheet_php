@@ -43,6 +43,23 @@ class LogModel
         return $result->getPoints();
     }
 
+    public function getLogLogin($activity, $userId)
+    {
+        $where = [
+            "activity = '$activity'",
+            "userId = '$userId'",
+        ];
+
+        return $this->querybuilder()
+            ->from('logsheet_logactivity')
+            ->select('*')
+            ->where($where)
+            ->limit(10)
+            ->orderBy('time', 'desc')
+            ->getResultSet()
+            ->getPoints();
+    }
+
     public function getTotal($userId, $dateFrom, $dateTo)
     {
         $where = [
