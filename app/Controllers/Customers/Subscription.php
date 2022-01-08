@@ -96,7 +96,7 @@ class Subscription extends BaseController
             $packageId = $dataSubscription[0]['packageId'];
             $packageData = $packageModel->getById($packageId);
             $package = $packageData;
-        }else{
+        } else {
             $dateTime   = new DateTime();
             $clone      = new DateTime();
 
@@ -116,7 +116,7 @@ class Subscription extends BaseController
                 $resData = json_decode($checkContact['data']);
                 if (count($resData->data->data)) {
                     $contact = $resData->data->data[0];
-                }else{
+                } else {
                     // add contact to kledo
                     $parameter = json_decode($this->session->get('parameter'));
                     $address = $parameter->city . ' ' . $parameter->postalCode . ', ' . $parameter->country;
@@ -334,6 +334,15 @@ class Subscription extends BaseController
         }
         if ($transaction[0]['paymentTotal'] == '0') {
             return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "You can only upgrade this package"]);
+        }
+        if (count($dataSubscription)) {
+            $now = new DateTime();
+            $exp = new DateTime($dataSubscription[0]['expiredDate']);
+            $interval = $now->diff($exp);
+            $range = $interval->days;
+            if ($range > 10) {
+                return View('errors/customError', ['errorCode' => 500, 'errorMessage' => "You can only renew your plan in the last 10 days."]);
+            }
         }
 
         $packagePrice   = $packagePriceModel->getAll();
@@ -611,6 +620,21 @@ class Subscription extends BaseController
         $name       = $this->session->get('name');
         $post       = $this->request->getPost();
         $package    = json_decode($post['package']);
+
+        $dataSubscription = $subscriptionModel->getAll(['userId' => $adminId]);
+        if (count($dataSubscription)) {
+            $now = new DateTime();
+            $exp = new DateTime($dataSubscription[0]['expiredDate']);
+            $interval = $now->diff($exp);
+            $range = $interval->days;
+            if ($range > 10) {
+                return $this->response->setJSON(array(
+                    'status' => 500,
+                    'message' => 'You can only renew your plan in the last 10 days.',
+                    'data' => []
+                ));
+            }
+        }
 
         try {
             //Get Product

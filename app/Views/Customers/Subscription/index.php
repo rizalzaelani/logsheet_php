@@ -481,6 +481,12 @@ $session = \Config\Services::session();
             }
 
             function renew() {
+                if (range > 10) {
+                    return swal.fire({
+                        icon: 'warning',
+                        title: 'You can only renew your plan in the last 10 days.'
+                    })
+                }
                 if (transaction.length) {
                     if (transaction[0].paidDate == null && transaction[0].cancelDate == null) {
                         swal.fire({
@@ -532,7 +538,6 @@ $session = \Config\Services::session();
                     method: 'POST',
                     data: formdata
                 }).then((res) => {
-                    // console.log(res);
                     let rsp = res.data;
                     if (rsp.status == 200) {
                         let base64 = rsp.data;
@@ -677,6 +682,30 @@ $session = \Config\Services::session();
                     dropdownParent: $('#modalTrx'),
                 })
 
+
+                $('#tableSubs').DataTable({
+                    order: [2, 'desc'],
+                    scrollX: true,
+                    columnDefs: [],
+                    'createdRow': function(row, data) {
+                        row.setAttribute("data-id", data[0]);
+                        row.classList.add("cursor-pointer");
+                    },
+                });
+                $(document).on('click', '#tableSubs tbody tr', function() {
+                    let trxId = $(this).attr("data-id");
+                    if (trxId) {
+                        v.myModal = new coreui.Modal(document.getElementById('modalTrx'), {});
+                        v.myModal.show();
+
+                        v.transaction.forEach((el, i) => {
+                            if (el.transactionId == trxId) {
+                                v.dataModal = el;
+                            }
+                        });
+                    }
+                });
+
             })
 
             return {
@@ -711,32 +740,5 @@ $session = \Config\Services::session();
             }
         },
     }).mount('#app');
-    $(document).ready(function() {
-        $('#tableSubs').DataTable({
-            order: [2, 'desc'],
-            scrollX: true,
-            columnDefs: [],
-            'createdRow': function(row, data) {
-                row.setAttribute("data-id", data[0]);
-                row.classList.add("cursor-pointer");
-                // row.setAttribute("data-toggle", "tooltip");
-                // row.setAttribute("data-html", "true");
-                // row.setAttribute("title", "<div>Click to go to detail transaction</div>");
-            },
-        });
-        $(document).on('click', '#tableSubs tbody tr', function() {
-            let trxId = $(this).attr("data-id");
-            if (trxId) {
-                v.myModal = new coreui.Modal(document.getElementById('modalTrx'), {});
-                v.myModal.show();
-
-                v.transaction.forEach((el, i) => {
-                    if (el.transactionId == trxId) {
-                        v.dataModal = el;
-                    }
-                });
-            }
-        });
-    })
 </script>
 <?= $this->endSection(); ?>

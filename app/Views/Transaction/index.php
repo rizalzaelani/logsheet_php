@@ -16,7 +16,13 @@
 					</div>
 				</div>
 				<div class="d-flex justify-content-between mb-1">
-					
+					<div class="d-flex justify-content-start align-items-center">
+						<h4 class="mr-2 mb-0"><?= $title ?></h4>
+						<span class="badge badge-pill badge-warning p-2 mr-1"></span>
+						<p class="m-0 mr-2"> Waiting Approve</p>
+						<span class="badge badge-pill badge-primary p-2 mr-1"></span>
+						<p class="m-0 mr-2"> Approve</p>
+					</div>
 					<h5 class="header-icon">
 						<a href="#filterDT" onclick="return false;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="filterDT" id="btnFiltDT"><i class="fa fa-filter" data-toggle="tooltip" title="Filter"></i></a>
 						<a href="javascript:;" class="dt-search" data-target="#tableTrx"><i class="fa fa-search" data-toggle="tooltip" title="Search"></i></a>
