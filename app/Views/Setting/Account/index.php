@@ -110,7 +110,7 @@
                 <div class="side-profile pb-5 d-none d-sm-block">
                     <div class="d-block text-center pt-4">
                         <div class="img-profile">
-                            <img src="<?= base_url("img/avatars/1.jpg") ?>" :alt="user.email">
+                            <img src="<?= base_url("img/avatars/user2.png") ?>" :alt="user.email">
                         </div>
                         <h3 class="mt-4 mb-0 text-capitalize">{{user.fullname}}</h3>
                         <span class="text-muted">{{user.email}}</span>
@@ -165,7 +165,7 @@
                             <div class="d-flex justify-content-between mb-3">
                                 <div>
                                     <h2 class="font-weight-normal">Personal Information</h2>
-                                    <span class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales sit amet nunc et vehicula. Mauris sed lectus nisi.</span>
+                                    <!-- <span class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales sit amet nunc et vehicula. Mauris sed lectus nisi.</span> -->
                                 </div>
                             </div>
                             <hr />
