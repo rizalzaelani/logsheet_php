@@ -337,6 +337,12 @@
 			var dataSchedule = ref("");
 
 			function loadData() {
+				if(this.reportType == ""){
+					return swal.fire({
+						icon: 'info',
+						title: 'Please select report type first.'
+					})
+				}
 				if (this.reportType == 'transaction') {
 					if (!($('#dtTransaction').hasClass('hide'))) {
 						$('#dtTransaction').addClass('hide');

@@ -62,7 +62,7 @@
 							<tr>
 								<th>Scanned</th>
 								<th>Asset Name</th>
-								<th>Asset Number</th>
+								<!-- <th>Asset Number</th> -->
 								<th width="27.5%">Tag</th>
 								<th width="27.5%">Location</th>
 							</tr>
@@ -117,10 +117,13 @@
 								},
 								{
 									data: "assetName",
+									render: function(data, type, row, meta) {
+										return '<div>' + row.assetName + '<br><span class="sub-text">' + row.assetNumber + '<span class="text-lowercase"><i> ' + (row.schType == '' ? '' : '(' + row.schType + ')') + '</i></span>' + '</span></div>';
+									}
 								},
-								{
-									data: "assetNumber",
-								},
+								// {
+								// 	data: "assetNumber",
+								// },
 								{
 									data: "tagName",
 								},
@@ -136,7 +139,7 @@
 									}
 								},
 								{
-									targets: [3, 4],
+									targets: [2, 3],
 									render: function(data) {
 										if (data != '-') {
 											// unique = Array.from(new Set(data));

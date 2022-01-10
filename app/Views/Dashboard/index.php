@@ -16,7 +16,7 @@
 					<i class=" fa fa-calendar"></i>&nbsp;
 					<span></span> <i class="fa fa-caret-down"></i>
 				</div>
-				<div class="filter bg-white d-flex justify-content-center align-items-center" role="button" data-toggle="dropdown" data-display="static" style="padding: 0.3rem 0.75rem !important; box-shadow: 0 !important;border: 1px solid rgb(204, 204, 204) !important;">
+				<!-- <div class="filter bg-white d-flex justify-content-center align-items-center" role="button" data-toggle="dropdown" data-display="static" style="padding: 0.3rem 0.75rem !important; box-shadow: 0 !important;border: 1px solid rgb(204, 204, 204) !important;">
 					<h5 class="mb-0">
 						<i class="fa fa-filter"></i>
 					</h5>
@@ -50,7 +50,7 @@
 							</div>
 						</div>
 					</form>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
