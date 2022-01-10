@@ -111,6 +111,7 @@ $schDay = array('Su' => 'Sunday', 'Mo' => 'Monday', 'Tu' => 'Tuesday', 'We' => '
 $schDays = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 'Last');
 $session = \Config\Services::session();
 $sess = $session->get('adminId');
+$assetId = $assetData['assetId'];
 
 ?>
 <div class="row" id="app">
@@ -201,17 +202,20 @@ $sess = $session->get('adminId');
                         <div class="row">
                             <div class="col-6">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <?php
-                                    if (!checkLimitAsset()) { ?>
-                                        <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip disabled" disabled data-toggle="tooltip" data-placement="left" title="Duplicate Asset" style="cursor: not-allowed !important"> <i class="fa fa-copy"></i> Duplicate
-                                            <svg class="c-icon mr-1">
-                                                <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-lock-locked"></use>
-                                            </svg>
-                                        </button>
-                                    <?php } else { ?>
-                                        <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Duplicate Asset"> <i class="fa fa-copy"></i> Duplicate</button>
-                                    <?php } ?>
-                                    <button @click="deleteAsset()" type="button" class="btn btn-sub btn-outline-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Delete Asset"> <i class="fa fa-trash"></i> Delete</button>
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <?php
+                                        if (!checkLimitAsset()) { ?>
+                                            <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip disabled mr-1" disabled style="cursor: not-allowed !important"> <i class="fa fa-copy"></i> Duplicate
+                                                <svg class="c-icon mr-1">
+                                                    <use xlink:href="<?= base_url() ?>/icons/coreui/svg/linear.svg#cil-lock-locked"></use>
+                                                </svg>
+                                            </button>
+                                        <?php } else { ?>
+                                            <button @click="duplicate(assetData.assetId)" type="button" class="btn btn-sub btn-outline-primary has-tooltip mr-1"> <i class="fa fa-copy"></i> Duplicate</button>
+                                        <?php } ?>
+                                        <a href="<?= base_url('Asset/exportPerAsset') . '/' . $assetId ?>" terget="_blank" class="btn btn-sub btn-outline-success"> <i class="fa fa-file-excel"></i> Export</a>
+                                    </div>
+                                    <button @click="deleteAsset()" type="button" class="btn btn-sub btn-outline-danger"> <i class="fa fa-trash"></i> Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -4098,6 +4102,37 @@ $sess = $session->get('adminId');
                     })
                 }
 
+                function exportAsset() {
+                    let assetId = assetData.assetId;
+                    if (!assetId) {
+                        return swal.fire({
+                            icon: 'error',
+                            title: 'Bad request!'
+                        })
+                    }
+
+                    let formdata = new FormData()
+                    formdata.append('assetId', assetId)
+                    axios({
+                        url: '<?= base_url('Asset/exportPerAsset') ?>',
+                        method: 'POST',
+                        data: formdata
+                    }).then((res) => {
+                        let rsp = res.data;
+                        // if (rsp.status == 200) {
+                        //     swal.fire({
+                        //         icon: 'success',
+                        //         title: rsp.message
+                        //     })
+                        // }else{
+                        //     swal.fire({
+                        //         icon: 'error',
+                        //         title: rsp.message
+                        //     })
+                        // }
+                    })
+                }
+
                 const addDescJson = async (e) => {
                     let checkKey = _.filter(descJson, {
                         key: e.value
@@ -4242,48 +4277,6 @@ $sess = $session->get('adminId');
                     }
                 }
 
-                // function DTChangeLog(changelog){
-                //     $('#tableChangeLog').DataTable({
-                //         data: changelog,
-                //         columns: [{
-                //                 data: "time",
-                //                 name: "time",
-                //                 render: function(data, type, row, meta) {
-                //                     return v.momentchangelog(data);
-                //                 }
-                //             },
-                //             {
-                //                 data: "ip",
-                //                 name: "ip"
-                //             },
-                //             {
-                //                 data: "username",
-                //                 name: "username"
-                //             },
-                //             {
-                //                 data: "activity",
-                //                 name: "activity",
-                //             },
-                //             {
-                //                 data: "assetId",
-                //                 name: "assetId",
-                //                 render: function(data, type, row, meta) {
-                //                     if (row.activity == 'Update asset') {
-                //                         return '<button onclick="modalChange(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                //                     }else{
-                //                         return '<button onclick="modalChangeParam(' + meta.row + ')" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye mr-1"></i> Detail</button>'
-                //                     }
-                //                 }
-                //             }
-                //         ],
-                //         order: [0, 'desc'],
-                //         columnDefs: [{
-                //             targets: 4,
-                //             width: "10%"
-                //         }]
-                //     })
-                // }
-
                 const cb = (start, end) => {
                     $('#rangechangelog span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
                     $('#rangechangelog').on('apply.daterangepicker', function(ev, picker) {
@@ -4309,7 +4302,6 @@ $sess = $session->get('adminId');
                                     title: rsp.message
                                 })
                             }
-                            // console.log(res);
                         })
                     })
                 }
@@ -4583,6 +4575,7 @@ $sess = $session->get('adminId');
                     start,
                     end,
                     duplicate,
+                    exportAsset,
                     // DTChangeLog
 
                     checkLimitTag,

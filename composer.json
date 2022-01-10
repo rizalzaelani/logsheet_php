@@ -7,7 +7,7 @@
 	"require": {
 		"php": "^7.3||^8.0",
 		"codeigniter4/framework": "^4",
-		"phpoffice/phpspreadsheet": "^1.18",
+		"phpoffice/phpspreadsheet": "^1.21",
 		"box/spout": "^3.3",
 		"dompdf/dompdf": "^1.0",
 		"firebase/php-jwt": "^5.4",

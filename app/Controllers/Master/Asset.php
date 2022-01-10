@@ -24,7 +24,9 @@ use Box\Spout\Common\Entity\Style\Color;
 use DateTime;
 use Exception;
 use Faker\Provider\Uuid;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PHPUnit\Framework\Constraint\IsJson;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class Asset extends BaseController
 {
@@ -1720,6 +1722,286 @@ class Asset extends BaseController
 				'data' => []
 			));
 		}
+	}
+
+	public function exportPerAsset($assetId)
+	{
+		$spreadsheet = new Spreadsheet();
+		$assetModel = new AssetModel();
+		$assetTaggingModel = new AssetTaggingModel();
+		$parameterModel = new ParameterModel();
+
+		$adminId = $this->session->get('adminId');
+		$dataAsset = $assetModel->getAll(['userId' => $adminId, 'assetId' => $assetId, 'deletedAt' => null]);
+		$dataParameter = $parameterModel->getAll(['assetId' => $assetId, 'deletedAt' => null]);
+		$dataTagging = $assetTaggingModel->getAll(['assetId' => $assetId]);
+		$rfid = "";
+		$coordinat = "";
+
+		// sheet 1
+		$sheet = $spreadsheet->setActiveSheetIndex(0);
+		$sheet->setTitle('Asset');
+
+		$header1 = [
+			"Asset Name",
+			"Asset Number",
+			"Details",
+			"Location",
+			"Tag",
+			"Schedule",
+			"Schedule Type",
+			"Schedule Daily",
+			"Schedule Week Days",
+			"Schedule Month Days",
+			"Schedule Month Week On",
+			"Schedule Month Week Days",
+			"RFID",
+			"Coordinate",
+			"Operation Status"
+		];
+
+		$sheet->mergeCells('A1:A2');
+		$sheet->mergeCells('B1:B2');
+		$sheet->mergeCells('C1:C2');
+		$sheet->mergeCells('D1:D2');
+		$sheet->mergeCells('E1:E2');
+		$sheet->mergeCells('F1:F2');
+		$sheet->mergeCells('G1:G2');
+		$sheet->mergeCells('H1:H2');
+		$sheet->mergeCells('I1:I2');
+		$sheet->mergeCells('J1:J2');
+		$sheet->mergeCells('K1:K2');
+		$sheet->mergeCells('L1:L2');
+		$sheet->mergeCells('M1:M2');
+		$sheet->mergeCells('N1:N2');
+		$sheet->mergeCells('O1:O2');
+		$styleArray = [
+			'font' => [
+				'bold' => true,
+			],
+			'alignment' => [
+				'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+				'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+			],
+			'borders' => [
+				'allBorders' => [
+					'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+				],
+			],
+		];
+
+		$s1 = [
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FFFFFF00',
+				]
+			],
+		];
+		$s2 = [
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FF669933',
+				]
+			],
+		];
+		$s3 = [
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FFFFCC00',
+				]
+			],
+		];
+		$s4 = [
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FF999999',
+				]
+			],
+		];
+		$styleArray2 = [
+			'borders' => [
+				'allBorders' => [
+					'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+				],
+			]
+		];
+		$spreadsheet->getActiveSheet()->getStyle('A1:O2')->applyFromArray($styleArray);
+		$spreadsheet->getActiveSheet()->getStyle('A1:C1')->applyFromArray($s1);
+		$spreadsheet->getActiveSheet()->getStyle('D1:E1')->applyFromArray($s2);
+		$spreadsheet->getActiveSheet()->getStyle('F1:L1')->applyFromArray($s1);
+		$spreadsheet->getActiveSheet()->getStyle('M1:N1')->applyFromArray($s3);
+		$spreadsheet->getActiveSheet()->getStyle('O1:O1')->applyFromArray($s4);
+		$spreadsheet->getActiveSheet()->getStyle('A3:O3')->applyFromArray($styleArray2);
+		$sheet->fromArray($header1, NULL, 'A1');
+
+		if (!empty($dataTagging)) {
+			foreach ($dataTagging as $key => $value) {
+				if ($value['assetTaggingtype'] == 'rfid') {
+					$rfid = $value['assetTaggingValue'];
+				}
+				if ($value['assetTaggingtype'] == 'coordinat') {
+					$coordinat = $value['assetTaggingValue'];
+				}
+			}
+		}
+
+		$column = 3;
+		if (count($dataAsset)) {
+			foreach ($dataAsset as $key => $value) {
+				$spreadsheet->setActiveSheetIndex(0)
+					->setCellValue('A' . $column, $value['assetName'])
+					->setCellValue('B' . $column, $value['assetNumber'])
+					->setCellValue('C' . $column, $this->isJson($value['description']) ? "" : $value['description'])
+					->setCellValue('D' . $column, $value['tagLocationName'])
+					->setCellValue('E' . $column, $value['tagName'])
+					->setCellValue('F' . $column, $value['schManual'] == 1 ? "Manual" : "Automatic")
+					->setCellValue('G' . $column, $value['schType'])
+					->setCellValue('H' . $column, $value['schFrequency'])
+					->setCellValue('I' . $column, $value['schType'] == 'Weekly' ? $value['schWeekDays'] : "")
+					->setCellValue('J' . $column, $value['schDays'])
+					->setCellValue('K' . $column, $value['schWeeks'])
+					->setCellValue('L' . $column, $value['schType'] == 'Monthly' ? $value['schWeekDays'] : "")
+					->setCellValue('M' . $column, $rfid)
+					->setCellValue('N' . $column, $coordinat)
+					->setCellValue('O' . $column, $value['assetStatusName']);
+				$column++;
+			}
+		}
+
+		// sheet 2
+		$spreadsheet->createSheet();
+		$sheet2 = $spreadsheet->setActiveSheetIndex(1);
+		$spreadsheet->getActiveSheet()->setTitle('Description');
+
+		$sheet2->setCellValue('A1', 'Asset Number');
+		$sheet2->setCellValue('B1', 'Description');
+		$sheet2->setCellValue('B2', 'key');
+		$sheet2->setCellValue('C2', 'value');
+		$sheet2->mergeCells('A1:A2');
+		$sheet2->mergeCells('B1:C1');
+		$styleSheet2 = [
+			'font' => [
+				'bold' => true,
+			],
+			'alignment' => [
+				'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+				'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+			],
+			'borders' => [
+				'allBorders' => [
+					'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+				],
+			],
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FFFFFF00',
+				]
+			],
+		];
+		$ss2 = [
+			'borders' => [
+				'allBorders' => [
+					'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+				],
+			],
+		];
+		$spreadsheet->getActiveSheet(1)->getStyle('A1:C2')->applyFromArray($styleSheet2);
+
+		if (!empty($dataAsset)) {
+			if ($this->isJson($dataAsset[0]['description'])) {
+				$description = json_decode($dataAsset[0]['description']);
+				$col = 3;
+				foreach ($description as $key => $value) {
+					$sheet2->setCellValue('A' . $col, $dataAsset[0]['assetNumber']);
+					$sheet2->setCellValue('B' . $col, $value->key);
+					$sheet2->setCellValue('C' . $col, $value->value);
+					$col++;
+				}
+				$spreadsheet->getActiveSheet(1)->getStyle('A3:' . 'C' . (count($description) + 2))->applyFromArray($ss2);
+			}
+		}
+
+		// sheet 3
+		$spreadsheet->createSheet();
+		$sheet3 = $spreadsheet->setActiveSheetIndex(2);
+		$spreadsheet->getActiveSheet()->setTitle('Parameter');
+
+		$header3 = [
+			"#",
+			"Parameter",
+			"Description",
+			"Max",
+			"Min",
+			"Normal",
+			"Abnormal",
+			"Uom",
+			"Option",
+			"Input Type",
+			"Show On"
+		];
+
+		$styleSheet3 = [
+			'font' => [
+				'bold' => true,
+			],
+			'alignment' => [
+				'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+				'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+			],
+			'borders' => [
+				'allBorders' => [
+					'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+				],
+			],
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FFFFFF00',
+				]
+			],
+		];
+
+		$ss3 = [
+			'borders' => [
+				'allBorders' => [
+					'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+				],
+			],
+		];
+		$sheet3->fromArray($header3, NULL, 'A1');
+		$sheet3->getStyle('A1:K1')->applyFromArray($styleSheet3);
+
+		if (!empty($dataParameter)) {
+			$i = 2;
+			foreach ($dataParameter as $key => $value) {
+				$sheet3->setCellValue('A' . $i, $key + 1);
+				$sheet3->setCellValue('B' . $i, $value['parameterName']);
+				$sheet3->setCellValue('C' . $i, $value['description']);
+				$sheet3->setCellValue('D' . $i, $value['max']);
+				$sheet3->setCellValue('E' . $i, $value['min']);
+				$sheet3->setCellValue('F' . $i, $value['normal']);
+				$sheet3->setCellValue('G' . $i, $value['abnormal']);
+				$sheet3->setCellValue('H' . $i, $value['uom']);
+				$sheet3->setCellValue('I' . $i, $value['option']);
+				$sheet3->setCellValue('J' . $i, $value['inputType']);
+				$sheet3->setCellValue('K' . $i, $value['showOn']);
+				$i++;
+			}
+			$spreadsheet->getActiveSheet(1)->getStyle('A2:' . 'K' . (count($dataParameter) + 1))->applyFromArray($ss3);
+		}
+
+		$filename = $dataAsset[0]['assetName'] . date("d M Y") . '.xlsx';
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename=' . $filename . '');
+		header('Cache-Control: max-age=0');
+
+		$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+		$writer->save('php://output');
 	}
 
 	private function isJson(string $value)

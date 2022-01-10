@@ -122,6 +122,7 @@ $routes->post('/Asset/editParameter', 'Master/Asset::editParameter');
 $routes->post('/Asset/updateParameter', 'Master/Asset::updateParameter');
 $routes->post('/Asset/deleteParameter', 'Master/Asset::deleteParameter');
 $routes->post('/Asset/duplicate', 'Master/Asset::duplicate');
+$routes->add('/Asset/exportPerAsset/(:any)', 'Master\Asset::exportPerAsset/$1');
 
 $routes->post('/Asset/saveSetting', 'Master/Asset::saveSetting');
 $routes->post('/Asset/sortingParameter', 'Master/Asset::sortingParameter');
