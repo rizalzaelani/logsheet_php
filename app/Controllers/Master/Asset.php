@@ -1331,18 +1331,19 @@ class Asset extends BaseController
 
 	public function importAsset()
 	{
-		$assetModel = new AssetModel();
-		$tagModel = new TagModel();
-		$tagLocationModel = new TagLocationModel();
-		$assetTagModel = new AssetTagModel();
+		$assetModel			= new AssetModel();
+		$tagModel			= new TagModel();
+		$tagLocationModel	= new TagLocationModel();
+		$assetTagModel		= new AssetTagModel();
 		$assetTagLocationModel = new AssetTagLocationModel();
-		$assetStatusModel = new AssetStatusModel();
-		$assetTaggingModel = new AssetTaggingModel();
-		$parameterModel = new ParameterModel();
-		$asset = $this->request->getPost('dataAsset');
-		$parameter = $this->request->getPost('parameter');
-		$lengthAsset = count($asset);
+		$assetStatusModel	= new AssetStatusModel();
+		$assetTaggingModel	= new AssetTaggingModel();
+		$parameterModel		= new ParameterModel();
+		$asset				= $this->request->getPost('dataAsset');
+		$parameter			= $this->request->getPost('parameter');
+		$lengthAsset		= count($asset);
 
+		$adminId			= $this->session->get('adminId');
 		if (!checkLimitAsset()) {
 			return View('errors/customError', ['errorCode' => 400, 'errorMessage' => "Sorry, Your assets has reached the limit"]);
 		}
@@ -1354,34 +1355,50 @@ class Asset extends BaseController
 				$dataAsset = $row;
 				break;
 			}
+			if ($lengthAsset == 1) {
+				$cekAssetNumber = $assetModel->getAll(['userId' => $adminId, 'deletedAt' => null, 'assetNumber' => $dataAsset[0]->assetNumber]);
+				if(!empty($cekAssetNumber)){
+					return $this->response->setJSON(array(
+						'status' => 500,
+						'message' => 'Asset number already exist, make sure asset number is unique',
+						'data' => []
+					));
+				}
+			}
 			for ($i = 0; $i < $lengthAsset; $i++) {
-				$dataInsert = array(
-					'assetId' => uuidv4(),
-					'userId' => $this->session->get("adminId"),
-					'assetName' => $dataAsset[$i]->assetName,
-					'assetNumber' => $dataAsset[$i]->assetNumber,
-					'description' => $dataAsset[$i]->description,
-					'schManual' => $dataAsset[$i]->schManual == "Automatic" ? 0 : 1,
-					'schType' => $dataAsset[$i]->schType,
-					'schFrequency' => $dataAsset[$i]->schFrequency,
-					'schWeekDays' => $dataAsset[$i]->schWeekDays,
-					'schWeeks' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schWeeks : '',
-					'schDays' => $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schDays : '',
-				);
-
 				// asset status
+				$cekAssetNumbers = $assetModel->getAll(['userId' => $adminId, 'deletedAt' => null, 'assetNumber' => $dataAsset[$i]->assetNumber]);
 				$status = $dataAsset[$i]->assetStatus;
-				$dataStatus = $assetStatusModel->getByName($status);
-				if ($dataStatus == NULL) {
+				$assetStatus = "";
+				$dataStatus = $assetStatusModel->getAll(['userId' => $adminId, 'assetStatusName' => $status, 'deletedAt' => null]);
+				if (empty($dataStatus)) {
 					$newStatus = array(
 						'assetStatusId' => uuidv4(),
-						'userId' => $this->session->get("adminId"),
+						'userId' => $adminId,
 						'assetStatusName' => $status,
 					);
 					$assetStatusModel->insert($newStatus);
-					$dataInsert['assetStatusId'] = $newStatus['assetStatusId'];
+					$assetStatus = $newStatus['assetStatusId'];
 				} else {
-					$dataInsert['assetStatusId'] = $dataStatus['assetStatusId'];
+					$assetStatus = $dataStatus[0]['assetStatusId'];
+				}
+
+				$dataInsert = array(
+					'assetId'		=> uuidv4(),
+					'userId'		=> $this->session->get("adminId"),
+					'assetStatusId'	=> $assetStatus,
+					'assetName'		=> $dataAsset[$i]->assetName,
+					'assetNumber'	=> $dataAsset[$i]->assetNumber,
+					'description'	=> $dataAsset[$i]->description,
+					'schManual'		=> $dataAsset[$i]->schManual == "Automatic" ? '0' : '1',
+					'schType'		=> $dataAsset[$i]->schType,
+					'schFrequency'	=> $dataAsset[$i]->schFrequency,
+					'schWeekDays'	=> $dataAsset[$i]->schWeekDays,
+					'schWeeks'		=> $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schWeeks : '',
+					'schDays'		=> $dataAsset[$i]->schType == 'Monthly' ? $dataAsset[$i]->schDays : '',
+				);
+				if (!empty($cekAssetNumbers)) {
+					$dataInsert['assetNumber'] = $dataInsert['assetNumber'] . '_' . $this->randomString();
 				}
 				$assetModel->insert($dataInsert);
 
@@ -1401,8 +1418,8 @@ class Asset extends BaseController
 				$tag = $dataAsset[$i]->tag;
 				// $arrTag = explode(",", $tag);
 				foreach ($tag as $key => $val) {
-					$dataTag = $tagModel->getByName($val);
-					if ($dataTag == NULL) {
+					$dataTag = $tagModel->getAll(['userId' => $adminId, 'tagName' => $val]);
+					if (empty($dataTag)) {
 						$newTag = array(
 							'tagId' => uuidv4(),
 							'userId' => $this->session->get("adminId"),
@@ -1417,7 +1434,7 @@ class Asset extends BaseController
 						);
 						$assetTagModel->insert($insertNewAssetTag);
 					} else {
-						$tagId = $dataTag['tagId'];
+						$tagId = $dataTag[0]['tagId'];
 						$insertAssetTag = array(
 							'assetTagId' => uuidv4(),
 							'assetId' => $dataInsert['assetId'],
@@ -1430,8 +1447,8 @@ class Asset extends BaseController
 				$tagLocation = $dataAsset[$i]->tagLocation;
 				// $arrTagLocation = explode(",", $tagLocation);
 				foreach ($tagLocation as $key => $val) {
-					$dataTagLocation = $tagLocationModel->getByName($val);
-					if ($dataTagLocation == NULL) {
+					$dataTagLocation = $tagLocationModel->getAll(['userId' => $adminId, 'tagLocationName' => $val]);
+					if (empty($dataTagLocation)) {
 						$newTagLocation = array(
 							'tagLocationId' => uuidv4(),
 							'userId' => $this->session->get("adminId"),
@@ -1448,7 +1465,7 @@ class Asset extends BaseController
 						);
 						$assetTagLocationModel->insert($insertNewAssetTagLocation);
 					} else {
-						$tagLocationId = $dataTagLocation['tagLocationId'];
+						$tagLocationId = $dataTagLocation[0]['tagLocationId'];
 						$insertAssetTagLocation = array(
 							'assetTagLocationId' => uuidv4(),
 							'assetId' => $dataInsert['assetId'],
@@ -1486,9 +1503,12 @@ class Asset extends BaseController
 				'data' => ''
 			));
 		} catch (Exception $e) {
-			throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+			return $this->response->setJSON(array(
+				'status' => $e->getCode(),
+				'message'=>$e->getMessage(),
+				'data'=>[]
+			));
 		}
-		die();
 	}
 
 	public function export()

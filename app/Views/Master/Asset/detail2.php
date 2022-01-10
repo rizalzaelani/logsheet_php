@@ -113,6 +113,7 @@ $session = \Config\Services::session();
 $sess = $session->get('adminId');
 $assetId = $assetData['assetId'];
 
+
 ?>
 <div class="row" id="app">
     <div class="col-12">

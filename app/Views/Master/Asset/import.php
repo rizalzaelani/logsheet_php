@@ -184,7 +184,7 @@
                                 <div class="row pt-4">
                                     <div class="col">
                                         <div class="w-100 table-responsive">
-                                            <table class="table table-hover display nowrap" id="tableAsset">
+                                            <table class="table display nowrap" id="tableAsset">
                                                 <thead>
                                                     <tr style="background-color: #f2f4f8;">
                                                         <th scope="col">Asset</th>
@@ -254,7 +254,7 @@
                                 <div class="row pt-4">
                                     <div class="col">
                                         <div class="table-responsive w-100">
-                                            <table class="w-100 table table-hover diwplay nowrap">
+                                            <table class="w-100 table display nowrap">
                                                 <thead>
                                                     <tr style="background-color: #f2f4f8;">
                                                         <th>Parameter</th>
@@ -429,7 +429,8 @@
     const {
         ref,
         reactive,
-        onMounted
+        onMounted,
+        toRaw
     } = Vue;
     let v = Vue.createApp({
         el: '#app',
@@ -506,13 +507,13 @@
                 let parameter = this.parameter;
                 for (let a = 0; a < this.parameter.length; a++) {
                     if (this.parameter[a].abnormal != "") {
-                        this.parameter[a].abnormal = (this.parameter[a].abnormal).join(",");
+                        this.parameter[a].abnormal = toRaw((this.parameter[a].abnormal).join(","));
                     }
                     if (this.parameter[a].normal != "") {
-                        this.parameter[a].normal = (this.parameter[a].normal).join(",");
+                        this.parameter[a].normal = toRaw((this.parameter[a].normal).join(","));
                     }
                     if (this.parameter[a].option != "") {
-                        this.parameter[a].option = (this.parameter[a].option).join(",");
+                        this.parameter[a].option = toRaw((this.parameter[a].option).join(","));
                     }
                 }
                 asset.forEach((item, k) => {
@@ -530,23 +531,30 @@
                     if (rsp.status == 200) {
                         $('.complete').removeClass('bg-secondary');
                         $('.complete').addClass('bg-primary text-white');
-                        swal.fire({
+                       return swal.fire({
                             icon: 'success',
-                            title: 'Success!',
-                            text: rsp.message
+                            title: rsp.message
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 window.location.href = "<?= base_url('Asset'); ?>"
                             }
                         })
                     } else {
-                        swal.fire({
-                            icon: 'error',
-                            title: 'Failed Import Asset'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.reload();
+                        let lengthParameter = v.parameter.length;
+                        for (let a = 0; a < lengthParameter; a++) {
+                            if (v.parameter[a].abnormal != "") {
+                                v.parameter[a].abnormal = v.parameter[a].abnormal.split(",");
                             }
+                            if (v.parameter[a].normal != "") {
+                                v.parameter[a].normal = v.parameter[a].normal.split(",");
+                            }
+                            if (v.parameter[a].option != "") {
+                                v.parameter[a].option = v.parameter[a].option.split(",");
+                            }
+                        }
+                        return swal.fire({
+                            icon: 'error',
+                            title: rsp.message
                         })
                     }
                 })
