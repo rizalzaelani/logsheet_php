@@ -47,6 +47,11 @@
         color: var(--danger);
         background-color: #fff;
     }
+
+    .bg-exist{
+        background-color: #E74C3C !important;
+    }
+
 </style>
 <?= $this->endSection(); ?>
 
@@ -195,55 +200,66 @@
                                                         <th scope="col">Coordinat</th>
                                                         <th scope="col">Operation Status</th>
                                                         <th class="d-none" scope="col">Parameter</th>
+                                                        <th width="5%">Other</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr style="text-align: left;" v-for="(items, i) in dataAsset">
-                                                        <td>
-                                                            <span>{{ items.assetName }}</span><br>
-                                                            <span class="text-muted mr-1">{{ items.assetNumber }}</span><i class="fa fa-eye text-info cursor-pointer" @click="modalDetail(i)"></i>
-                                                        </td>
-                                                        <td>
-                                                            <div v-for="(val, i) in items.tagLocation">
-                                                                <span class="badge badge-dark text-white p-1">{{ val }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div v-for="(val, i) in items.tag">
-                                                                <span class="badge badge-dark text-white p-1">{{ val }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td v-if="items.schManual == 'Manual'">
-                                                            Manual
-                                                        </td>
-                                                        <td v-else>
-                                                            <div v-if="items.schType == 'Daily'">
-                                                                {{ items.schType }}<br>
-                                                                ({{ items.schFrequency }})
-                                                            </div>
-                                                            <div v-else-if="items.schType == 'Weekly'">
-                                                                {{ items.schType }}<br>
-                                                                ({{ items.schWeekDays }})
-                                                            </div>
-                                                            <div v-else-if="items.schType == 'Monthly' && items.schDays == ''">
-                                                                {{ items.schType }}<br>
-                                                                ({{ items.schWeeks }})<br>
-                                                                ({{ items.schWeekDays }})
-                                                            </div>
-                                                            <div v-else-if="items.schType == 'Monthly' && items.schDays != ''">
-                                                                {{ items.schType }}<br>
-                                                                ({{ items.schDays }})
-                                                            </div>
-                                                        </td>
-                                                        <td>{{ items.rfid }}</td>
-                                                        <td>
-                                                            <div v-if="items.coordinat != ''">
-                                                                <button class="btn btn-sm btn-link m-0 p-0" @click="mapCoordinat(items.coordinat)">Open Map</button>
-                                                            </div>
-                                                        </td>
-                                                        <td>{{ items.assetStatus }}</td>
-                                                        <td class="d-none"><button class="btn btn-link btn-sm p-0" @click="modalParameter(i)">Click here</button></td>
-                                                    </tr>
+                                                    <template v-for="(items, i) in dataAsset">
+                                                        <tr style="text-align: left;" :class="items.exist ? 'bg-exist' : ''">
+                                                            <td>
+                                                                <span>{{ items.assetName }}</span><br>
+                                                                <span :class="items.exist ? 'mr-1' : 'text-muted mr-1'">{{ items.assetNumber }}</span><i class="fa fa-eye text-info cursor-pointer" @click="modalDetail(i)"></i>
+                                                            </td>
+                                                            <td>
+                                                                <div v-for="(val, i) in items.tagLocation">
+                                                                    <span class="badge badge-dark text-white p-1">{{ val }}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div v-for="(val, i) in items.tag">
+                                                                    <span class="badge badge-dark text-white p-1">{{ val }}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td v-if="items.schManual == 'Manual'">
+                                                                Manual
+                                                            </td>
+                                                            <td v-else>
+                                                                <div v-if="items.schType == 'Daily'">
+                                                                    {{ items.schType }}<br>
+                                                                    ({{ items.schFrequency }})
+                                                                </div>
+                                                                <div v-else-if="items.schType == 'Weekly'">
+                                                                    {{ items.schType }}<br>
+                                                                    ({{ items.schWeekDays }})
+                                                                </div>
+                                                                <div v-else-if="items.schType == 'Monthly' && items.schDays == ''">
+                                                                    {{ items.schType }}<br>
+                                                                    ({{ items.schWeeks }})<br>
+                                                                    ({{ items.schWeekDays }})
+                                                                </div>
+                                                                <div v-else-if="items.schType == 'Monthly' && items.schDays != ''">
+                                                                    {{ items.schType }}<br>
+                                                                    ({{ items.schDays }})
+                                                                </div>
+                                                            </td>
+                                                            <td>{{ items.rfid }}</td>
+                                                            <td>
+                                                                <div v-if="items.coordinat != ''">
+                                                                    <button class="btn btn-sm btn-link m-0 p-0" @click="mapCoordinat(items.coordinat)">Open Map</button>
+                                                                </div>
+                                                            </td>
+                                                            <td>{{ items.assetStatus }}</td>
+                                                            <td class="d-none"><button class="btn btn-link btn-sm p-0" @click="modalParameter(i)">Click here</button></td>
+                                                            <td>
+                                                                <template v-if="items.exist">
+                                                                    <a @click="other()" class="btn btn-link"><i class="fa fa-question-circle"></i></a>
+                                                                </template>
+                                                                <template v-else>
+
+                                                                </template>
+                                                            </td>
+                                                        </tr>
+                                                    </template>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -516,8 +532,10 @@
                         this.parameter[a].option = toRaw((this.parameter[a].option).join(","));
                     }
                 }
-                asset.forEach((item, k) => {
-                    formdata.append("dataAsset[]", JSON.stringify(this.dataAsset));
+                this.dataAsset.forEach((val, i) => {
+                    if (val.exist == false) {
+                        formdata.append("dataAsset[]", JSON.stringify(val));
+                    }
                 });
                 parameter.forEach((item, i) => {
                     formdata.append("parameter[]", JSON.stringify(this.parameter));
@@ -564,6 +582,13 @@
                 window.location.reload();
             }
 
+            function other(){
+                return swal.fire({
+                    icon: 'info',
+                    title: 'Asset number already exist, make sure asset number is unique value.'
+                })
+            }
+
             onMounted(() => {
                 $('#category').select2({
                     theme: 'coreui',
@@ -589,7 +614,8 @@
                 index,
                 mapCoordinat,
                 coordinat,
-                category
+                category,
+                other
             }
         },
     }).mount('#app');

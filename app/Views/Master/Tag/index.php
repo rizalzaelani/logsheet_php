@@ -60,12 +60,12 @@
                     </h5>
                 </div>
                 <div class="table-responsive w-100">
-                    <table class="table w-100 table-hover" id="tableTag">
+                    <table class="table table-hover" id="tableTag">
                         <thead class="bg-primary">
                             <tr>
-                                <th style="width: 30%">Tag Name</th>
-                                <th style="width: 50%">Description</th>
-                                <th style="width: 20%">Action</th>
+                                <th>Tag Name</th>
+                                <th width="50%">Description</th>
+                                <th width="17%">Action</th>
                             </tr>
                         </thead>
                     </table>

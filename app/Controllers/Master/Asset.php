@@ -1192,6 +1192,8 @@ class Asset extends BaseController
 	public function getDataImport()
 	{
 		$file = $this->request->getFile('importAsset');
+		$adminId = $this->session->get('adminId');
+		$assetModel = new AssetModel();
 		if ($file) {
 			$name = 'docAsset' . time() . '.xlsx';
 			$file->move('upload/', $name);
@@ -1205,6 +1207,7 @@ class Asset extends BaseController
 				if ($sheet->getName() == 'Asset') {
 					foreach ($sheet->getRowIterator() as $row) {
 						if ($rowAsset > 1) {
+							$cekAssetNumber = $assetModel->getAll(['userId' => $adminId, 'deletedAt' => null, 'assetNumber' => $row->getCellAtIndex(1)->getValue()]);
 							$dataAsset[] = array(
 								'assetName' => $row->getCellAtIndex(0)->getValue(),
 								'assetNumber' => $row->getCellAtIndex(1)->getValue(),
@@ -1219,7 +1222,8 @@ class Asset extends BaseController
 								'schDays' => $row->getCellAtIndex(9)->getValue(),
 								'rfid' => $row->getCellAtIndex(12)->getValue(),
 								'coordinat' => str_replace("'", '', $row->getCellAtIndex(13)->getValue()),
-								'assetStatus' => $row->getCellAtIndex(14)->getValue()
+								'assetStatus' => $row->getCellAtIndex(14)->getValue(),
+								'exist' => (!empty($cekAssetNumber) ? true : false)
 							);
 						}
 						$rowAsset++;
